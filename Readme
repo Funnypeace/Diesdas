@@ -1,1 +1,10 @@
-Test-Datei
+# Diesdas
+
+This repository contains HTML demo pages. To make them accessible online, you can enable GitHub Pages in your repository settings:
+
+1. Commit and push all changes to the `main` branch.
+2. In your GitHub repository, go to **Settings** → **Pages**.
+3. Under **Source**, select `main` branch and `/root` as the folder.
+4. Save the settings. After a short delay your pages will be available at the provided URL.
+
+Open `index.html` from that URL to see the overview with the available demos.

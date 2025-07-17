@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaktiver Reiseplan: Japan 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        .section-title {
+            font-size: 1.875rem; /* text-3xl */
+            font-weight: 700; /* font-bold */
+            color: #1e293b; /* slate-800 */
+            margin-bottom: 1.5rem; /* mb-6 */
+            text-align: center;
+        }
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #f59e0b; /* amber-500 */
+            border-bottom-color: #f59e0b; /* amber-500 */
+        }
+        .filter-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .filter-btn.active {
+            background-color: #f59e0b; /* amber-500 */
+            color: #ffffff;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .day-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .day-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .day-card.highlight {
+            background-color: #fef3c7; /* amber-100 */
+            border-color: #f59e0b; /* amber-500 */
+        }
+        .day-card.pre-booked {
+            position: relative;
+            background-color: #dbeafe; /* blue-200 */
+            border-color: #3b82f6; /* blue-500 */
+        }
+        .day-card.pre-booked::after {
+            content: '★';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            color: #3b82f6;
+            font-size: 1.25rem;
+        }
+        .modal-content {
+            max-height: 80vh;
+        }
+        .activity-item.highlighted {
+            background-color: #fefce8; /* yellow-50 */
+            border-left: 4px solid #f59e0b; /* amber-500 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+                max-height: 350px;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <header class="bg-slate-800 text-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl md:text-2xl font-bold text-amber-400">Japan 2025</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#overview" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Übersicht</a>
+                        <a href="#itinerary" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Reiseplan</a>
+                        <a href="#transport" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Transport & Tipps</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-700 focus:outline-none">
+                        <span class="sr-only">Menü öffnen</span>
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#overview" class="nav-link block px-3 py-2 rounded-md text-base font-medium">Übersicht</a>
+                <a href="#itinerary" class="nav-link block px-3 py-2 rounded-md text-base font-medium">Reiseplan</a>
+                <a href="#transport" class="nav-link block px-3 py-2 rounded-md text-base font-medium">Transport & Tipps</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+        <section id="overview" class="mb-16 scroll-mt-20">
+            <h2 class="section-title">Reiseübersicht</h2>
+            <p class="text-center max-w-3xl mx-auto mb-10 text-slate-600">Willkommen zu Ihrer Reise durch Japan! Diese Übersicht fasst die wichtigsten Eckdaten und die Verteilung Ihrer Aufenthalte zusammen. Der Fokus liegt auf einer unvergesslichen Mischung aus Technologie, Anime und traditioneller Kultur.</p>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+                    <span class="text-4xl">✈️</span>
+                    <div>
+                        <h3 class="font-bold text-slate-800">Flugdaten</h3>
+                        <p class="text-sm">Ankunft: 18. Juni, 22:30 HND</p>
+                        <p class="text-sm">Abflug: 04. Juli, 00:05 HND</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+                    <span class="text-4xl">🗓️</span>
+                    <div>
+                        <h3 class="font-bold text-slate-800">Reisedauer</h3>
+                        <p class="text-lg">17 Tage / 15 Nächte</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+                    <span class="text-4xl">🏨</span>
+                    <div>
+                        <h3 class="font-bold text-slate-800">Unterkünfte</h3>
+                        <p class="text-lg">4 Hotels in 3 Städten</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-md mb-12">
+                <h3 class="text-xl font-bold text-slate-800 mb-4 text-center">Nächte pro Stadt</h3>
+                <div class="chart-container">
+                    <canvas id="nightsPerCityChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-md">
+                <h3 class="text-xl font-bold text-slate-800 mb-4 text-center">Gebuchte Hotels</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-50 text-slate-600">
+                            <tr>
+                                <th class="p-4 font-medium">Hotel</th>
+                                <th class="p-4 font-medium">Stadt</th>
+                                <th class="p-4 font-medium">Check-in</th>
+                                <th class="p-4 font-medium">Check-out</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr><td class="p-4">Hotel Villa Fontaine Tokyo Hamamatsucho</td><td class="p-4">Tokio</td><td class="p-4">18. Juni</td><td class="p-4">21. Juni</td></tr>
+                            <tr><td class="p-4">Almont Hotel Kyoto</td><td class="p-4">Kyoto</td><td class="p-4">21. Juni</td><td class="p-4">24. Juni</td></tr>
+                            <tr><td class="p-4">Smile Hotel Shinosaka</td><td class="p-4">Osaka</td><td class="p-4">24. Juni</td><td class="p-4">29. Juni</td></tr>
+                            <tr><td class="p-4">Shinjuku Granbell Hotel</td><td class="p-4">Tokio</td><td class="p-4">29. Juni</td><td class="p-4">03. Juli</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
+        <section id="itinerary" class="mb-16 scroll-mt-20">
+            <h2 class="section-title">Interaktiver Reiseplan</h2>
+            <p class="text-center max-w-3xl mx-auto mb-6 text-slate-600">Klicken Sie auf einen Tag, um die detaillierte Planung zu sehen. Nutzen Sie die Filter, um Aktivitäten nach Ihren Interessen hervorzuheben. Tage mit bereits fest gebuchten Hauptaktivitäten sind mit einem ★ markiert.</p>
+
+            <div class="flex justify-center flex-wrap gap-2 md:gap-4 mb-8" id="theme-filters">
+                <button class="filter-btn active px-4 py-2 text-sm font-medium rounded-full bg-white shadow-sm border border-slate-200" data-filter="all">Alle anzeigen</button>
+                <button class="filter-btn px-4 py-2 text-sm font-medium rounded-full bg-white shadow-sm border border-slate-200" data-filter="technologie">🖥️ Technologie</button>
+                <button class="filter-btn px-4 py-2 text-sm font-medium rounded-full bg-white shadow-sm border border-slate-200" data-filter="anime">🎨 Anime</button>
+                <button class="filter-btn px-4 py-2 text-sm font-medium rounded-full bg-white shadow-sm border border-slate-200" data-filter="kultur">⛩️ Kultur</button>
+            </div>
+
+            <div id="itinerary-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            </div>
+        </section>
+
+        <section id="transport" class="scroll-mt-20">
+            <h2 class="section-title">Transport & Reisetipps</h2>
+            <p class="text-center max-w-3xl mx-auto mb-10 text-slate-600">Effiziente Fortbewegung ist in Japan der Schlüssel. Hier finden Sie eine Kostenanalyse für Zugreisen und wichtige allgemeine Tipps, die Ihnen die Reise erleichtern werden.</p>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 md:p-8 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold text-slate-800 mb-4 text-center">Kostenanalyse: Shinkansen</h3>
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="transportCostChart"></canvas>
+                    </div>
+                    <p class="text-sm text-center mt-4 text-slate-500">Empfehlung: Kombination aus Einzeltickets und dem kostengünstigeren JR Kansai-Hiroshima Area Pass für die Tage in der Kansai-Region.</p>
+                </div>
+
+                <div class="bg-white p-6 md:p-8 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold text-slate-800 mb-6 text-center">Wichtige Tipps</h3>
+                    <div id="tips-accordion" class="space-y-4">
+                        <div class="accordion-item">
+                            <button class="accordion-header w-full text-left flex justify-between items-center p-4 bg-slate-50 hover:bg-slate-100 rounded-lg">
+                                <span class="font-semibold text-slate-700">Geld & Währung</span>
+                                <span class="accordion-icon text-amber-500 font-bold text-xl">+</span>
+                            </button>
+                            <div class="accordion-content hidden p-4 border-t border-slate-200">
+                                <p>Japan ist bargeld-freundlich. Führen Sie immer etwas Bargeld mit sich. Kreditkarten werden in großen Geschäften und Hotels akzeptiert. Geldautomaten in Convenience Stores (7-Eleven, Lawson) sind ideal für Abhebungen.</p>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <button class="accordion-header w-full text-left flex justify-between items-center p-4 bg-slate-50 hover:bg-slate-100rounded-lg">
+                                <span class="font-semibold text-slate-700">Kommunikation & Internet</span>
+                                <span class="accordion-icon text-amber-500 font-bold text-xl">+</span>
+                            </button>
+                            <div class="accordion-content hidden p-4 border-t border-slate-200">
+                                <p>Ein Pocket Wi-Fi oder eine eSIM ist für die Navigation (Google Maps) und Übersetzung unerlässlich. Dies sichert ständigen Internetzugang.</p>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <button class="accordion-header w-full text-left flex justify-between items-center p-4 bg-slate-50 hover:bg-slate-100 rounded-lg">
+                                <span class="font-semibold text-slate-700">Etikette</span>
+                                <span class="accordion-icon text-amber-500 font-bold text-xl">+</span>
+                            </button>
+                            <div class="accordion-content hidden p-4 border-t border-slate-200">
+                                <p>Höflichkeit ist wichtig. Verbeugen ist ein üblicher Gruß. Vermeiden Sie laute Gespräche in öffentlichen Verkehrsmitteln und essen/trinken Sie nicht beim Gehen auf der Straße.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-800 text-white mt-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center text-sm text-slate-400">
+            <p>Ihr persönlicher Reiseplan für Japan | Juni/Juli 2025</p>
+        </div>
+    </footer>
+    
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl transform transition-all">
+            <div class="flex justify-between items-center p-4 border-b border-slate-200">
+                <h3 id="modal-title" class="text-xl font-bold text-slate-800"></h3>
+                <button id="modal-close" class="text-slate-500 hover:text-slate-800 text-2xl">&times;</button>
+            </div>
+            <div id="modal-content" class="p-6 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <script>
+        const itineraryData = [
+            { day: 1, date: "18. Juni", location: "Tokio", title: "Ankunft", themes: [], preBooked: false, details: `
+                <div class="space-y-4">
+                    <div class="activity-item"><strong class="text-amber-600">Abend (22:30 Uhr):</strong> Ankunft am Flughafen Tokio Haneda (HND).</div>
+                    <div class="activity-item"><strong class="text-amber-600">Danach:</strong> Einchecken im Hotel Villa Fontaine Tokyo Hamamatsucho.</div>
+                </div>` },
+            { day: 2, date: "19. Juni", location: "Tokio", title: "Parks, Kultur & Skyline", themes: ['kultur'], preBooked: false, details: `
+                <div class="space-y-4">
+                    <div class="activity-item" data-theme="kultur"><strong class="text-amber-600">Vormittag:</strong> Tokyo Tower, Shiba Park &amp; Zōjō-ji Tempel besuchen.</div>
+                    <div class="activity-item" data-theme="kultur"><strong class="text-amber-600">Mittag:</strong> Essen bei Gonpachi Nishi-Azabu &amp; Roppongi Hills Aussicht.</div>
+                    <div class="activity-item" data-theme="kultur"><strong class="text-amber-600">Nachmittag:</strong> Besuch des Hamarikyū-Parks (Hamarikyu Gardens).</div>
+                    <div class="activity-item"><strong class="text-amber-600">Abend:</strong> Erkundung von Takeshiba am Wasser für die Skyline (Tokyo, Takeshiba).</div>
+                    <div class="activity-item">Zusammengefasst: <a href="https://maps.app.goo.gl/TCNHeU8EuVGebMVM8" target="_blank">Maps-Link</a></div>
+                </div>` },
+            { day: 3, date: "20. Juni", location: "Tokio", title: "Shibuya & Kultur", themes: ['kultur','anime'], preBooked: false, details: `
+                <div class="space-y-4">
+                    <div class="activity-item"><strong class="text-amber-600">Vormittag:</strong> Shibuya Scramble Crossing &amp; Shopping bei MEGA Don Quijote.</div>
+                    <div class="activity-item" data-theme="kultur anime"><strong class="text-amber-600">Nachmittag:</strong> Meiji Jingu &amp; Takeshita Street &amp; ONE PIECE Straw Hat Store - Shibuya Main Store.</div>
+                    <div class="activity-item" data-theme="kultur"><strong class="text-amber-600">Optional:</strong> Imperial Palace / Kaiserpalast Tokio.</div>
+                </div>` },
+            { day: 4, date: "21. Juni", location: "Tokio → Kyoto", title: "Reise & Tempel", themes: ['kultur'], preBooked: false, details: `
+                <div class="space-y-4">
+                    <div class="activity-item"><strong class="text-amber-600">Vormittag:</strong> Auschecken Hotel: Villa Fontaine Tokyo Hamamatsucho.</div>
+                    <div class="activity-item"><strong class="text-amber-600">Nachmittag:</strong> Einchecken Hotel: Almont Hotel Kyoto.</div>
+                    <div class="activity-item" data-theme="kultur"><strong class="text-amber-600">Abend:</strong> Kinkaku-ji Goldener Pavillon &amp; Kiyomizu-dera Tempel Abends.</div>
+                </div>` },
+            { day: 5, date: "22. Juni", location: "Kyoto", title: "Fushimi Inari & Arashiyama", themes: ['kultur'], preBooked: false, details: `
+                <div class="space-y-4">
+                    <div class="activity-item" data-theme="kultur"><strong class="text-amber-600">Früh morgens:</strong> Fushimi Inari Taisha Schrein.</div>
+                    <div class="activity-item" data-theme="kultur"><strong class="text-amber-600">Vormittag:</strong> Arashiyama Bambuswald (Bamboo Grove).</div>
+                    <div class="activity-item"><strong class="text-amber-600">Rest des Tages:</strong> Freie Gestaltung in Kyoto.</div>
+                </div>` },
+            { day: 6, date: "23. Juni", location: "Kyoto", title: "Freier Tag", themes: [], preBooked: false, details: `<p>Dieser Tag steht zur freien Verfügung in Kyoto.</p>` },
+            { day: 7, date: "24. Juni", location: "Kyoto → Osaka", title: "Reise nach Osaka", themes: [], preBooked: false, details: `
+                <div class="space-y-4">
+                    <div class="activity-item"><strong class="text-amber-600">Vormittag:</strong> Auschecken Hotel: Almont Hotel Kyoto.</div>
+                    <div class="activity-item"><strong class="text-amber-600">Nachmittag:</strong> Einchecken Hotel: Smile Hotel Shinosaka.</div>
+                    <div class="activity-item"><strong class="text-amber-600">Abend:</strong> Freie Gestaltung in Osaka.</div>
+                </div>` },
+            { day: 8, date: "25. Juni", location: "Osaka", title: "Universal Studios Japan", themes: ['anime'], preBooked: true, details: `
+                <div class="space-y-4">
+                    <div class="activity-item" data-theme="anime"><strong class="text-amber-600">Ganztägig:</strong> Universal Studios Japan.</div>
+                </div>` },
+            { day: 9, date: "26. Juni", location: "Osaka", title: "Weltausstellung Expo 2025", themes: ['technologie'], preBooked: true, details: `
+                <div class="space-y-4">
+                    <div class="activity-item" data-theme="technologie"><strong class="text-amber-600">Ganztägig:</strong> Weltausstellung Expo 2025 (Tickets gebucht am 16.03.2025).</div>
+                </div>` },
+            { day: 10, date: "27. Juni", location: "Hiroshima", title: "Ausflug Hiroshima", themes: ['kultur'], preBooked: true, details: `
+                <div class="space-y-4">
+                    <div class="activity-item" data-theme="kultur"><strong class="text-amber-600">Ganztägig:</strong> Ausflug Hiroshima: HIROSHIMA GATE PARK + Prayer Fountain.</div>
+                </div>` },
+            { day: 11, date: "28. Juni", location: "Osaka", title: "Freier Tag", themes: [], preBooked: false, details: `<p>Dieser Tag steht zur freien Verfügung in Osaka.</p>` },
+            { day: 12, date: "29. Juni", location: "Osaka → Tokio", title: "Reise & Anime", themes: ['anime','technologie'], preBooked: false, details: `
+                <div class="space-y-4">
+                    <div class="activity-item"><strong class="text-amber-600">Vormittag:</strong> Auschecken Hotel: Smile Hotel Shinosaka.</div>
+                    <div class="activity-item"><strong class="text-amber-600">Nachmittag:</strong> Einchecken Hotel: Shinjuku Granbell Hotel.</div>
+                    <div class="activity-item" data-theme="anime technologie"><strong class="text-amber-600">Abend:</strong> Ab zur Akihabara Station – Erkundung des Anime-/Elektro-Viertels.</div>
+                </div>` },
+            { day: 13, date: "30. Juni", location: "Tokio", title: "Sensō-ji Tempel", themes: ['kultur'], preBooked: false, details: `
+                <div class="space-y-4">
+                    <div class="activity-item" data-theme="kultur"><strong class="text-amber-600">Ganztägig:</strong> Tempel Sensō-ji.</div>
+                </div>` },
+            { day: 14, date: "1. Juli", location: "Tokio", title: "Anime & Elektro", themes: ['anime','technologie'], preBooked: false, details: `
+                <div class="space-y-4">
+                    <div class="activity-item" data-theme="anime technologie"><strong class="text-amber-600">Ganztägig:</strong> Ab zur Akihabara Station – Erkundung des Anime-/Elektro-Viertels.</div>
+                </div>` },
+            { day: 15, date: "2. Juli", location: "Tokio", title: "Freier Tag", themes: [], preBooked: false, details: `<p>Dieser Tag steht zur freien Verfügung in Tokio.</p>` },
+            { day: 16, date: "3. Juli", location: "Tokio", title: "Auschecken", themes: [], preBooked: false, details: `
+                <div class="space-y-4">
+                    <div class="activity-item"><strong class="text-amber-600">Ganztägig:</strong> Auschecken Hotel: Shinjuku Granbell Hotel.</div>
+                </div>` },
+            { day: 17, date: "4. Juli", location: "Tokio", title: "Abreise", themes: [], preBooked: false, details: `
+                <div class="space-y-4">
+                    <div class="activity-item"><strong class="text-amber-600">Sehr früh (0:05 Uhr):</strong> Abflug aus Tokio.</div>
+                </div>` },
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = {
+                activeFilter: 'all',
+                init() {
+                    this.setupEventListeners();
+                    this.renderItineraryGrid();
+                    this.renderCharts();
+                    this.setActiveNavLink();
+                },
+                setupEventListeners() {
+                    document.getElementById('mobile-menu-button').addEventListener('click', () => {
+                        document.getElementById('mobile-menu').classList.toggle('hidden');
+                    });
+
+                    document.querySelectorAll('.nav-link').forEach(link => {
+                        link.addEventListener('click', (e) => {
+                            if (window.innerWidth < 768) {
+                                document.getElementById('mobile-menu').classList.add('hidden');
+                            }
+                            const targetId = link.getAttribute('href');
+                            const targetElement = document.querySelector(targetId);
+                            if (targetElement) {
+                                e.preventDefault();
+                                targetElement.scrollIntoView({ behavior: 'smooth' });
+                                setTimeout(() => this.setActiveNavLink(), 50);
+                            }
+                        });
+                    });
+
+                    document.getElementById('theme-filters').addEventListener('click', e => {
+                        if (e.target.tagName === 'BUTTON') {
+                            this.activeFilter = e.target.dataset.filter;
+                            this.updateFilterButtons();
+                            this.updateDayCardsHighlight();
+                        }
+                    });
+
+                    document.getElementById('itinerary-grid').addEventListener('click', e => {
+                        const card = e.target.closest('.day-card');
+                        if (card) this.openModal(card.dataset.day);
+                    });
+
+                    document.getElementById('modal-close').addEventListener('click', () => this.closeModal());
+                    document.getElementById('modal').addEventListener('click', e => {
+                        if (e.target.id === 'modal') this.closeModal();
+                    });
+
+                    document.getElementById('tips-accordion').addEventListener('click', e => {
+                        const header = e.target.closest('.accordion-header');
+                        if (header) {
+                            const content = header.nextElementSibling;
+                            const icon = header.querySelector('.accordion-icon');
+                            const isHidden = content.classList.toggle('hidden');
+                            icon.textContent = isHidden ? '+' : '−';
+                            document.querySelectorAll('#tips-accordion .accordion-content').forEach(other => {
+                                if (other !== content && !other.classList.contains('hidden')) {
+                                    other.classList.add('hidden');
+                                    other.previousElementSibling.querySelector('.accordion-icon').textContent = '+';
+                                }
+                            });
+                        }
+                    });
+
+                    window.addEventListener('scroll', () => this.setActiveNavLink());
+                    window.addEventListener('resize', () => this.setActiveNavLink());
+                },
+                renderItineraryGrid() {
+                    const grid = document.getElementById('itinerary-grid');
+                    grid.innerHTML = itineraryData.map(day => `
+                        <div class="day-card bg-white p-4 rounded-lg shadow-md border-2 border-transparent cursor-pointer ${day.preBooked ? 'pre-booked' : ''}" data-day="${day.day}" tabindex="0" role="button" aria-label="Details für Tag ${day.day}: ${day.title}">
+                            <p class="font-bold text-sm text-slate-800">Tag ${day.day}</p>
+                            <p class="text-xs text-slate-500 mb-1">${day.date}</p>
+                            <p class="text-slate-700 font-semibold">${day.location}</p>
+                            <p class="text-xs text-slate-600 truncate">${day.title}</p>
+                        </div>
+                    `).join('');
+                },
+                updateFilterButtons() {
+                    document.querySelectorAll('#theme-filters button').forEach(btn => {
+                        btn.classList.toggle('active', btn.dataset.filter === this.activeFilter);
+                    });
+                },
+                updateDayCardsHighlight() {
+                    document.querySelectorAll('.day-card').forEach(card => {
+                        const day = itineraryData[card.dataset.day - 1];
+                        const hasTheme = this.activeFilter === 'all' || (day.themes.includes(this.activeFilter));
+                        card.classList.toggle('highlight', hasTheme && this.activeFilter !== 'all');
+                        card.style.opacity = hasTheme || this.activeFilter === 'all' ? '1' : '0.5';
+                    });
+                },
+                openModal(dayNum) {
+                    const day = itineraryData[dayNum - 1];
+                    document.getElementById('modal-title').textContent = `Tag ${day.day}: ${day.title} (${day.date})`;
+                    const modalContent = document.getElementById('modal-content');
+                    modalContent.innerHTML = day.details;
+                    modalContent.querySelectorAll('.activity-item').forEach(item => {
+                        const themes = (item.dataset.theme || '').split(' ');
+                        if (this.activeFilter !== 'all' && themes.includes(this.activeFilter)) {
+                            item.classList.add('highlighted');
+                        } else {
+                            item.classList.remove('highlighted');
+                        }
+                    });
+                    const modal = document.getElementById('modal');
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                    modal.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+                    document.getElementById('modal-close').focus();
+                },
+                closeModal() {
+                    const modal = document.getElementById('modal');
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                    modal.setAttribute('aria-hidden', 'true');
+                    document.body.style.overflow = '';
+                },
+                setActiveNavLink() {
+                    let current = '';
+                    const sections = document.querySelectorAll('main section[id]');
+                    const offset = document.querySelector('header').offsetHeight + 20;
+                    sections.forEach(sec => {
+                        const top = sec.offsetTop - offset;
+                        const bottom = top + sec.offsetHeight;
+                        if (pageYOffset >= top && pageYOffset < bottom) current = sec.id;
+                    });
+                    if (!current) {
+                        if (pageYOffset < sections[0].offsetTop - offset) current = sections[0].id;
+                        else current = sections[sections.length - 1].id;
+                    }
+                    document.querySelectorAll('.nav-link').forEach(link => {
+                        link.classList.toggle('active', link.getAttribute('href') === `#${current}`);
+                    });
+                },
+                renderCharts() {
+                    const nightsCtx = document.getElementById('nightsPerCityChart');
+                    if (nightsCtx) {
+                        new Chart(nightsCtx.getContext('2d'), {
+                            type: 'bar',
+                            data: {
+                                labels: ['Tokio (Start)', 'Kyoto', 'Osaka', 'Tokio (Ende)'],
+                                datasets: [{
+                                    label: 'Anzahl Nächte',
+                                    data: [3, 3, 5, 4],
+                                    backgroundColor: ['#7dd3fc','#fcd34d','#f87171','#7dd3fc'],
+                                    borderColor: ['#0ea5e9','#facc15','#ef4444','#0ea5e9'],
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                indexAxis: 'y',
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend:{display:false}, title:{display:false} },
+                                scales: {
+                                    x:{ beginAtZero:true, grid:{color:'#e2e8f0'} },
+                                    y:{ grid:{display:false} }
+                                }
+                            }
+                        });
+                    }
+                    const transportCtx = document.getElementById('transportCostChart');
+                    if (transportCtx) {
+                        const jpy = [52710,50000,80000];
+                        const rate = 0.0061;
+                        const eur = jpy.map(c=>parseFloat((c*rate).toFixed(2)));
+                        new Chart(transportCtx.getContext('2d'), {
+                            type:'bar',
+                            data:{
+                                labels:['Einzel-/Regionaltickets','JR Pass 7 Tage','JR Pass 14 Tage'],
+                                datasets:[{
+                                    label:'Geschätzte Kosten in Euro (€)',
+                                    data:eur,
+                                    backgroundColor:['#6ee7b7','#fcd34d','#f87171'],
+                                    borderColor:['#10b981','#facc15','#ef4444','#f59e0b'],
+                                    borderWidth:1
+                                }]
+                            },
+                            options:{
+                                responsive:true,
+                                maintainAspectRatio:false,
+                                plugins:{
+                                    legend:{display:false},
+                                    title:{display:true,text:'Vergleich der Transportkosten',padding:{bottom:20},font:{size:16}}
+                                },
+                                scales:{
+                                    y:{
+                                        beginAtZero:true,
+                                        ticks:{callback:v=>v.toLocaleString('de-DE',{style:'currency',currency:'EUR'})},
+                                        grid:{color:'#e2e8f0'}
+                                    },
+                                    x:{grid:{display:false}}
+                                }
+                            }
+                        });
+                    }
+                }
+            };
+            app.init();
+        });
+    </script>
+</body>
+</html>

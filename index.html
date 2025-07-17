@@ -4,17 +4,71 @@
     <meta charset="UTF-8">
     <title>Übersichtsseite</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 1rem; }
-        .page-container { display: flex; flex-wrap: wrap; gap: 1rem; }
-        .page { border: 1px solid #ccc; padding: 1rem; width: 300px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #fdfbfb, #ebedee);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 900px;
+        }
+        h1 {
+            margin-bottom: 2rem;
+        }
+        .cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 240px;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 14px rgba(0,0,0,0.15);
+        }
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+        }
+        .card p {
+            margin: 0;
+            color: #555;
+        }
     </style>
 </head>
 <body>
-    <h1>Übersichtsseite</h1>
-    <div class="page-container">
-        <div class="page">
-            <h2>Rotierendes Oktagon mit Ball</h2>
-            <a href="rotierendes-oktagon.html">Seite öffnen</a>
+    <div class="container">
+        <h1>Übersichtsseite</h1>
+        <div class="cards">
+            <a class="card" href="rotierendes-oktagon-mit-ball.html">
+                <h2>Rotierendes Oktagon mit Ball</h2>
+                <p>Zur Demo</p>
+            </a>
+            <a class="card" href="https://gimini-app-black.vercel.app/">
+                <h2>Geschichtenerzähler</h2>
+                <p>Externe Seite</p>
+            </a>
+            <a class="card" href="japan-plan-2025.html">
+                <h2>Japan Plan 2025</h2>
+                <p>Interaktiver Reiseplan</p>
+            </a>
         </div>
     </div>
 </body>

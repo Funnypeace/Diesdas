@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Interactive 3D Earth Advanced Demo (Async-Fix)</title>
+    <title>Interactive 3D Earth Demo (Stable Version)</title>
     <style>
         body { margin: 0; overflow: hidden; }
         canvas { display: block; }
@@ -45,10 +45,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r17/Stats.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
 <script>
-const manager = new THREE.LoadingManager(start);
+// ----------- Texture Loading -----------
+const manager = new THREE.LoadingManager(() => {
+    // After ALL textures loaded, start scene
+    start();
+});
 const loader = new THREE.TextureLoader(manager);
 
-// Texturen-Objekt für Zugriff nach dem Laden
 const textures = {};
 textures.day = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthmap1k.jpg');
 textures.night = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthlights1k.jpg');
@@ -59,350 +62,266 @@ textures.cloudAlpha = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/
 textures.stars = loader.load('https://www.solarsystemscope.com/textures/download/2k_stars.jpg');
 textures.moon = loader.load('https://www.solarsystemscope.com/textures/download/2k_moon.jpg');
 
-// Alles weitere nach vollständigem Laden
+// ----------- Start -----------
 function start() {
-    // ... Der komplette Inhalt deiner Hauptfunktion (wie bisher!) ...
-    // Für Übersichtlichkeit ausgelagert:
-    initScene();
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+document.body.appendChild(renderer.domElement);
+
+// Controls
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.22;
+controls.minDistance = 1.5;
+controls.maxDistance = 5;
+controls.maxPolarAngle = Math.PI * 0.97;
+
+// Stats
+const stats = new Stats();
+document.body.appendChild(stats.dom);
+
+// Starfield
+const starGeometry = new THREE.SphereGeometry(100, 64, 64);
+const starMaterial = new THREE.MeshBasicMaterial({ map: textures.stars, side: THREE.BackSide });
+const stars = new THREE.Mesh(starGeometry, starMaterial);
+scene.add(stars);
+
+// Lights
+const sunLight = new THREE.DirectionalLight(0xffffff, 1.22);
+sunLight.castShadow = true;
+scene.add(sunLight);
+
+const ambientLight = new THREE.AmbientLight(0x222244, 0.8);
+scene.add(ambientLight);
+
+// ---- Earth
+const earthRadius = 1;
+const earthGeometry = new THREE.SphereGeometry(earthRadius, 64, 64);
+const earthMaterial = new THREE.MeshPhongMaterial({
+    map: textures.day,
+    normalMap: textures.normal,
+    normalScale: new THREE.Vector2(0.5, 0.5),
+    specularMap: textures.specular,
+    specular: new THREE.Color(0x222222),
+    shininess: 7,
+    emissiveMap: textures.night,
+    emissive: new THREE.Color(0x333333),
+    emissiveIntensity: 1.2,
+});
+const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+earth.castShadow = true;
+earth.receiveShadow = true;
+scene.add(earth);
+
+// ---- Clouds
+const cloudGeometry = new THREE.SphereGeometry(earthRadius + 0.013, 64, 64);
+const cloudMaterial = new THREE.MeshPhongMaterial({
+    map: textures.cloud,
+    alphaMap: textures.cloudAlpha,
+    transparent: true,
+    opacity: 1.0,
+    depthWrite: false
+});
+const clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
+clouds.castShadow = false;
+clouds.receiveShadow = false;
+scene.add(clouds);
+
+// ---- Atmosphere Glow (simple)
+const atmosphereGeometry = new THREE.SphereGeometry(earthRadius * 1.07, 64, 64);
+const atmosphereMaterial = new THREE.MeshPhongMaterial({
+    color: 0x66bbff,
+    transparent: true,
+    opacity: 0.18,
+    side: THREE.BackSide
+});
+const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+scene.add(atmosphere);
+
+// ---- Moon
+const moonRadius = 0.27;
+const moonGeometry = new THREE.SphereGeometry(moonRadius, 48, 48);
+const moonMaterial = new THREE.MeshPhongMaterial({
+    map: textures.moon,
+    shininess: 2
+});
+const moon = new THREE.Mesh(moonGeometry, moonMaterial);
+scene.add(moon);
+
+const moonLight = new THREE.PointLight(0xaaaacc, 0.15, 12);
+scene.add(moonLight);
+
+// --- City Lights (PointLights)
+const majorCities = [
+    [52.52, 13.40, "Berlin"],
+    [35.68, 139.76, "Tokyo"],
+    [40.71, -74.01, "New York"],
+    [48.85, 2.35, "Paris"],
+    [34.05, -118.25, "Los Angeles"],
+    [31.23, 121.47, "Shanghai"],
+    [-23.55, -46.63, "São Paulo"],
+    [55.75, 37.61, "Moscow"]
+];
+let cityLights = [];
+majorCities.forEach(([lat, lon], idx) => {
+    const phi = (90 - lat) * Math.PI / 180;
+    const theta = (lon + 180) * Math.PI / 180;
+    const r = earthRadius + 0.04;
+    const x = r * Math.sin(phi) * Math.cos(theta);
+    const y = r * Math.cos(phi);
+    const z = r * Math.sin(phi) * Math.sin(theta);
+    const cityLight = new THREE.PointLight(0xffe570, 0.0, 0.5);
+    cityLight.position.set(x, y, z);
+    scene.add(cityLight);
+    cityLights.push(cityLight);
+});
+
+// Rain Particles over Europe
+const rainDrops = [];
+const rainGroup = new THREE.Group();
+for (let i = 0; i < 80; i++) {
+    const geometry = new THREE.SphereGeometry(0.005, 6, 6);
+    const material = new THREE.MeshBasicMaterial({ color: 0x66bbff });
+    const phi = (90 - (45 + Math.random() * 12)) * Math.PI / 180;
+    const theta = (10 + Math.random() * 16) * Math.PI / 180;
+    const r = earthRadius + 0.055;
+    const drop = new THREE.Mesh(geometry, material);
+    drop.position.set(
+        r * Math.sin(phi) * Math.cos(theta),
+        r * Math.cos(phi),
+        r * Math.sin(phi) * Math.sin(theta)
+    );
+    rainGroup.add(drop);
+    rainDrops.push(drop);
+}
+scene.add(rainGroup);
+
+// --- Audio mit Howler.js ---
+let ambientMusic;
+let musicStarted = false;
+function initMusic() {
+    if (musicStarted) return;
+    musicStarted = true;
+    document.getElementById('audio-btn').style.display = 'none';
+    ambientMusic = new Howl({
+        src: ['https://cdn.pixabay.com/audio/2022/02/23/audio_117b9b5f4a.mp3'],
+        autoplay: true,
+        loop: true,
+        volume: 0.22
+    });
+    ambientMusic.play();
+}
+document.getElementById('audio-btn').style.display = 'block';
+document.getElementById('audio-btn').onclick = initMusic;
+document.body.addEventListener('pointerdown', initMusic, { once: true });
+
+// --- Info-Popup für Klicks ---
+const infoPopup = document.getElementById('info-popup');
+function showInfo(txt) {
+    infoPopup.innerHTML = txt;
+    infoPopup.style.display = 'block';
+    setTimeout(() => infoPopup.style.display = 'none', 2800);
 }
 
-function initScene() {
-    // --- Grundlegendes Setup ---
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+// --- Raycaster für interaktive Regionen (vereinfacht) ---
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+function onClick(event) {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObject(earth);
+    if (intersects.length > 0) {
+        const p = intersects[0].point.clone().normalize();
+        const lat = 90 - Math.acos(p.y) * 180 / Math.PI;
+        const lon = ((Math.atan2(p.z, p.x)) * 180 / Math.PI + 360) % 360 - 180;
+        let msg = "";
+        if (lat > 55) msg = "Das ist die Arktis.";
+        else if (lat < -60) msg = "Das ist die Antarktis.";
+        else if (lat > 35 && lon > -10 && lon < 40) msg = "Europa";
+        else if (lat > 5 && lat < 60 && lon > -170 && lon < -30) msg = "Nordamerika";
+        else if (lat < -10 && lon > -85 && lon < -30) msg = "Südamerika";
+        else if (lat < 35 && lon > 100 && lon < 180) msg = "Australien/Ozeanien";
+        else if (lat > 10 && lat < 55 && lon > 60 && lon < 150) msg = "Asien";
+        else if (lat > -35 && lat < 35 && lon > -20 && lon < 50) msg = "Afrika";
+        else msg = "Ozean/Meer";
+        showInfo(`<b>Klick-Koordinaten:</b><br>Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)}<br>${msg}`);
+    }
+}
+window.addEventListener('click', onClick);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.shadowMap.enabled = true;
-    document.body.appendChild(renderer.domElement);
+// --- Kamera ---
+camera.position.set(0, 0, 2.4);
 
-    // --- OrbitControls mit Limitierungen ---
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.22;
-    controls.minDistance = 1.5;
-    controls.maxDistance = 5;
-    controls.maxPolarAngle = Math.PI * 0.97;
+// --- Animation ---
+let start = Date.now();
+function animate() {
+    requestAnimationFrame(animate);
 
-    // --- Stats.js ---
-    const stats = new Stats();
-    document.body.appendChild(stats.dom);
+    const elapsed = (Date.now() - start) / 1000;
 
-    // --- Starfield ---
-    const starGeometry = new THREE.SphereGeometry(100, 64, 64);
-    const starMaterial = new THREE.MeshBasicMaterial({ map: textures.stars, side: THREE.BackSide });
-    const stars = new THREE.Mesh(starGeometry, starMaterial);
-    scene.add(stars);
+    earth.rotation.y += 0.0010;
+    clouds.rotation.y += 0.0013 + Math.sin(elapsed * 0.4) * 0.0002;
+    atmosphere.rotation.copy(earth.rotation);
 
-    // --- Lichter ---
-    const sunLight = new THREE.DirectionalLight(0xffffff, 1.25);
-    sunLight.castShadow = true;
-    sunLight.shadow.mapSize.width = 2048;
-    sunLight.shadow.mapSize.height = 2048;
-    scene.add(sunLight);
-
-    const ambientLight = new THREE.AmbientLight(0x222244, 0.8);
-    scene.add(ambientLight);
-
-    // --- Erde mit Custom Shader ---
-    const earthRadius = 1;
-    const earthGeometry = new THREE.SphereGeometry(earthRadius, 64, 64);
-
-    let uniforms = THREE.UniformsUtils.clone(THREE.ShaderLib.phong.uniforms);
-    uniforms.sunDirection = { value: sunLight.position.clone().normalize() };
-    uniforms.diffuse = { value: new THREE.Color(0xffffff) };
-    uniforms.emissive = { value: new THREE.Color(0x444444) };
-    uniforms.specular = { value: new THREE.Color(0x333333) };
-    uniforms.shininess = { value: 5 };
-    uniforms.map = { value: textures.day };
-    uniforms.normalMap = { value: textures.normal };
-    uniforms.normalScale = { value: new THREE.Vector2(0.5, 0.5) };
-    uniforms.emissiveMap = { value: textures.night };
-    uniforms.specularMap = { value: textures.specular };
-
-    let vertexShader = THREE.ShaderLib.phong.vertexShader;
-    vertexShader = vertexShader.replace(
-        '#include <common>',
-        '#include <common>\n' +
-        'varying vec3 vWorldNormal;'
-    );
-    vertexShader = vertexShader.replace(
-        '#include <normal_vertex>',
-        '#include <normal_vertex>\n' +
-        'vWorldNormal = normalize( mat3( modelMatrix ) * objectNormal );'
+    // Sonne umkreist die Erde auf Y-Ebene
+    const sunOrbitRad = 4.5;
+    const sunAngle = elapsed * 0.16;
+    sunLight.position.set(
+        Math.cos(sunAngle) * sunOrbitRad,
+        Math.sin(sunAngle) * sunOrbitRad * 0.55,
+        Math.sin(sunAngle) * sunOrbitRad
     );
 
-    let fragmentShader = THREE.ShaderLib.phong.fragmentShader;
-    fragmentShader = fragmentShader.replace(
-        '#include <common>',
-        '#include <common>\n' +
-        'varying vec3 vWorldNormal;\n' +
-        'uniform vec3 sunDirection;'
+    // AmbientLight Tag/Nacht-Dimmung
+    const cameraDir = new THREE.Vector3(0, 0, 1).applyQuaternion(camera.quaternion);
+    const sunToCamera = sunLight.position.clone().normalize().dot(cameraDir);
+    ambientLight.intensity = 0.35 + 0.5 * Math.max(0, sunToCamera);
+
+    // Mond
+    const moonOrbitRad = 2.1;
+    const moonAngle = elapsed * 0.055 + 0.9;
+    moon.position.set(
+        Math.cos(moonAngle) * moonOrbitRad,
+        0.21 * Math.sin(elapsed * 0.43),
+        Math.sin(moonAngle) * moonOrbitRad
     );
-    fragmentShader = fragmentShader.replace(
-        'float specularStrength = 1.0;',
-        'float specularStrength = 1.0;\n' +
-        '#ifdef USE_SPECULARMAP\n' +
-        '  vec4 texelSpecular = texture2D( specularMap, vUv );\n' +
-        '  specularStrength *= texelSpecular.r;\n' +
-        '#endif'
-    );
-    fragmentShader = fragmentShader.replace(
-        '#include <emissive_fragment>',
-        `#include <emissive_fragment>
-        float dotNL = dot( vWorldNormal, sunDirection );
-        float nightFactor = smoothstep(-0.2, 0.05, -dotNL);
-        totalEmissiveRadiance *= nightFactor;
-        `
-    );
-
-    const earthMaterial = new THREE.ShaderMaterial({
-        uniforms: uniforms,
-        vertexShader: vertexShader,
-        fragmentShader: fragmentShader,
-        lights: true,
-        defines: {
-            'USE_MAP': '',
-            'USE_NORMALMAP': '',
-            'USE_EMISSIVEMAP': '',
-            'USE_SPECULARMAP': ''
-        }
-    });
-
-    const earth = new THREE.Mesh(earthGeometry, earthMaterial);
-    earth.castShadow = true;
-    earth.receiveShadow = true;
-    scene.add(earth);
-
-    // --- Atmosphärischer Glow ---
-    const atmosphereGeometry = new THREE.SphereGeometry(earthRadius * 1.08, 64, 64);
-    const atmosphereMaterial = new THREE.ShaderMaterial({
-        uniforms: {
-            "c": { value: 0.6 },
-            "p": { value: 6.0 },
-            glowColor: { value: new THREE.Color(0x55ccff) }
-        },
-        vertexShader: `
-            varying vec3 vNormal;
-            void main() {
-                vNormal = normalize(normalMatrix * normal);
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-            }
-        `,
-        fragmentShader: `
-            uniform float c;
-            uniform float p;
-            uniform vec3 glowColor;
-            varying vec3 vNormal;
-            void main() {
-                float intensity = pow(c - dot(vNormal, vec3(0.0, 0.0, 1.0)), p);
-                gl_FragColor = vec4(glowColor, intensity);
-            }
-        `,
-        side: THREE.BackSide,
-        blending: THREE.AdditiveBlending,
-        transparent: true
-    });
-    const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
-    scene.add(atmosphere);
-
-    // --- Clouds (animierte Rotation) ---
-    const cloudGeometry = new THREE.SphereGeometry(earthRadius + 0.013, 64, 64);
-    const cloudMaterial = new THREE.MeshPhongMaterial({
-        map: textures.cloud,
-        alphaMap: textures.cloudAlpha,
-        transparent: true,
-        opacity: 1.0,
-        depthWrite: false
-    });
-    const clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
-    clouds.castShadow = false;
-    clouds.receiveShadow = false;
-    scene.add(clouds);
-
-    // --- Mond (Textur von NASA) ---
-    const moonRadius = 0.27;
-    const moonGeometry = new THREE.SphereGeometry(moonRadius, 48, 48);
-    const moonMaterial = new THREE.MeshPhongMaterial({
-        map: textures.moon,
-        shininess: 2
-    });
-    const moon = new THREE.Mesh(moonGeometry, moonMaterial);
-    scene.add(moon);
+    moon.rotation.y = elapsed * 0.009;
+    moonLight.position.copy(moon.position);
 
     // Mondlicht
-    const moonLight = new THREE.PointLight(0xaaaacc, 0.12, 12);
-    scene.add(moonLight);
+    const moonToSunDot = moon.position.clone().normalize().dot(sunLight.position.clone().normalize());
+    moonLight.intensity = 0.10 + 0.10 * Math.max(0, -moonToSunDot);
 
-    // --- Städte-Lichter als PointLights (nur nachts sichtbar) ---
-    const majorCities = [
-        [52.52, 13.40, "Berlin"],
-        [35.68, 139.76, "Tokyo"],
-        [40.71, -74.01, "New York"],
-        [48.85, 2.35, "Paris"],
-        [34.05, -118.25, "Los Angeles"],
-        [31.23, 121.47, "Shanghai"],
-        [-23.55, -46.63, "São Paulo"],
-        [55.75, 37.61, "Moscow"]
-    ];
-    let cityLights = [];
-    majorCities.forEach(([lat, lon], idx) => {
-        const phi = (90 - lat) * Math.PI / 180;
-        const theta = (lon + 180) * Math.PI / 180;
-        const r = earthRadius + 0.04;
-        const x = r * Math.sin(phi) * Math.cos(theta);
-        const y = r * Math.cos(phi);
-        const z = r * Math.sin(phi) * Math.sin(theta);
-        const cityLight = new THREE.PointLight(0xffe570, 0.0, 0.5);
-        cityLight.position.set(x, y, z);
-        scene.add(cityLight);
-        cityLights.push(cityLight);
+    // Regen animieren
+    rainDrops.forEach(drop => {
+        drop.position.y -= 0.008;
+        if (drop.position.y < 0.85) drop.position.y = 0.97 + Math.random() * 0.07;
     });
 
-    // --- Regenwolken-Partikelsystem über Europa (einfach) ---
-    const rainDrops = [];
-    const rainGroup = new THREE.Group();
-    for (let i = 0; i < 80; i++) {
-        const geometry = new THREE.SphereGeometry(0.005, 6, 6);
-        const material = new THREE.MeshBasicMaterial({ color: 0x66bbff });
-        const phi = (90 - (45 + Math.random() * 12)) * Math.PI / 180;
-        const theta = (10 + Math.random() * 16) * Math.PI / 180;
-        const r = earthRadius + 0.055;
-        const drop = new THREE.Mesh(geometry, material);
-        drop.position.set(
-            r * Math.sin(phi) * Math.cos(theta),
-            r * Math.cos(phi),
-            r * Math.sin(phi) * Math.sin(theta)
-        );
-        rainGroup.add(drop);
-        rainDrops.push(drop);
-    }
-    scene.add(rainGroup);
-
-    // --- Audio mit Howler.js ---
-    let ambientMusic;
-    let musicStarted = false;
-    function initMusic() {
-        if (musicStarted) return;
-        musicStarted = true;
-        document.getElementById('audio-btn').style.display = 'none';
-        ambientMusic = new Howl({
-            src: ['https://cdn.pixabay.com/audio/2022/02/23/audio_117b9b5f4a.mp3'],
-            autoplay: true,
-            loop: true,
-            volume: 0.22
-        });
-        ambientMusic.play();
-    }
-    document.getElementById('audio-btn').style.display = 'block';
-    document.getElementById('audio-btn').onclick = initMusic;
-    document.body.addEventListener('pointerdown', initMusic, { once: true });
-
-    // --- Info-Popup für Klicks ---
-    const infoPopup = document.getElementById('info-popup');
-    function showInfo(txt) {
-        infoPopup.innerHTML = txt;
-        infoPopup.style.display = 'block';
-        setTimeout(() => infoPopup.style.display = 'none', 2800);
-    }
-
-    // --- Raycaster für interaktive Regionen (vereinfacht) ---
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-    function onClick(event) {
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObject(earth);
-        if (intersects.length > 0) {
-            const p = intersects[0].point.clone().normalize();
-            const lat = 90 - Math.acos(p.y) * 180 / Math.PI;
-            const lon = ((Math.atan2(p.z, p.x)) * 180 / Math.PI + 360) % 360 - 180;
-            let msg = "";
-            if (lat > 55) msg = "Das ist die Arktis.";
-            else if (lat < -60) msg = "Das ist die Antarktis.";
-            else if (lat > 35 && lon > -10 && lon < 40) msg = "Europa";
-            else if (lat > 5 && lat < 60 && lon > -170 && lon < -30) msg = "Nordamerika";
-            else if (lat < -10 && lon > -85 && lon < -30) msg = "Südamerika";
-            else if (lat < 35 && lon > 100 && lon < 180) msg = "Australien/Ozeanien";
-            else if (lat > 10 && lat < 55 && lon > 60 && lon < 150) msg = "Asien";
-            else if (lat > -35 && lat < 35 && lon > -20 && lon < 50) msg = "Afrika";
-            else msg = "Ozean/Meer";
-            showInfo(`<b>Klick-Koordinaten:</b><br>Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)}<br>${msg}`);
-        }
-    }
-    window.addEventListener('click', onClick);
-
-    // --- Kamera ---
-    camera.position.set(0, 0, 2.4);
-
-    // --- Animation ---
-    let start = Date.now();
-    function animate() {
-        requestAnimationFrame(animate);
-
-        const elapsed = (Date.now() - start) / 1000;
-
-        earth.rotation.y += 0.0010;
-        clouds.rotation.y += 0.0013 + Math.sin(elapsed * 0.4) * 0.0002;
-        atmosphere.rotation.copy(earth.rotation);
-
-        // Sonne umkreist die Erde auf Y-Ebene
-        const sunOrbitRad = 4.5;
-        const sunAngle = elapsed * 0.16;
-        sunLight.position.set(
-            Math.cos(sunAngle) * sunOrbitRad,
-            Math.sin(sunAngle) * sunOrbitRad * 0.55,
-            Math.sin(sunAngle) * sunOrbitRad
-        );
-        earthMaterial.uniforms.sunDirection.value.copy(sunLight.position).normalize();
-
-        // AmbientLight Tag/Nacht-Dimmung
-        const cameraDir = new THREE.Vector3(0, 0, 1).applyQuaternion(camera.quaternion);
-        const sunToCamera = sunLight.position.clone().normalize().dot(cameraDir);
-        ambientLight.intensity = 0.35 + 0.5 * Math.max(0, sunToCamera);
-
-        // Mond
-        const moonOrbitRad = 2.1;
-        const moonAngle = elapsed * 0.055 + 0.9;
-        moon.position.set(
-            Math.cos(moonAngle) * moonOrbitRad,
-            0.21 * Math.sin(elapsed * 0.43),
-            Math.sin(moonAngle) * moonOrbitRad
-        );
-        moon.rotation.y = elapsed * 0.009;
-        moonLight.position.copy(moon.position);
-
-        // Mondlicht
-        const moonToSunDot = moon.position.clone().normalize().dot(sunLight.position.clone().normalize());
-        moonLight.intensity = 0.10 + 0.10 * Math.max(0, -moonToSunDot);
-
-        // Regen animieren
-        rainDrops.forEach(drop => {
-            drop.position.y -= 0.008;
-            if (drop.position.y < 0.85) drop.position.y = 0.97 + Math.random() * 0.07;
-        });
-
-        // Städte-Lichter nachts sichtbar
-        cityLights.forEach((pl, idx) => {
-            const cityPos = pl.position.clone().normalize();
-            const nightDot = cityPos.dot(sunLight.position.clone().normalize());
-            pl.intensity = nightDot < -0.18 ? 0.12 : 0.0;
-        });
-
-        controls.update();
-        stats.update();
-        renderer.render(scene, camera);
-    }
-    animate();
-
-    window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+    // Städte-Lichter nachts sichtbar
+    cityLights.forEach((pl, idx) => {
+        const cityPos = pl.position.clone().normalize();
+        const nightDot = cityPos.dot(sunLight.position.clone().normalize());
+        pl.intensity = nightDot < -0.18 ? 0.12 : 0.0;
     });
+
+    controls.update();
+    stats.update();
+    renderer.render(scene, camera);
 }
+animate();
 
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+}
 </script>
 </body>
 </html>

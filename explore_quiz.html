@@ -255,18 +255,6 @@
             background: linear-gradient(135deg, #34a853 0%, #137333 100%);
         }
 
-        .action-card.categories {
-            background: linear-gradient(135deg, #4285f4 0%, #1a73e8 100%);
-        }
-
-        .action-card.profile {
-            background: linear-gradient(135deg, #9c27b0 0%, #673ab7 100%);
-        }
-
-        .action-card.bonus {
-            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-        }
-
         .action-card::before {
             content: "";
             position: absolute;
@@ -423,21 +411,6 @@
             <div class="action-card quick-game" onclick="startQuickGame()">
                 <h3><span class="action-icon">▶️</span> Schnelles Spiel</h3>
                 <p>Starte ein zufälliges Quiz mit gemischten Fragen</p>
-            </div>
-            
-            <div class="action-card categories" onclick="showCategories()">
-                <h3><span class="action-icon">📚</span> Kategorien</h3>
-                <p>Wähle deine Lieblingskategorie zum Spielen</p>
-            </div>
-            
-            <div class="action-card profile" onclick="showProfile()">
-                <h3><span class="action-icon">👤</span> Mein Profil</h3>
-                <p>Verfolge deinen Fortschritt und deine Statistiken</p>
-            </div>
-            
-            <div class="action-card bonus" onclick="showBonusGames()">
-                <h3><span class="action-icon">🎲</span> Bonusspiele</h3>
-                <p>Entdecke Flaggen, Länder und mehr in speziellen Spielen</p>
             </div>
         </div>
 
@@ -761,8 +734,6 @@
         }
 
         function updateStats() {
-            // This would normally save to a database
-            // For demo purposes, we'll just update the display
             setTimeout(() => {
                 showMainInterface();
             }, 3000);
@@ -770,18 +741,6 @@
 
         function showMainInterface() {
             location.reload(); // Simple way to return to main interface
-        }
-
-        function showCategories() {
-            alert('Kategorien-Auswahl wird geöffnet...');
-        }
-
-        function showProfile() {
-            alert('Profil wird geöffnet...');
-        }
-
-        function showBonusGames() {
-            alert('Bonusspiele werden geöffnet...');
         }
 
         // Add CSS for quiz interface

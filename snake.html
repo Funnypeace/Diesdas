@@ -110,6 +110,7 @@
         let dy = 0;
         let score = 0;
         let gameRunning = true;
+        let waitingForStart = true; // NEU
 
         function randomFood() {
             food = {
@@ -151,6 +152,7 @@
 
         function updateGame() {
             if (!gameRunning) return;
+            if (waitingForStart) return; // NEU
 
             const head = {x: snake[0].x + dx, y: snake[0].y + dy};
 
@@ -192,6 +194,7 @@
             gameRunning = true;
             gameOverElement.style.display = 'none';
             randomFood();
+            waitingForStart = true; // NEU
         }
 
         function gameLoop() {
@@ -203,27 +206,33 @@
         document.addEventListener('keydown', (e) => {
             if (!gameRunning) return;
 
+            let changed = false;
+
             switch(e.key) {
                 case 'ArrowUp':
                 case 'w':
                 case 'W':
-                    if (dy !== 1) { dx = 0; dy = -1; }
+                    if (dy !== 1) { dx = 0; dy = -1; changed = true; }
                     break;
                 case 'ArrowDown':
                 case 's':
                 case 'S':
-                    if (dy !== -1) { dx = 0; dy = 1; }
+                    if (dy !== -1) { dx = 0; dy = 1; changed = true; }
                     break;
                 case 'ArrowLeft':
                 case 'a':
                 case 'A':
-                    if (dx !== 1) { dx = -1; dy = 0; }
+                    if (dx !== 1) { dx = -1; dy = 0; changed = true; }
                     break;
                 case 'ArrowRight':
                 case 'd':
                 case 'D':
-                    if (dx !== -1) { dx = 1; dy = 0; }
+                    if (dx !== -1) { dx = 1; dy = 0; changed = true; }
                     break;
+            }
+
+            if (waitingForStart && changed) {
+                waitingForStart = false;
             }
         });
 

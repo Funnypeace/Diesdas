@@ -1,15 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Photorealistic Interactive 3D Earth with Atmosphere and Smooth Night Lights</title>
+    <title>Photorealistic Interactive 3D Earth + Features</title>
     <style>
         body { margin: 0; }
         canvas { display: block; }
+        #audio-btn {
+            position: absolute;
+            bottom: 24px; left: 24px;
+            background: rgba(32,32,64,0.85);
+            color: #fff;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            z-index: 10;
+            cursor: pointer;
+            display: none;
+        }
     </style>
 </head>
 <body>
+<button id="audio-btn">🔊 Musik starten</button>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r17/Stats.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
 <script>
     // --- Scene Setup ---
     const scene = new THREE.Scene();
@@ -26,6 +42,11 @@
     controls.enableDamping = true;
     controls.dampingFactor = 0.25;
 
+    // --- Stats.js (FPS Anzeige) ---
+    const stats = new Stats();
+    stats.showPanel(0);
+    document.body.appendChild(stats.dom);
+
     // --- Texture Loader ---
     const loader = new THREE.TextureLoader();
     const dayTexture = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthmap1k.jpg');
@@ -35,6 +56,7 @@
     const cloudTexture = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthcloudmap.jpg');
     const cloudAlphaTexture = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthcloudmaptrans.jpg');
     const starTexture = loader.load('https://www.solarsystemscope.com/textures/download/2k_stars.jpg');
+    const moonTexture = loader.load('https://planetpixelemporium.com/images/moonmap2k.jpg'); // CORS-freundlich
 
     // --- Starfield Background ---
     const starGeometry = new THREE.SphereGeometry(100, 64, 64);
@@ -45,9 +67,8 @@
     const stars = new THREE.Mesh(starGeometry, starMaterial);
     scene.add(stars);
 
-    // --- Lighting ---
+    // --- Lighting: Sun (DirectionalLight) für Tag/Nacht-Zyklus ---
     const sunLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    sunLight.position.set(10, 0, 0);
     sunLight.castShadow = true;
     sunLight.shadow.mapSize.width = 2048;
     sunLight.shadow.mapSize.height = 2048;
@@ -70,7 +91,7 @@
     let uniforms = THREE.UniformsUtils.clone(THREE.ShaderLib.phong.uniforms);
     uniforms.sunDirection = { value: sunLight.position.clone().normalize() };
     uniforms.diffuse = { value: new THREE.Color(0xffffff) };
-    uniforms.emissive = { value: new THREE.Color(0x444444) }; // Dim for realism
+    uniforms.emissive = { value: new THREE.Color(0x444444) };
     uniforms.specular = { value: new THREE.Color(0x333333) };
     uniforms.shininess = { value: 5 };
     uniforms.map = { value: dayTexture };
@@ -83,8 +104,8 @@
     const atmosphereGeometry = new THREE.SphereGeometry(earthRadius * 1.08, 64, 64);
     const atmosphereMaterial = new THREE.ShaderMaterial({
         uniforms: {
-            "c": { value: 0.6 }, // Glow-Intensität
-            "p": { value: 6.0 }, // Power
+            "c": { value: 0.6 },
+            "p": { value: 6.0 },
             glowColor: { value: new THREE.Color(0x55ccff) }
         },
         vertexShader: `
@@ -139,7 +160,6 @@
         '  specularStrength *= texelSpecular.r;\n' +
         '#endif'
     );
-    // SMOOTH Night Lights: Weichere Übergänge für die Emissive-Map auf Nachtseite
     fragmentShader = fragmentShader.replace(
         '#include <emissive_fragment>',
         `#include <emissive_fragment>
@@ -182,25 +202,80 @@
     clouds.receiveShadow = false;
     scene.add(clouds);
 
+    // --- Moon in orbit (mit Textur, Umlaufbahn & Eigenrotation) ---
+    const moonRadius = 0.27;
+    const moonGeometry = new THREE.SphereGeometry(moonRadius, 48, 48);
+    const moonMaterial = new THREE.MeshPhongMaterial({
+        map: moonTexture,
+        shininess: 2
+    });
+    const moon = new THREE.Mesh(moonGeometry, moonMaterial);
+    scene.add(moon);
+
     // --- Camera ---
     camera.position.set(0, 0, 2.4);
 
-    // --- Animate ---
-    function animate() {
-        requestAnimationFrame(animate);
+    // --- Audio: Space Ambient per Howler.js ---
+    let ambientMusic;
+    let musicStarted = false;
+    function initMusic() {
+        if (musicStarted) return;
+        musicStarted = true;
+        document.getElementById('audio-btn').style.display = 'none';
+        ambientMusic = new Howl({
+            src: ['https://cdn.pixabay.com/audio/2022/02/23/audio_117b9b5f4a.mp3'], // CCO lizensiert
+            autoplay: true,
+            loop: true,
+            volume: 0.22
+        });
+        ambientMusic.play();
+    }
+    document.getElementById('audio-btn').style.display = 'block';
+    document.getElementById('audio-btn').onclick = initMusic;
+    document.body.addEventListener('pointerdown', initMusic, { once: true });
 
-        // Erdrotation & Wolken
-        earth.rotation.y += 0.001;
+    // --- Animation ---
+    let start = Date.now();
+    function animate() {
+        stats.begin();
+
+        // Zeit
+        const elapsed = (Date.now() - start) / 1000;
+
+        // Erde/Wolken drehen
+        earth.rotation.y += 0.0010;
         clouds.rotation.y += 0.0012;
 
-        // Atmosphärischer Glow immer Richtung Kamera ausrichten (optional für besseren Effekt)
+        // Atmosphärischer Glow folgt der Erde
         atmosphere.rotation.copy(earth.rotation);
+
+        // --- SUN: Automatischer Tag/Nacht-Zyklus: Sonne umkreist Erde ---
+        const sunOrbitRad = 4.5;
+        const sunAngle = elapsed * 0.15;
+        sunLight.position.set(
+            Math.cos(sunAngle) * sunOrbitRad,
+            0.9 * Math.sin(sunAngle) * sunOrbitRad * 0.3,
+            Math.sin(sunAngle) * sunOrbitRad
+        );
 
         // Update Licht-Richtung im Shader
         earthMaterial.uniforms.sunDirection.value.copy(sunLight.position).normalize();
 
+        // --- MOON: Umlaufbahn um die Erde ---
+        const moonOrbitRad = 2.1;
+        const moonAngle = elapsed * 0.055 + 0.4; // langsamer als Sonne
+        moon.position.set(
+            Math.cos(moonAngle) * moonOrbitRad,
+            0.22 * Math.sin(elapsed * 0.33),
+            Math.sin(moonAngle) * moonOrbitRad
+        );
+        moon.rotation.y = elapsed * 0.0085;
+
         controls.update();
         renderer.render(scene, camera);
+
+        stats.end();
+        requestAnimationFrame(animate);
     }
     animate();
 

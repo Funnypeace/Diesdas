@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Interactive 3D Earth Demo (Stable Version)</title>
+    <title>Interactive 3D Earth Demo (Stable Version, CORS-fix)</title>
     <style>
         body { margin: 0; overflow: hidden; }
         canvas { display: block; }
@@ -53,14 +53,14 @@ const manager = new THREE.LoadingManager(() => {
 const loader = new THREE.TextureLoader(manager);
 
 const textures = {};
-textures.day = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthmap1k.jpg');
-textures.night = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthlights1k.jpg');
-textures.specular = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthspec1k.jpg');
-textures.normal = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthbump1k.jpg');
-textures.cloud = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthcloudmap.jpg');
-textures.cloudAlpha = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthcloudmaptrans.jpg');
+textures.day = loader.load('https://planetpixelemporium.com/images/earthmap4k.jpg');
+textures.night = loader.load('https://planetpixelemporium.com/images/earthlights2k.jpg');
+textures.specular = loader.load('https://planetpixelemporium.com/images/earthspec4k.jpg');
+textures.normal = loader.load('https://planetpixelemporium.com/images/earthbump4k.jpg');
+textures.cloud = loader.load('https://planetpixelemporium.com/images/earthcloudmaptrans.png');
+textures.cloudAlpha = loader.load('https://planetpixelemporium.com/images/earthcloudmaptrans.png');
 textures.stars = loader.load('https://www.solarsystemscope.com/textures/download/2k_stars.jpg');
-textures.moon = loader.load('https://www.solarsystemscope.com/textures/download/2k_moon.jpg');
+textures.moon = loader.load('https://planetpixelemporium.com/images/moonmap2k.jpg');
 
 // ----------- Start -----------
 function start() {

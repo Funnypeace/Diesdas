@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Interactive 3D Earth Advanced Demo</title>
+    <title>Interactive 3D Earth Advanced Demo (Async-Fix)</title>
     <style>
         body { margin: 0; overflow: hidden; }
         canvas { display: block; }
@@ -45,6 +45,28 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r17/Stats.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
 <script>
+const manager = new THREE.LoadingManager(start);
+const loader = new THREE.TextureLoader(manager);
+
+// Texturen-Objekt für Zugriff nach dem Laden
+const textures = {};
+textures.day = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthmap1k.jpg');
+textures.night = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthlights1k.jpg');
+textures.specular = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthspec1k.jpg');
+textures.normal = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthbump1k.jpg');
+textures.cloud = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthcloudmap.jpg');
+textures.cloudAlpha = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthcloudmaptrans.jpg');
+textures.stars = loader.load('https://www.solarsystemscope.com/textures/download/2k_stars.jpg');
+textures.moon = loader.load('https://www.solarsystemscope.com/textures/download/2k_moon.jpg');
+
+// Alles weitere nach vollständigem Laden
+function start() {
+    // ... Der komplette Inhalt deiner Hauptfunktion (wie bisher!) ...
+    // Für Übersichtlichkeit ausgelagert:
+    initScene();
+}
+
+function initScene() {
     // --- Grundlegendes Setup ---
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -66,20 +88,9 @@
     const stats = new Stats();
     document.body.appendChild(stats.dom);
 
-    // --- Texturen ---
-    const loader = new THREE.TextureLoader();
-    const dayTexture = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthmap1k.jpg');
-    const nightTexture = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthlights1k.jpg');
-    const specularTexture = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthspec1k.jpg');
-    const normalTexture = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthbump1k.jpg');
-    const cloudTexture = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthcloudmap.jpg');
-    const cloudAlphaTexture = loader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthcloudmaptrans.jpg');
-    const starTexture = loader.load('https://www.solarsystemscope.com/textures/download/2k_stars.jpg');
-    const moonTexture = loader.load('https://www.solarsystemscope.com/textures/download/2k_moon.jpg');
-
     // --- Starfield ---
     const starGeometry = new THREE.SphereGeometry(100, 64, 64);
-    const starMaterial = new THREE.MeshBasicMaterial({ map: starTexture, side: THREE.BackSide });
+    const starMaterial = new THREE.MeshBasicMaterial({ map: textures.stars, side: THREE.BackSide });
     const stars = new THREE.Mesh(starGeometry, starMaterial);
     scene.add(stars);
 
@@ -103,11 +114,11 @@
     uniforms.emissive = { value: new THREE.Color(0x444444) };
     uniforms.specular = { value: new THREE.Color(0x333333) };
     uniforms.shininess = { value: 5 };
-    uniforms.map = { value: dayTexture };
-    uniforms.normalMap = { value: normalTexture };
+    uniforms.map = { value: textures.day };
+    uniforms.normalMap = { value: textures.normal };
     uniforms.normalScale = { value: new THREE.Vector2(0.5, 0.5) };
-    uniforms.emissiveMap = { value: nightTexture };
-    uniforms.specularMap = { value: specularTexture };
+    uniforms.emissiveMap = { value: textures.night };
+    uniforms.specularMap = { value: textures.specular };
 
     let vertexShader = THREE.ShaderLib.phong.vertexShader;
     vertexShader = vertexShader.replace(
@@ -198,8 +209,8 @@
     // --- Clouds (animierte Rotation) ---
     const cloudGeometry = new THREE.SphereGeometry(earthRadius + 0.013, 64, 64);
     const cloudMaterial = new THREE.MeshPhongMaterial({
-        map: cloudTexture,
-        alphaMap: cloudAlphaTexture,
+        map: textures.cloud,
+        alphaMap: textures.cloudAlpha,
         transparent: true,
         opacity: 1.0,
         depthWrite: false
@@ -213,7 +224,7 @@
     const moonRadius = 0.27;
     const moonGeometry = new THREE.SphereGeometry(moonRadius, 48, 48);
     const moonMaterial = new THREE.MeshPhongMaterial({
-        map: moonTexture,
+        map: textures.moon,
         shininess: 2
     });
     const moon = new THREE.Mesh(moonGeometry, moonMaterial);
@@ -224,7 +235,6 @@
     scene.add(moonLight);
 
     // --- Städte-Lichter als PointLights (nur nachts sichtbar) ---
-    // Koordinaten: [lat, lon, cityname]
     const majorCities = [
         [52.52, 13.40, "Berlin"],
         [35.68, 139.76, "Tokyo"],
@@ -237,31 +247,28 @@
     ];
     let cityLights = [];
     majorCities.forEach(([lat, lon], idx) => {
-        // Kugelkoordinaten auf EarthRadius+0.05
         const phi = (90 - lat) * Math.PI / 180;
         const theta = (lon + 180) * Math.PI / 180;
         const r = earthRadius + 0.04;
         const x = r * Math.sin(phi) * Math.cos(theta);
         const y = r * Math.cos(phi);
         const z = r * Math.sin(phi) * Math.sin(theta);
-        const cityLight = new THREE.PointLight(0xffe570, 0.0, 0.5); // Start: aus
+        const cityLight = new THREE.PointLight(0xffe570, 0.0, 0.5);
         cityLight.position.set(x, y, z);
         scene.add(cityLight);
         cityLights.push(cityLight);
     });
 
     // --- Regenwolken-Partikelsystem über Europa (einfach) ---
-    // Simpler Ansatz, für Demo-Zwecke!
     const rainDrops = [];
     const rainGroup = new THREE.Group();
     for (let i = 0; i < 80; i++) {
         const geometry = new THREE.SphereGeometry(0.005, 6, 6);
         const material = new THREE.MeshBasicMaterial({ color: 0x66bbff });
-        const drop = new THREE.Mesh(geometry, material);
-        // Zufällig über Europa platzieren (ungefähr: 50N 12E)
         const phi = (90 - (45 + Math.random() * 12)) * Math.PI / 180;
         const theta = (10 + Math.random() * 16) * Math.PI / 180;
         const r = earthRadius + 0.055;
+        const drop = new THREE.Mesh(geometry, material);
         drop.position.set(
             r * Math.sin(phi) * Math.cos(theta),
             r * Math.cos(phi),
@@ -280,14 +287,13 @@
         musicStarted = true;
         document.getElementById('audio-btn').style.display = 'none';
         ambientMusic = new Howl({
-            src: ['https://cdn.pixabay.com/audio/2022/02/23/audio_117b9b5f4a.mp3'], // CC0 Space Loop
+            src: ['https://cdn.pixabay.com/audio/2022/02/23/audio_117b9b5f4a.mp3'],
             autoplay: true,
             loop: true,
             volume: 0.22
         });
         ambientMusic.play();
     }
-    // Zeige Button auf mobilen Geräten
     document.getElementById('audio-btn').style.display = 'block';
     document.getElementById('audio-btn').onclick = initMusic;
     document.body.addEventListener('pointerdown', initMusic, { once: true });
@@ -309,11 +315,9 @@
         raycaster.setFromCamera(mouse, camera);
         const intersects = raycaster.intersectObject(earth);
         if (intersects.length > 0) {
-            // Umwandeln von Punkt auf Kugel in lat/lon (näherungsweise)
             const p = intersects[0].point.clone().normalize();
             const lat = 90 - Math.acos(p.y) * 180 / Math.PI;
             const lon = ((Math.atan2(p.z, p.x)) * 180 / Math.PI + 360) % 360 - 180;
-            // Primitiver Kontinente-Klick (Demo, für echte Geo-Karten siehe z.B. d3.js)
             let msg = "";
             if (lat > 55) msg = "Das ist die Arktis.";
             else if (lat < -60) msg = "Das ist die Antarktis.";
@@ -339,11 +343,8 @@
 
         const elapsed = (Date.now() - start) / 1000;
 
-        // Erde und Wolken drehen
         earth.rotation.y += 0.0010;
         clouds.rotation.y += 0.0013 + Math.sin(elapsed * 0.4) * 0.0002;
-
-        // Atmosphärischer Glow folgt Erdrotation
         atmosphere.rotation.copy(earth.rotation);
 
         // Sonne umkreist die Erde auf Y-Ebene
@@ -354,42 +355,39 @@
             Math.sin(sunAngle) * sunOrbitRad * 0.55,
             Math.sin(sunAngle) * sunOrbitRad
         );
-        // Update Shader-Uniforms für Tag/Nacht
         earthMaterial.uniforms.sunDirection.value.copy(sunLight.position).normalize();
 
-        // AmbientLight wird nachts dunkler, tagsüber heller (je nach Sonnenseite Richtung Kamera)
+        // AmbientLight Tag/Nacht-Dimmung
         const cameraDir = new THREE.Vector3(0, 0, 1).applyQuaternion(camera.quaternion);
         const sunToCamera = sunLight.position.clone().normalize().dot(cameraDir);
         ambientLight.intensity = 0.35 + 0.5 * Math.max(0, sunToCamera);
 
-        // Mond kreist in 27 Stunden einmal um die Erde
+        // Mond
         const moonOrbitRad = 2.1;
         const moonAngle = elapsed * 0.055 + 0.9;
         moon.position.set(
             Math.cos(moonAngle) * moonOrbitRad,
-            0.21 * Math.sin(elapsed * 0.43), // leichtes Wackeln
+            0.21 * Math.sin(elapsed * 0.43),
             Math.sin(moonAngle) * moonOrbitRad
         );
-        moon.rotation.y = elapsed * 0.009; // leichte Eigenrotation
+        moon.rotation.y = elapsed * 0.009;
         moonLight.position.copy(moon.position);
 
-        // Mondlicht nachts stärker, tags schwächer (je nach Sonnenseite)
+        // Mondlicht
         const moonToSunDot = moon.position.clone().normalize().dot(sunLight.position.clone().normalize());
         moonLight.intensity = 0.10 + 0.10 * Math.max(0, -moonToSunDot);
 
-        // Regen animieren: Tropfen "fallen" leicht und kehren zurück
+        // Regen animieren
         rainDrops.forEach(drop => {
             drop.position.y -= 0.008;
             if (drop.position.y < 0.85) drop.position.y = 0.97 + Math.random() * 0.07;
         });
 
-        // Städte-Lichter nur nachts an der Nachtseite sichtbar machen
+        // Städte-Lichter nachts sichtbar
         cityLights.forEach((pl, idx) => {
-            // Normale vom Erdmittelpunkt zur Stadt
             const cityPos = pl.position.clone().normalize();
-            // Wie stark ist dort "Nacht" (dot mit Sonne)?
             const nightDot = cityPos.dot(sunLight.position.clone().normalize());
-            pl.intensity = nightDot < -0.18 ? 0.12 : 0.0; // Weicher Übergang
+            pl.intensity = nightDot < -0.18 ? 0.12 : 0.0;
         });
 
         controls.update();
@@ -398,12 +396,13 @@
     }
     animate();
 
-    // --- Responsive ---
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     });
+}
+
 </script>
 </body>
 </html>

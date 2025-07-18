@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExploreQuiz - Reise um die Welt</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e8f2ff 0%, #f0e6ff 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #4285f4;
+        }
+
+        .logo::before {
+            content: "🌍";
+            font-size: 28px;
+        }
+
+        .settings {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            font-size: 18px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        /* Welcome Banner */
+        .welcome-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-banner::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 200px;
+            height: 200px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="50" font-size="60" fill="rgba(255,255,255,0.1)">✈️</text></svg>');
+            background-size: contain;
+            transform: rotate(15deg);
+        }
+
+        .welcome-banner h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-banner p {
+            font-size: 18px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .profile-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4285f4, #34a853);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .profile-details h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .profile-details p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .points {
+            text-align: right;
+        }
+
+        .points-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #4285f4;
+            margin-bottom: 5px;
+        }
+
+        .points-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .level-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .level-badge {
+            background: #f0f0f0;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .level-progress {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4285f4, #34a853);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat-item {
+            flex: 1;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-number.correct {
+            color: #34a853;
+        }
+
+        .stat-number.incorrect {
+            color: #ea4335;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Action Cards */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .action-card {
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-card.quick-game {
+            background: linear-gradient(135deg, #34a853 0%, #137333 100%);
+        }
+
+        .action-card.categories {
+            background: linear-gradient(135deg, #4285f4 0%, #1a73e8 100%);
+        }
+
+        .action-card.profile {
+            background: linear-gradient(135deg, #9c27b0 0%, #673ab7 100%);
+        }
+
+        .action-card.bonus {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+        }
+
+        .action-card::before {
+            content: "";
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .action-card h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .action-card p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .action-icon {
+            font-size: 24px;
+        }
+
+        /* Category Progress */
+        .category-progress {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-progress h2 {
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .category-item {
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+            background: #f8f9fa;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .category-item:hover {
+            transform: translateY(-3px);
+        }
+
+        .category-score {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .category-score.japan { color: #ea4335; }
+        .category-score.europe { color: #34a853; }
+        .category-score.wonder { color: #4285f4; }
+        .category-score.capital { color: #34a853; }
+
+        .category-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .category-subtitle {
+            font-size: 12px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .category-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .welcome-banner h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">ExploreQuiz</div>
+            <button class="settings">⚙️</button>
+        </div>
+        
+        <div class="subtitle">Reise um die Welt</div>
+
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <h1>Willkommen zurück!</h1>
+            <p>Bereit für dein nächstes Abenteuer?</p>
+        </div>
+
+        <!-- Profile Card -->
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-info">
+                    <div class="profile-avatar">F</div>
+                    <div class="profile-details">
+                        <h3>Funnypeace</h3>
+                        <p>Reise-Neuling</p>
+                    </div>
+                </div>
+                <div class="points">
+                    <div class="points-number">0</div>
+                    <div class="points-label">Punkte</div>
+                </div>
+            </div>
+            
+            <div class="level-info">
+                <div class="level-badge">Level 1</div>
+                <div class="level-progress">0/100</div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%"></div>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number correct">0</div>
+                    <div class="stat-label">Richtige Antworten</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number incorrect">0</div>
+                    <div class="stat-label">Fragen Beantwortet</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Cards -->
+        <div class="action-grid">
+            <div class="action-card quick-game" onclick="startQuickGame()">
+                <h3><span class="action-icon">▶️</span> Schnelles Spiel</h3>
+                <p>Starte ein zufälliges Quiz mit gemischten Fragen</p>
+            </div>
+            
+            <div class="action-card categories" onclick="showCategories()">
+                <h3><span class="action-icon">📚</span> Kategorien</h3>
+                <p>Wähle deine Lieblingskategorie zum Spielen</p>
+            </div>
+            
+            <div class="action-card profile" onclick="showProfile()">
+                <h3><span class="action-icon">👤</span> Mein Profil</h3>
+                <p>Verfolge deinen Fortschritt und deine Statistiken</p>
+            </div>
+            
+            <div class="action-card bonus" onclick="showBonusGames()">
+                <h3><span class="action-icon">🎲</span> Bonusspiele</h3>
+                <p>Entdecke Flaggen, Länder und mehr in speziellen Spielen</p>
+            </div>
+        </div>
+
+        <!-- Category Progress -->
+        <div class="category-progress">
+            <h2>Deine Kategorie-Fortschritte</h2>
+            <div class="category-grid">
+                <div class="category-item" onclick="playCategory('japan')">
+                    <div class="category-score japan">0</div>
+                    <div class="category-name">Japan</div>
+                    <div class="category-subtitle">Richtige Antworten</div>
+                </div>
+                <div class="category-item" onclick="playCategory('europe')">
+                    <div class="category-score europe">0</div>
+                    <div class="category-name">Europa</div>
+                    <div class="category-subtitle">Richtige Antworten</div>
+                </div>
+                <div class="category-item" onclick="playCategory('wonder')">
+                    <div class="category-score wonder">0</div>
+                    <div class="category-name">Weltwunder</div>
+                    <div class="category-subtitle">Richtige Antworten</div>
+                </div>
+                <div class="category-item" onclick="playCategory('capital')">
+                    <div class="category-score capital">0</div>
+                    <div class="category-name">Land & Hauptstadt</div>
+                    <div class="category-subtitle">Richtige Antworten</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample quiz data with complex questions
+        const quizData = {
+            japan: [
+                {
+                    question: "Welche ist die Hauptstadt von Japan?",
+                    options: ["Tokyo", "Osaka", "Kyoto", "Hiroshima"],
+                    correct: 0,
+                    difficulty: "leicht"
+                },
+                {
+                    question: "Welcher Berg ist der höchste in Japan?",
+                    options: ["Mount Asama", "Mount Fuji", "Mount Hotaka", "Mount Kita"],
+                    correct: 1,
+                    difficulty: "leicht"
+                },
+                {
+                    question: "Welche japanische Insel ist die nördlichste der vier Hauptinseln?",
+                    options: ["Honshu", "Hokkaido", "Kyushu", "Shikoku"],
+                    correct: 1,
+                    difficulty: "mittel"
+                },
+                {
+                    question: "In welcher Präfektur liegt die Stadt Hiroshima?",
+                    options: ["Hiroshima-ken", "Yamaguchi-ken", "Okayama-ken", "Shimane-ken"],
+                    correct: 0,
+                    difficulty: "schwer"
+                },
+                {
+                    question: "Wie heißt der berühmte Bambuswald in der Nähe von Kyoto?",
+                    options: ["Fushimi Bamboo Grove", "Arashiyama Bamboo Grove", "Nara Bamboo Forest", "Uji Bamboo Path"],
+                    correct: 1,
+                    difficulty: "schwer"
+                },
+                {
+                    question: "Welche Stadt war von 1603 bis 1868 unter dem Namen Edo bekannt?",
+                    options: ["Kyoto", "Osaka", "Tokyo", "Nagoya"],
+                    correct: 2,
+                    difficulty: "mittel"
+                }
+            ],
+            europe: [
+                {
+                    question: "Welche ist die Hauptstadt von Frankreich?",
+                    options: ["Lyon", "Marseille", "Paris", "Nice"],
+                    correct: 2,
+                    difficulty: "leicht"
+                },
+                {
+                    question: "In welchem Land liegt die Stadt Barcelona?",
+                    options: ["Portugal", "Spanien", "Italien", "Griechenland"],
+                    correct: 1,
+                    difficulty: "leicht"
+                },
+                {
+                    question: "Welches ist das kleinste Land der Europäischen Union?",
+                    options: ["Malta", "Luxemburg", "Zypern", "Slowenien"],
+                    correct: 0,
+                    difficulty: "mittel"
+                },
+                {
+                    question: "Wie heißt der längste Fluss Europas?",
+                    options: ["Donau", "Rhein", "Wolga", "Dnepr"],
+                    correct: 2,
+                    difficulty: "schwer"
+                },
+                {
+                    question: "Welche Stadt ist die Hauptstadt von Slowenien?",
+                    options: ["Ljubljana", "Bratislava", "Zagreb", "Sarajevo"],
+                    correct: 0,
+                    difficulty: "schwer"
+                },
+                {
+                    question: "In welchem Jahr fiel die Berliner Mauer?",
+                    options: ["1987", "1989", "1990", "1991"],
+                    correct: 1,
+                    difficulty: "mittel"
+                },
+                {
+                    question: "Welche europäische Hauptstadt liegt an beiden Seiten des Bosporus?",
+                    options: ["Bukarest", "Istanbul", "Athen", "Sofia"],
+                    correct: 1,
+                    difficulty: "schwer"
+                }
+            ],
+            wonder: [
+                {
+                    question: "Wo befindet sich das Taj Mahal?",
+                    options: ["Pakistan", "Indien", "Bangladesh", "Sri Lanka"],
+                    correct: 1,
+                    difficulty: "leicht"
+                },
+                {
+                    question: "Welches ist das älteste der sieben Weltwunder?",
+                    options: ["Koloss von Rhodos", "Pyramiden von Gizeh", "Hängende Gärten", "Leuchtturm von Alexandria"],
+                    correct: 1,
+                    difficulty: "mittel"
+                },
+                {
+                    question: "In welchem Land steht Angkor Wat?",
+                    options: ["Thailand", "Vietnam", "Kambodscha", "Laos"],
+                    correct: 2,
+                    difficulty: "mittel"
+                },
+                {
+                    question: "Welche antike Stadt in Jordanien ist berühmt für ihre in Fels gehauenen Gebäude?",
+                    options: ["Jerash", "Petra", "Amman", "Aqaba"],
+                    correct: 1,
+                    difficulty: "schwer"
+                },
+                {
+                    question: "Wie viele Terrassen hat die Chinesische Mauer ungefähr?",
+                    options: ["Keine - sie ist keine Terrassenanlage", "2.000", "5.000", "10.000"],
+                    correct: 0,
+                    difficulty: "schwer"
+                },
+                {
+                    question: "Welcher Inka-Herrscher ließ Machu Picchu erbauen?",
+                    options: ["Atahualpa", "Huascar", "Pachacuti", "Manco Capac"],
+                    correct: 2,
+                    difficulty: "schwer"
+                },
+                {
+                    question: "Wie hoch ist der Cristo Redentor in Rio de Janeiro (ohne Sockel)?",
+                    options: ["28 Meter", "30 Meter", "35 Meter", "40 Meter"],
+                    correct: 1,
+                    difficulty: "schwer"
+                }
+            ],
+            capital: [
+                {
+                    question: "Welche ist die Hauptstadt von Australien?",
+                    options: ["Sydney", "Melbourne", "Canberra", "Brisbane"],
+                    correct: 2,
+                    difficulty: "mittel"
+                },
+                {
+                    question: "Welche ist die Hauptstadt von Kanada?",
+                    options: ["Toronto", "Vancouver", "Montreal", "Ottawa"],
+                    correct: 3,
+                    difficulty: "mittel"
+                },
+                {
+                    question: "Welche Stadt ist die Hauptstadt von Bhutan?",
+                    options: ["Thimphu", "Paro", "Punakha", "Phuntsholing"],
+                    correct: 0,
+                    difficulty: "schwer"
+                },
+                {
+                    question: "Welche Stadt ist die Hauptstadt von Myanmar?",
+                    options: ["Yangon", "Naypyidaw", "Mandalay", "Bagan"],
+                    correct: 1,
+                    difficulty: "schwer"
+                },
+                {
+                    question: "Welche ist die Hauptstadt von Kasachstan?",
+                    options: ["Almaty", "Nur-Sultan", "Shymkent", "Aktobe"],
+                    correct: 1,
+                    difficulty: "schwer"
+                },
+                {
+                    question: "Welche Stadt ist die Hauptstadt von Eritrea?",
+                    options: ["Massawa", "Asmara", "Assab", "Keren"],
+                    correct: 1,
+                    difficulty: "schwer"
+                },
+                {
+                    question: "Welche Stadt ist die Hauptstadt von Palau?",
+                    options: ["Koror", "Ngerulmud", "Airai", "Melekeok"],
+                    correct: 1,
+                    difficulty: "schwer"
+                },
+                {
+                    question: "Welche Stadt ist sowohl Hauptstadt als auch größte Stadt von Neuseeland?",
+                    options: ["Wellington ist Hauptstadt, Auckland größte Stadt", "Auckland", "Wellington", "Christchurch"],
+                    correct: 0,
+                    difficulty: "mittel"
+                }
+            ]
+        };
+
+        let currentQuiz = [];
+        let currentQuestion = 0;
+        let score = 0;
+        let totalQuestions = 0;
+        let correctAnswers = 0;
+
+        function startQuickGame() {
+            // Mix questions from all categories
+            currentQuiz = [];
+            Object.keys(quizData).forEach(category => {
+                currentQuiz.push(...quizData[category]);
+            });
+            
+            // Shuffle questions
+            currentQuiz = currentQuiz.sort(() => Math.random() - 0.5).slice(0, 5);
+            currentQuestion = 0;
+            score = 0;
+            
+            showQuizInterface();
+        }
+
+        function playCategory(category) {
+            currentQuiz = [...quizData[category]];
+            currentQuestion = 0;
+            score = 0;
+            
+            showQuizInterface();
+        }
+
+        function showQuizInterface() {
+            if (currentQuestion >= currentQuiz.length) {
+                endQuiz();
+                return;
+            }
+
+            const question = currentQuiz[currentQuestion];
+            const quizHTML = `
+                <div class="quiz-interface">
+                    <div class="quiz-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${(currentQuestion / currentQuiz.length) * 100}%"></div>
+                        </div>
+                        <div class="question-counter">Frage ${currentQuestion + 1} von ${currentQuiz.length}</div>
+                    </div>
+                    
+                    <div class="quiz-question">
+                        <h2>${question.question}</h2>
+                        <div class="quiz-options">
+                            ${question.options.map((option, index) => `
+                                <button class="quiz-option" onclick="selectAnswer(${index})">${option}</button>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <button class="back-button" onclick="showMainInterface()">← Zurück</button>
+                </div>
+            `;
+            
+            document.querySelector('.container').innerHTML = quizHTML;
+        }
+
+        function selectAnswer(selectedIndex) {
+            const question = currentQuiz[currentQuestion];
+            const options = document.querySelectorAll('.quiz-option');
+            
+            options.forEach((option, index) => {
+                option.disabled = true;
+                if (index === question.correct) {
+                    option.style.backgroundColor = '#34a853';
+                    option.style.color = 'white';
+                } else if (index === selectedIndex && index !== question.correct) {
+                    option.style.backgroundColor = '#ea4335';
+                    option.style.color = 'white';
+                }
+            });
+            
+            if (selectedIndex === question.correct) {
+                score++;
+                correctAnswers++;
+            }
+            
+            totalQuestions++;
+            
+            setTimeout(() => {
+                currentQuestion++;
+                showQuizInterface();
+            }, 1500);
+        }
+
+        function endQuiz() {
+            const resultHTML = `
+                <div class="quiz-result">
+                    <h2>Quiz beendet!</h2>
+                    <div class="result-score">
+                        <div class="score-circle">
+                            <span class="score-number">${score}</span>
+                            <span class="score-total">/${currentQuiz.length}</span>
+                        </div>
+                        <p>Richtige Antworten</p>
+                    </div>
+                    <button class="play-again-button" onclick="showMainInterface()">Zurück zur Startseite</button>
+                </div>
+            `;
+            
+            document.querySelector('.container').innerHTML = resultHTML;
+            
+            // Update stats
+            updateStats();
+        }
+
+        function updateStats() {
+            // This would normally save to a database
+            // For demo purposes, we'll just update the display
+            setTimeout(() => {
+                showMainInterface();
+            }, 3000);
+        }
+
+        function showMainInterface() {
+            location.reload(); // Simple way to return to main interface
+        }
+
+        function showCategories() {
+            alert('Kategorien-Auswahl wird geöffnet...');
+        }
+
+        function showProfile() {
+            alert('Profil wird geöffnet...');
+        }
+
+        function showBonusGames() {
+            alert('Bonusspiele werden geöffnet...');
+        }
+
+        // Add CSS for quiz interface
+        const quizStyles = `
+            .quiz-interface {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            
+            .quiz-progress {
+                margin-bottom: 30px;
+            }
+            
+            .question-counter {
+                text-align: center;
+                margin-top: 10px;
+                color: #666;
+            }
+            
+            .quiz-question h2 {
+                font-size: 24px;
+                margin-bottom: 30px;
+                text-align: center;
+                color: #333;
+            }
+            
+            .quiz-options {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .quiz-option {
+                padding: 15px 20px;
+                border: 2px solid #e0e0e0;
+                border-radius: 12px;
+                background: white;
+                cursor: pointer;
+                font-size: 16px;
+                transition: all 0.3s ease;
+            }
+            
+            .quiz-option:hover {
+                border-color: #4285f4;
+                background: #f8f9ff;
+            }
+            
+            .back-button {
+                margin-top: 30px;
+                padding: 12px 20px;
+                background: #666;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+            }
+            
+            .quiz-result {
+                text-align: center;
+                padding: 40px;
+            }
+            
+            .quiz-result h2 {
+                font-size: 28px;
+                margin-bottom: 30px;
+                color: #333;
+            }
+            
+            .result-score {
+                margin-bottom: 30px;
+            }
+            
+            .score-circle {
+                width: 120px;
+                height: 120px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #4285f4, #34a853);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 20px;
+                color: white;
+                font-weight: bold;
+            }
+            
+            .score-number {
+                font-size: 36px;
+            }
+            
+            .score-total {
+                font-size: 18px;
+            }
+            
+            .play-again-button {
+                padding: 15px 30px;
+                background: #4285f4;
+                color: white;
+                border: none;
+                border-radius: 12px;
+                font-size: 16px;
+                cursor: pointer;
+            }
+        `;
+        
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = quizStyles;
+        document.head.appendChild(styleSheet);
+    </script>
+</body>
+</html>

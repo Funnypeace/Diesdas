@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persönlichkeitstest - Entdecke deinen Typ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .question-container {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .question-container.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .option.selected {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .option-text {
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .result-container {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .result-container.active {
+            display: block;
+        }
+
+        .personality-type {
+            font-size: 3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .personality-name {
+            font-size: 1.5em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .personality-description {
+            font-size: 1.1em;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .traits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .trait {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+        }
+
+        .trait-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .trait-value {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .restart-btn {
+            margin-top: 30px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .question {
+                font-size: 1.1em;
+            }
+            
+            .option {
+                padding: 15px;
+            }
+            
+            .personality-type {
+                font-size: 2.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Persönlichkeitstest</h1>
+        <p class="subtitle">Entdecke deinen Persönlichkeitstyp in 20 Fragen</p>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div id="questionContainer" class="question-container active">
+            <div class="question" id="questionText"></div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="navigation">
+                <button class="btn" id="prevBtn" onclick="previousQuestion()" disabled>Zurück</button>
+                <button class="btn" id="nextBtn" onclick="nextQuestion()" disabled>Weiter</button>
+            </div>
+        </div>
+
+        <div id="resultContainer" class="result-container">
+            <div class="personality-type" id="personalityType"></div>
+            <div class="personality-name" id="personalityName"></div>
+            <div class="personality-description" id="personalityDescription"></div>
+            <div class="traits" id="traitsContainer"></div>
+            <button class="btn restart-btn" onclick="restartTest()">Test wiederholen</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Wie tankst du am liebsten Energie auf?",
+                options: [
+                    { text: "Durch Zeit allein verbringen und nachdenken", type: "I" },
+                    { text: "Durch Gespräche und Zeit mit anderen Menschen", type: "E" }
+                ]
+            },
+            {
+                question: "Worauf achtest du beim Lösen von Problemen?",
+                options: [
+                    { text: "Auf konkrete Fakten und Details", type: "S" },
+                    { text: "Auf Muster und Möglichkeiten", type: "N" }
+                ]
+            },
+            {
+                question: "Wie triffst du wichtige Entscheidungen?",
+                options: [
+                    { text: "Basierend auf logischer Analyse", type: "T" },
+                    { text: "Basierend auf persönlichen Werten und Gefühlen", type: "F" }
+                ]
+            },
+            {
+                question: "Wie gehst du mit Deadlines um?",
+                options: [
+                    { text: "Ich plane im Voraus und halte mich an den Zeitplan", type: "J" },
+                    { text: "Ich arbeite flexibel und passe mich an", type: "P" }
+                ]
+            },
+            {
+                question: "In sozialen Situationen bist du eher...",
+                options: [
+                    { text: "Zurückhaltend und beobachtend", type: "I" },
+                    { text: "Gesprächig und aktiv", type: "E" }
+                ]
+            },
+            {
+                question: "Beim Lernen bevorzugst du...",
+                options: [
+                    { text: "Schritt-für-Schritt Anleitungen", type: "S" },
+                    { text: "Das große Ganze zu verstehen", type: "N" }
+                ]
+            },
+            {
+                question: "Bei Konflikten ist dir wichtig...",
+                options: [
+                    { text: "Objektive Fairness und Gerechtigkeit", type: "T" },
+                    { text: "Harmonie und die Gefühle aller Beteiligten", type: "F" }
+                ]
+            },
+            {
+                question: "Dein Arbeitsplatz ist meist...",
+                options: [
+                    { text: "Ordentlich und organisiert", type: "J" },
+                    { text: "Flexibel und spontan eingerichtet", type: "P" }
+                ]
+            },
+            {
+                question: "Du fühlst dich wohler...",
+                options: [
+                    { text: "In kleineren, vertrauten Gruppen", type: "I" },
+                    { text: "In größeren, lebendigen Gruppen", type: "E" }
+                ]
+            },
+            {
+                question: "Beim Planen eines Urlaubs...",
+                options: [
+                    { text: "Recherchierst du konkrete Orte und Aktivitäten", type: "S" },
+                    { text: "Träumst du von verschiedenen Möglichkeiten", type: "N" }
+                ]
+            },
+            {
+                question: "Kritik nimmst du am besten an, wenn sie...",
+                options: [
+                    { text: "Sachlich und direkt formuliert ist", type: "T" },
+                    { text: "Einfühlsam und persönlich überbracht wird", type: "F" }
+                ]
+            },
+            {
+                question: "Bei Projekten bevorzugst du...",
+                options: [
+                    { text: "Klare Ziele und Zeitpläne", type: "J" },
+                    { text: "Flexibilität und spontane Anpassungen", type: "P" }
+                ]
+            },
+            {
+                question: "Nach einem langen Tag...",
+                options: [
+                    { text: "Brauchst du Ruhe und Zeit für dich", type: "I" },
+                    { text: "Suchst du Gesellschaft und Gespräche", type: "E" }
+                ]
+            },
+            {
+                question: "Du vertraust eher...",
+                options: [
+                    { text: "Bewährten Methoden und Erfahrungen", type: "S" },
+                    { text: "Neuen Ideen und Innovationen", type: "N" }
+                ]
+            },
+            {
+                question: "Bei Entscheidungen ist dir wichtig...",
+                options: [
+                    { text: "Effizienz und Ergebnisse", type: "T" },
+                    { text: "Auswirkungen auf Menschen und Beziehungen", type: "F" }
+                ]
+            },
+            {
+                question: "Du arbeitest am besten...",
+                options: [
+                    { text: "Mit klaren Strukturen und Routine", type: "J" },
+                    { text: "Mit Abwechslung und Spontaneität", type: "P" }
+                ]
+            },
+            {
+                question: "In Meetings sprichst du...",
+                options: [
+                    { text: "Erst nach gründlichem Nachdenken", type: "I" },
+                    { text: "Spontan und denkst laut", type: "E" }
+                ]
+            },
+            {
+                question: "Du schätzt Menschen, die...",
+                options: [
+                    { text: "Praktisch und realistisch sind", type: "S" },
+                    { text: "Kreativ und visionär sind", type: "N" }
+                ]
+            },
+            {
+                question: "Bei Problemen suchst du zuerst...",
+                options: [
+                    { text: "Logische Lösungen und Ursachen", type: "T" },
+                    { text: "Verständnis und emotionale Unterstützung", type: "F" }
+                ]
+            },
+            {
+                question: "Du fühlst dich am wohlsten...",
+                options: [
+                    { text: "Wenn alles geplant und vorhersehbar ist", type: "J" },
+                    { text: "Wenn du spontan reagieren kannst", type: "P" }
+                ]
+            }
+        ];
+
+        const personalityTypes = {
+            "INTJ": {
+                name: "Der Architekt",
+                description: "Du bist ein strategischer Denker mit einem Plan für alles. Als INTJ kombinierst du Kreativität mit Rationalität und bist entschlossen, deine Visionen zu verwirklichen."
+            },
+            "INTP": {
+                name: "Der Denker",
+                description: "Du bist ein innovativer Erfinder mit einem unstillbaren Durst nach Wissen. Als INTP liebst du es, Theorien zu entwickeln und komplexe Probleme zu lösen."
+            },
+            "ENTJ": {
+                name: "Der Kommandeur",
+                description: "Du bist ein geborener Anführer, der Herausforderungen liebt. Als ENTJ kombinierst du Charisma mit Entschlossenheit und inspirierst andere zu Höchstleistungen."
+            },
+            "ENTP": {
+                name: "Der Debattierer",
+                description: "Du bist ein schlauer und neugieriger Denker, der keine intellektuelle Herausforderung scheut. Als ENTP liebst du es, Ideen zu erkunden und zu debattieren."
+            },
+            "INFJ": {
+                name: "Der Anwalt",
+                description: "Du bist ein kreativer und einfühlsamer Idealist. Als INFJ strebst du danach, die Welt zu einem besseren Ort zu machen und anderen zu helfen."
+            },
+            "INFP": {
+                name: "Der Mediator",
+                description: "Du bist ein poetischer und gütiger Altruist. Als INFP wirst du von deinen Werten geleitet und suchst stets nach Wegen, Gutes zu bewirken."
+            },
+            "ENFJ": {
+                name: "Der Protagonist",
+                description: "Du bist ein charismatischer und inspirierender Anführer. Als ENFJ motivierst du andere, ihr Potenzial zu entfalten und gemeinsam große Ziele zu erreichen."
+            },
+            "ENFP": {
+                name: "Der Aktivist",
+                description: "Du bist ein enthusiastischer und kreativer Geist. Als ENFP siehst du das Leben als ein aufregendes Puzzle voller Möglichkeiten und Verbindungen."
+            },
+            "ISTJ": {
+                name: "Der Logistiker",
+                description: "Du bist ein praktischer und faktenorientierter Mensch. Als ISTJ bist du zuverlässig, organisiert und immer bereit, Verantwortung zu übernehmen."
+            },
+            "ISFJ": {
+                name: "Der Beschützer",
+                description: "Du bist ein warmherziger und engagierter Beschützer. Als ISFJ sorgst du dich um andere und arbeitest unermüdlich für das Wohlergehen deiner Gemeinschaft."
+            },
+            "ESTJ": {
+                name: "Der Exekutive",
+                description: "Du bist ein ausgezeichneter Organisator und Anführer. Als ESTJ bringst du Menschen zusammen, um gemeinsam Ziele zu erreichen und Traditionen zu pflegen."
+            },
+            "ESFJ": {
+                name: "Der Konsul",
+                description: "Du bist ein außergewöhnlich fürsorglicher und sozialer Mensch. Als ESFJ hilfst du anderen gerne und sorgst für Harmonie in deinem Umfeld."
+            },
+            "ISTP": {
+                name: "Der Virtuose",
+                description: "Du bist ein mutiger und praktischer Experimentator. Als ISTP bist du ein Meister der Werkzeuge und liebst es, Dinge zu verstehen und zu reparieren."
+            },
+            "ISFP": {
+                name: "Der Abenteurer",
+                description: "Du bist ein flexibler und charmanter Künstler. Als ISFP lebst du im Moment und suchst stets nach neuen Möglichkeiten, dich auszudrücken."
+            },
+            "ESTP": {
+                name: "Der Unternehmer",
+                description: "Du bist ein spontaner und energiegeladener Mensch. Als ESTP liebst du es, im Mittelpunkt zu stehen und andere mit deiner Begeisterung anzustecken."
+            },
+            "ESFP": {
+                name: "Der Entertainer",
+                description: "Du bist ein spontaner und enthusiastischer Mensch. Als ESFP bringst du Freude in das Leben anderer und genießt jeden Moment in vollen Zügen."
+            }
+        };
+
+        let currentQuestion = 0;
+        let answers = [];
+        let scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+
+        function displayQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('questionText').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.innerHTML = `<div class="option-text">${option.text}</div>`;
+                optionElement.onclick = () => selectOption(index);
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            updateProgress();
+            updateNavigationButtons();
+        }
+
+        function selectOption(index) {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            options[index].classList.add('selected');
+            
+            answers[currentQuestion] = index;
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function updateNavigationButtons() {
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            document.getElementById('nextBtn').disabled = answers[currentQuestion] === undefined;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Ergebnis anzeigen';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Weiter';
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            } else {
+                calculateResults();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function calculateResults() {
+            scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+            
+            answers.forEach((answerIndex, questionIndex) => {
+                const selectedOption = questions[questionIndex].options[answerIndex];
+                scores[selectedOption.type]++;
+            });
+            
+            const personalityType = 
+                (scores.E > scores.I ? 'E' : 'I') +
+                (scores.S > scores.N ? 'S' : 'N') +
+                (scores.T > scores.F ? 'T' : 'F') +
+                (scores.J > scores.P ? 'J' : 'P');
+            
+            showResults(personalityType);
+        }
+
+        function showResults(type) {
+            document.getElementById('questionContainer').classList.remove('active');
+            document.getElementById('resultContainer').classList.add('active');
+            
+            const typeInfo = personalityTypes[type];
+            document.getElementById('personalityType').textContent = type;
+            document.getElementById('personalityName').textContent = typeInfo.name;
+            document.getElementById('personalityDescription').textContent = typeInfo.description;
+            
+            const traitsContainer = document.getElementById('traitsContainer');
+            traitsContainer.innerHTML = '';
+            
+            const traits = [
+                { name: 'Energie', value: scores.E > scores.I ? `Extraversion (${scores.E}/${scores.E + scores.I})` : `Introversion (${scores.I}/${scores.E + scores.I})` },
+                { name: 'Informationsverarbeitung', value: scores.S > scores.N ? `Sensorisch (${scores.S}/${scores.S + scores.N})` : `Intuitiv (${scores.N}/${scores.S + scores.N})` },
+                { name: 'Entscheidungsfindung', value: scores.T > scores.F ? `Thinking (${scores.T}/${scores.T + scores.F})` : `Feeling (${scores.F}/${scores.T + scores.F})` },
+                { name: 'Lebensstil', value: scores.J > scores.P ? `Judging (${scores.J}/${scores.J + scores.P})` : `Perceiving (${scores.P}/${scores.J + scores.P})` }
+            ];
+            
+            traits.forEach(trait => {
+                const traitElement = document.createElement('div');
+                traitElement.className = 'trait';
+                traitElement.innerHTML = `
+                    <div class="trait-name">${trait.name}</div>
+                    <div class="trait-value">${trait.value}</div>
+                `;
+                traitsContainer.appendChild(traitElement);
+            });
+        }
+
+        function restartTest() {
+            currentQuestion = 0;
+            answers = [];
+            scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+            
+            document.getElementById('resultContainer').classList.remove('active');
+            document.getElementById('questionContainer').classList.add('active');
+            
+            displayQuestion();
+        }
+
+        // Initialize the test
+        displayQuestion();
+    </script>
+</body>
+</html>

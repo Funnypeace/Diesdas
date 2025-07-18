@@ -1,0 +1,356 @@
+{
+  "fragen": [
+    {
+      "id": 1,
+      "frage": "Was ist die Hauptstadt von Japan?",
+      "optionen": ["Kyoto", "Osaka", "Tokio", "Hiroshima"],
+      "antwort": "Tokio",
+      "kategorie": "Japan",
+      "schwierigkeit": "leicht"
+    },
+    {
+      "id": 2,
+      "frage": "Welches Land gehört NICHT zu Skandinavien?",
+      "optionen": ["Norwegen", "Finnland", "Dänemark", "Island"],
+      "antwort": "Finnland",
+      "kategorie": "Europa",
+      "schwierigkeit": "mittel"
+    },
+    {
+      "id": 3,
+      "frage": "Welches ist das größte Weltwunder der Antike, das heute noch steht?",
+      "optionen": ["Koloss von Rhodos", "Pyramiden von Gizeh", "Hängende Gärten", "Leuchtturm von Alexandria"],
+      "antwort": "Pyramiden von Gizeh",
+      "kategorie": "Weltwunder",
+      "schwierigkeit": "mittel"
+    },
+    {
+      "id": 4,
+      "frage": "Wie heißt die traditionelle japanische Kunst des Papierfaltens?",
+      "optionen": ["Ikebana", "Origami", "Calligraphy", "Bonsai"],
+      "antwort": "Origami",
+      "kategorie": "Japan",
+      "schwierigkeit": "leicht"
+    },
+    {
+      "id": 5,
+      "frage": "Welche Hauptstadt gehört zu Australien?",
+      "optionen": ["Sydney", "Melbourne", "Canberra", "Perth"],
+      "antwort": "Canberra",
+      "kategorie": "Land & Hauptstadt",
+      "schwierigkeit": "mittel"
+    },
+    {
+      "id": 6,
+      "frage": "In welchem Land befindet sich Machu Picchu?",
+      "optionen": ["Chile", "Peru", "Bolivien", "Ecuador"],
+      "antwort": "Peru",
+      "kategorie": "Weltwunder",
+      "schwierigkeit": "leicht"
+    },
+    {
+      "id": 7,
+      "frage": "Welche Währung wird in der Schweiz verwendet?",
+      "optionen": ["Euro", "Schweizer Franken", "Schilling", "Krone"],
+      "antwort": "Schweizer Franken",
+      "kategorie": "Europa",
+      "schwierigkeit": "leicht"
+    },
+    {
+      "id": 8,
+      "frage": "Welcher Berg ist der höchste in Japan?",
+      "optionen": ["Mount Asama", "Mount Fuji", "Mount Hakusan", "Mount Tateyama"],
+      "antwort": "Mount Fuji",
+      "kategorie": "Japan",
+      "schwierigkeit": "leicht"
+    },
+    {
+      "id": 9,
+      "frage": "Welches moderne Weltwunder steht in Brasilien?",
+      "optionen": ["Christus-Statue in Rio", "Iguazu-Wasserfälle", "Zuckerhut", "Copacabana"],
+      "antwort": "Christus-Statue in Rio",
+      "kategorie": "Weltwunder",
+      "schwierigkeit": "mittel"
+    },
+    {
+      "id": 10,
+      "frage": "Was ist die Hauptstadt von Kanada?",
+      "optionen": ["Toronto", "Vancouver", "Ottawa", "Montreal"],
+      "antwort": "Ottawa",
+      "kategorie": "Land & Hauptstadt",
+      "schwierigkeit": "mittel"
+    },
+    {
+      "id": 11,
+      "frage": "Welches Land hat die Form eines Stiefels?",
+      "optionen": ["Spanien", "Italien", "Griechenland", "Portugal"],
+      "antwort": "Italien",
+      "kategorie": "Europa",
+      "schwierigkeit": "leicht"
+    },
+    {
+      "id": 12,
+      "frage": "Wie nennt man die japanische Kunst der Blumenarrangements?",
+      "optionen": ["Origami", "Ikebana", "Bonsai", "Calligraphy"],
+      "antwort": "Ikebana",
+      "kategorie": "Japan",
+      "schwierigkeit": "mittel"
+    },
+    {
+      "id": 13,
+      "frage": "Welches ist das längste Bauwerk der Welt?",
+      "optionen": ["Chinesische Mauer", "Berliner Mauer", "Hadrianswall", "Atlantikwall"],
+      "antwort": "Chinesische Mauer",
+      "kategorie": "Weltwunder",
+      "schwierigkeit": "leicht"
+    },
+    {
+      "id": 14,
+      "frage": "Was ist die Hauptstadt von Südafrika?",
+      "optionen": ["Johannesburg", "Kapstadt", "Pretoria", "Durban"],
+      "antwort": "Pretoria",
+      "kategorie": "Land & Hauptstadt",
+      "schwierigkeit": "schwer"
+    },
+    {
+      "id": 15,
+      "frage": "Welches Land ist für seine Tulpen berühmt?",
+      "optionen": ["Belgien", "Deutschland", "Niederlande", "Dänemark"],
+      "antwort": "Niederlande",
+      "kategorie": "Europa",
+      "schwierigkeit": "leicht"
+    },
+    {
+      "id": 16,
+      "frage": "Wie heißt der traditionelle japanische Kimono-Gürtel?",
+      "optionen": ["Obi", "Tabi", "Geta", "Yukata"],
+      "antwort": "Obi",
+      "kategorie": "Japan",
+      "schwierigkeit": "schwer"
+    },
+    {
+      "id": 17,
+      "frage": "In welchem Land steht der Taj Mahal?",
+      "optionen": ["Pakistan", "Indien", "Bangladesh", "Sri Lanka"],
+      "antwort": "Indien",
+      "kategorie": "Weltwunder",
+      "schwierigkeit": "leicht"
+    },
+    {
+      "id": 18,
+      "frage": "Was ist die Hauptstadt von Neuseeland?",
+      "optionen": ["Auckland", "Wellington", "Christchurch", "Hamilton"],
+      "antwort": "Wellington",
+      "kategorie": "Land & Hauptstadt",
+      "schwierigkeit": "mittel"
+    },
+    {
+      "id": 19,
+      "frage": "Welches Land hat die meisten Nachbarländer in Europa?",
+      "optionen": ["Deutschland", "Frankreich", "Polen", "Österreich"],
+      "antwort": "Deutschland",
+      "kategorie": "Europa",
+      "schwierigkeit": "schwer"
+    },
+    {
+      "id": 20,
+      "frage": "Welche Stadt wird als 'Stadt der tausend Tempel' bezeichnet?",
+      "optionen": ["Tokio", "Kyoto", "Nara", "Osaka"],
+      "antwort": "Kyoto",
+      "kategorie": "Japan",
+      "schwierigkeit": "mittel"
+    },
+    {
+      "id": 21,
+      "frage": "Welches moderne Weltwunder befindet sich in Jordanien?",
+      "optionen": ["Petra", "Wadi Rum", "Jerash", "Amman Citadel"],
+      "antwort": "Petra",
+      "kategorie": "Weltwunder",
+      "schwierigkeit": "mittel"
+    },
+    {
+      "id": 22,
+      "frage": "Was ist die Hauptstadt von Brasilien?",
+      "optionen": ["Rio de Janeiro", "São Paulo", "Brasília", "Salvador"],
+      "antwort": "Brasília",
+      "kategorie": "Land & Hauptstadt",
+      "schwierigkeit": "mittel"
+    },
+    {
+      "id": 23,
+      "frage": "Welches Land ist für seine Fjorde berühmt?",
+      "optionen": ["Schweden", "Norwegen", "Island", "Finnland"],
+      "antwort": "Norwegen",
+      "kategorie": "Europa",
+      "schwierigkeit": "leicht"
+    },
+    {
+      "id": 24,
+      "frage": "Wie nennt man die japanischen Kampfkünste-Schulen?",
+      "optionen": ["Dojo", "Sensei", "Kata", "Bushido"],
+      "antwort": "Dojo",
+      "kategorie": "Japan",
+      "schwierigkeit": "mittel"
+    },
+    {
+      "id": 25,
+      "frage": "Welches Weltwunder steht in Peru?",
+      "optionen": ["Chichen Itza", "Machu Picchu", "Kolosseum", "Taj Mahal"],
+      "antwort": "Machu Picchu",
+      "kategorie": "Weltwunder",
+      "schwierigkeit": "leicht"
+    },
+    {
+      "id": 26,
+      "frage": "Was ist die Hauptstadt von Thailand?",
+      "optionen": ["Phuket", "Chiang Mai", "Bangkok", "Pattaya"],
+      "antwort": "Bangkok",
+      "kategorie": "Land & Hauptstadt",
+      "schwierigkeit": "leicht"
+    },
+    {
+      "id": 27,
+      "frage": "Welches Land hat die Form eines Kreuzes?",
+      "optionen": ["Schweiz", "Schweden", "Slowakei", "Slowenien"],
+      "antwort": "Schweiz",
+      "kategorie": "Europa",
+      "schwierigkeit": "schwer"
+    },
+    {
+      "id": 28,
+      "frage": "Wie heißt der berühmte japanische Hochgeschwindigkeitszug?",
+      "optionen": ["Shinkansen", "Yamanote", "Tokaido", "JR"],
+      "antwort": "Shinkansen",
+      "kategorie": "Japan",
+      "schwierigkeit": "mittel"
+    },
+    {
+      "id": 29,
+      "frage": "In welchem Land steht das Kolosseum?",
+      "optionen": ["Griechenland", "Italien", "Türkei", "Spanien"],
+      "antwort": "Italien",
+      "kategorie": "Weltwunder",
+      "schwierigkeit": "leicht"
+    },
+    {
+      "id": 30,
+      "frage": "Was ist die Hauptstadt von Argentinien?",
+      "optionen": ["Buenos Aires", "Córdoba", "Rosario", "Mendoza"],
+      "antwort": "Buenos Aires",
+      "kategorie": "Land & Hauptstadt",
+      "schwierigkeit": "leicht"
+    }
+  ],
+  "kategorien": [
+    {
+      "name": "Japan",
+      "beschreibung": "Alles über das Land der aufgehenden Sonne",
+      "farbe": "#FF6B6B"
+    },
+    {
+      "name": "Europa", 
+      "beschreibung": "Europäische Länder und Kulturen",
+      "farbe": "#4ECDC4"
+    },
+    {
+      "name": "Weltwunder",
+      "beschreibung": "Die berühmtesten Bauwerke der Welt",
+      "farbe": "#45B7D1"
+    },
+    {
+      "name": "Land & Hauptstadt",
+      "beschreibung": "Hauptstädte der Welt",
+      "farbe": "#96CEB4"
+    }
+  ],
+  "level": [
+    {
+      "stufe": 1,
+      "name": "Reise-Neuling",
+      "punkte_benötigt": 0,
+      "beschreibung": "Willkommen bei ExploreQuiz!"
+    },
+    {
+      "stufe": 2,
+      "name": "Entdecker",
+      "punkte_benötigt": 100,
+      "beschreibung": "Du beginnst deine Reise um die Welt!"
+    },
+    {
+      "stufe": 3,
+      "name": "Globetrotter", 
+      "punkte_benötigt": 200,
+      "beschreibung": "Die Welt wird zu deinem Spielplatz!"
+    },
+    {
+      "stufe": 4,
+      "name": "Kulturerkunder",
+      "punkte_benötigt": 300,
+      "beschreibung": "Du verstehst verschiedene Kulturen!"
+    },
+    {
+      "stufe": 5,
+      "name": "Welt-Experte",
+      "punkte_benötigt": 500,
+      "beschreibung": "Du kennst dich überall aus!"
+    },
+    {
+      "stufe": 6,
+      "name": "Reise-Meister",
+      "punkte_benötigt": 800,
+      "beschreibung": "Ein wahrer Meister der Weltreisen!"
+    }
+  ],
+  "flaggen_quiz": [
+    {
+      "land": "Deutschland",
+      "flagge": "🇩🇪",
+      "optionen": ["Deutschland", "Belgien", "Niederlande", "Österreich"],
+      "antwort": "Deutschland"
+    },
+    {
+      "land": "Japan",
+      "flagge": "🇯🇵", 
+      "optionen": ["China", "Japan", "Südkorea", "Taiwan"],
+      "antwort": "Japan"
+    },
+    {
+      "land": "Brasilien",
+      "flagge": "🇧🇷",
+      "optionen": ["Brasilien", "Argentinien", "Uruguay", "Paraguay"],
+      "antwort": "Brasilien"
+    },
+    {
+      "land": "Kanada",
+      "flagge": "🇨🇦",
+      "optionen": ["Kanada", "USA", "Vereinigtes Königreich", "Australien"],
+      "antwort": "Kanada"
+    },
+    {
+      "land": "Italien",
+      "flagge": "🇮🇹",
+      "optionen": ["Italien", "Irland", "Mexiko", "Ungarn"],
+      "antwort": "Italien"
+    }
+  ],
+  "länder_umriss": [
+    {
+      "land": "Italien",
+      "form": "Stiefel",
+      "optionen": ["Italien", "Griechenland", "Spanien", "Portugal"],
+      "antwort": "Italien"
+    },
+    {
+      "land": "Japan",
+      "form": "Inselkette",
+      "optionen": ["Japan", "Philippinen", "Indonesien", "Neuseeland"],
+      "antwort": "Japan"
+    },
+    {
+      "land": "Chile",
+      "form": "Langer schmaler Streifen",
+      "optionen": ["Chile", "Peru", "Ecuador", "Kolumbien"],
+      "antwort": "Chile"
+    }
+  ]
+}

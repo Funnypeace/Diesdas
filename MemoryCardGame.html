@@ -69,15 +69,16 @@
         .game-board {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            grid-gap: 15px;
+            grid-gap: 30px; /* Abstand erhöht */
             max-width: 650px;
             margin: 0 auto;
         }
 
         .card {
-            height: 120px;
+            height: 130px;    /* Karten minimal größer */
             perspective: 1000px;
             cursor: pointer;
+            margin: 8px;      /* Extra Abstand um jede Karte */
         }
 
         .card-inner {
@@ -112,7 +113,7 @@
 
         .card-back {
             background: linear-gradient(135deg, #2193b0, #6dd5ed);
-            font-size: 2.5rem;
+            font-size: 3rem;   /* Größere Fragezeichen */
             color: white;
         }
 
@@ -220,33 +221,37 @@
         @media (max-width: 700px) {
             .game-board {
                 grid-template-columns: repeat(3, 1fr);
+                grid-gap: 18px;
             }
-            
+
             h1 {
                 font-size: 2.2rem;
             }
-            
+
             .card {
                 height: 100px;
+                margin: 5px;
             }
         }
 
         @media (max-width: 500px) {
             .game-board {
                 grid-template-columns: repeat(2, 1fr);
+                grid-gap: 12px;
             }
-            
+
             .game-info {
                 flex-direction: column;
                 gap: 10px;
             }
-            
+
             h1 {
                 font-size: 1.8rem;
             }
-            
+
             .card {
                 height: 90px;
+                margin: 3px;
             }
         }
     </style>

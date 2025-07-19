@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<title>Mini-Rogue</title>
+<style>
+  body{margin:0;background:#111;color:#eee;font-family:monospace;overflow:hidden}
+  #game{display:grid;grid-template-columns:1fr 250px;height:100vh}
+  #map{border-right:1px solid #333;background:#000;position:relative}
+  #sidebar{padding:10px;font-size:12px;overflow-y:auto;background:#222}
+  .cell{position:absolute;width:20px;height:20px;font-size:14px;text-align:center;line-height:20px}
+  .player{color:#0f0;font-weight:bold}
+  .enemy{color:#f00}
+  .npc{color:#5ff}
+  .item{color:#ff5}
+  .wall{background:#444}
+  .fog{background:#000}
+  button{margin:2px;padding:4px 8px;font-size:12px;background:#333;border:1px solid #555;color:#eee;cursor:pointer}
+  button:hover{background:#555}
+  .log{margin-top:10px;height:120px;overflow-y:auto;border-top:1px solid #555;padding-top:5px;font-size:11px}
+  .stat{margin-bottom:4px}
+</style>
+</head>
+<body>
+<div id="game">
+  <div id="map"></div>
+  <div id="sidebar">
+    <div class="stat"><b>HP:</b> <span id="hp">100</span>/100</div>
+    <div class="stat"><b>ATK:</b> <span id="atk">10</span></div>
+    <div class="stat"><b>DEF:</b> <span id="def">5</span></div>
+    <div class="stat"><b>Gold:</b> <span id="gold">0</span></div>
+    <div class="stat"><b>Floor:</b> <span id="floor">1</span></div>
+    <div class="stat"><b>Biom:</b> <span id="biom">Wald</span></div>
+    <div class="stat"><b>Inventar:</b></div>
+    <div id="inv" style="margin-left:10px"></div>
+    <div class="stat"><b>Crafting:</b></div>
+    <button onclick="craft('sword')">Schwert (5 Holz, 3 Eisen)</button>
+    <button onclick="craft('armor')">Rüstung (5 Eisen, 2 Leder)</button>
+    <button onclick="craft('potion')">Trank (2 Kräuter, 1 Fläschchen)</button>
+    <div class="log" id="log">Willkommen im Mini-Rogue!</div>
+  </div>
+</div>
+
+<script>
+/* ---------- CONFIG ---------- */
+const W = 40, H = 25, TILE = 20;
+const biomes = ['Wald','Höhle','Eis','Lava'];
+const items = ['Holz','Eisen','Leder','Kräuter','Fläschchen'];
+const npcTypes = ['Händler','Schmied','Alchemist'];
+const enemyTypes = [
+  {name:'Goblin',hp:30,atk:6,def:2},
+  {name:'Ork',hp:50,atk:10,def:4},
+  {name:'Eisgolem',hp:70,atk:14,def:6},
+  {name:'Lavawurm',hp:100,atk:20,def:8}
+];
+
+/* ---------- STATE ---------- */
+let map, fov, player, entities, stairs, floor = 1, gameOver = false;
+
+/* ---------- INIT ---------- */
+function init() {
+  player = {x:1,y:1,hp:100,atk:10,def:5,gold:0,inv:{}};
+  entities = [];
+  stairs = {};
+  generateFloor();
+  drawMap();
+  log("Verwende WASD zum Bewegen, Leertaste für Aktionen.");
+  window.addEventListener('keydown',handleKeys);
+}
+function generateFloor() {
+  map = Array.from({length:H},()=>Array(W).fill(0));
+  fov = Array.from({length:H},()=>Array(W).fill(0));
+  const biom = biomes[(floor-1)%biomes.length];
+  document.getElementById('biom').textContent = biom;
+  // simple room-digger
+  for(let i=0;i<100;i++){
+    const x = rand(W-4)+2, y = rand(H-4)+2;
+    const w = rand(5)+3, h = rand(5)+3;
+    for(let dy=0;dy<h;dy++)for(let dx=0;dx<w;dx++){
+      const nx=x+dx,ny=y+dy;
+      if(nx<W-1&&ny<H-1)map[ny][nx]=1;
+    }
+  }
+  // place entities
+  for(let i=0;i<15;i++){
+    let x,y; do{x=rand(W);y=rand(H);}while(map[y][x]!==1);
+    if(i===0){player.x=x;player.y=y;continue;}
+    const roll=rand(100);
+    if(roll<40)entities.push({type:'enemy',...enemyTypes[(floor-1)%4],x,y});
+    else if(roll<60)entities.push({type:'npc',kind:npcTypes[rand(3)],x,y});
+    else entities.push({type:'item',name:items[rand(items.length)],x,y});
+  }
+  // stairs
+  let sx,sy; do{sx=rand(W);sy=rand(H);}while(map[sy][sx]!==1);
+  stairs={x:sx,y:sy};
+}
+/* ---------- DRAW ---------- */
+function drawMap() {
+  const mapEl = document.getElementById('map');
+  mapEl.innerHTML='';
+  for(let y=0;y<H;y++){
+    for(let x=0;x<W;x++){
+      const fogged = !fov[y][x];
+      const cell = document.createElement('div');
+      cell.className='cell';
+      cell.style.left=x*TILE+'px';
+      cell.style.top=y*TILE+'px';
+      if(fogged){cell.classList.add('fog');}
+      else if(map[y][x]===0){cell.classList.add('wall');}
+      else{
+        const e = entities.find(e=>e.x===x&&e.y===y);
+        if(x===player.x&&y===player.y){cell.textContent='@';cell.classList.add('player');}
+        else if(e){
+          if(e.type==='enemy'){cell.textContent='E';cell.classList.add('enemy');}
+          else if(e.type==='npc'){cell.textContent='N';cell.classList.add('npc');}
+          else{cell.textContent='!';cell.classList.add('item');}
+        }
+        else if(x===stairs.x&&y===stairs.y){cell.textContent='>';cell.classList.add('item');}
+      }
+      mapEl.appendChild(cell);
+    }
+  }
+  updateSidebar();
+}
+function updateSidebar(){
+  ['hp','atk','def','gold'].forEach(k=>document.getElementById(k).textContent=player[k]);
+  document.getElementById('floor').textContent=floor;
+  const inv=document.getElementById('inv');
+  inv.innerHTML='';
+  Object.entries(player.inv).forEach(([k,v])=>{
+    if(v>0)inv.innerHTML+=`<div>${k}: ${v}</div>`;
+  });
+}
+/* ---------- FOV ---------- */
+function updateFOV(){
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++)fov[y][x]=0;
+  const r=7;
+  for(let dy=-r;dy<=r;dy++){
+    for(let dx=-r;dx<=r;dx++){
+      const nx=player.x+dx,ny=player.y+dy;
+      if(nx>=0&&ny>=0&&nx<W&&ny<H&&dx*dx+dy*dy<=r*r){
+        fov[ny][nx]=1;
+      }
+    }
+  }
+}
+/* ---------- INPUT ---------- */
+function handleKeys(e){
+  if(gameOver) return;
+  let dx=0,dy=0;
+  switch(e.key.toLowerCase()){
+    case 'w':dy=-1;break;
+    case 's':dy=1;break;
+    case 'a':dx=-1;break;
+    case 'd':dx=1;break;
+    case ' ':interact();return;
+    default:return;
+  }
+  const nx=player.x+dx,ny=player.y+dy;
+  if(nx<0||ny<0||nx>=W||ny>=H||map[ny][nx]===0) return;
+  const enemy = entities.find(e=>e.x===nx&&e.y===ny&&e.type==='enemy');
+  if(enemy){
+    fight(enemy);
+  }else{
+    player.x=nx;player.y=ny;
+    updateFOV();
+    drawMap();
+  }
+}
+/* ---------- COMBAT ---------- */
+function fight(enemy){
+  const dmg = Math.max(1,player.atk-enemy.def);
+  enemy.hp -= dmg;
+  log(`Du triffst ${enemy.name} für ${dmg} Schaden.`);
+  if(enemy.hp<=0){
+    log(`${enemy.name} besiegt!`);
+    player.gold += rand(10)+5;
+    entities = entities.filter(e=>e!==enemy);
+  }else{
+    const edmg = Math.max(1,enemy.atk-player.def);
+    player.hp -= edmg;
+    log(`${enemy.name} trifft dich für ${edmg} Schaden.`);
+    if(player.hp<=0){log("Du bist gestorben!");gameOver=true;}
+  }
+  updateFOV();
+  drawMap();
+}
+/* ---------- INTERACTION ---------- */
+function interact(){
+  const e = entities.find(e=>e.x===player.x-1&&e.y===player.y)||
+            entities.find(e=>e.x===player.x+1&&e.y===player.y)||
+            entities.find(e=>e.x===player.x&&e.y===player.y-1)||
+            entities.find(e=>e.x===player.x&&e.y===player.y+1);
+  if(e){
+    if(e.type==='item'){
+      player.inv[e.name]=(player.inv[e.name]||0)+1;
+      log(`Du findest ${e.name}.`);
+      entities=entities.filter(x=>x!==e);
+    }else if(e.type==='npc'){
+      const cost = 20;
+      if(player.gold>=cost){
+        player.gold-=cost;
+        if(e.kind==='Händler'){player.inv['Fläschchen']=(player.inv['Fläschchen']||0)+1;log("Händler: Trank erworben.");}
+        else if(e.kind==='Schmied'){player.atk+=2;log("Schmied: Waffe verstärkt.");}
+        else{player.def+=1;log("Alchemist: Rüstung verbessert.");}
+      }else{log(`${e.kind}: Nicht genug Gold.`);}
+    }
+  }else if(player.x===stairs.x&&player.y===stairs.y){
+    floor++;
+    log(`Du gehst nach unten zu Ebene ${floor}.`);
+    entities=[];
+    generateFloor();
+  }
+  updateFOV();
+  drawMap();
+}
+/* ---------- CRAFTING ---------- */
+function craft(type){
+  const req = {
+    sword:{Holz:5,Eisen:3},
+    armor:{Eisen:5,Leder:2},
+    potion:{Kräuter:2,Fläschchen:1}
+  };
+  const ok = Object.entries(req[type]).every(([k,v])=>(player.inv[k]||0)>=v);
+  if(!ok){log("Nicht genug Materialien.");return;}
+  Object.entries(req[type]).forEach(([k,v])=>player.inv[k]-=v);
+  if(type==='sword'){player.atk+=5;log("Schwert hergestellt! ATK +5");}
+  if(type==='armor'){player.def+=3;log("Rüstung hergestellt! DEF +3");}
+  if(type==='potion'){player.hp=Math.min(100,player.hp+30);log("Trank gebraut! HP +30");}
+  updateSidebar();
+}
+/* ---------- UTIL ---------- */
+function rand(n){return Math.floor(Math.random()*n);}
+function log(msg){
+  const l=document.getElementById('log');
+  l.innerHTML+='<br>'+msg;
+  l.scrollTop=l.scrollHeight;
+}
+init();
+</script>
+</body>
+</html>

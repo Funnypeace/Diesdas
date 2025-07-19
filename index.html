@@ -2,14 +2,22 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Übersichtsseite CDR</title>
+    <title>Übersichtsseite</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        html {
+            box-sizing: border-box;
+        }
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
             padding: 0;
             background: #f6f8fa;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
         h1 {
             text-align: center;
@@ -91,6 +99,7 @@
             color: #191a1c;
             width: 100%;
             max-width: 450px;
+            min-height: 56px;
             transition: transform 0.18s cubic-bezier(.23,1.02,.44,.99), box-shadow 0.18s cubic-bezier(.23,1.02,.44,.99);
             display: block;
             text-align: left;
@@ -112,15 +121,37 @@
             font-size: 1.06rem;
             color: #495567;
         }
+
+        /* --- Responsive Anpassungen --- */
         @media (max-width: 650px) {
             h1 { font-size: 2rem; }
             .page-container { max-width: 99vw; gap: 1.2rem; }
-            .card { max-width: 99vw; padding: 1.1rem 1rem; }
+            .card { max-width: 99vw; padding: 1.1rem 1rem; min-height: 48px; }
             .card h2 { font-size: 1.12rem; }
             .card p { font-size: 0.97rem; }
-            .weather-container { gap: 0.7rem; }
-            .weather-card { padding: 1rem 0.6rem; min-width: 120px; font-size: 1.01rem; }
+            .weather-container { gap: 1rem; }
+            .weather-card { padding: 1rem 0.7rem; min-width: 120px; font-size: 1.01rem; }
             .weather-section { max-width: 99vw; }
+        }
+        @media (max-width: 400px) {
+            h1 { font-size: 1.36rem; margin-top: 1.2rem; margin-bottom: 1.1rem; }
+            .page-container { gap: 0.8rem; padding-bottom: 16px; }
+            .card {
+                padding: 0.8rem 0.4rem;
+                min-height: 42px;
+                border-radius: 12px;
+            }
+            .card h2 { font-size: 1rem; }
+            .card p { font-size: 0.9rem; }
+            .weather-container { gap: 0.4rem; }
+            .weather-card {
+                padding: 0.7rem 0.3rem;
+                min-width: 90px;
+                font-size: 0.95rem;
+                border-radius: 9px;
+            }
+            .weather-card .weather-icon { font-size: 1.5rem; }
+            .weather-card .temp { font-size: 1.1rem; }
         }
     </style>
 </head>
@@ -250,8 +281,5 @@
     }
     showWeather();
     </script>
-
-    <!-- Vercel Analytics Script -->
-    <script defer src="https://vercel.com/analytics/script.js"></script>
 </body>
 </html>

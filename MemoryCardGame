@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Card Game | Paare finden</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: white;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 650px;
+            margin: 15px 0;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .info-box {
+            text-align: center;
+            flex: 1;
+        }
+
+        .info-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD700;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 15px;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .card {
+            height: 120px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #ff9966, #ff5e62);
+            transform: rotateY(180deg);
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #2193b0, #6dd5ed);
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .card.matched .card-back {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+        }
+
+        .card i {
+            font-size: 2.8rem;
+        }
+
+        .controls {
+            margin: 25px 0;
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            background: linear-gradient(to right, #FF512F, #F09819);
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .difficulty {
+            margin: 15px 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .difficulty button {
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .difficulty button.active {
+            background: linear-gradient(to right, #00b09b, #96c93d);
+        }
+
+        .win-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        .win-message.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .win-content {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .win-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #FFD700;
+        }
+
+        .win-content p {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        @media (max-width: 700px) {
+            .game-board {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .card {
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .game-board {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .game-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .card {
+                height: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><i class="fas fa-brain"></i> Memory Card Game</h1>
+        <p>Finde die passenden Paare!</p>
+    </header>
+    
+    <div class="game-info">
+        <div class="info-box">
+            <div>Versuche</div>
+            <div class="info-value" id="moves">0</div>
+        </div>
+        <div class="info-box">
+            <div>Verbleibende Paare</div>
+            <div class="info-value" id="pairs">8</div>
+        </div>
+        <div class="info-box">
+            <div>Zeit</div>
+            <div class="info-value" id="timer">0s</div>
+        </div>
+    </div>
+    
+    <div class="game-container">
+        <div class="difficulty">
+            <button class="difficulty-btn active" data-size="8">Einfach (8 Paare)</button>
+            <button class="difficulty-btn" data-size="12">Mittel (12 Paare)</button>
+            <button class="difficulty-btn" data-size="18">Schwer (18 Paare)</button>
+        </div>
+        
+        <div class="game-board" id="game-board"></div>
+        
+        <div class="controls">
+            <button id="restart-btn"><i class="fas fa-redo"></i> Neues Spiel</button>
+        </div>
+    </div>
+    
+    <div class="win-message" id="win-message">
+        <div class="win-content">
+            <h2>Herzlichen Glückwunsch! <i class="fas fa-trophy"></i></h2>
+            <p>Du hast alle Paare gefunden!</p>
+            <p>Versuche: <span id="final-moves">0</span></p>
+            <p>Benötigte Zeit: <span id="final-time">0</span> Sekunden</p>
+            <button id="play-again">Nochmal spielen</button>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Memory Card Game - Erstellt mit HTML, CSS und JavaScript | Deploy auf Vercel</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Spielelemente
+            const gameBoard = document.getElementById('game-board');
+            const movesDisplay = document.getElementById('moves');
+            const pairsDisplay = document.getElementById('pairs');
+            const timerDisplay = document.getElementById('timer');
+            const restartBtn = document.getElementById('restart-btn');
+            const winMessage = document.getElementById('win-message');
+            const finalMoves = document.getElementById('final-moves');
+            const finalTime = document.getElementById('final-time');
+            const playAgainBtn = document.getElementById('play-again');
+            const difficultyButtons = document.querySelectorAll('.difficulty-btn');
+            
+            // Spielvariablen
+            let cards = [];
+            let flippedCards = [];
+            let matchedPairs = 0;
+            let totalPairs = 8;
+            let moves = 0;
+            let timer = 0;
+            let timerInterval;
+            let gameStarted = false;
+            
+            // Symbol-Set für die Karten
+            const symbols = [
+                'fa-apple-alt', 'fa-bell', 'fa-bolt', 'fa-camera', 
+                'fa-car', 'fa-cat', 'fa-cloud', 'fa-coffee',
+                'fa-crown', 'fa-dog', 'fa-dragon', 'fa-feather',
+                'fa-fish', 'fa-gem', 'fa-heart', 'fa-key',
+                'fa-leaf', 'fa-lemon', 'fa-moon', 'fa-music',
+                'fa-plane', 'fa-rocket', 'fa-star', 'fa-sun',
+                'fa-tree', 'fa-umbrella', 'fa-volleyball-ball'
+            ];
+            
+            // Schwierigkeitsgrad auswählen
+            difficultyButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    difficultyButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    totalPairs = parseInt(button.dataset.size);
+                    startGame();
+                });
+            });
+            
+            // Spiel starten
+            function startGame() {
+                // Zurücksetzen des Spiels
+                clearInterval(timerInterval);
+                gameBoard.innerHTML = '';
+                flippedCards = [];
+                matchedPairs = 0;
+                moves = 0;
+                timer = 0;
+                gameStarted = false;
+                
+                movesDisplay.textContent = moves;
+                pairsDisplay.textContent = totalPairs;
+                timerDisplay.textContent = "0s";
+                
+                winMessage.classList.remove('show');
+                
+                // Karten erstellen
+                createCards();
+            }
+            
+            // Karten erstellen
+            function createCards() {
+                cards = [];
+                const selectedSymbols = symbols.slice(0, totalPairs);
+                
+                // Doppelte Symbole für Paare erstellen
+                const gameSymbols = [...selectedSymbols, ...selectedSymbols];
+                
+                // Symbole mischen
+                shuffleArray(gameSymbols);
+                
+                // Karten generieren
+                gameSymbols.forEach((symbol, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.dataset.symbol = symbol;
+                    
+                    card.innerHTML = `
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <i class="fas ${symbol}"></i>
+                            </div>
+                            <div class="card-back">
+                                <i class="fas fa-question"></i>
+                            </div>
+                        </div>
+                    `;
+                    
+                    card.addEventListener('click', flipCard);
+                    gameBoard.appendChild(card);
+                    cards.push(card);
+                });
+                
+                // Grid-Größe anpassen
+                const gridSize = totalPairs <= 8 ? 4 : totalPairs <= 12 ? 4 : 6;
+                gameBoard.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+            }
+            
+            // Karte umdrehen
+            function flipCard() {
+                // Spiel starten, wenn es das erste Mal ist
+                if (!gameStarted) {
+                    startTimer();
+                    gameStarted = true;
+                }
+                
+                // Maximal 2 Karten auf einmal umdrehen
+                if (flippedCards.length < 2 && !this.classList.contains('flipped') && !this.classList.contains('matched')) {
+                    this.classList.add('flipped');
+                    flippedCards.push(this);
+                    
+                    // Wenn 2 Karten umgedreht sind, prüfen ob sie passen
+                    if (flippedCards.length === 2) {
+                        moves++;
+                        movesDisplay.textContent = moves;
+                        
+                        setTimeout(checkMatch, 500);
+                    }
+                }
+            }
+            
+            // Prüfen, ob die umgedrehten Karten ein Paar sind
+            function checkMatch() {
+                const [card1, card2] = flippedCards;
+                const symbol1 = card1.dataset.symbol;
+                const symbol2 = card2.dataset.symbol;
+                
+                if (symbol1 === symbol2) {
+                    // Paar gefunden
+                    card1.classList.add('matched');
+                    card2.classList.add('matched');
+                    matchedPairs++;
+                    pairsDisplay.textContent = totalPairs - matchedPairs;
+                    
+                    // Gewinnbedingung prüfen
+                    if (matchedPairs === totalPairs) {
+                        endGame();
+                    }
+                } else {
+                    // Kein Paar - Karten zurückdrehen
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                }
+                
+                flippedCards = [];
+            }
+            
+            // Timer starten
+            function startTimer() {
+                clearInterval(timerInterval);
+                timer = 0;
+                timerDisplay.textContent = "0s";
+                
+                timerInterval = setInterval(() => {
+                    timer++;
+                    timerDisplay.textContent = `${timer}s`;
+                }, 1000);
+            }
+            
+            // Spiel beenden (gewonnen)
+            function endGame() {
+                clearInterval(timerInterval);
+                
+                finalMoves.textContent = moves;
+                finalTime.textContent = timer;
+                
+                setTimeout(() => {
+                    winMessage.classList.add('show');
+                }, 1000);
+            }
+            
+            // Array mischen (Fisher-Yates Algorithmus)
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+            
+            // Event Listener für Buttons
+            restartBtn.addEventListener('click', startGame);
+            playAgainBtn.addEventListener('click', startGame);
+            
+            // Spiel initial starten
+            startGame();
+        });
+    </script>
+</body>
+</html>

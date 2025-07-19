@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaktiver Reiseplan: Agadir 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        .section-title {
+            font-size: 1.875rem; /* text-3xl */
+            font-weight: 700; /* font-bold */
+            color: #1e293b; /* slate-800 */
+            margin-bottom: 1.5rem; /* mb-6 */
+            text-align: center;
+        }
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #d97706; /* amber-600 */
+            border-bottom-color: #d97706; /* amber-600 */
+        }
+        .filter-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .filter-btn.active {
+            background-color: #d97706; /* amber-600 */
+            color: #ffffff;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .day-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .day-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .day-card.highlight {
+            background-color: #fef3c7; /* amber-100 */
+            border-color: #d97706; /* amber-600 */
+        }
+        .day-card.pre-booked {
+            position: relative;
+            background-color: #dbeafe; /* blue-200 */
+            border-color: #3b82f6; /* blue-500 */
+        }
+        .day-card.pre-booked::after {
+            content: '★';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            color: #3b82f6;
+            font-size: 1.25rem;
+        }
+        .modal-content {
+            max-height: 80vh;
+        }
+        .activity-item.highlighted {
+            background-color: #fefce8; /* yellow-50 */
+            border-left: 4px solid #d97706; /* amber-600 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+                max-height: 350px;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <header class="bg-slate-800 text-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl md:text-2xl font-bold text-amber-400">Agadir 2025</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#overview" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Übersicht</a>
+                        <a href="#itinerary" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Reiseplan</a>
+                        <a href="#tips" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Reisetipps</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-700 focus:outline-none">
+                        <span class="sr-only">Menü öffnen</span>
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#overview" class="nav-link block px-3 py-2 rounded-md text-base font-medium">Übersicht</a>
+                <a href="#itinerary" class="nav-link block px-3 py-2 rounded-md text-base font-medium">Reiseplan</a>
+                <a href="#tips" class="nav-link block px-3 py-2 rounded-md text-base font-medium">Reisetipps</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+        <section id="overview" class="mb-16 scroll-mt-20">
+            <h2 class="section-title">Reiseübersicht</h2>
+            <p class="text-center max-w-3xl mx-auto mb-10 text-slate-600">Willkommen zu Ihrer Reise nach Agadir, Marokko! Diese Übersicht fasst die wichtigsten Eckdaten und die Verteilung Ihrer Aufenthalte zusammen. Der Fokus liegt auf einer unvergesslichen Mischung aus Kultur, Natur und Entspannung.</p>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+                    <span class="text-4xl">✈️</span>
+                    <div>
+                        <h3 class="font-bold text-slate-800">Flugdaten</h3>
+                        <p class="text-sm">Ankunft: 08. Nov, 10:40 Al Massira</p>
+                        <p class="text-sm">Abflug: 15. Nov, Al Massira</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+                    <span class="text-4xl">🗓️</span>
+                    <div>
+                        <h3 class="font-bold text-slate-800">Reisedauer</h3>
+                        <p class="text-lg">7 Tage / 6 Nächte</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+                    <span class="text-4xl">🏨</span>
+                    <div>
+                        <h3 class="font-bold text-slate-800">Unterkunft</h3>
+                        <p class="text-lg">Tildi Hotel & Spa</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-md mb-12">
+                <h3 class="text-xl font-bold text-slate-800 mb-4 text-center">Wetter im November</h3>
+                <div class="chart-container">
+                    <canvas id="weatherChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-md">
+                <h3 class="text-xl font-bold text-slate-800 mb-4 text-center">Hotel Information</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-50 text-slate-600">
+                            <tr>
+                                <th class="p-4 font-medium">Detail</th>
+                                <th class="p-4 font-medium">Information</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr><td class="p-4 font-semibold">Hotel</td><td class="p-4">Tildi Hotel & Spa (4-Sterne)</td></tr>
+                            <tr><td class="p-4 font-semibold">Lage</td><td class="p-4">Geschäftsviertel, 200m vom Strand</td></tr>
+                            <tr><td class="p-4 font-semibold">Entfernung Flughafen</td><td class="p-4">20km vom Al Massira Flughafen</td></tr>
+                            <tr><td class="p-4 font-semibold">Verpflegung</td><td class="p-4">Halbpension (Frühstück & Abendessen)</td></tr>
+                            <tr><td class="p-4 font-semibold">Ausstattung</td><td class="p-4">Außenpool, Spa, WLAN, Parkplatz</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
+        <section id="itinerary" class="mb-16 scroll-mt-20">
+            <h2 class="section-title">Interaktiver Reiseplan</h2>
+            <p class="text-center max-w-3xl mx-auto mb-6 text-slate-600">Klicken Sie auf einen Tag, um die detaillierte Planung zu sehen. Nutzen Sie die Filter, um Aktivitäten nach Ihren Interessen hervorzuheben. Tage mit bereits fest gebuchten Hauptaktivitäten sind mit einem ★ markiert.</p>
+
+            <div class="flex justify-center flex-wrap gap-2 md:gap-4 mb-8" id="theme-filters">
+                <button class="filter-btn active px-4 py-2 text-sm font-medium rounded-full bg-white shadow-sm border border-slate-200" data-filter="all">Alle anzeigen</button>
+                <button class="filter-btn px-4 py-2 text-sm font-medium rounded-full bg-white shadow-sm border border-slate-200" data-filter="kultur">🏛️ Kultur</button>
+                <button class="filter-btn px-4 py-2 text-sm font-medium rounded-full bg-white shadow-sm border border-slate-200" data-filter="natur">🌿 Natur</button>
+                <button class="filter-btn px-4 py-2 text-sm font-medium rounded-full bg-white shadow-sm border border-slate-200" data-filter="entspannung">🧘 Entspannung</button>
+            </div>
+
+            <div id="itinerary-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
+            </div>
+        </section>
+
+        <section id="tips" class="scroll-mt-20">
+            <h2 class="section-title">Reisetipps & Informationen</h2>
+            <p class="text-center max-w-3xl mx-auto mb-10 text-slate-600">Wichtige Informationen und Tipps für Ihre Reise nach Agadir. Diese Hinweise helfen Ihnen, das Beste aus Ihrer Reise herauszuholen und kulturelle Besonderheiten zu respektieren.</p>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 md:p-8 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold text-slate-800 mb-4 text-center">Kosten & Budget</h3>
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="costChart"></canvas>
+                    </div>
+                    <p class="text-sm text-center mt-4 text-slate-500">Geschätzte Kosten für Ausflüge: 200-400 € pro Person (inkl. Transport und Eintritte).</p>
+                </div>
+
+                <div class="bg-white p-6 md:p-8 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold text-slate-800 mb-6 text-center">Wichtige Tipps</h3>
+                    <div id="tips-accordion" class="space-y-4">
+                        <div class="accordion-item">
+                            <button class="accordion-header w-full text-left flex justify-between items-center p-4 bg-slate-50 hover:bg-slate-100 rounded-lg">
+                                <span class="font-semibold text-slate-700">Geld & Währung</span>
+                                <span class="accordion-icon text-amber-600 font-bold text-xl">+</span>
+                            </button>
+                            <div class="accordion-content hidden p-4 border-t border-slate-200">
+                                <p>Währung: Marokkanischer Dirham (MAD), ca. 11 MAD = 1 €. Dirhams nur in Marokko erhältlich. Geld am Geldautomat abheben oder Euro vor Ort tauschen. Kreditkarten in Hotels und großen Geschäften akzeptiert, in Souks Barzahlung üblich.</p>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <button class="accordion-header w-full text-left flex justify-between items-center p-4 bg-slate-50 hover:bg-slate-100 rounded-lg">
+                                <span class="font-semibold text-slate-700">Kleidung & Verhalten</span>
+                                <span class="accordion-icon text-amber-600 font-bold text-xl">+</span>
+                            </button>
+                            <div class="accordion-content hidden p-4 border-t border-slate-200">
+                                <p>Dezente Kleidung empfohlen: Schultern und Knie bedeckt, besonders in der Stadt und Souks. Respektvolles Verhalten gegenüber lokaler Kultur. Vor dem Fotografieren von Personen um Erlaubnis fragen.</p>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <button class="accordion-header w-full text-left flex justify-between items-center p-4 bg-slate-50 hover:bg-slate-100 rounded-lg">
+                                <span class="font-semibold text-slate-700">Handeln & Einkaufen</span>
+                                <span class="accordion-icon text-amber-600 font-bold text-xl">+</span>
+                            </button>
+                            <div class="accordion-content hidden p-4 border-t border-slate-200">
+                                <p>In Souks ist Feilschen Pflicht und Teil der Kultur. Bieten Sie etwa 1/3 des Startpreises und nähern Sie sich an. Bleiben Sie freundlich und humorvoll. Nur handeln, wenn echtes Kaufinteresse besteht.</p>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <button class="accordion-header w-full text-left flex justify-between items-center p-4 bg-slate-50 hover:bg-slate-100 rounded-lg">
+                                <span class="font-semibold text-slate-700">Essen & Trinken</span>
+                                <span class="accordion-icon text-amber-600 font-bold text-xl">+</span>
+                            </button>
+                            <div class="accordion-content hidden p-4 border-t border-slate-200">
+                                <p>Kein Leitungswasser trinken - nur Flaschenwasser verwenden. Bei Straßenständen nur frisch durcherhitztes Essen. Genießen Sie die marokkanische Küche: Tajine, Couscous, frischer Fisch. Trinkgeld: 10% in Restaurants üblich.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-800 text-white mt-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center text-sm text-slate-400">
+            <p>Ihr persönlicher Reiseplan für Agadir | November 2025</p>
+        </div>
+    </footer>
+    
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl transform transition-all">
+            <div class="flex justify-between items-center p-4 border-b border-slate-200">
+                <h3 id="modal-title" class="text-xl font-bold text-slate-800"></h3>
+                <button id="modal-close" class="text-slate-500 hover:text-slate-800 text-2xl">&times;</button>
+            </div>
+            <div id="modal-content" class="p-6 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <script>
+        const itineraryData = [
+            { day: 1, date: "08. Nov", location: "Agadir", title: "Ankunft & Strand", themes: ['entspannung'], preBooked: false, details: `
+                <div class="space-y-4">
+                    <div class="activity-item"><strong class="text-amber-600">Vormittag (10:40 Uhr):</strong> Ankunft am Flughafen Al Massira.</div>
+                    <div class="activity-item"><strong class="text-amber-600">Mittag:</strong> Transfer zum Tildi Hotel & Spa, Check-in.</div>
+                    <div class="activity-item" data-theme="entspannung"><strong class="text-amber-600">Nachmittag:</strong> Leichter Spaziergang am Agadir-Strand (Atlantikküste, Wellen beobachten).</div>
+                    <div class="activity-item" data-theme="kultur"><strong class="text-amber-600">Abend:</strong> Erkundung der Promenade und des Hafens.</div>
+                    <div class="activity-item"><strong class="text-amber-600">Tipp:</strong> Jetlag berücksichtigen, früh schlafen.</div>
+                </div>` },
+            { day: 2, date: "09. Nov", location: "Agadir", title: "Souk & Kasbah", themes: ['kultur'], preBooked: false, details: `
+                <div class="space-y-4">
+                    <div class="activity-item" data-theme="kultur"><strong class="text-amber-600">Vormittag:</strong> Besuch des Souk El Had (größter Markt in Agadir) - Gewürze, Handwerk, lokale Produkte.</div>
+                    <div class="activity-item"><strong class="text-amber-600">Mittag:</strong> Leichtes Essen in der Stadt (z.B. Tajine in einem Café).</div>
+                    <div class="activity-item" data-theme="kultur"><strong class="text-amber-600">Nachmittag:</strong> Kasbah Agadir Oufella - Panoramablick über Stadt und Meer, Erdbeben-Geschichte von 1960.</div>
+                    <div class="activity-item"><strong class="text-amber-600">Kosten:</strong> Ca. 20 € für Transport/Eintritte.</div>
+                </div>` },
+            { day: 3, date: "10. Nov", location: "Paradise Valley", title: "Paradise Valley", themes: ['natur'], preBooked: true, details: `
+                <div class="space-y-4">
+                    <div class="activity-item" data-theme="natur"><strong class="text-amber-600">Ganztägig:</strong> Ausflug ins Paradise Valley (30 km nördlich, 1h Fahrt).</div>
+                    <div class="activity-item" data-theme="natur"><strong class="text-amber-600">Aktivitäten:</strong> Sanfte Spaziergänge entlang Palmenhainen, natürliche Pools und Wasserfälle.</div>
+                    <div class="activity-item" data-theme="kultur"><strong class="text-amber-600">Kultur:</strong> Besuch lokaler Berber-Dörfer, traditionelle Landwirtschaft.</div>
+                    <div class="activity-item"><strong class="text-amber-600">Mittag:</strong> Picknick oder lokales Essen (im Tourpreis inkl.).</div>
+                    <div class="activity-item"><strong class="text-amber-600">Kosten:</strong> Ca. 50-70 €/Person inkl. Transport.</div>
+                </div>` },
+            { day: 4, date: "11. Nov", location: "Taroudant", title: "Taroudant & Tiout", themes: ['kultur', 'natur'], preBooked: true, details: `
+                <div class="space-y-4">
+                    <div class="activity-item" data-theme="kultur"><strong class="text-amber-600">Vormittag:</strong> Taroudant - "kleine Marrakesch" (80 km östlich, 1,5h Fahrt).</div>
+                    <div class="activity-item" data-theme="kultur"><strong class="text-amber-600">Besichtigung:</strong> Befestigte Altstadt mit Souks, Palästen und traditionellen Märkten.</div>
+                    <div class="activity-item"><strong class="text-amber-600">Mittag:</strong> Lokales Essen in der Medina.</div>
+                    <div class="activity-item" data-theme="natur"><strong class="text-amber-600">Nachmittag:</strong> Tiout-Oase - Palmenhainen und Kasbah-Ruine, Spaziergang durch Palmenplantagen.</div>
+                    <div class="activity-item"><strong class="text-amber-600">Kosten:</strong> Ca. 60-80 €/Person.</div>
+                </div>` },
+            { day: 5, date: "12. Nov", location: "Agadir", title: "Crocoparc & Medina", themes: ['natur', 'kultur'], preBooked: false, details: `
+                <div class="space-y-4">
+                    <div class="activity-item" data-theme="natur"><strong class="text-amber-600">Vormittag:</strong> Crocoparc Agadir - zoologisch-botanischer Park mit Krokodilen und exotischen Gärten.</div>
+                    <div class="activity-item" data-theme="natur"><strong class="text-amber-600">Highlight:</strong> Schaufütterung der Krokodile um 12:00 Uhr.</div>
+                    <div class="activity-item" data-theme="kultur"><strong class="text-amber-600">Nachmittag:</strong> Medina Polizzi - künstlich aufgebaute Altstadt mit traditioneller marokkanischer Baukunst.</div>
+                    <div class="activity-item" data-theme="kultur"><strong class="text-amber-600">Aktivitäten:</strong> Handwerksläden, traditionelle Architektur erkunden.</div>
+                    <div class="activity-item"><strong class="text-amber-600">Eintritt:</strong> Crocoparc 90 DH, Medina Polizzi 40 DH.</div>
+                </div>` },
+            { day: 6, date: "13. Nov", location: "Souss-Massa", title: "Nationalpark & Freizeit", themes: ['natur', 'entspannung'], preBooked: true, details: `
+                <div class="space-y-4">
+                    <div class="activity-item" data-theme="natur"><strong class="text-amber-600">Vormittag:</strong> Nationalpark Souss-Massa (45 Min. südlich von Agadir).</div>
+                    <div class="activity-item" data-theme="natur"><strong class="text-amber-600">Tierwelt:</strong> Vogelbeobachtung - Flamingos, Störche, Waldrapp und Küstenlandschaften.</div>
+                    <div class="activity-item" data-theme="entspannung"><strong class="text-amber-600">Nachmittag:</strong> Freizeit zur Entspannung am Hotelpool oder Spa-Nutzung.</div>
+                    <div class="activity-item" data-theme="entspannung"><strong class="text-amber-600">Optional:</strong> Besuch der Marina/Hafen oder letzte Einkäufe.</div>
+                    <div class="activity-item"><strong class="text-amber-600">Kosten:</strong> Ca. 50-60 €/Person inkl. Transfer.</div>
+                </div>` },
+            { day: 7, date: "14. Nov", location: "Agadir", title: "Abschied & Abreise", themes: ['entspannung', 'kultur'], preBooked: false, details: `
+                <div class="space-y-4">
+                    <div class="activity-item" data-theme="kultur"><strong class="text-amber-600">Vormittag:</strong> Spaziergang entlang der Strandpromenade bis zum alten Fischereihafen.</div>
+                    <div class="activity-item" data-theme="kultur"><strong class="text-amber-600">Optional:</strong> Erdbeben-Gedenkmuseum (Musée de la Mémoire) oder Agadir Cable Car zur Kasbah.</div>
+                    <div class="activity-item" data-theme="entspannung"><strong class="text-amber-600">Nachmittag:</strong> Freie Zeit für Souvenirs oder letzten Strandbesuch.</div>
+                    <div class="activity-item" data-theme="entspannung"><strong class="text-amber-600">Optional:</strong> Kamelritt am Strand.</div>
+                    <div class="activity-item"><strong class="text-amber-600">Abend:</strong> Letztes Abendessen im Hotel, Koffer packen.</div>
+                </div>` },
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = {
+                activeFilter: 'all',
+                init() {
+                    this.setupEventListeners();
+                    this.renderItineraryGrid();
+                    this.renderCharts();
+                    this.setActiveNavLink();
+                },
+                setupEventListeners() {
+                    document.getElementById('mobile-menu-button').addEventListener('click', () => {
+                        document.getElementById('mobile-menu').classList.toggle('hidden');
+                    });
+
+                    document.querySelectorAll('.nav-link').forEach(link => {
+                        link.addEventListener('click', (e) => {
+                            if (window.innerWidth < 768) {
+                                document.getElementById('mobile-menu').classList.add('hidden');
+                            }
+                            const targetId = link.getAttribute('href');
+                            const targetElement = document.querySelector(targetId);
+                            if (targetElement) {
+                                e.preventDefault();
+                                targetElement.scrollIntoView({ behavior: 'smooth' });
+                                setTimeout(() => this.setActiveNavLink(), 50);
+                            }
+                        });
+                    });
+
+                    document.getElementById('theme-filters').addEventListener('click', e => {
+                        if (e.target.tagName === 'BUTTON') {
+                            this.activeFilter = e.target.dataset.filter;
+                            this.updateFilterButtons();
+                            this.updateDayCardsHighlight();
+                        }
+                    });
+
+                    document.getElementById('itinerary-grid').addEventListener('click', e => {
+                        const card = e.target.closest('.day-card');
+                        if (card) this.openModal(card.dataset.day);
+                    });
+
+                    document.getElementById('modal-close').addEventListener('click', () => this.closeModal());
+                    document.getElementById('modal').addEventListener('click', e => {
+                        if (e.target.id === 'modal') this.closeModal();
+                    });
+
+                    document.getElementById('tips-accordion').addEventListener('click', e => {
+                        const header = e.target.closest('.accordion-header');
+                        if (header) {
+                            const content = header.nextElementSibling;
+                            const icon = header.querySelector('.accordion-icon');
+                            const isHidden = content.classList.toggle('hidden');
+                            icon.textContent = isHidden ? '+' : '−';
+                            document.querySelectorAll('#tips-accordion .accordion-content').forEach(other => {
+                                if (other !== content && !other.classList.contains('hidden')) {
+                                    other.classList.add('hidden');
+                                    other.previousElementSibling.querySelector('.accordion-icon').textContent = '+';
+                                }
+                            });
+                        }
+                    });
+
+                    window.addEventListener('scroll', () => this.setActiveNavLink());
+                    window.addEventListener('resize', () => this.setActiveNavLink());
+                },
+                renderItineraryGrid() {
+                    const grid = document.getElementById('itinerary-grid');
+                    grid.innerHTML = itineraryData.map(day => `
+                        <div class="day-card bg-white p-4 rounded-lg shadow-md border-2 border-transparent cursor-pointer ${day.preBooked ? 'pre-booked' : ''}" data-day="${day.day}" tabindex="0" role="button" aria-label="Details für Tag ${day.day}: ${day.title}">
+                            <p class="font-bold text-sm text-slate-800">Tag ${day.day}</p>
+                            <p class="text-xs text-slate-500 mb-1">${day.date}</p>
+                            <p class="text-slate-700 font-semibold">${day.location}</p>
+                            <p class="text-xs text-slate-600 truncate">${day.title}</p>
+                        </div>
+                    `).join('');
+                },
+                updateFilterButtons() {
+                    document.querySelectorAll('#theme-filters button').forEach(btn => {
+                        btn.classList.toggle('active', btn.dataset.filter === this.activeFilter);
+                    });
+                },
+                updateDayCardsHighlight() {
+                    document.querySelectorAll('.day-card').forEach(card => {
+                        const day = itineraryData[card.dataset.day - 1];
+                        const hasTheme = this.activeFilter === 'all' || (day.themes.includes(this.activeFilter));
+                        card.classList.toggle('highlight', hasTheme && this.activeFilter !== 'all');
+                        card.style.opacity = hasTheme || this.activeFilter === 'all' ? '1' : '0.5';
+                    });
+                },
+                openModal(dayNum) {
+                    const day = itineraryData[dayNum - 1];
+                    document.getElementById('modal-title').textContent = `Tag ${day.day}: ${day.title} (${day.date})`;
+                    const modalContent = document.getElementById('modal-content');
+                    modalContent.innerHTML = day.details;
+                    modalContent.querySelectorAll('.activity-item').forEach(item => {
+                        const themes = (item.dataset.theme || '').split(' ');
+                        if (this.activeFilter !== 'all' && themes.some(theme => theme === this.activeFilter)) {
+                            item.classList.add('highlighted');
+                        } else {
+                            item.classList.remove('highlighted');
+                        }
+                    });
+                    const modal = document.getElementById('modal');
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                    modal.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+                    document.getElementById('modal-close').focus();
+                },
+                closeModal() {
+                    const modal = document.getElementById('modal');
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                    modal.setAttribute('aria-hidden', 'true');
+                    document.body.style.overflow = '';
+                },
+                setActiveNavLink() {
+                    let current = '';
+                    const sections = document.querySelectorAll('main section[id]');
+                    const offset = document.querySelector('header').offsetHeight + 20;
+                    sections.forEach(sec => {
+                        const top = sec.offsetTop - offset;
+                        const bottom = top + sec.offsetHeight;
+                        if (pageYOffset >= top && pageYOffset < bottom) current = sec.id;
+                    });
+                    if (!current) {
+                        if (pageYOffset < sections[0].offsetTop - offset) current = sections[0].id;
+                        else current = sections[sections.length - 1].id;
+                    }
+                    document.querySelectorAll('.nav-link').forEach(link => {
+                        link.classList.toggle('active', link.getAttribute('href') === `#${current}`);
+                    });
+                },
+                renderCharts() {
+                    const weatherCtx = document.getElementById('weatherChart');
+                    if (weatherCtx) {
+                        new Chart(weatherCtx.getContext('2d'), {
+                            type: 'line',
+                            data: {
+                                labels: ['Tag', 'Nacht', 'Wasser'],
+                                datasets: [{
+                                    label: 'Temperatur (°C)',
+                                    data: [25, 15, 20],
+                                    backgroundColor: ['#fbbf24', '#1e40af', '#0ea5e9'],
+                                    borderColor: ['#f59e0b', '#1d4ed8', '#0284c7'],
+                                    borderWidth: 3,
+                                    fill: false,
+                                    tension: 0.4
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { 
+                                    legend: { display: false }, 
+                                    title: { display: false } 
+                                },
+                                scales: {
+                                    y: { 
+                                        beginAtZero: false, 
+                                        min: 10,
+                                        max: 30,
+                                        grid: { color: '#e2e8f0' },
+                                        ticks: { callback: v => v + '°C' }
+                                    },
+                                    x: { grid: { display: false } }
+                                }
+                            }
+                        });
+                    }
+                    const costCtx = document.getElementById('costChart');
+                    if (costCtx) {
+                        new Chart(costCtx.getContext('2d'), {
+                            type: 'doughnut',
+                            data: {
+                                labels: ['Paradise Valley', 'Taroudant & Tiout', 'Nationalpark', 'Lokale Aktivitäten'],
+                                datasets: [{
+                                    data: [70, 80, 60, 40],
+                                    backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444'],
+                                    borderColor: ['#059669', '#d97706', '#2563eb', '#dc2626'],
+                                    borderWidth: 2
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { 
+                                        position: 'bottom',
+                                        labels: { padding: 20 }
+                                    },
+                                    title: { 
+                                        display: true, 
+                                        text: 'Geschätzte Ausflugkosten (€ pro Person)',
+                                        padding: { bottom: 20 },
+                                        font: { size: 16 }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            };
+            app.init();
+        });
+    </script>
+</body>
+</html>
+

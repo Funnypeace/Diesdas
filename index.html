@@ -72,6 +72,20 @@
             font-weight: bold;
             margin: 0.3rem 0 0.2rem 0;
         }
+        /* Besucherzähler */
+        .visit-counter {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 2.2rem;
+            font-size: 1.13rem;
+            letter-spacing: 0.03em;
+            font-weight: 500;
+        }
+        .visit-counter .counter-emoji {
+            font-size: 1.5em;
+            vertical-align: middle;
+            margin-right: 0.35em;
+        }
         .page-container {
             display: flex;
             flex-direction: column;
@@ -133,6 +147,12 @@
         <div class="weather-container" id="weather-container">
             <!-- Wird per JS gefüllt -->
         </div>
+    </div>
+
+    <!-- Besucherzähler -->
+    <div class="visit-counter">
+        <span class="counter-emoji">👀</span>
+        Besuche: <span id="pageviews">…</span>
     </div>
 
     <div class="page-container">
@@ -249,6 +269,13 @@
         document.getElementById('weather-container').innerHTML = html;
     }
     showWeather();
+
+    // Besucherzähler mit countapi.xyz (URL als Namespace)
+    fetch('https://api.countapi.xyz/hit/diesdas.vercel.app/index')
+      .then(res => res.json())
+      .then(res => {
+        document.getElementById('pageviews').textContent = res.value;
+      });
     </script>
 </body>
 </html>

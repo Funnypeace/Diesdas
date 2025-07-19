@@ -23,10 +23,39 @@
         .weather-section {
             width: 100%;
             max-width: 740px;
-            margin: 0 auto 2.5rem auto;
+            margin: 0 auto 1.5rem auto;
             display: flex;
             flex-direction: column;
             align-items: center;
+        }
+        .visitor-counter {
+            width: 100%;
+            max-width: 740px;
+            margin: 0 auto 2.5rem auto;
+            display: flex;
+            justify-content: center;
+        }
+        .counter-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            box-shadow: 0 4px 14px rgba(100,120,160,0.12);
+            padding: 1.2rem 2rem;
+            text-align: center;
+            color: white;
+            min-width: 200px;
+        }
+        .counter-card .counter-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0.9;
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .counter-card .counter-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0;
         }
         .weather-section-title {
             text-align: center;
@@ -71,20 +100,6 @@
             font-size: 1.6rem;
             font-weight: bold;
             margin: 0.3rem 0 0.2rem 0;
-        }
-        /* Besucherzähler */
-        .visit-counter {
-            text-align: center;
-            color: #64748b;
-            margin-bottom: 2.2rem;
-            font-size: 1.13rem;
-            letter-spacing: 0.03em;
-            font-weight: 500;
-        }
-        .visit-counter .counter-emoji {
-            font-size: 1.5em;
-            vertical-align: middle;
-            margin-right: 0.35em;
         }
         .page-container {
             display: flex;
@@ -135,6 +150,9 @@
             .weather-container { gap: 0.7rem; }
             .weather-card { padding: 1rem 0.6rem; min-width: 120px; font-size: 1.01rem; }
             .weather-section { max-width: 99vw; }
+            .visitor-counter { max-width: 99vw; }
+            .counter-card { padding: 1rem 1.5rem; min-width: 180px; }
+            .counter-card .counter-number { font-size: 1.7rem; }
         }
     </style>
 </head>
@@ -150,9 +168,11 @@
     </div>
 
     <!-- Besucherzähler -->
-    <div class="visit-counter">
-        <span class="counter-emoji">👀</span>
-        Besuche: <span id="pageviews">…</span>
+    <div class="visitor-counter">
+        <div class="counter-card">
+            <div class="counter-label">Besucher</div>
+            <div class="counter-number" id="visitor-count">---</div>
+        </div>
     </div>
 
     <div class="page-container">
@@ -268,14 +288,26 @@
         ).join('');
         document.getElementById('weather-container').innerHTML = html;
     }
-    showWeather();
 
-    // Besucherzähler mit countapi.xyz (URL als Namespace)
-    fetch('https://api.countapi.xyz/hit/diesdas.vercel.app/index')
-      .then(res => res.json())
-      .then(res => {
-        document.getElementById('pageviews').textContent = res.value;
-      });
+    async function updateVisitorCount() {
+        try {
+            // CountAPI verwenden - kostenloser Service für Besucherzähler
+            const response = await fetch('https://api.countapi.xyz/hit/diesdas.vercel.app/visits');
+            const data = await response.json();
+            
+            if (data.value) {
+                document.getElementById('visitor-count').textContent = data.value.toLocaleString('de-DE');
+            } else {
+                document.getElementById('visitor-count').textContent = 'Fehler';
+            }
+        } catch (error) {
+            console.log('Fehler beim Laden der Besucherzahl:', error);
+            document.getElementById('visitor-count').textContent = 'Fehler';
+        }
+    }
+
+    showWeather();
+    updateVisitorCount();
     </script>
 </body>
 </html>

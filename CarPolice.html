@@ -1,0 +1,1169 @@
+<!DOCTYPE html><html lang="de"><head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Elektrofahrzeug Car Policy | Deutsche Mittelstandsunternehmen</title>
+    <script src="https://cdn.tailwindcss.com/3.4.0"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e3a8a',
+                        secondary: '#64748b',
+                        accent: '#f59e0b',
+                        neutral: '#374151',
+                        'base-100': '#ffffff',
+                        'base-200': '#f8fafc',
+                        'base-300': '#e2e8f0'
+                    },
+                    fontFamily: {
+                        'serif': ['Playfair Display', 'serif'],
+                        'sans': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Prevent horizontal overflow on small screens */
+        @media (max-width: 768px) {
+            body {
+                overflow-x: hidden;
+            }
+        }
+        .hero-overlay {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.9) 0%, rgba(100, 116, 139, 0.8) 100%);
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 1.5rem;
+            height: 400px;
+        }
+        .bento-main {
+            grid-row: 1 / -1;
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+        .bento-side-1 {
+            background: linear-gradient(45deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .bento-side-2 {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .toc-fixed {
+            position: fixed;
+            left: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        .main-content {
+            margin-left: 320px;
+            max-width: 800px;
+        }
+        .citation-link {
+            color: #1e3a8a;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dotted #1e3a8a;
+            transition: all 0.2s ease;
+        }
+        .citation-link:hover {
+            background-color: #dbeafe;
+            border-bottom-style: solid;
+        }
+        
+        /* Mermaid Chart Styles */
+        .mermaid-container {
+            display: flex;
+            justify-content: center;
+            min-height: 300px;
+            max-height: 800px;
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mermaid-container .mermaid {
+            width: 100%;
+            max-width: 100%;
+            height: 100%;
+            cursor: grab;
+            transition: transform 0.3s ease;
+            transform-origin: center center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: none; /* 防止触摸设备上的默认行为 */
+            -webkit-user-select: none; /* 防止文本选择 */
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .mermaid-container .mermaid svg {
+            max-width: 100%;
+            height: 100%;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .mermaid-container .mermaid:active {
+            cursor: grabbing;
+        }
+
+        .mermaid-container.zoomed .mermaid {
+            height: 100%;
+            width: 100%;
+            cursor: grab;
+        }
+
+        .mermaid-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .mermaid-control-btn {
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #374151;
+            font-size: 14px;
+            min-width: 36px;
+            height: 36px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mermaid-control-btn:hover {
+            background: #f8fafc;
+            border-color: #3b82f6;
+            color: #3b82f6;
+            transform: translateY(-1px);
+        }
+
+        .mermaid-control-btn:active {
+            transform: scale(0.95);
+        }
+
+        @media (max-width: 1280px) {
+            .toc-fixed {
+                display: none;
+            }
+            .main-content {
+                margin-left: 0;
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .mermaid-control-btn:not(.reset-zoom) {
+                display: none;
+            }
+            .mermaid-controls {
+                top: auto;
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .bento-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+                gap: 1rem;
+                height: auto;
+            }
+            .bento-main {
+                grid-row: 1;
+                min-height: 300px;
+            }
+            .bento-main h1 {
+                font-size: 2rem;
+            }
+            .bento-main p {
+                font-size: 1rem;
+            }
+            .grid-cols-3 {
+                grid-template-columns: 1fr;
+            }
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            .grid.md\:grid-cols-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Additional media query for very small screens */
+        @media (max-width: 480px) {
+            .bento-main h1 {
+                font-size: 1.5rem;
+            }
+            .bento-main p {
+                font-size: 0.875rem;
+            }
+            .bento-side-1, .bento-side-2 {
+                padding: 1rem;
+            }
+        }
+    </style>
+  </head>
+
+  <body class="bg-base-100 font-sans text-neutral leading-relaxed">
+    <!-- Fixed Table of Contents -->
+    <nav class="toc-fixed">
+      <h3 class="font-serif font-bold text-lg text-primary mb-4">Inhalt</h3>
+      <ul class="space-y-2 text-sm">
+        <li>
+          <a href="#hero" class="block text-secondary hover:text-primary transition-colors py-1">Übersicht</a>
+        </li>
+        <li>
+          <a href="#introduction" class="block text-secondary hover:text-primary transition-colors py-1">1. Präambel</a>
+        </li>
+        <li>
+          <a href="#general-rules" class="block text-secondary hover:text-primary transition-colors py-1">2. Allgemeine Regelungen</a>
+        </li>
+        <li>
+          <a href="#eligibility" class="block text-secondary hover:text-primary transition-colors py-1">3. Anspruch auf Dienstwagen</a>
+        </li>
+        <li>
+          <a href="#vehicle-selection" class="block text-secondary hover:text-primary transition-colors py-1">4. Fahrzeugauswahl</a>
+        </li>
+        <li>
+          <a href="#private-use" class="block text-secondary hover:text-primary transition-colors py-1">5. Private Nutzung</a>
+        </li>
+        <li>
+          <a href="#ev-regulations" class="block text-secondary hover:text-primary transition-colors py-1">6. Regelungen für Elektrofahrzeuge</a>
+        </li>
+        <li>
+          <a href="#employee-duties" class="block text-secondary hover:text-primary transition-colors py-1">7. Nutzungsbedingungen</a>
+        </li>
+        <li>
+          <a href="#co-determination" class="block text-secondary hover:text-primary transition-colors py-1">8. Mitbestimmungsrecht</a>
+        </li>
+        <li>
+          <a href="#final-provisions" class="block text-secondary hover:text-primary transition-colors py-1">9. Schlussbestimmungen</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content px-8 py-12">
+      <!-- Hero Section -->
+      <section id="hero" class="mb-16">
+        <div class="bento-grid">
+          <div class="bento-main relative">
+            <img src="https://kimi-web-img.moonshot.cn/img/ari-motors-v2-uploads.s3.eu-central-1.amazonaws.com/85eb31a9138f83565491a5ff9fed792363d9ee56.png" alt="Elektrofahrzeugflotte eines Unternehmens" class="w-full h-full object-cover" size="large" aspect="wide" style="photo" query="elektrofahrzeug flotte unternehmen" referrerpolicy="no-referrer" data-modified="1" data-score="11598.00"/>
+            <div class="hero-overlay absolute inset-0 flex items-center justify-center">
+              <div class="text-center text-white px-8">
+                <h1 class="font-serif text-4xl md:text-5xl font-bold mb-4 italic">
+                  Car Policy für die
+                  <br/>
+                  <span class="text-accent">elektrische Zukunft</span>
+                </h1>
+                <p class="text-xl opacity-90 max-w-2xl mx-auto">
+                  Rahmenbedingungen für nachhaltige Dienstwagenflotten in deutschen Mittelstandsunternehmen
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="bento-side-1">
+            <div class="text-center">
+              <div class="text-3xl font-bold text-primary mb-2">100</div>
+              <div class="text-sm text-secondary">Leasingfahrzeuge</div>
+            </div>
+          </div>
+          <div class="bento-side-2">
+            <div class="text-center">
+              <div class="text-2xl font-bold mb-2">900€ + 0</div>
+              <div class="text-sm opacity-90">Max. Leasingrate</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Key Highlights -->
+      <section class="mb-16">
+        <div class="grid grid-cols-3 gap-8">
+          <div class="bg-base-200 p-6 rounded-lg">
+            <div class="text-primary mb-3">
+              <i class="fas fa-leaf text-2xl"></i>
+            </div>
+            <h3 class="font-serif font-bold text-lg mb-2">CO2-Bilanzverbesserung</h3>
+            <p class="text-secondary text-sm">Fokus auf Elektrofahrzeuge deutscher Hersteller zur Reduzierung von Treibhausgasemissionen</p>
+          </div>
+          <div class="bg-base-200 p-6 rounded-lg">
+            <div class="text-primary mb-3">
+              <i class="fas fa-car text-2xl"></i>
+            </div>
+            <h3 class="font-serif font-bold text-lg mb-2">Deutsche Hersteller</h3>
+            <p class="text-secondary text-sm">Ausschließlich VW, BMW, Mercedes, Audi und Opel mit BusinessPaket-Ausstattung</p>
+          </div>
+          <div class="bg-base-200 p-6 rounded-lg">
+            <div class="text-primary mb-3">
+              <i class="fas fa-home text-2xl"></i>
+            </div>
+            <h3 class="font-serif font-bold text-lg mb-2">Private Nutzung</h3>
+            <p class="text-secondary text-sm">Erlaubte private Nutzung mit klaren Rahmenbedingungen und Steuervorteilen</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Introduction -->
+      <section id="introduction" class="mb-16">
+        <h2 class="font-serif text-3xl font-bold text-primary mb-8">1. Präambel / Einleitung</h2>
+
+        <div class="prose prose-lg max-w-none">
+          <h3 class="font-serif text-xl font-bold text-neutral mb-4">1.1 Ziel der Car Policy: CO2-Bilanzverbesserung und Förderung der E-Mobilität</h3>
+          <p class="mb-6">
+            Die vorliegende Car Policy dient der Regelung der Nutzung von Dienstfahrzeugen innerhalb des Unternehmens. Ein primäres Ziel dieser Richtlinie ist die <strong>deutliche Verbesserung der CO2-Bilanz des Unternehmens</strong> durch die gezielte Förderung von Elektromobilität. Bisher verfügte der Fuhrpark über eine signifikante Anzahl von Dieselfahrzeugen, deren CO2-Ausstoß die Umweltbilanz des Unternehmens belastete.
+          </p>
+
+          <div class="bg-blue-50 border-l-4 border-primary p-6 my-8">
+            <div class="flex items-start">
+              <i class="fas fa-quote-left text-primary text-2xl mt-1 mr-4"></i>
+              <div>
+                <p class="text-lg font-medium text-primary mb-2">Nachhaltigkeitsvision</p>
+                <p class="text-secondary">Durch die Umstellung auf Elektrofahrzeuge (BEV - Battery Electric Vehicles) soll ein aktiver Beitrag zum Umweltschutz und zur Reduzierung von Treibhausgasemissionen geleistet werden.</p>
+              </div>
+            </div>
+          </div>
+
+          <p class="mb-6">
+            Diese Strategie spiegelt das unternehmerische Bestreben wider, nachhaltige und zukunftsorientierte Mobilitätslösungen zu implementieren. Die Car Policy soll klare Rahmenbedingungen schaffen, um den Übergang zu einer klimafreundlicheren Dienstwagenflotte zu unterstützen <a href="https://www.oeko.de/fileadmin/oekodoc/WegeEMob_CarPolicy.pdf" class="citation-link" target="_blank">[43]</a>.
+          </p>
+
+          <h3 class="font-serif text-xl font-bold text-neutral mb-4">1.2 Geltungsbereich und Zielgruppe</h3>
+          <p class="mb-6">
+            Diese Car Policy gilt für alle <strong>Mitarbeiterinnen und Mitarbeiter des Unternehmens in Deutschland</strong>, denen ein Dienstwagen zur dienstlichen und privaten Nutzung überlassen wird. Die Richtlinie regelt die Voraussetzungen für den Anspruch auf einen Dienstwagen, die Auswahlkriterien für die Fahrzeuge, die Bedingungen für deren Nutzung sowie die damit verbundenen Rechte und Pflichten der Mitarbeiter <a href="https://blog.lapid.de/was-ist-eine-car-policy" class="citation-link" target="_blank">[25]</a>.
+          </p>
+        </div>
+      </section>
+
+      <!-- General Rules -->
+      <section id="general-rules" class="mb-16">
+        <h2 class="font-serif text-3xl font-bold text-primary mb-8">2. Allgemeine Regelungen</h2>
+
+        <div class="grid grid-cols-2 gap-8">
+          <div>
+            <h3 class="font-serif text-xl font-bold text-neutral mb-4">2.1 Rechtskonformität</h3>
+            <p class="mb-4 text-secondary">
+              Die Nutzung der Dienstfahrzeuge unterliegt strikt den geltenden Gesetzen und Vorschriften der Bundesrepublik Deutschland. Dies umfasst insbesondere das Straßenverkehrsgesetz (StVG), die Straßenverkehrs-Ordnung (StVO) und die Straßenverkehrs-Zulassungs-Ordnung (StVZO) <a href="https://www.arbeit-und-arbeitsrecht.de/fachmagazin/fachartikel/dienstwagen.html" class="citation-link" target="_blank">[16]</a>,
+              <a href="https://www.cmshs-bloggt.de/arbeitsrecht/dienstwagen-stvo-berufsrisiko-schnelle-fahrt-mit-folgen/" class="citation-link" target="_blank">[17]</a>.
+            </p>
+          </div>
+          <div>
+            <h3 class="font-serif text-xl font-bold text-neutral mb-4">2.2 Verantwortlichkeiten</h3>
+            <p class="mb-4 text-secondary">
+              Die <strong>Gesamtverantwortung für den Fuhrpark</strong> liegt beim Fleet Management des Unternehmens. Die Mitarbeiter tragen die Verantwortung für den pfleglichen Umgang mit dem Fahrzeug und die Einhaltung der Verkehrsvorschriften <a href="https://flotte.de/artikel/45/30/muster-einer-car-policy" class="citation-link" target="_blank">[29]</a>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Eligibility -->
+      <section id="eligibility" class="mb-16">
+        <h2 class="font-serif text-3xl font-bold text-primary mb-8">3. Anspruch auf einen Dienstwagen</h2>
+
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-8 rounded-lg mb-8">
+          <h3 class="font-serif text-xl font-bold text-neutral mb-6">Berechtigungskriterien</h3>
+          <div class="grid grid-cols-3 gap-6">
+            <div class="text-center">
+              <div class="bg-primary text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-user-tie text-2xl"></i>
+              </div>
+              <h4 class="font-bold mb-2">Position</h4>
+              <p class="text-sm text-secondary">Führungskräfte und Mitarbeiter mit repräsentativen Aufgaben</p>
+            </div>
+            <div class="text-center">
+              <div class="bg-primary text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-route text-2xl"></i>
+              </div>
+              <h4 class="font-bold mb-2">Betriebliche Notwendigkeit</h4>
+              <p class="text-sm text-secondary">Unverzichtbar für die Aufgabenerfüllung</p>
+            </div>
+            <div class="text-center">
+              <div class="bg-primary text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-id-card text-2xl"></i>
+              </div>
+              <h4 class="font-bold mb-2">Fahrerlaubnis</h4>
+              <p class="text-sm text-secondary">Gültige Fahrerlaubnis für die entsprechende Fahrzeugklasse</p>
+            </div>
+          </div>
+        </div>
+
+        <p class="text-secondary mb-6">
+          Der Anspruch auf Überlassung eines Dienstwagens wird an bestimmte, klar definierte Kriterien geknüpft. Die Entscheidung über die Gewährung eines Dienstwagens liegt im Ermessen des Unternehmens, orientiert sich jedoch an diesen festgelegten Kriterien <a href="https://blog.lapid.de/was-ist-eine-car-policy" class="citation-link" target="_blank">[25]</a>,
+          <a href="https://cdn.prod.website-files.com/66a13910f59248b30dfd47c5/670514d46ff76b3cddac2866_Avrios-EBook-CarPolicy-DE.pdf" class="citation-link" target="_blank">[60]</a>.
+        </p>
+      </section>
+
+      <!-- Vehicle Selection -->
+      <section id="vehicle-selection" class="mb-16">
+        <h2 class="font-serif text-3xl font-bold text-primary mb-8">4. Fahrzeugauswahl und -beschaffung</h2>
+
+        <div class="mb-8">
+          <h3 class="font-serif text-xl font-bold text-neutral mb-4">4.1 Beschränkung auf deutsche Hersteller</h3>
+          <p class="mb-6 text-secondary">
+            Um eine einheitliche Flottenbeschaffung und -wartung zu gewährleisten sowie aus Gründen der Unterstützung der heimischen Automobilindustrie, beschränkt sich das Unternehmen bei der Auswahl der Dienstfahrzeuge ausschließlich auf <strong>Modelle deutscher Autohersteller</strong>
+            <a href="https://blog.lapid.de/was-ist-eine-car-policy" class="citation-link" target="_blank">[25]</a>.
+          </p>
+
+          <div class="grid grid-cols-5 gap-4 mb-8">
+            <div class="bg-base-200 p-4 rounded-lg text-center">
+              <img src="https://kimi-web-img.moonshot.cn/img/www.codinter.com/89e5ea25e5abc7bfc7c3ea18db73eab1a369ddf6.png" alt="Volkswagen Logo" class="w-16 h-16 mx-auto mb-2" size="small" aspect="square" query="Volkswagen Logo" referrerpolicy="no-referrer" data-modified="1" data-score="11599.00"/>
+              <div class="font-bold">Volkswagen</div>
+              <div class="text-sm text-secondary">ID.3, ID.4, ID.5</div>
+            </div>
+            <div class="bg-base-200 p-4 rounded-lg text-center">
+              <img src="https://kimi-web-img.moonshot.cn/img/cdn.iconscout.com/dea13a47de4f3b890e5de5cacae6a12ade8c0de6.png" alt="BMW Logo" class="w-16 h-16 mx-auto mb-2" size="small" aspect="square" color="blue" style="clipart" query="BMW logo" referrerpolicy="no-referrer" data-modified="1" data-score="11599.00"/>
+              <div class="font-bold">BMW</div>
+              <div class="text-sm text-secondary">iX1, iX3, i4, iX</div>
+            </div>
+            <div class="bg-base-200 p-4 rounded-lg text-center">
+              <img src="https://kimi-web-img.moonshot.cn/img/cdn.iconscout.com/b98c1b7e54629062f3acc3a00c3689c22c139007.png" alt="Mercedes-Benz Logo" class="w-16 h-16 mx-auto mb-2" size="small" aspect="square" query="Mercedes-Benz logo" referrerpolicy="no-referrer" data-modified="1" data-score="11599.00"/>
+              <div class="font-bold">Mercedes</div>
+              <div class="text-sm text-secondary">EQA, EQB, EQC, EQE</div>
+            </div>
+            <div class="bg-base-200 p-4 rounded-lg text-center">
+              <img src="https://kimi-web-img.moonshot.cn/img/cdn.iconscout.com/b376643bb53d55a3a1aa3d980681d1220a160bcc.png" alt="Audi Logo" class="w-16 h-16 mx-auto mb-2" size="small" aspect="square" query="Audi Logo" referrerpolicy="no-referrer" data-modified="1" data-score="11599.00"/>
+              <div class="font-bold">Audi</div>
+              <div class="text-sm text-secondary">e-tron, Q4 e-tron, Q8 e-tron</div>
+            </div>
+            <div class="bg-base-200 p-4 rounded-lg text-center">
+              <img src="https://kimi-web-img.moonshot.cn/img/cdn.iconscout.com/4a8c9d4bcd0bf7ab8f5fe221b6aa8ffc4d6f9341.png" alt="Opel Logo" class="w-16 h-16 mx-auto mb-2" size="small" aspect="square" query="Opel logo" referrerpolicy="no-referrer" data-modified="1" data-score="11599.00"/>
+              <div class="font-bold">Opel</div>
+              <div class="text-sm text-secondary">Corsa-e, Mokka-e, Combo-e</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-8">
+          <h3 class="font-serif text-xl font-bold text-neutral mb-4">4.2 Fokus auf Elektrofahrzeuge (BEV)</h3>
+          <p class="mb-6 text-secondary">
+            In Übereinstimmung mit dem übergeordneten Ziel der Verbesserung der CO2-Bilanz liegt der Schwerpunkt der Fahrzeugbeschaffung auf <strong>reinen Elektrofahrzeugen (Battery Electric Vehicles - BEV)</strong>. Plug-in-Hybrid-Fahrzeuge (PHEV) werden nur in begründeten Ausnahmefällen in Betracht gezogen <a href="https://www.oeko.de/fileadmin/oekodoc/WegeEMob_CarPolicy.pdf" class="citation-link" target="_blank">[7]</a>,
+            <a href="https://www.oeko.de/fileadmin/oekodoc/WegeEMob_CarPolicy.pdf" class="citation-link" target="_blank">[43]</a>.
+          </p>
+        </div>
+
+        <div class="mb-8">
+          <h3 class="font-serif text-xl font-bold text-neutral mb-4">4.3 Maximale Leasingrate: 900 EUR + 0</h3>
+          <div class="bg-accent/10 border-l-4 border-accent p-6 rounded-lg">
+            <p class="text-secondary">
+              Die finanzielle Obergrenze für die monatliche Leasingrate eines Dienstwagens beträgt <strong>900 Euro netto (zuzüglich 0% Mehrwertsteuer, also &#34;900 EUR + 0&#34;)</strong>. Diese Leasingrate umfasst in der Regel die Kosten für das Fahrzeug selbst, die Vollkaskoversicherung, die Kfz-Steuer sowie ein Service- und Wartungspaket <a href="https://www.oeko.de/fileadmin/oekodoc/WegeEMob_CarPolicy.pdf" class="citation-link" target="_blank">[7]</a>.
+            </p>
+          </div>
+        </div>
+
+        <div class="mb-8">
+          <h3 class="font-serif text-xl font-bold text-neutral mb-4">4.4 Inkludierte BusinessPaket-Ausstattung</h3>
+          <p class="mb-4 text-secondary">
+            Alle Dienstfahrzeuge müssen mit einem <strong>&#34;BusinessPaket&#34;</strong> ausgestattet sein. Dieses Paket umfasst eine Reihe von Ausstattungsmerkmalen, die für den professionellen Einsatz der Fahrzeuge als notwendig erachtet werden:
+          </p>
+
+          <div class="grid grid-cols-2 gap-6">
+            <div class="space-y-3">
+              <div class="flex items-center">
+                <i class="fas fa-map-marked-alt text-primary mr-3"></i>
+                <span>Hochwertiges Navigationssystem</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-phone text-primary mr-3"></i>
+                <span>Freisprecheinrichtung</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-music text-primary mr-3"></i>
+                <span>Leistungsfähiges Audiosystem</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-chair text-primary mr-3"></i>
+                <span>Komfortsitze</span>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <div class="flex items-center">
+                <i class="fas fa-thermometer-half text-primary mr-3"></i>
+                <span>Klimaautomatik</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-lightbulb text-primary mr-3"></i>
+                <span>Lichtautomatik &amp; Regensensor</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-palette text-primary mr-3"></i>
+                <span>Metallic- oder Perleffektlackierung</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-box text-primary mr-3"></i>
+                <span>Ausreichend Stauraum</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Private Use -->
+      <section id="private-use" class="mb-16">
+        <h2 class="font-serif text-3xl font-bold text-primary mb-8">5. Private Nutzung des Dienstwagens</h2>
+
+        <div class="grid grid-cols-2 gap-8 mb-8">
+          <div>
+            <h3 class="font-serif text-xl font-bold text-neutral mb-4">5.1 Erlaubnis und Rahmenbedingungen</h3>
+            <p class="mb-4 text-secondary">
+              Die <strong>private Nutzung der Dienstfahrzeuge</strong> durch die berechtigten Mitarbeiter ist grundsätzlich erlaubt. Dies umfasst Fahrten zwischen Wohnung und Arbeitsstätte sowie sonstige private Fahrten ohne Kilometerbegrenzung <a href="https://flotte.de/artikel/45/30/muster-einer-car-policy" class="citation-link" target="_blank">[14]</a>.
+            </p>
+
+            <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
+              <p class="text-green-800 font-medium">Wichtig:</p>
+              <p class="text-green-700 text-sm">Die dienstliche Nutzung des Fahrzeugs hat stets Vorrang vor der privaten Nutzung.</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-serif text-xl font-bold text-neutral mb-4">5.2 Versteuerung des geldwerten Vorteils</h3>
+            <p class="mb-4 text-secondary">
+              Bei Elektrofahrzeugen, die nach dem 31.12.2018 und vor dem 01.01.2031 erstmals zugelassen werden, gilt ein <strong>ermäßigter Steuersatz für die 1%-Regelung</strong>. Der Listenpreis wird nur zu einem bestimmten Prozentsatz (zurzeit 0,25% bis Ende 2024) angesetzt, maximal jedoch auf einen Betrag von 60.000 Euro <a href="https://www.oeko.de/fileadmin/oekodoc/WegeEMob_CarPolicy.pdf" class="citation-link" target="_blank">[43]</a>.
+            </p>
+          </div>
+        </div>
+
+        <div class="mb-8">
+          <h3 class="font-serif text-xl font-bold text-neutral mb-4">5.3 Kraftstoff-/Stromkostenerstattung für Privatfahrten</h3>
+          <div class="bg-red-50 border-l-4 border-red-400 p-6 rounded-lg">
+            <p class="text-red-800 font-medium mb-2">Kostentragung:</p>
+            <p class="text-red-700">
+              Die Kosten für Strom, die im Zusammenhang mit der privaten Nutzung des Dienstwagens entstehen, werden grundsätzlich <strong>nicht vom Unternehmen erstattet</strong>. Der Mitarbeiter trägt diese Kosten selbst.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- EV Regulations -->
+      <section id="ev-regulations" class="mb-16">
+        <h2 class="font-serif text-3xl font-bold text-primary mb-8">6. Regelungen für Elektrofahrzeuge</h2>
+
+        <div class="mb-8">
+          <h3 class="font-serif text-xl font-bold text-neutral mb-4">6.1 Ladeinfrastruktur</h3>
+          <p class="mb-6 text-secondary">
+            Um den Betrieb von Elektrofahrzeugen im Dienstwagenfuhrpark zu ermöglichen und zu erleichtern, stellt das Unternehmen verschiedene Lademöglichkeiten zur Verfügung:
+          </p>
+
+          <div class="grid grid-cols-3 gap-6">
+            <div class="bg-blue-50 p-6 rounded-lg">
+              <div class="flex items-center mb-4">
+                <i class="fas fa-building text-primary text-2xl mr-3"></i>
+                <h4 class="font-bold">Arbeitsplatz</h4>
+              </div>
+              <p class="text-sm text-secondary">Ladesäulen auf dem Firmengelände für dienstliche Zwecke während der Arbeitszeit</p>
+            </div>
+            <div class="bg-green-50 p-6 rounded-lg">
+              <div class="flex items-center mb-4">
+                <i class="fas fa-home text-primary text-2xl mr-3"></i>
+                <h4 class="font-bold">Zuhause</h4>
+              </div>
+              <p class="text-sm text-secondary">Unterstützung bei der Installation privater Wallboxen, Kosten für Strom trägt Mitarbeiter</p>
+            </div>
+            <div class="bg-purple-50 p-6 rounded-lg">
+              <div class="flex items-center mb-4">
+                <i class="fas fa-charging-station text-primary text-2xl mr-3"></i>
+                <h4 class="font-bold">Öffentlich</h4>
+              </div>
+              <p class="text-sm text-secondary">Ladekarten für öffentliche Ladestationen bei Bedarf</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-8">
+          <h3 class="font-serif text-xl font-bold text-neutral mb-4">6.2 Ladekosten und Erstattung</h3>
+          <p class="mb-4 text-secondary">
+            Die Regelung der Ladekosten und deren Erstattung ist ein wesentlicher Bestandteil der E-Car Policy <a href="https://blog.lapid.de/e-car-policy-elektrofahrzeuge-im-unternehmen" class="citation-link" target="_blank">[51]</a>,
+            <a href="https://blog.lapid.de/e-car-policy-elektrofahrzeuge-im-unternehmen" class="citation-link" target="_blank">[53]</a>:
+          </p>
+
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse border border-gray-300">
+              <thead>
+                <tr class="bg-gray-50">
+                  <th class="border border-gray-300 px-4 py-2 text-left">Art der Fahrt</th>
+                  <th class="border border-gray-300 px-4 py-2 text-left">Kostenträger</th>
+                  <th class="border border-gray-300 px-4 py-2 text-left">Bemerkungen</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="border border-gray-300 px-4 py-2">Dienstliche Fahrten</td>
+                  <td class="border border-gray-300 px-4 py-2">Unternehmen</td>
+                  <td class="border border-gray-300 px-4 py-2">Vollständige Erstattung</td>
+                </tr>
+                <tr>
+                  <td class="border border-gray-300 px-4 py-2">Private Fahrten</td>
+                  <td class="border border-gray-300 px-4 py-2">Mitarbeiter</td>
+                  <td class="border border-gray-300 px-4 py-2">Keine Erstattung</td>
+                </tr>
+                <tr>
+                  <td class="border border-gray-300 px-4 py-2">Gemischte Nutzung</td>
+                  <td class="border border-gray-300 px-4 py-2">Anteilig</td>
+                  <td class="border border-gray-300 px-4 py-2">Genau Erfassung erforderlich</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Employee Duties -->
+      <section id="employee-duties" class="mb-16">
+        <h2 class="font-serif text-3xl font-bold text-primary mb-8">7. Nutzungsbedingungen und Pflichten des Mitarbeiters</h2>
+
+        <div class="grid grid-cols-2 gap-8">
+          <div>
+            <h3 class="font-serif text-xl font-bold text-neutral mb-4">7.1 Sorgfaltspflicht und Fahrzeugpflege</h3>
+            <p class="mb-4 text-secondary">
+              Jeder Mitarbeiter ist verpflichtet, mit dem Fahrzeug <strong>sorgsam und verantwortungsbewusst umzugehen</strong>. Diese Sorgfaltspflicht umfasst die regelmäßige Reinigung des Fahrzeugs sowie die Pflege der Materialien <a href="https://www.firmenauto.de/recht-steuer/halterhaftung/vorsicht-bei-der-dienstwagennutzung-die-groessten-probleme-fuer-mitarbeiter/" class="citation-link" target="_blank">[20]</a>.
+            </p>
+          </div>
+
+          <div>
+            <h3 class="font-serif text-xl font-bold text-neutral mb-4">7.2 Wartung und Reparaturen</h3>
+            <p class="mb-4 text-secondary">
+              Die <strong>termingerechte und sachgemäße Wartung</strong> ist für die Betriebssicherheit und Werterhaltung von entscheidender Bedeutung. Die Durchführung von Wartungsarbeiten darf nur durch vom Unternehmen autorisierte Werkstätten erfolgen <a href="https://www.avrios.com/de/blog/car-policy-fuer-elektro-fuhrparks-worauf-sie-achten-muessen" class="citation-link" target="_blank">[32]</a>.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-8">
+          <h3 class="font-serif text-xl font-bold text-neutral mb-4">7.3 Versicherung und Schadensregulierung</h3>
+          <p class="mb-4 text-secondary">
+            Das Unternehmen schließt für alle Dienstfahrzeuge eine <strong>Kfz-Haftpflichtversicherung sowie eine Vollkaskoversicherung</strong> ab. Der Mitarbeiter ist verpflichtet, jeden Unfall oder sonstigen Schaden am Fahrzeug unverzüglich zu melden <a href="https://www.arbeit-und-arbeitsrecht.de/fachmagazin/fachartikel/dienstwagen.html" class="citation-link" target="_blank">[16]</a>,
+            <a href="https://blog.lapid.de/was-ist-eine-car-policy" class="citation-link" target="_blank">[25]</a>.
+          </p>
+        </div>
+
+        <div class="mt-8">
+          <h3 class="font-serif text-xl font-bold text-neutral mb-4">7.4 Meldepflichten</h3>
+          <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-lg">
+            <p class="font-medium text-yellow-800 mb-2">Unverzüglich zu melden:</p>
+            <ul class="list-disc list-inside text-yellow-700 space-y-1">
+              <li>Unfälle und Schäden (auch Bagatellschäden)</li>
+              <li>Verlust der Fahrerlaubnis</li>
+              <li>Änderungen der persönlichen Verhältnisse</li>
+              <li>Technische Mängel oder Auffälligkeiten</li>
+              <li>Verlust von Zubehör oder Schlüsseln</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Co-determination -->
+      <section id="co-determination" class="mb-16">
+        <h2 class="font-serif text-3xl font-bold text-primary mb-8">8. Mitbestimmungsrecht des Betriebsrats</h2>
+
+        <div class="mb-8">
+          <h3 class="font-serif text-xl font-bold text-neutral mb-4">8.1 Einbindung des Betriebsrats</h3>
+          <p class="mb-6 text-secondary">
+            Die Einführung oder wesentliche Änderung einer Car Policy unterliegt in Deutschland, sofern ein Betriebsrat existiert, dem <strong>Mitbestimmungsrecht gemäß § 87 Abs. 1 BetrVG</strong>. Der Arbeitgeber muss den Betriebsrat bei der Gestaltung und Umsetzung der Dienstwagenordnung angemessen beteiligen <a href="https://forum.betriebsrat.de/thread/4003-hat-der-br-ein-mitbestimmungsrecht-bei-der-gestaltung-der-car-policy/" class="citation-link" target="_blank">[64]</a>.
+          </p>
+        </div>
+
+        <div class="mb-8">
+          <h3 class="font-serif text-xl font-bold text-neutral mb-4">8.2 Mitbestimmungspflichtige Bereiche</h3>
+          <p class="mb-4 text-secondary">
+            Das Mitbestimmungsrecht des Betriebsrats erstreckt sich auf mehrere zentrale Aspekte:
+          </p>
+
+          <div class="grid grid-cols-3 gap-6">
+            <div class="bg-blue-50 p-6 rounded-lg">
+              <h4 class="font-bold mb-3">Allgemeine Nutzungsregeln</h4>
+              <ul class="text-sm text-secondary space-y-2">
+                <li>• Ordnung des Betriebsablaufs</li>
+                <li>• Verhalten der Arbeitnehmer</li>
+                <li>• Tanken/Ladevorgaben</li>
+                <li>• Führerscheinkontrolle</li>
+              </ul>
+            </div>
+            <div class="bg-green-50 p-6 rounded-lg">
+              <h4 class="font-bold mb-3">Finanzielle Vorteile</h4>
+              <ul class="text-sm text-secondary space-y-2">
+                <li>• Gehaltsumwandlung</li>
+                <li>• Versteuerung</li>
+                <li>• Zuzahlungsregelungen</li>
+                <li>• Kostentragung</li>
+              </ul>
+            </div>
+            <div class="bg-purple-50 p-6 rounded-lg">
+              <h4 class="font-bold mb-3">Fahrzeugauswahl</h4>
+              <ul class="text-sm text-secondary space-y-2">
+                <li>• Joblevel-Zuordnung</li>
+                <li>• Sicherheitsstandards</li>
+                <li>• Komfortanforderungen</li>
+                <li>• Ladeinfrastruktur</li>
+              </ul>
+            </div>
+          </div>
+
+          <p class="mt-6 text-secondary">
+            Der Betriebsrat hat das Recht, darüber zu befinden, ob die vorgeschlagenen Regelungen angemessen und fair gegenüber den betroffenen Mitarbeitern sind <a href="https://www.avrios.com/de/blog/car-policy-mitbestimmungsrecht-durch-den-betriebsrat" class="citation-link" target="_blank">[63]</a>.
+          </p>
+        </div>
+      </section>
+
+      <!-- Final Provisions -->
+      <section id="final-provisions" class="mb-16">
+        <h2 class="font-serif text-3xl font-bold text-primary mb-8">9. Schlussbestimmungen</h2>
+
+        <div class="grid grid-cols-2 gap-8">
+          <div>
+            <h3 class="font-serif text-xl font-bold text-neutral mb-4">9.1 Inkrafttreten</h3>
+            <p class="mb-4 text-secondary">
+              Diese Car Policy tritt am <strong>[Datum der Unterzeichnung]</strong> in Kraft. Sie ersetzt alle vorhergehenden Regelungen und Vereinbarungen zur Dienstwagennutzung.
+            </p>
+          </div>
+
+          <div>
+            <h3 class="font-serif text-xl font-bold text-neutral mb-4">9.2 Änderungsvorbehalt</h3>
+            <p class="mb-4 text-secondary">
+              Das Unternehmen behält sich das Recht vor, diese Car Policy jederzeit zu ändern oder zu ergänzen. Die Richtlinie wird regelmäßig, mindestens jedoch alle zwei Jahre, überprüft.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-8">
+          <h3 class="font-serif text-xl font-bold text-neutral mb-4">9.3 Anlagen</h3>
+          <p class="mb-4 text-secondary">
+            Zu dieser Car Policy gehören folgende Anlagen, die Bestandteil dieser Ordnung sind:
+          </p>
+
+          <div class="bg-base-200 p-6 rounded-lg">
+            <ol class="list-decimal list-inside space-y-2 text-secondary">
+              <li>Liste förderfähiger Elektrofahrzeugmodelle deutscher Hersteller</li>
+              <li>Aktuelle Steuersätze und Regelungen zur Versteuerung</li>
+              <li>Ladevorgaben und -empfehlungen für Elektrofahrzeuge</li>
+              <li>Details zum BusinessPaket</li>
+              <li>Muster Dienstwagenüberlassungsvertrag</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <!-- Decision Tree Diagram -->
+      <section class="mb-16">
+        <h3 class="font-serif text-2xl font-bold text-primary mb-6">Entscheidungsbaum: Dienstwagen-Anspruch</h3>
+        <div class="mermaid-container">
+          <div class="mermaid-controls">
+            <button class="mermaid-control-btn zoom-in" title="放大">
+              <i class="fas fa-search-plus"></i>
+            </button>
+            <button class="mermaid-control-btn zoom-out" title="缩小">
+              <i class="fas fa-search-minus"></i>
+            </button>
+            <button class="mermaid-control-btn reset-zoom" title="重置">
+              <i class="fas fa-expand-arrows-alt"></i>
+            </button>
+            <button class="mermaid-control-btn fullscreen" title="全屏查看">
+              <i class="fas fa-expand"></i>
+            </button>
+          </div>
+          <div class="mermaid">
+            flowchart TD
+            A[&#34;Mitarbeiter beantragt Dienstwagen&#34;] --&gt; B{&#34;Position/Funktion?&#34;}
+            B --&gt;|&#34;Führungskraft&#34;| C{&#34;Betriebliche Notwendigkeit?&#34;}
+            B --&gt;|&#34;Außendienst&#34;| C
+            B --&gt;|&#34;Andere Position&#34;| D[&#34;Kein Anspruch&#34;]
+            C --&gt;|&#34;Ja&#34;| E{&#34;Gültige Fahrerlaubnis?&#34;}
+            C --&gt;|&#34;Nein&#34;| D
+            E --&gt;|&#34;Ja&#34;| F[&#34;Dienstwagen wird bewilligt
+            <br/>Max. 900€ + 0 Leasingrate
+            <br/>Nur deutsche BEV
+            <br/>Mit BusinessPaket&#34;]
+            E --&gt;|&#34;Nein&#34;| G[&#34;Führerschein erforderlich&#34;]
+
+            style A fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
+            style F fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000
+            style D fill:#ffebee,stroke:#d32f2f,stroke-width:2px,color:#000
+            style G fill:#ffebee,stroke:#d32f2f,stroke-width:2px,color:#000
+            style B fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
+            style C fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
+            style E fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="border-t border-base-300 pt-8 mt-16">
+        <div class="text-center text-secondary text-sm">
+          <p class="mb-2">Diese Car Policy dient als Rahmenrichtlinie für die Dienstwagennutzung in mittelständischen Unternehmen.</p>
+          <p>Stand: Juli 2025 | Gültig bis zur nächsten Überprüfung</p>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#dbeafe',
+                primaryTextColor: '#1f2937',
+                primaryBorderColor: '#1e40af',
+                lineColor: '#6b7280',
+                background: '#ffffff',
+                secondaryColor: '#f3f4f6',
+                tertiaryColor: '#fef3c7',
+                // Improved contrast settings
+                nodeBkg: '#ffffff',
+                nodeTextColor: '#1f2937',
+                edgeLabelBackground: '#ffffff',
+                clusterBkg: '#f8fafc',
+                clusterBorder: '#e2e8f0',
+                // Font settings
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '14px'
+            },
+            flowchart: {
+                useMaxWidth: false,
+                htmlLabels: true,
+                curve: 'basis',
+                padding: 20
+            },
+            fontFamily: 'Inter, sans-serif'
+        });
+
+        // Initialize Mermaid Controls for zoom and pan
+        function initializeMermaidControls() {
+            const containers = document.querySelectorAll('.mermaid-container');
+
+            containers.forEach(container => {
+            const mermaidElement = container.querySelector('.mermaid');
+            let scale = 1;
+            let isDragging = false;
+            let startX, startY, translateX = 0, translateY = 0;
+
+            // 触摸相关状态
+            let isTouch = false;
+            let touchStartTime = 0;
+            let initialDistance = 0;
+            let initialScale = 1;
+            let isPinching = false;
+
+            // Zoom controls
+            const zoomInBtn = container.querySelector('.zoom-in');
+            const zoomOutBtn = container.querySelector('.zoom-out');
+            const resetBtn = container.querySelector('.reset-zoom');
+            const fullscreenBtn = container.querySelector('.fullscreen');
+
+            function updateTransform() {
+                mermaidElement.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+
+                if (scale > 1) {
+                container.classList.add('zoomed');
+                } else {
+                container.classList.remove('zoomed');
+                }
+
+                mermaidElement.style.cursor = isDragging ? 'grabbing' : 'grab';
+            }
+
+            if (zoomInBtn) {
+                zoomInBtn.addEventListener('click', () => {
+                scale = Math.min(scale * 1.25, 4);
+                updateTransform();
+                });
+            }
+
+            if (zoomOutBtn) {
+                zoomOutBtn.addEventListener('click', () => {
+                scale = Math.max(scale / 1.25, 0.3);
+                if (scale <= 1) {
+                    translateX = 0;
+                    translateY = 0;
+                }
+                updateTransform();
+                });
+            }
+
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                scale = 1;
+                translateX = 0;
+                translateY = 0;
+                updateTransform();
+                });
+            }
+
+            if (fullscreenBtn) {
+                fullscreenBtn.addEventListener('click', () => {
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen();
+                } else if (container.msRequestFullscreen) {
+                    container.msRequestFullscreen();
+                }
+                });
+            }
+
+            // Mouse Events
+            mermaidElement.addEventListener('mousedown', (e) => {
+                if (isTouch) return; // 如果是触摸设备，忽略鼠标事件
+
+                isDragging = true;
+                startX = e.clientX - translateX;
+                startY = e.clientY - translateY;
+                mermaidElement.style.cursor = 'grabbing';
+                updateTransform();
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging && !isTouch) {
+                translateX = e.clientX - startX;
+                translateY = e.clientY - startY;
+                updateTransform();
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDragging && !isTouch) {
+                isDragging = false;
+                mermaidElement.style.cursor = 'grab';
+                updateTransform();
+                }
+            });
+
+            document.addEventListener('mouseleave', () => {
+                if (isDragging && !isTouch) {
+                isDragging = false;
+                mermaidElement.style.cursor = 'grab';
+                updateTransform();
+                }
+            });
+
+            // 获取两点之间的距离
+            function getTouchDistance(touch1, touch2) {
+                return Math.hypot(
+                touch2.clientX - touch1.clientX,
+                touch2.clientY - touch1.clientY
+                );
+            }
+
+            // Touch Events - 触摸事件处理
+            mermaidElement.addEventListener('touchstart', (e) => {
+                isTouch = true;
+                touchStartTime = Date.now();
+
+                if (e.touches.length === 1) {
+                // 单指拖动
+                isPinching = false;
+                isDragging = true;
+
+                const touch = e.touches[0];
+                startX = touch.clientX - translateX;
+                startY = touch.clientY - translateY;
+
+                } else if (e.touches.length === 2) {
+                // 双指缩放
+                isPinching = true;
+                isDragging = false;
+
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                initialDistance = getTouchDistance(touch1, touch2);
+                initialScale = scale;
+                }
+
+                e.preventDefault();
+            }, { passive: false });
+
+            mermaidElement.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 1 && isDragging && !isPinching) {
+                // 单指拖动
+                const touch = e.touches[0];
+                translateX = touch.clientX - startX;
+                translateY = touch.clientY - startY;
+                updateTransform();
+
+                } else if (e.touches.length === 2 && isPinching) {
+                // 双指缩放
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                const currentDistance = getTouchDistance(touch1, touch2);
+
+                if (initialDistance > 0) {
+                    const newScale = Math.min(Math.max(
+                    initialScale * (currentDistance / initialDistance),
+                    0.3
+                    ), 4);
+                    scale = newScale;
+                    updateTransform();
+                }
+                }
+
+                e.preventDefault();
+            }, { passive: false });
+
+            mermaidElement.addEventListener('touchend', (e) => {
+                // 重置状态
+                if (e.touches.length === 0) {
+                isDragging = false;
+                isPinching = false;
+                initialDistance = 0;
+
+                // 延迟重置isTouch，避免鼠标事件立即触发
+                setTimeout(() => {
+                    isTouch = false;
+                }, 100);
+                } else if (e.touches.length === 1 && isPinching) {
+                // 从双指变为单指，切换为拖动模式
+                isPinching = false;
+                isDragging = true;
+
+                const touch = e.touches[0];
+                startX = touch.clientX - translateX;
+                startY = touch.clientY - translateY;
+                }
+
+                updateTransform();
+            });
+
+            mermaidElement.addEventListener('touchcancel', (e) => {
+                isDragging = false;
+                isPinching = false;
+                initialDistance = 0;
+
+                setTimeout(() => {
+                isTouch = false;
+                }, 100);
+
+                updateTransform();
+            });
+
+            // Enhanced wheel zoom with better center point handling
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const rect = container.getBoundingClientRect();
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const delta = e.deltaY > 0 ? 0.9 : 1.1;
+                const newScale = Math.min(Math.max(scale * delta, 0.3), 4);
+
+                // Adjust translation to zoom towards center
+                if (newScale !== scale) {
+                const scaleDiff = newScale / scale;
+                translateX = translateX * scaleDiff;
+                translateY = translateY * scaleDiff;
+                scale = newScale;
+
+                if (scale <= 1) {
+                    translateX = 0;
+                    translateY = 0;
+                }
+
+                updateTransform();
+                }
+            });
+
+            // Initialize display
+            updateTransform();
+            });
+        }
+
+        // Initialize Mermaid Controls when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMermaidControls();
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Highlight active section in TOC
+        const observerOptions = {
+            rootMargin: '-20% 0px -60% 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const id = entry.target.getAttribute('id');
+                const tocLink = document.querySelector(`nav a[href="#${id}"]`);
+                
+                if (entry.isIntersecting) {
+                    // Remove active class from all links
+                    document.querySelectorAll('nav a').forEach(link => {
+                        link.classList.remove('text-primary', 'font-semibold');
+                        link.classList.add('text-secondary');
+                    });
+                    
+                    // Add active class to current link
+                    if (tocLink) {
+                        tocLink.classList.remove('text-secondary');
+                        tocLink.classList.add('text-primary', 'font-semibold');
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('section[id]').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+  
+
+</body></html>

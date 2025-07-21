@@ -1,310 +1,258 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <title>Übersichtsseite CDR</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        html { box-sizing: border-box; }
-        *, *:before, *:after { box-sizing: inherit; }
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f6f8fa;
-            overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
-        }
-        h1 {
-            text-align: center;
-            font-size: 2.4rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            margin-top: 2.5rem;
-            margin-bottom: 2rem;
-            color: #212529;
-        }
-        .weather-section {
-            width: 100%;
-            max-width: 740px;
-            margin: 0 auto 2.5rem auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .weather-section-title {
-            text-align: center;
-            font-size: 1.17rem;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            color: #24496c;
-            margin-bottom: 0.9rem;
-            margin-top: 0;
-        }
-        .weather-container {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-            width: 100%;
-        }
-        .weather-card {
-            background: #e8f0fd;
-            border-radius: 15px;
-            box-shadow: 0 4px 14px rgba(100,120,160,0.09);
-            padding: 1.3rem 1.4rem;
-            min-width: 160px;
-            max-width: 220px;
-            text-align: center;
-            font-size: 1.13rem;
-            color: #18426b;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: box-shadow 0.18s cubic-bezier(.23,1.02,.44,.99);
-        }
-        .weather-card strong {
-            font-size: 1.13rem;
-            letter-spacing: 0.2px;
-        }
-        .weather-card .weather-icon {
-            font-size: 2.3rem;
-            margin-bottom: 0.2rem;
-        }
-        .weather-card .temp {
-            font-size: 1.6rem;
-            font-weight: bold;
-            margin: 0.3rem 0 0.2rem 0;
-        }
-        .page-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
-            width: 100%;
-            max-width: 480px;
-            margin: 0 auto;
-            padding-bottom: 48px;
-        }
-        .card {
-            background: #fff;
-            padding: 1.5rem 2rem;
-            border-radius: 18px;
-            box-shadow: 0 6px 24px rgba(60,60,90,0.09), 0 1.5px 6px rgba(0,0,0,0.05);
-            text-decoration: none;
-            color: #191a1c;
-            width: 100%;
-            max-width: 450px;
-            min-height: 56px;
-            transition: transform 0.18s cubic-bezier(.23,1.02,.44,.99), box-shadow 0.18s cubic-bezier(.23,1.02,.44,.99);
-            display: block;
-            text-align: center;    /* <- HIER geändert */
-            border: none;
-        }
-        .card:hover, .card:focus {
-            transform: translateY(-8px) scale(1.035);
-            box-shadow: 0 16px 36px rgba(40,40,80,0.18), 0 3px 14px rgba(0,0,0,0.08);
-            outline: none;
-        }
-        .card h2 {
-            margin: 0 0 0.5rem 0;
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #1b2836;
-        }
-        .card p {
-            margin: 0;
-            font-size: 1.06rem;
-            color: #495567;
-        }
+  <meta charset="UTF-8">
+  <title>Übersichtsseite CDR</title>
 
-        /* --- Responsive Anpassungen --- */
-        @media (max-width: 650px) {
-            h1 { font-size: 2rem; }
-            .page-container { max-width: 99vw; gap: 1.2rem; }
-            .card { max-width: 99vw; padding: 1.1rem 1rem; min-height: 48px; }
-            .card h2 { font-size: 1.12rem; }
-            .card p { font-size: 0.97rem; }
-            .weather-container { gap: 1rem; }
-            .weather-card { padding: 1rem 0.7rem; min-width: 120px; font-size: 1.01rem; }
-            .weather-section { max-width: 99vw; }
-        }
-        @media (max-width: 400px) {
-            h1 { font-size: 1.36rem; margin-top: 1.2rem; margin-bottom: 1.1rem; }
-            .page-container { gap: 0.8rem; padding-bottom: 16px; }
-            .card {
-                padding: 0.8rem 0.4rem;
-                min-height: 42px;
-                border-radius: 12px;
-            }
-            .card h2 { font-size: 1rem; }
-            .card p { font-size: 0.9rem; }
-            .weather-container { gap: 0.4rem; }
-            .weather-card {
-                padding: 0.7rem 0.3rem;
-                min-width: 90px;
-                font-size: 0.95rem;
-                border-radius: 9px;
-            }
-            .weather-card .weather-icon { font-size: 1.5rem; }
-            .weather-card .temp { font-size: 1.1rem; }
-        }
-    </style>
-    <script src="https://cdn.counter.dev/script.js" data-id="c55f398c-81ad-4cef-8a9a-449fb17f72e2" data-utcoffset="2"></script>
+  <!-- Progressive Enhancement für Mobile und Dark Mode -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">        <!-- erlaubt Browser‐UI Anpassung [35] -->
+  <meta name="theme-color" content="#24496c" media="(prefers-color-scheme: light)"> <!-- hell -->
+  <meta name="theme-color" content="#0d1520" media="(prefers-color-scheme: dark)">  <!-- dunkel [23] -->
+
+  <!-- Kritisches CSS direkt im Head für schnellen First Paint [11] -->
+  <style>
+    /* ======= Grundlegende Variablen ======= */
+    :root {
+      --bg-light: #f6f8fa;
+      --bg-dark : #0d1520;
+      --card-light: #ffffff;
+      --card-dark : #192534;
+      --accent    : #24496c;
+      --text-main : #212529;
+      --text-dark : #d5dee9;
+      --radius-lg : 18px;
+      --radius-md : 12px;
+      --gap-lg    : 2rem;
+      --gap-md    : 1rem;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-light : var(--bg-dark);
+        --card-light: var(--card-dark);
+        --text-main : var(--text-dark);
+      }
+    }
+
+    /* ======= Base Layout ======= */
+    *,*::before,*::after { box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family:"Segoe UI",Arial,sans-serif;
+      background:var(--bg-light);
+      color:var(--text-main);
+      overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    h1{
+      text-align:center;
+      font-size:2.2rem;
+      font-weight:700;
+      margin:2.3rem 0 1.8rem;
+      letter-spacing:.4px;
+    }
+
+    /* ======= Wetter-Sektion ======= */
+    .weather-section{
+      max-width:740px;
+      margin:0 auto 2.5rem;
+      text-align:center;
+    }
+    .weather-header{
+      font-size:1.17rem;
+      font-weight:600;
+      color:var(--accent);
+      margin-bottom:.9rem;
+    }
+    .weather-container{
+      display:flex;
+      gap:1.5rem;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    .weather-card{
+      background:#e8f0fd;
+      border-radius:var(--radius-md);
+      box-shadow:0 4px 14px rgba(100,120,160,.09);
+      padding:1.2rem 1.3rem;
+      min-width:150px;
+      text-align:center;
+      color:#18426b;
+    }
+    .weather-icon{ font-size:2.2rem; }
+    .weather-temp{ font-size:1.55rem; font-weight:700; }
+
+    /* ======= Link-Karten ======= */
+    .grid{
+      display:grid;
+      gap:var(--gap-lg);
+      width:100%;
+      max-width:980px;
+      margin:0 auto 48px;
+      padding:0 var(--gap-md);
+      grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); /* Responsive Grid ohne Media-Queries [18][32] */
+    }
+
+    .card{
+      display:block;
+      text-decoration:none;
+      background:var(--card-light);
+      color:inherit;
+      padding:1.6rem 1.8rem;
+      border-radius:var(--radius-lg);
+      box-shadow:0 6px 24px rgba(60,60,90,.08),0 1.5px 6px rgba(0,0,0,.04);
+      transition:transform .16s ease,box-shadow .16s ease;
+      text-align:center;
+      min-height:56px;
+    }
+    .card:hover,.card:focus{
+      transform:translateY(-6px) scale(1.025);
+      box-shadow:0 14px 32px rgba(40,40,80,.18),0 3px 14px rgba(0,0,0,.08);
+      outline:none;
+    }
+    .card h2{ margin:0 0 .45rem; font-size:1.25rem; font-weight:700; }
+    .card p { margin:0; font-size:1.05rem; color:#495567; }
+
+    /* ======= Responsive Feinschliff ======= */
+    @media (max-width:650px){
+      h1{font-size:1.9rem;margin-top:1.8rem;}
+      .grid{gap:var(--gap-md);}
+      .card{padding:1.2rem 1rem;}
+    }
+    @media (max-width:400px){
+      h1{font-size:1.4rem;margin-top:1.2rem;}
+      .card{padding:.9rem .6rem;border-radius:var(--radius-md);}
+      .card h2{font-size:1.05rem;}
+      .card p {font-size:.9rem;}
+      .weather-container{gap:.6rem;}
+      .weather-card{min-width:110px;padding:.9rem .6rem;border-radius:10px;}
+    }
+  </style>
+
+  <!-- schlanker Besucherzähler (Laufzeit ≈ 0 ms) -->
+  <script src="https://cdn.counter.dev/script.js" data-id="c55f398c-81ad-4cef-8a9a-449fb17f72e2" data-utcoffset="2" defer></script>
 </head>
 <body>
-    <h1>Übersichtsseite CDR</h1>
+  <h1>Übersichtsseite CDR</h1>
 
-    <!-- Wetterüberschrift und Wetterkarten -->
-    <div class="weather-section">
-        <div class="weather-section-title">Aktuelles Wetter</div>
-        <div class="weather-container" id="weather-container">
-            <!-- Wird per JS gefüllt -->
-        </div>
-    </div>
+  <!-- ================= Wetter ================ -->
+  <section class="weather-section">
+    <div class="weather-header">Aktuelles Wetter</div>
+    <div id="weather-container" class="weather-container" aria-live="polite"></div>
+  </section>
 
-    <div class="page-container">
-        <a class="card" href="agadir_reiseplan.html" target="_blank" rel="noopener">
-            <h2>Agadir Reiseplan</h2>
-            <p>Interaktive Reiseübersicht</p>
-        </a>
-        <a class="card" href="agadir_reiseplan2.html" target="_blank" rel="noopener">
-            <h2>Agadir Reiseplan 2</h2>
-            <p>Erweiterte Reiseübersicht</p>
-        </a>
-        <a class="card" href="CarPolice.html" target="_blank" rel="noopener">
-            <h2>Car Policy 100 Fahrzeuge Beispiel</h2>
-            <p>Dienstwagen-Richtlinie erstellen</p>
-        </a>
-        <a class="card" href="rotierendes-oktagon-mit-ball.html" target="_blank" rel="noopener">
-            <h2>Rotierendes Oktagon mit Ball</h2>
-            <p>Zur Demo</p>
-        </a>
-        <a class="card" href="MangaJapanCL.html" target="_blank" rel="noopener">
-            <h2>MangaJapanCL</h2>
-            <p>Fotogalerie</p>
-        </a>
-        <a class="card" href="https://gimini-app-black.vercel.app/" target="_blank" rel="noopener">
-            <h2>Geschichtenerzähler</h2>
-            <p>Externe Seite</p>
-        </a>
-        <a class="card" href="https://japan2025-mauve.vercel.app/" target="_blank" rel="noopener">
-            <h2>Japan Plan 2025</h2>
-            <p>Interaktiver Reiseplan</p>
-        </a>
-        <a class="card" href="3derde.html" target="_blank" rel="noopener">
-            <h2>3D Erde</h2>
-            <p>Interaktive 3D Erde</p>
-        </a>
-        <a class="card" href="Kugel3D.html" target="_blank" rel="noopener">
-            <h2>Kugel 3D</h2>
-            <p>3D Kugel Demo</p>
-        </a>
-        <!-- NEUES QUIZ -->
-        <a class="card" href="explore_quiz.html" target="_blank" rel="noopener">
-            <h2>Explore Quiz</h2>
-            <p>Länder & Flaggen Quiz-App</p>
-        </a>
-        <a class="card" href="snake.html" target="_blank" rel="noopener">
-            <h2>Snake Spiel</h2>
-            <p>Klassisches Snake-Spiel</p>
-        </a>
-        <a class="card" href="EndlessRunner.html" target="_blank" rel="noopener">
-            <h2>Endless Runner</h2>
-            <p>Kleines Laufspiel</p>
-        </a>
-        <a class="card" href="personality_test.html" target="_blank" rel="noopener">
-            <h2>Persönlichkeitstest</h2>
-            <p>Finde deinen Typ heraus</p>
-        </a>
-        <a class="card" href="DungeonSpiel.html" target="_blank" rel="noopener">
-            <h2>Dungeon Spiel</h2>
-            <p>Rogue-like Abenteuer</p>
-        </a>
-        <a class="card" href="MemoryCardGame.html" target="_blank" rel="noopener">
-            <h2>Memory Card Game</h2>
-            <p>Kartenpaare finden</p>
-        </a>
-        <a class="card" href="Lavalampe.html" target="_blank" rel="noopener">
-            <h2>Virtuelle Lavalampe</h2>
-            <p>Hypnotische Animationen</p>
-        </a>
-        <a class="card" href="retrosnow1.html" target="_blank" rel="noopener">
-            <h2>Jon Snow Retro Battle</h2>
-            <p>Retro-Schlacht</p>
-        </a>
-        <a class="card" href="ArcticDriftEndlessSnowboarder.html" target="_blank" rel="noopener">
-            <h2>Arctic Drift</h2>
-            <p>Endlos Snowboarden</p>
-        </a>
-        <a class="card" href="NeonByte-Racer.html" target="_blank" rel="noopener">
-            <h2>Neon Byte-Racer</h2>
-            <p>Futuristisches Rennspiel</p>
-        </a>
-        <a class="card" href="OrbMiner.html" target="_blank" rel="noopener">
-            <h2>Orb Miner</h2>
-            <p>Sammle wertvolle Orbs</p>
-        </a>
-        <a class="card" href="GlitchGhost.html" target="_blank" rel="noopener">
-            <h2>Glitch Ghost</h2>
-            <p>Weiche den Geistern aus</p>
-        </a>
-        <a class="card" href="PocketDungeon.html" target="_blank" rel="noopener">
-            <h2>Pocket Dungeon</h2>
-            <p>Winziges Dungeon-Abenteuer</p>
-        </a>
-    </div>
+  <!-- ================= Link-Raster ================ -->
+  <main class="grid">
+    <!--  Liste automatisch sortieren – kürzere Sektion = besser Scroll-Ergonomie  -->
+    <a class="card" href="agadir_reiseplan.html" target="_blank" rel="noopener">
+      <h2>Agadir Reiseplan</h2><p>Interaktive Reiseübersicht</p>
+    </a>
+    <a class="card" href="agadir_reiseplan2.html" target="_blank" rel="noopener">
+      <h2>Agadir Reiseplan 2</h2><p>Erweiterte Reiseübersicht</p>
+    </a>
+    <a class="card" href="CarPolice.html" target="_blank" rel="noopener">
+      <h2>Car Policy 100 Fahrzeuge</h2><p>Dienstwagen-Richtlinie</p>
+    </a>
+    <a class="card" href="rotierendes-oktagon-mit-ball.html" target="_blank" rel="noopener">
+      <h2>Oktagon + Ball</h2><p>Canvas Demo</p>
+    </a>
+    <a class="card" href="MangaJapanCL.html" target="_blank" rel="noopener">
+      <h2>MangaJapanCL</h2><p>Fotogalerie</p>
+    </a>
+    <a class="card" href="https://gimini-app-black.vercel.app/" target="_blank" rel="noopener">
+      <h2>Geschichtenerzähler</h2><p>Externe App</p>
+    </a>
+    <a class="card" href="https://japan2025-mauve.vercel.app/" target="_blank" rel="noopener">
+      <h2>Japan Plan 2025</h2><p>Interaktiver Reiseplan</p>
+    </a>
+    <a class="card" href="3derde.html" target="_blank" rel="noopener">
+      <h2>3D Erde</h2><p>WebGL Demo</p>
+    </a>
+    <a class="card" href="Kugel3D.html" target="_blank" rel="noopener">
+      <h2>Kugel 3D</h2><p>Three.js Beispiel</p>
+    </a>
+    <a class="card" href="explore_quiz.html" target="_blank" rel="noopener">
+      <h2>Explore Quiz</h2><p>Flaggen-Spiel</p>
+    </a>
+    <!-- ===== Spiele  ===== -->
+    <a class="card" href="snake.html" target="_blank" rel="noopener">
+      <h2>Snake</h2><p>Klassiker</p>
+    </a>
+    <a class="card" href="EndlessRunner.html" target="_blank" rel="noopener">
+      <h2>Endless Runner</h2><p>Laufspiel</p>
+    </a>
+    <a class="card" href="personality_test.html" target="_blank" rel="noopener">
+      <h2>Persönlichkeitstest</h2><p>Typ-Analyse</p>
+    </a>
+    <a class="card" href="DungeonSpiel.html" target="_blank" rel="noopener">
+      <h2>Dungeon Spiel</h2><p>Rogue-like</p>
+    </a>
+    <a class="card" href="MemoryCardGame.html" target="_blank" rel="noopener">
+      <h2>Memory Game</h2><p>Kartenpaare</p>
+    </a>
+    <a class="card" href="Lavalampe.html" target="_blank" rel="noopener">
+      <h2>Virtuelle Lavalampe</h2><p>Hypnotische Animation</p>
+    </a>
+    <a class="card" href="retrosnow1.html" target="_blank" rel="noopener">
+      <h2>Retro Battle</h2><p>8-bit Action</p>
+    </a>
+    <a class="card" href="ArcticDriftEndlessSnowboarder.html" target="_blank" rel="noopener">
+      <h2>Arctic Drift</h2><p>Snowboard Endless</p>
+    </a>
+    <a class="card" href="NeonByte-Racer.html" target="_blank" rel="noopener">
+      <h2>Neon Byte-Racer</h2><p>Futuristisches Rennen</p>
+    </a>
+    <a class="card" href="OrbMiner.html" target="_blank" rel="noopener">
+      <h2>Orb Miner</h2><p>Sammel-Game</p>
+    </a>
+    <a class="card" href="GlitchGhost.html" target="_blank" rel="noopener">
+      <h2>Glitch Ghost</h2><p>Geister ausweichen</p>
+    </a>
+    <a class="card" href="PocketDungeon.html" target="_blank" rel="noopener">
+      <h2>Pocket Dungeon</h2><p>Mini-Abenteuer</p>
+    </a>
+  </main>
 
-    <script>
-    // Wetter-Icons je nach Wettercode Open-Meteo
-    function weatherIcon(code) {
-        if ([0].includes(code)) return '☀️';
-        if ([1].includes(code)) return '🌤️';
-        if ([2,3].includes(code)) return '⛅';
-        if ([45,48].includes(code)) return '🌫️';
-        if (code >= 51 && code <= 67) return '🌧️';
-        if (code >= 71 && code <= 77) return '❄️';
-        if (code >= 80 && code <= 82) return '🌦️';
-        if (code >= 95 && code <= 99) return '⛈️';
-        return '☁️';
+  <!-- ================= JS: Mini-Wetter ================ -->
+  <script>
+    /* Einfache Icon-Zuordnung (Open-Meteo Codes) */
+    const icon = c =>       ([0]      .includes(c)?'☀️':
+                             [1]      .includes(c)?'🌤️':
+                             [2,3]    .includes(c)?'⛅':
+                             [45,48]  .includes(c)?'🌫️':
+                             (c>=51&&c<=67)?'🌧️':
+                             (c>=71&&c<=77)?'❄️':
+                             (c>=80&&c<=82)?'🌦️':
+                             (c>=95&&c<=99)?'⛈️':'☁️');
+
+    async function fetchWeather(city,lat,lon){
+      const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+      try{
+        const r=await fetch(url);
+        const j=await r.json();
+        const {temperature,weathercode}=j.current_weather;
+        return {city,temp:Math.round(temperature),code:weathercode};
+      }catch(_){return {city,temp:'?',code:1};}
     }
 
-    async function getWeather(city, lat, lon) {
-        try {
-            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
-            const res = await fetch(url);
-            const data = await res.json();
-            const temp = Math.round(data.current_weather.temperature);
-            const code = data.current_weather.weathercode;
-            return {
-                city,
-                temp,
-                icon: weatherIcon(code)
-            };
-        } catch {
-            return { city, temp: "?", icon: "?" }
-        }
-    }
-
-    async function showWeather() {
-        const cities = [
-            { name: 'Hamburg', lat: 53.55, lon: 10.00 },
-            { name: 'Aveiro', lat: 40.64, lon: -8.65 },
-            { name: 'Tokio', lat: 35.68, lon: 139.76 }
-        ];
-        const weatherData = await Promise.all(
-            cities.map(c => getWeather(c.name, c.lat, c.lon))
-        );
-        const html = weatherData.map(w =>
-            `<div class="weather-card">
-                <strong>${w.city}</strong>
-                <span class="weather-icon">${w.icon}</span>
-                <span class="temp">${w.temp}°C</span>
-            </div>`
-        ).join('');
-        document.getElementById('weather-container').innerHTML = html;
-    }
-    showWeather();
-    </script>
+    (async()=>{
+      const cities=[
+        {name:'Hamburg',lat:53.55,lon:10.0},
+        {name:'Aveiro', lat:40.64,lon:-8.65},
+        {name:'Tokio',  lat:35.68,lon:139.76}
+      ];
+      const data=await Promise.all(cities.map(c=>fetchWeather(c.name,c.lat,c.lon)));
+      document.getElementById('weather-container').innerHTML=
+        data.map(d=>`
+          <div class="weather-card">
+            <strong>${d.city}</strong>
+            <span class="weather-icon">${icon(d.code)}</span>
+            <span class="weather-temp">${d.temp}°C</span>
+          </div>
+        `).join('');
+    })();
+  </script>
 </body>
 </html>

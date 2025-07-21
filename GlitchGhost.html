@@ -1,5 +1,5 @@
 <!DOCTYPE html><html><head><title>Glitch Ghost</title><style>body{margin:0;background:#000}canvas{border:2px solid #555}</style></head>
-<body><canvas id="tic" width="240" height="136"></canvas>
+<body><canvas id="tic" width="240" height="136" style="width: 720px; height: 408px; image-rendering: pixelated;"></canvas>
 <script>
 const c=document.getElementById('tic'),ctx=c.getContext('2d'),k={};onkeydown=e=>k[e.code]=1;onkeyup=e=>k[e.code]=0;
 let p={x:120,y:68},ghosts=[],t=60*60,flash=0;

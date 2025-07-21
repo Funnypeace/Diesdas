@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jon Snow Retro Battle</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #000;
+            color: #fff;
+            font-family: monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        canvas {
+            border: 2px solid #555;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        .info {
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="game"></canvas>
+    <div class="info">
+        ARROWS: Move | X: Attack | R: Restart
+    </div>
+
+    <script>
+        // TIC-80 Web Player minimal implementation
+        const canvas = document.getElementById('game');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 240;
+        canvas.height = 136;
+
+        // Game state
+        let gameTime = 0;
+        let scene = 0;
+        let jon = {
+            x: 20,
+            y: 100,
+            frame: 0,
+            attacking: false,
+            attackTimer: 0
+        };
+        let wights = [];
+        let snowflakes = [];
+        let victoryTimer = 0;
+
+        // Initialize snowflakes
+        for (let i = 0; i < 50; i++) {
+            snowflakes.push({
+                x: Math.random() * 240,
+                y: Math.random() * 136,
+                speed: Math.random() * 2 + 1
+            });
+        }
+
+        // Spawn wights
+        function spawnWights() {
+            wights = [];
+            for (let i = 0; i < 3; i++) {
+                wights.push({
+                    x: 200 + i * 40,
+                    y: 100,
+                    frame: 0,
+                    dead: false,
+                    deathTimer: 0
+                });
+            }
+        }
+
+        // Palette
+        const colors = {
+            bg: 0x223366,
+            snow: 0xFFFFFF,
+            jon: 0x222222,
+            skin: 0xDDAA88,
+            sword: 0x888888,
+            wight: 0x4455AA,
+            torch: 0xFFAA00
+        };
+
+        // Input
+        const keys = {};
+        document.addEventListener('keydown', (e) => keys[e.code] = true);
+        document.addEventListener('keyup', (e) => keys[e.code] = false);
+
+        // Draw pixelated character
+        function drawJon(x, y, frame, attacking) {
+            // Cloak
+            ctx.fillStyle = '#' + colors.jon.toString(16).padStart(6, '0');
+            ctx.fillRect(x-4, y-12, 8, 20);
+            
+            // Head
+            ctx.fillStyle = '#' + colors.skin.toString(16).padStart(6, '0');
+            ctx.fillRect(x-2, y-16, 4, 6);
+            
+            // Hair
+            ctx.fillStyle = '#' + colors.jon.toString(16).padStart(6, '0');
+            ctx.fillRect(x-3, y-18, 6, 4);
+            
+            // Sword
+            if (attacking) {
+                ctx.fillStyle = '#' + colors.sword.toString(16).padStart(6, '0');
+                ctx.fillRect(x+6, y-10, 1, 12);
+            } else {
+                ctx.fillStyle = '#' + colors.sword.toString(16).padStart(6, '0');
+                ctx.fillRect(x-1, y-2, 2, 10);
+            }
+        }
+
+        function drawWight(x, y, frame, dead) {
+            if (dead) {
+                // Death animation - exploding pixels
+                for (let i = 0; i < 8; i++) {
+                    let px = x + (Math.random() - 0.5) * 16;
+                    let py = y + (Math.random() - 0.5) * 16;
+                    ctx.fillStyle = '#' + colors.wight.toString(16).padStart(6, '0');
+                    ctx.fillRect(px, py, 1, 1);
+                }
+                return;
+            }
+            
+            // Body
+            ctx.fillStyle = '#' + colors.wight.toString(16).padStart(6, '0');
+            ctx.fillRect(x-3, y-10, 6, 16);
+            
+            // Head
+            ctx.fillStyle = '#' + colors.wight.toString(16).padStart(6, '0');
+            ctx.fillRect(x-2, y-14, 4, 6);
+            
+            // Arms
+            ctx.fillRect(x-6, y-8, 3, 2);
+            ctx.fillRect(x+3, y-8, 3, 2);
+        }
+
+        function drawBackground() {
+            // Sky
+            ctx.fillStyle = '#' + colors.bg.toString(16).padStart(6, '0');
+            ctx.fillRect(0, 0, 240, 136);
+            
+            // Ground
+            ctx.fillStyle = '#' + colors.snow.toString(16).padStart(6, '0');
+            ctx.fillRect(0, 110, 240, 26);
+            
+            // Castle walls
+            ctx.fillStyle = '#555555';
+            for (let i = 0; i < 240; i += 20) {
+                ctx.fillRect(i, 80, 16, 30);
+            }
+            
+            // Torches
+            ctx.fillStyle = '#' + colors.torch.toString(16).padStart(6, '0');
+            ctx.fillRect(30, 75, 2, 8);
+            ctx.fillRect(210, 75, 2, 8);
+        }
+
+        function drawSnow() {
+            ctx.fillStyle = '#' + colors.snow.toString(16).padStart(6, '0');
+            snowflakes.forEach(flake => {
+                ctx.fillRect(flake.x, flake.y, 1, 1);
+                flake.y += flake.speed;
+                if (flake.y > 136) {
+                    flake.y = 0;
+                    flake.x = Math.random() * 240;
+                }
+            });
+        }
+
+        // Game loop
+        function update() {
+            gameTime += 1/60;
+            
+            // Scene transitions
+            if (gameTime < 4) {
+                scene = 0;
+            } else if (gameTime < 7) {
+                scene = 1;
+                if (wights.length === 0) spawnWights();
+            } else if (gameTime < 10) {
+                scene = 2;
+            } else {
+                // Loop
+                gameTime = 0;
+                wights = [];
+                jon.x = 20;
+                jon.attacking = false;
+            }
+            
+            // Input
+            if (keys['ArrowLeft'] && jon.x > 10) jon.x -= 2;
+            if (keys['ArrowRight'] && jon.x < 230) jon.x += 2;
+            if (keys['KeyX'] && !jon.attacking) {
+                jon.attacking = true;
+                jon.attackTimer = 10;
+            }
+            
+            if (jon.attacking) {
+                jon.attackTimer--;
+                if (jon.attackTimer <= 0) jon.attacking = false;
+            }
+            
+            // Combat
+            if (scene === 1) {
+                wights.forEach(wight => {
+                    if (!wight.dead) {
+                        wight.x -= 0.5;
+                        
+                        // Attack collision
+                        if (jon.attacking && Math.abs(jon.x - wight.x) < 20) {
+                            wight.dead = true;
+                            wight.deathTimer = 30;
+                        }
+                        
+                        // Game over if wight reaches Jon
+                        if (wight.x < jon.x + 10 && !wight.dead) {
+                            gameTime = 0;
+                            wights = [];
+                        }
+                    } else {
+                        wight.deathTimer--;
+                    }
+                });
+            }
+            
+            // Victory pose
+            if (scene === 2 && wights.every(w => w.dead)) {
+                victoryTimer++;
+                jon.frame = Math.floor(victoryTimer / 10) % 2;
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, 240, 136);
+            
+            // CRT scanline effect
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            for (let i = 0; i < 136; i += 2) {
+                ctx.fillRect(0, i, 240, 1);
+            }
+            
+            drawBackground();
+            drawSnow();
+            
+            if (scene === 0) {
+                // Spawn scene
+                drawJon(jon.x, jon.y, jon.frame, false);
+            } else if (scene === 1) {
+                // Battle scene
+                drawJon(jon.x, jon.y, jon.frame, jon.attacking);
+                wights.forEach(wight => {
+                    if (wight.deathTimer > 0 || !wight.dead) {
+                        drawWight(wight.x, wight.y, wight.frame, wight.dead);
+                    }
+                });
+            } else {
+                // Victory scene
+                drawJon(120, 100, jon.frame, false);
+            }
+            
+            // Scene text
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = '8px monospace';
+            if (scene === 0) ctx.fillText('WINTER IS COMING...', 60, 20);
+            if (scene === 2 && wights.every(w => w.dead)) {
+                ctx.fillText('THE WATCH STANDS', 70, 50);
+            }
+        }
+
+        // Main loop
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Restart
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'KeyR') {
+                gameTime = 0;
+                wights = [];
+                jon.x = 20;
+                jon.attacking = false;
+            }
+        });
+
+        gameLoop();
+    </script>
+</body>
+</html>

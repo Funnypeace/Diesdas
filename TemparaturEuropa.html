@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Temperaturen in Europa: Die anhaltende Hitzewelle</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'PT Sans', sans-serif;
+      background-color: #f3f3ff;
+      color: #00002e;
+    }
+
+    h1, h2 {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 600;
+    }
+
+    .card {
+      background-color: #fff;
+      border-radius: 12px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 800px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .grid-item {
+      background-color: #e6e6f2;
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .grid-item h4 {
+      margin: 0 0 0.5rem;
+    }
+
+    .chart {
+      margin-top: 1rem;
+      height: 250px;
+      background: repeating-linear-gradient(
+        45deg,
+        #f9f9ff,
+        #f9f9ff 10px,
+        #e6e6ff 10px,
+        #e6e6ff 20px
+      );
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      display: flex;
+      align-items: end;
+      justify-content: space-around;
+      padding: 0.5rem;
+    }
+
+    .bar {
+      width: 40px;
+      background-color: #2d4df2;
+      color: white;
+      text-align: center;
+      font-size: 0.8rem;
+      border-radius: 4px 4px 0 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>Temperaturen in Europa: Die anhaltende Hitzewelle</h1>
+    <p>Die Hitzewelle hält an: Sowohl der europäische Durchschnitt als auch die Temperaturen in den Hauptstädten Portugals, Spaniens, Frankreichs, Italiens und der Türkei liegen am 24. Juli 2025 deutlich über den Werten der beiden Vortage.</p>
+  </div>
+
+  <div class="card">
+    <h2>Tagesvergleich: 22.–24. Juli 2025</h2>
+    <div class="chart">
+      <div class="bar" style="height: 80%;">33°C</div>
+      <div class="bar" style="height: 85%;">34°C</div>
+      <div class="bar" style="height: 90%;">35°C</div>
+    </div>
+    <p>Europäischer Durchschnitt: kontinuierlicher Anstieg.</p>
+  </div>
+
+  <div class="card">
+    <h2>Extremwerte im Süden Europas</h2>
+    <div class="grid">
+      <div class="grid-item">
+        <h4>Lissabon</h4>
+        <p>40 °C<br>Rekordnahe Temperaturen</p>
+      </div>
+      <div class="grid-item">
+        <h4>Madrid</h4>
+        <p>41 °C<br>Historisch hohe Werte</p>
+      </div>
+      <div class="grid-item">
+        <h4>Paris</h4>
+        <p>37 °C<br>Über Juli-Mittel</p>
+      </div>
+      <div class="grid-item">
+        <h4>Rom</h4>
+        <p>38 °C<br>Mediterraner Einfluss</p>
+      </div>
+      <div class="grid-item">
+        <h4>Ankara</h4>
+        <p>39 °C<br>Heißester Juli-Tag seit Jahren</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Langzeittrend</h2>
+    <p>Die durchschnittlichen Juli-Höchsttemperaturen sind seit 1970 kontinuierlich gestiegen. Besonders deutlich ist der Anstieg in Berlin (+10 °C), Lissabon (+9 °C), Madrid (+9 °C) und Rom (+8 °C).</p>
+  </div>
+
+  <footer>
+    Datenquellen: ERA5-Reanalyse (Copernicus C3S) und lokale Wetterstationen.<br>
+    Erstellt mit <a href="https://gamma.app" target="_blank">Gamma.app</a>
+  </footer>
+
+</body>
+</html>

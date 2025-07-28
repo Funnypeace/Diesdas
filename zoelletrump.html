@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Trump Zoll-Deals Analyse 2025</title>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+      body{
+          font-family: system-ui, Helvetica, Arial, sans-serif;
+          margin: 2rem;
+          background:#fafafa;
+          color:#222;
+      }
+      h1,h2{color:#003366;}
+      table{
+          border-collapse:collapse;
+          width:100%;
+          margin-bottom:2.5rem;
+      }
+      th,td{
+          border:1px solid #ccc;
+          padding:.45rem .65rem;
+          text-align:left;
+      }
+      th{background:#e5eef7;}
+      tr:nth-child(even){background:#f8f8f8;}
+      canvas{max-width:100%;height:400px;margin-bottom:3rem;}
+  </style>
+</head>
+<body>
+
+<h1>Trump Zoll-Deals 2025 – Länderübersicht, Zielerreichung &amp; Diagramme</h1>
+
+<h2>Komplette Tabelle aller bekannten Verhandlungsstände</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Land</th>
+      <th>Ursprünglich&nbsp;geplant&nbsp;(&percnt;)</th>
+      <th>Tatsächlich&nbsp;erreicht&nbsp;(&percnt;)</th>
+      <th>Verbesserung<br>(Prozentpunkte)</th>
+      <th>Status</th>
+      <th>Zugeständnisse / Besonderheiten</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>China</td><td>145</td><td>30</td><td>+115</td><td>Teilweise</td><td>Seltene Erden - Lieferungen</td></tr>
+    <tr><td>Vietnam</td><td>46</td><td>20</td><td>+26</td><td>Erfolgreich</td><td>Null-Zölle auf US-Waren</td></tr>
+    <tr><td>EU</td><td>30</td><td>15</td><td>+15</td><td>Erfolgreich</td><td>750 Mrd.&nbsp;$ Energie &plus; 600 Mrd.&nbsp;$ Investitionen</td></tr>
+    <tr><td>Indonesien</td><td>32</td><td>19</td><td>+13</td><td>Erfolgreich</td><td>15 Mrd.&nbsp;$ Energie, 50 × Boeing</td></tr>
+    <tr><td>Japan</td><td>25</td><td>15</td><td>+10</td><td>Erfolgreich</td><td>550 Mrd.&nbsp;$ Investitionen</td></tr>
+    <tr><td>Philippinen</td><td>20</td><td>19</td><td>&plus;1</td><td>Erfolgreich</td><td>Eigene Zölle komplett abgeschafft</td></tr>
+    <tr><td>Großbritannien</td><td>10</td><td>10</td><td>0</td><td>Erfolgreich</td><td>Zollfrei für Rolls-Royce-Teile</td></tr>
+    <tr><td>Schweiz</td><td>31</td><td>31</td><td>0</td><td>Offen</td><td>Noch kein Brief aus Washington</td></tr>
+    <tr><td>Südkorea</td><td>25</td><td>25</td><td>0</td><td>Offen</td><td>Erhöhte Verteidigungsausgaben im Gespräch</td></tr>
+    <tr><td>Taiwan</td><td>32</td><td>32</td><td>0</td><td>Offen</td><td>-</td></tr>
+    <tr><td>Thailand</td><td>36</td><td>36</td><td>0</td><td>Offen</td><td>-</td></tr>
+    <tr><td>Indien</td><td>26</td><td>26</td><td>0</td><td>Offen</td><td>Ziel 500 Mrd.&nbsp;$ Handel bis 2030</td></tr>
+    <tr><td>Kanada</td><td>25</td><td>25</td><td>0</td><td>Temporär</td><td>USMCA-Waren ausgenommen</td></tr>
+    <tr><td>Mexiko</td><td>25</td><td>25</td><td>0</td><td>Temporär</td><td>USMCA-Waren ausgenommen</td></tr>
+    <tr><td>Australien</td><td>10</td><td>10</td><td>0</td><td>Offen</td><td>-</td></tr>
+    <tr><td>Singapur</td><td>10</td><td>10</td><td>0</td><td>Offen</td><td>-</td></tr>
+    <tr><td>Saudi-Arabien</td><td>10</td><td>10</td><td>0</td><td>Offen</td><td>-</td></tr>
+    <tr><td>Israel</td><td>17</td><td>17</td><td>0</td><td>Offen</td><td>-</td></tr>
+    <tr><td>Südafrika</td><td>30</td><td>30</td><td>0</td><td>Offen</td><td>-</td></tr>
+    <tr><td>Bangladesch</td><td>37</td><td>37</td><td>0</td><td>Offen</td><td>-</td></tr>
+    <tr><td>Myanmar</td><td>44</td><td>44</td><td>0</td><td>Offen</td><td>-</td></tr>
+    <tr><td>Laos</td><td>48</td><td>48</td><td>0</td><td>Offen</td><td>-</td></tr>
+    <tr><td>Kambodscha</td><td>49</td><td>49</td><td>0</td><td>Offen</td><td>-</td></tr>
+    <tr><td>Lesotho</td><td>50</td><td>50</td><td>0</td><td>Sehr schlecht</td><td>Ausnahmezustand wegen Wirtschaftskrise</td></tr>
+    <tr><td>Brasilien</td><td>10</td><td>50</td><td>&minus;40</td><td>Verschlechtert</td><td>Politische Eskalation Bolsonaro</td></tr>
+  </tbody>
+</table>
+
+<h2>Diagramm 1: Zoll-Verbesserung (Prozentpunkte)</h2>
+<canvas id="improvementChart"></canvas>
+
+<h2>Diagramm 2: Ursprünglich vs.&nbsp;Tatsächlich (Ausgewählte Länder)</h2>
+<canvas id="comparisonChart"></canvas>
+
+<script>
+/* ---------------- Daten für Diagramme ---------------- */
+const labels = [
+  'China','Vietnam','EU','Indonesien','Japan',
+  'Philippinen','Großbritannien','Brasilien'
+];
+const originalTariffs = [145,46,30,32,25,20,10,10];
+const actualTariffs   = [ 30,20,15,19,15,19,10,50];
+const improvements    = originalTariffs.map((o,i)=> o - actualTariffs[i]);
+
+/* ---------------- Diagramm 1: Verbesserungen ---------------- */
+new Chart(
+  document.getElementById('improvementChart'),
+  {
+    type:'bar',
+    data:{
+      labels:labels,
+      datasets:[{
+        label:'Verbesserung (Prozentpunkte)',
+        data:improvements,
+        backgroundColor:improvements.map(v=> v>=0 ? '#2e7d32' : '#c62828')
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        title:{display:true,text:'Zoll-Reduktion bzw. -Erhöhung 2025'},
+        tooltip:{callbacks:{
+          label:(ctx)=>`${ctx.parsed.y ?? ctx.parsed.x} Prozentpunkte`
+        }}
+      },
+      scales:{y:{beginAtZero:true}}
+    }
+  }
+);
+
+/* ---------------- Diagramm 2: Ursprünglich vs. Tatsächlich ---------------- */
+new Chart(
+  document.getElementById('comparisonChart'),
+  {
+    type:'bar',
+    data:{
+      labels:labels,
+      datasets:[
+        {
+          label:'Ursprünglich',
+          data:originalTariffs,
+          backgroundColor:'#1976d2'
+        },
+        {
+          label:'Tatsächlich',
+          data:actualTariffs,
+          backgroundColor:'#ff9800'
+        }
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        title:{display:true,text:'Geplante vs. erreichte Zollsätze 2025'},
+        tooltip:{mode:'index',intersect:false}
+      },
+      scales:{y:{beginAtZero:true}}
+    }
+  }
+);
+</script>
+
+</body>
+</html>

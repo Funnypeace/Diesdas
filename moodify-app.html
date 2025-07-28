@@ -198,27 +198,27 @@
     <h1>Moodify</h1>
     
     <div class="app-container">
-        <h2 class="mood-title">How are you feeling right now?</h2>
+        <h2 class="mood-title">Wie fühlst du dich gerade?</h2>
         
         <!-- Current mood display -->
         <div class="current-mood" id="currentMood"></div>
         
         <!-- Mood selection buttons -->
         <div class="mood-grid">
-            <button class="mood-btn" data-mood="happy">😊 Happy</button>
-            <button class="mood-btn" data-mood="anxious">😰 Anxious</button>
-            <button class="mood-btn" data-mood="focused">🎯 Focused</button>
-            <button class="mood-btn" data-mood="tired">😴 Tired</button>
-            <button class="mood-btn" data-mood="excited">🚀 Excited</button>
-            <button class="mood-btn" data-mood="calm">🧘 Calm</button>
-            <button class="mood-btn" data-mood="sad">😢 Sad</button>
-            <button class="mood-btn" data-mood="energetic">⚡ Energetic</button>
+            <button class="mood-btn" data-mood="happy">😊 Glücklich</button>
+            <button class="mood-btn" data-mood="anxious">😰 Ängstlich</button>
+            <button class="mood-btn" data-mood="focused">🎯 Fokussiert</button>
+            <button class="mood-btn" data-mood="tired">😴 Müde</button>
+            <button class="mood-btn" data-mood="excited">🚀 Aufgeregt</button>
+            <button class="mood-btn" data-mood="calm">🧘 Ruhig</button>
+            <button class="mood-btn" data-mood="sad">😢 Traurig</button>
+            <button class="mood-btn" data-mood="energetic">⚡ Energisch</button>
         </div>
         
         <!-- Quote display card -->
         <div class="quote-card" id="quoteCard">
             <div class="quote-text" id="quoteText">
-                Select your mood to see an inspiring message
+                Wähle deine aktuelle Stimmung aus, um ein motivierendes Zitat zu erhalten
             </div>
         </div>
     </div>
@@ -226,39 +226,71 @@
     <div class="copyright">©2025 Moodify</div>
 
     <script>
-        // Mood data with gradients and motivational quotes
+        // Mood data with gradients and multiple motivational quotes
         const moodData = {
             happy: {
-                gradient: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%)',
-                quote: 'Your happiness is contagious! Keep spreading those positive vibes and watch how it brightens everyone around you. 🌟'
+                gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                quotes: [
+                    'Glück ist die Kunst, niemals zu vergessen, was schön ist im Leben. 🌟',
+                    'Jeder Tag ist ein neuer Anfang. Nimm einen tiefen Atemzug und fang wieder von vorne an. ✨',
+                    'Das Glück deines Lebens hängt von der Beschaffenheit deiner Gedanken ab. 💫'
+                ]
             },
             anxious: {
-                gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
-                quote: 'Take a deep breath. You are stronger than your worries, and this feeling will pass. Focus on what you can control right now. 🌱'
+                gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                quotes: [
+                    'Mut ist nicht die Abwesenheit von Angst, sondern die Beurteilung, dass etwas anderes wichtiger ist. 🌱',
+                    'Du bist stärker als du denkst und mutiger als du glaubst. 💪',
+                    'Sorgen sind wie ein Schaukelstuhl: Sie geben dir etwas zu tun, aber bringen dich nicht weiter. 🪑'
+                ]
             },
             focused: {
-                gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                quote: 'Your concentration is your superpower! Channel this focus into your goals and watch amazing things happen. 🎯'
+                gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+                quotes: [
+                    'Konzentration ist der Schlüssel zu allem, was du erreichen willst. 🎯',
+                    'Der Fokus auf das Wesentliche macht den Unterschied zwischen Erfolg und Mittelmäßigkeit. 🏆',
+                    'Wo deine Aufmerksamkeit hingeht, fließt deine Energie. ⚡'
+                ]
             },
             tired: {
                 gradient: 'linear-gradient(135deg, #c9d6ff 0%, #e2e2e2 100%)',
-                quote: 'Rest is not a luxury, it\'s a necessity. Honor your body\'s need for recovery - you\'ll come back stronger. 💤'
+                quotes: [
+                    'Ruhe ist keine Zeitverschwendung, sondern eine Investition in deine Zukunft. 💤',
+                    'Manchmal ist der produktivste Schritt, den du machen kannst, zu entspannen. 🛋️',
+                    'Erholung ist nicht das Gegenteil von Arbeit, sondern ihr Partner. 🤝'
+                ]
             },
             excited: {
-                gradient: 'linear-gradient(135deg, #ff9a56 0%, #ff6b95 100%)',
-                quote: 'Your excitement is the fuel for extraordinary achievements! Harness this energy and make something incredible happen. 🚀'
+                gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+                quotes: [
+                    'Energie und Ausdauer erobern alle Dinge. 🚀',
+                    'Deine Aufregung ist der Treibstoff für außergewöhnliche Leistungen. ⚡',
+                    'Große Energie ist das Ergebnis einer großen Vision. 🌟'
+                ]
             },
             calm: {
-                gradient: 'linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)',
-                quote: 'In your calmness lies great wisdom. This peaceful state allows you to see clearly and make thoughtful decisions. 🧘'
+                gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+                quotes: [
+                    'Ruhe ist nicht die Abwesenheit von Chaos, sondern Frieden inmitten des Chaos. 🧘',
+                    'In der Ruhe liegt die Kraft. In der Gelassenheit liegt die Weisheit. 🌸',
+                    'Atme tief ein und lass los, was du nicht kontrollieren kannst. 🍃'
+                ]
             },
             sad: {
                 gradient: 'linear-gradient(135deg, #89b6e8 0%, #a8c8ec 100%)',
-                quote: 'It\'s okay to feel sad - emotions are temporary visitors. Be gentle with yourself and remember that brighter days are ahead. 🤗'
+                quotes: [
+                    'Tränen sind Worte, die das Herz nicht aussprechen kann. 💙',
+                    'Nach jedem Sturm kommt wieder Sonnenschein. Halte durch. 🌅',
+                    'Es ist okay, nicht okay zu sein. Morgen ist ein neuer Tag. 🤗'
+                ]
             },
             energetic: {
                 gradient: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
-                quote: 'Your energy is infectious! Use this vitality to tackle challenges, inspire others, and make the most of this moment. ⚡'
+                quotes: [
+                    'Deine Energie ist ansteckend. Nutze sie, um andere zu inspirieren. ⚡',
+                    'Bewegung ist Leben - und Leben ist Bewegung. 🏃‍♀️',
+                    'Mit Energie und Leidenschaft lassen sich Berge versetzen. 🏔️'
+                ]
             }
         };
 
@@ -298,14 +330,27 @@
 
             // Update current mood display
             const moodName = selectedMood.charAt(0).toUpperCase() + selectedMood.slice(1);
-            currentMood.textContent = `Current mood: ${moodName}`;
+            const germanMoodNames = {
+                'happy': 'Glücklich',
+                'anxious': 'Ängstlich', 
+                'focused': 'Fokussiert',
+                'tired': 'Müde',
+                'excited': 'Aufgeregt',
+                'calm': 'Ruhig',
+                'sad': 'Traurig',
+                'energetic': 'Energisch'
+            };
+            currentMood.textContent = `Aktuelle Stimmung: ${germanMoodNames[selectedMood]}`;
             currentMood.classList.add('show');
 
             // Animate quote change
             quoteCard.classList.remove('show');
             
             setTimeout(() => {
-                quoteText.textContent = moodInfo.quote;
+                // Get random quote from the mood's quote array
+                const quotes = moodInfo.quotes;
+                const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+                quoteText.textContent = randomQuote;
                 quoteCard.classList.add('show');
             }, 300);
 
@@ -315,7 +360,7 @@
             }
 
             // Log mood selection for potential analytics
-            console.log(`Mood selected: ${selectedMood} at ${new Date().toLocaleTimeString()}`);
+            console.log(`Stimmung ausgewählt: ${selectedMood} um ${new Date().toLocaleTimeString('de-DE')}`);
         }
 
         // Initialize the app when DOM is loaded

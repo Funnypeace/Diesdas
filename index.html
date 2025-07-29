@@ -91,6 +91,7 @@
     }
     .weather-icon{ font-size:2.2rem; }
     .weather-temp{ font-size:1.55rem; font-weight:700; }
+    .time-display{ margin-top:0.6rem; font-size:1.2rem; font-weight:500; }
 
     .content-wrapper {
       max-width: 1200px;
@@ -231,6 +232,7 @@
   <section class="weather-section">
     <div class="weather-header">Aktuelles Wetter</div>
     <div id="weather-container" class="weather-container" aria-live="polite"></div>
+    <div id="time-container" class="time-display"></div>
   </section>
 
   <!-- ================= Filter-Navigation ================ -->
@@ -425,7 +427,16 @@
         `).join('');
     })();
 
+    function updateTime(){
+      const now=new Date();
+      const opts={hour:'2-digit',minute:'2-digit',second:'2-digit'};
+      document.getElementById('time-container').textContent=
+        'Aktuelle Uhrzeit: '+now.toLocaleTimeString('de-DE',opts);
+    }
+    setInterval(updateTime,1000);
+
     document.addEventListener('DOMContentLoaded', function() {
+      updateTime();
       const filterButtons = document.querySelectorAll('.filter-btn');
       const categorySections = document.querySelectorAll('.category-section');
 

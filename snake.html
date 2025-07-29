@@ -110,7 +110,7 @@
         let dy = 0;
         let score = 0;
         let gameRunning = true;
-        let waitingForStart = true; // NEU
+        let waitingForStart = true;
 
         function randomFood() {
             food = {
@@ -124,27 +124,24 @@
             ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Schlange zeichnen
-            ctx.fillStyle = '#4ecdc4';
+            // Schlange zeichnen (Gelb)
             snake.forEach((segment, index) => {
                 if (index === 0) {
-                    // Kopf der Schlange
-                    ctx.fillStyle = '#45b7aa';
+                    ctx.fillStyle = '#ffd700'; // Kopf - Goldgelb
                 } else {
-                    ctx.fillStyle = '#4ecdc4';
+                    ctx.fillStyle = '#ffe066'; // Körper - Gelb
                 }
-                
                 ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
-                
+
                 // Glanz-Effekt
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
                 ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, 6);
             });
 
-            // Essen zeichnen
-            ctx.fillStyle = '#ff6b6b';
+            // Essen zeichnen (Violett)
+            ctx.fillStyle = '#764ba2';
             ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
-            
+
             // Glanz für Essen
             ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
             ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, 6);
@@ -152,7 +149,7 @@
 
         function updateGame() {
             if (!gameRunning) return;
-            if (waitingForStart) return; // NEU
+            if (waitingForStart) return;
 
             const head = {x: snake[0].x + dx, y: snake[0].y + dy};
 
@@ -194,7 +191,7 @@
             gameRunning = true;
             gameOverElement.style.display = 'none';
             randomFood();
-            waitingForStart = true; // NEU
+            waitingForStart = true;
         }
 
         function gameLoop() {

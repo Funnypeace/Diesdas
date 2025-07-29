@@ -15,7 +15,6 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             font-family: Arial, sans-serif;
         }
-        
         .game-container {
             text-align: center;
             background: rgba(255, 255, 255, 0.1);
@@ -24,34 +23,29 @@
             backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
-        
         h1 {
             color: white;
             margin-bottom: 10px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
-        
         .score {
             color: white;
             font-size: 18px;
             margin-bottom: 15px;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
-        
         #gameCanvas {
             border: 3px solid white;
             border-radius: 10px;
             background: rgba(0, 0, 0, 0.3);
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
         }
-        
         .controls {
             margin-top: 15px;
             color: white;
             font-size: 14px;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
-        
         .game-over {
             color: #ff6b6b;
             font-size: 24px;
@@ -59,7 +53,6 @@
             margin-top: 15px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
-        
         button {
             background: rgba(255, 255, 255, 0.2);
             color: white;
@@ -71,7 +64,6 @@
             margin-top: 10px;
             transition: all 0.3s ease;
         }
-        
         button:hover {
             background: rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
@@ -112,6 +104,28 @@
         let gameRunning = true;
         let waitingForStart = true;
 
+        // 1. Pattern-Canvas für die Textur der Schlange
+        const patternCanvas = document.createElement('canvas');
+        patternCanvas.width = 20;
+        patternCanvas.height = 20;
+        const pctx = patternCanvas.getContext('2d');
+        // Gelber Hintergrund
+        pctx.fillStyle = '#ffe066';
+        pctx.fillRect(0, 0, 20, 20);
+        // Dunkelgelbe Streifen
+        pctx.strokeStyle = '#e0af14';
+        pctx.lineWidth = 4;
+        pctx.beginPath();
+        pctx.moveTo(0, 10);
+        pctx.lineTo(20, 10);
+        pctx.stroke();
+        pctx.beginPath();
+        pctx.moveTo(10, 0);
+        pctx.lineTo(10, 20);
+        pctx.stroke();
+
+        const snakePattern = ctx.createPattern(patternCanvas, 'repeat');
+
         function randomFood() {
             food = {
                 x: Math.floor(Math.random() * tileCount),
@@ -124,12 +138,12 @@
             ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Schlange zeichnen (Gelb)
+            // Schlange zeichnen (mit Textur)
             snake.forEach((segment, index) => {
                 if (index === 0) {
                     ctx.fillStyle = '#ffd700'; // Kopf - Goldgelb
                 } else {
-                    ctx.fillStyle = '#ffe066'; // Körper - Gelb
+                    ctx.fillStyle = snakePattern; // Körper - Muster
                 }
                 ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
 

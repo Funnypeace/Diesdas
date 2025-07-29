@@ -6,11 +6,10 @@
 
   <!-- Progressive Enhancement für Mobile und Dark Mode -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light dark">        <!-- erlaubt Browser‐UI Anpassung [35] -->
-  <meta name="theme-color" content="#24496c" media="(prefers-color-scheme: light)"> <!-- hell -->
-  <meta name="theme-color" content="#0d1520" media="(prefers-color-scheme: dark)">  <!-- dunkel [23] -->
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#24496c" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0d1520" media="(prefers-color-scheme: dark)">
 
-  <!-- Kritisches CSS direkt im Head für schnellen First Paint [11] -->
   <style>
     /* ======= Grundlegende Variablen ======= */
     :root {
@@ -25,6 +24,12 @@
       --radius-md : 12px;
       --gap-lg    : 2rem;
       --gap-md    : 1rem;
+      --category-travel: #e8f5e8;
+      --category-games: #fff3e0;
+      --category-info: #e3f2fd;
+      --category-tools: #fff8e1;
+      --category-demo: #f3e5f5;
+      --category-art: #fce4ec;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -32,6 +37,12 @@
         --bg-light : var(--bg-dark);
         --card-light: var(--card-dark);
         --text-main : var(--text-dark);
+        --category-travel: #1a2e1a;
+        --category-games: #2e1f0a;
+        --category-info: #0a1f2e;
+        --category-tools: #2e2a0a;
+        --category-demo: #2e0a2e;
+        --category-art: #2e0a1f;
       }
     }
 
@@ -84,15 +95,51 @@
     .weather-icon{ font-size:2.2rem; }
     .weather-temp{ font-size:1.55rem; font-weight:700; }
 
+    /* ======= Kategorie-Container ======= */
+    .content-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--gap-md);
+    }
+
+    .category-section {
+      margin-bottom: 3rem;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding: 0 0.5rem;
+    }
+
+    .category-icon {
+      font-size: 1.8rem;
+      margin-right: 0.8rem;
+    }
+
+    .category-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 0;
+    }
+
+    .category-count {
+      background: var(--accent);
+      color: white;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      margin-left: auto;
+    }
+
     /* ======= Link-Karten ======= */
     .grid{
       display:grid;
-      gap:var(--gap-lg);
+      gap:var(--gap-md);
       width:100%;
-      max-width:980px;
-      margin:0 auto 48px;
-      padding:0 var(--gap-md);
-      grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); /* Responsive Grid ohne Media-Queries [18][32] */
+      grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
     }
 
     .card{
@@ -106,20 +153,74 @@
       transition:transform .16s ease,box-shadow .16s ease;
       text-align:center;
       min-height:56px;
+      position: relative;
+      border-left: 4px solid transparent;
     }
+
     .card:hover,.card:focus{
       transform:translateY(-6px) scale(1.025);
       box-shadow:0 14px 32px rgba(40,40,80,.18),0 3px 14px rgba(0,0,0,.08);
       outline:none;
     }
+    
     .card h2{ margin:0 0 .45rem; font-size:1.25rem; font-weight:700; }
     .card p { margin:0; font-size:1.05rem; color:#495567; }
+
+    /* Kategorie-spezifische Farben */
+    .category-travel .card { border-left-color: #4caf50; }
+    .category-games .card { border-left-color: #ff9800; }
+    .category-info .card { border-left-color: #2196f3; }
+    .category-tools .card { border-left-color: #ffc107; }
+    .category-demo .card { border-left-color: #9c27b0; }
+    .category-art .card { border-left-color: #e91e63; }
+
+    /* ======= Filter-Navigation ======= */
+    .filter-nav {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: var(--card-light);
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .filter-btn.show-all {
+      background: #28a745;
+      border-color: #28a745;
+      color: white;
+    }
+
+    .filter-btn.show-all:hover {
+      background: #218838;
+      border-color: #218838;
+    }
 
     /* ======= Responsive Feinschliff ======= */
     @media (max-width:650px){
       h1{font-size:1.9rem;margin-top:1.8rem;}
       .grid{gap:var(--gap-md);}
       .card{padding:1.2rem 1rem;}
+      .category-header{flex-direction:column;align-items:flex-start;}
+      .category-count{margin-left:0;margin-top:0.5rem;}
+      .filter-nav{gap:0.5rem;}
+      .filter-btn{padding:0.4rem 0.8rem;font-size:0.8rem;}
     }
     @media (max-width:400px){
       h1{font-size:1.4rem;margin-top:1.2rem;}
@@ -129,9 +230,17 @@
       .weather-container{gap:.6rem;}
       .weather-card{min-width:110px;padding:.9rem .6rem;border-radius:10px;}
     }
+
+    /* ======= Animation für Filter ======= */
+    .category-section {
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .category-section.hidden {
+      display: none;
+    }
   </style>
 
-  <!-- schlanker Besucherzähler (Laufzeit ≈ 0 ms) -->
   <script src="https://cdn.counter.dev/script.js" data-id="c55f398c-81ad-4cef-8a9a-449fb17f72e2" data-utcoffset="2" defer></script>
 </head>
 <body>
@@ -143,94 +252,167 @@
     <div id="weather-container" class="weather-container" aria-live="polite"></div>
   </section>
 
-  <!-- ================= Link-Raster ================ -->
-  <main class="grid">
-    <!--  Liste automatisch sortieren – kürzere Sektion = besser Scroll-Ergonomie  -->
-    <a class="card" href="agadir_reiseplan.html" target="_blank" rel="noopener">
-      <h2>Agadir Reiseplan</h2><p>Interaktive Reiseübersicht</p>
-    </a>
-    <a class="card" href="agadir_reiseplan2.html" target="_blank" rel="noopener">
-      <h2>Agadir Reiseplan 2</h2><p>Erweiterte Reiseübersicht</p>
-    </a>
-    <a class="card" href="CarPolice.html" target="_blank" rel="noopener">
-      <h2>Car Policy 100 Fahrzeuge</h2><p>Dienstwagen-Richtlinie</p>
-    </a>
-    <a class="card" href="rotierendes-oktagon-mit-ball.html" target="_blank" rel="noopener">
-      <h2>Oktagon + Ball</h2><p>Canvas Demo</p>
-    </a>
-    <a class="card" href="MangaJapanCL.html" target="_blank" rel="noopener">
-      <h2>MangaJapanCL</h2><p>Fotogalerie</p>
-    </a>
-    <a class="card" href="https://gimini-app-black.vercel.app/" target="_blank" rel="noopener">
-      <h2>Geschichtenerzähler</h2><p>Externe App</p>
-    </a>
-    <a class="card" href="https://japan2025-mauve.vercel.app/" target="_blank" rel="noopener">
-      <h2>Japan Plan 2025</h2><p>Interaktiver Reiseplan</p>
-    </a>
-    <a class="card" href="Flüge2026HamburgJapan.html" target="_blank" rel="noopener">
-      <h2>Flüge 2026 Hamburg–Japan</h2><p>Flugsuche</p>
-    </a>
-    <a class="card" href="3derde.html" target="_blank" rel="noopener">
-      <h2>3D Erde</h2><p>WebGL Demo</p>
-    </a>
-    <a class="card" href="Kugel3D.html" target="_blank" rel="noopener">
-      <h2>Kugel 3D</h2><p>Three.js Beispiel</p>
-    </a>
-    <a class="card" href="explore_quiz.html" target="_blank" rel="noopener">
-      <h2>Explore Quiz</h2><p>Flaggen-Spiel</p>
-    </a>
-    <a class="card" href="TemparaturEuropa.html" target="_blank" rel="noopener">
-      <h2>Temperatur Europa</h2><p>Anhaltende Hitzewelle</p>
-    </a>
-    <a class="card" href="moodify-app.html" target="_blank" rel="noopener">
-      <h2>Moodify</h2><p>Stimmungs-App</p>
-    </a>
-    <a class="card" href="HommageJuliaEngelmann.html" target="_blank" rel="noopener">
-      <h2>Eines Tages, Baby</h2><p>Poetry Slam</p>
-    </a>
-    <!-- ===== Spiele  ===== -->
-    <a class="card" href="snake.html" target="_blank" rel="noopener">
-      <h2>Snake</h2><p>Klassiker</p>
-    </a>
-    <a class="card" href="EndlessRunner.html" target="_blank" rel="noopener">
-      <h2>Endless Runner</h2><p>Laufspiel</p>
-    </a>
-    <a class="card" href="personality_test.html" target="_blank" rel="noopener">
-      <h2>Persönlichkeitstest</h2><p>Typ-Analyse</p>
-    </a>
-    <a class="card" href="DungeonSpiel.html" target="_blank" rel="noopener">
-      <h2>Dungeon Spiel</h2><p>Rogue-like</p>
-    </a>
-    <a class="card" href="MemoryCardGame.html" target="_blank" rel="noopener">
-      <h2>Memory Game</h2><p>Kartenpaare</p>
-    </a>
-    <a class="card" href="Lavalampe.html" target="_blank" rel="noopener">
-      <h2>Virtuelle Lavalampe</h2><p>Hypnotische Animation</p>
-    </a>
-    <a class="card" href="retrosnow1.html" target="_blank" rel="noopener">
-      <h2>Retro Battle</h2><p>8-bit Action</p>
-    </a>
-    <a class="card" href="ArcticDriftEndlessSnowboarder.html" target="_blank" rel="noopener">
-      <h2>Arctic Drift</h2><p>Snowboard Endless</p>
-    </a>
-    <a class="card" href="NeonByte-Racer.html" target="_blank" rel="noopener">
-      <h2>Neon Byte-Racer</h2><p>Futuristisches Rennen</p>
-    </a>
-    <a class="card" href="OrbMiner.html" target="_blank" rel="noopener">
-      <h2>Orb Miner</h2><p>Sammel-Game</p>
-    </a>
-    <a class="card" href="GlitchGhost.html" target="_blank" rel="noopener">
-      <h2>Glitch Ghost</h2><p>Geister ausweichen</p>
-    </a>
-    <a class="card" href="PocketDungeon.html" target="_blank" rel="noopener">
-      <h2>Pocket Dungeon</h2><p>Mini-Abenteuer</p>
-    </a>
-    <a class="card" href="zoelletrump.html" target="_blank" rel="noopener">
-      <h2>Zoll-Deals 2025</h2><p>Trump-Analyse</p>
-    </a>
-  </main>
+  <!-- ================= Filter-Navigation ================ -->
+  <div class="content-wrapper">
+    <nav class="filter-nav">
+      <button class="filter-btn show-all active" data-category="all">Alle anzeigen</button>
+      <button class="filter-btn" data-category="info">📊 Info</button>
+      <button class="filter-btn" data-category="tools">🔧 Tools</button>
+      <button class="filter-btn" data-category="games">🎮 Spiele</button>
+      <button class="filter-btn" data-category="travel">🌍 Reisen</button>
+      <button class="filter-btn" data-category="demo">⚡ Demos</button>
+      <button class="filter-btn" data-category="art">🎨 Kunst</button>
+    </nav>
 
-  <!-- ================= JS: Mini-Wetter ================ -->
+    <!-- ================= Info ================ -->
+    <section class="category-section category-info" data-category="info">
+      <div class="category-header">
+        <span class="category-icon">📊</span>
+        <h2 class="category-title">Info</h2>
+        <span class="category-count">3</span>
+      </div>
+      <div class="grid">
+        <a class="card" href="CarPolice.html" target="_blank" rel="noopener">
+          <h2>Car Policy 100 Fahrzeuge</h2><p>Dienstwagen-Richtlinie</p>
+        </a>
+        <a class="card" href="TemparaturEuropa.html" target="_blank" rel="noopener">
+          <h2>Temperatur Europa</h2><p>Anhaltende Hitzewelle</p>
+        </a>
+        <a class="card" href="zoelletrump.html" target="_blank" rel="noopener">
+          <h2>Zoll-Deals 2025</h2><p>Trump-Analyse</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- ================= Tools ================ -->
+    <section class="category-section category-tools" data-category="tools">
+      <div class="category-header">
+        <span class="category-icon">🔧</span>
+        <h2 class="category-title">Tools</h2>
+        <span class="category-count">3</span>
+      </div>
+      <div class="grid">
+        <a class="card" href="moodify-app.html" target="_blank" rel="noopener">
+          <h2>Moodify</h2><p>Stimmungs-App</p>
+        </a>
+        <a class="card" href="https://gimini-app-black.vercel.app/" target="_blank" rel="noopener">
+          <h2>Geschichtenerzähler</h2><p>Externe App</p>
+        </a>
+        <a class="card" href="personality_test.html" target="_blank" rel="noopener">
+          <h2>Persönlichkeitstest</h2><p>Typ-Analyse</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- ================= Spiele ================ -->
+    <section class="category-section category-games" data-category="games">
+      <div class="category-header">
+        <span class="category-icon">🎮</span>
+        <h2 class="category-title">Spiele</h2>
+        <span class="category-count">11</span>
+      </div>
+      <div class="grid">
+        <a class="card" href="snake.html" target="_blank" rel="noopener">
+          <h2>Snake</h2><p>Klassiker</p>
+        </a>
+        <a class="card" href="EndlessRunner.html" target="_blank" rel="noopener">
+          <h2>Endless Runner</h2><p>Laufspiel</p>
+        </a>
+        <a class="card" href="DungeonSpiel.html" target="_blank" rel="noopener">
+          <h2>Dungeon Spiel</h2><p>Rogue-like</p>
+        </a>
+        <a class="card" href="MemoryCardGame.html" target="_blank" rel="noopener">
+          <h2>Memory Game</h2><p>Kartenpaare</p>
+        </a>
+        <a class="card" href="retrosnow1.html" target="_blank" rel="noopener">
+          <h2>Retro Battle</h2><p>8-bit Action</p>
+        </a>
+        <a class="card" href="ArcticDriftEndlessSnowboarder.html" target="_blank" rel="noopener">
+          <h2>Arctic Drift</h2><p>Snowboard Endless</p>
+        </a>
+        <a class="card" href="NeonByte-Racer.html" target="_blank" rel="noopener">
+          <h2>Neon Byte-Racer</h2><p>Futuristisches Rennen</p>
+        </a>
+        <a class="card" href="OrbMiner.html" target="_blank" rel="noopener">
+          <h2>Orb Miner</h2><p>Sammel-Game</p>
+        </a>
+        <a class="card" href="GlitchGhost.html" target="_blank" rel="noopener">
+          <h2>Glitch Ghost</h2><p>Geister ausweichen</p>
+        </a>
+        <a class="card" href="PocketDungeon.html" target="_blank" rel="noopener">
+          <h2>Pocket Dungeon</h2><p>Mini-Abenteuer</p>
+        </a>
+        <a class="card" href="explore_quiz.html" target="_blank" rel="noopener">
+          <h2>Explore Quiz</h2><p>Flaggen-Spiel</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- ================= Reisen & Pläne ================ -->
+    <section class="category-section category-travel" data-category="travel">
+      <div class="category-header">
+        <span class="category-icon">🌍</span>
+        <h2 class="category-title">Reisen & Pläne</h2>
+        <span class="category-count">4</span>
+      </div>
+      <div class="grid">
+        <a class="card" href="agadir_reiseplan.html" target="_blank" rel="noopener">
+          <h2>Agadir Reiseplan</h2><p>Interaktive Reiseübersicht</p>
+        </a>
+        <a class="card" href="agadir_reiseplan2.html" target="_blank" rel="noopener">
+          <h2>Agadir Reiseplan 2</h2><p>Erweiterte Reiseübersicht</p>
+        </a>
+        <a class="card" href="https://japan2025-mauve.vercel.app/" target="_blank" rel="noopener">
+          <h2>Japan Plan 2025</h2><p>Interaktiver Reiseplan</p>
+        </a>
+        <a class="card" href="Flüge2026HamburgJapan.html" target="_blank" rel="noopener">
+          <h2>Flüge 2026 Hamburg–Japan</h2><p>Flugsuche</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- ================= Demos ================ -->
+    <section class="category-section category-demo" data-category="demo">
+      <div class="category-header">
+        <span class="category-icon">⚡</span>
+        <h2 class="category-title">Demos</h2>
+        <span class="category-count">4</span>
+      </div>
+      <div class="grid">
+        <a class="card" href="rotierendes-oktagon-mit-ball.html" target="_blank" rel="noopener">
+          <h2>Oktagon + Ball</h2><p>Canvas Demo</p>
+        </a>
+        <a class="card" href="3derde.html" target="_blank" rel="noopener">
+          <h2>3D Erde</h2><p>WebGL Demo</p>
+        </a>
+        <a class="card" href="Kugel3D.html" target="_blank" rel="noopener">
+          <h2>Kugel 3D</h2><p>Three.js Beispiel</p>
+        </a>
+        <a class="card" href="Lavalampe.html" target="_blank" rel="noopener">
+          <h2>Virtuelle Lavalampe</h2><p>Hypnotische Animation</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- ================= Kunst ================ -->
+    <section class="category-section category-art" data-category="art">
+      <div class="category-header">
+        <span class="category-icon">🎨</span>
+        <h2 class="category-title">Kunst</h2>
+        <span class="category-count">2</span>
+      </div>
+      <div class="grid">
+        <a class="card" href="MangaJapanCL.html" target="_blank" rel="noopener">
+          <h2>MangaJapanCL</h2><p>Fotogalerie</p>
+        </a>
+        <a class="card" href="HommageJuliaEngelmann.html" target="_blank" rel="noopener">
+          <h2>Eines Tages, Baby</h2><p>Poetry Slam</p>
+        </a>
+      </div>
+    </section>
+  </div>
+
+  <!-- ================= JS: Wetter + Filter ================ -->
   <script>
     /* Einfache Icon-Zuordnung (Open-Meteo Codes) */
     const icon = c =>       ([0]      .includes(c)?'☀️':
@@ -252,6 +434,7 @@
       }catch(_){return {city,temp:'?',code:1};}
     }
 
+    // Wetter laden
     (async()=>{
       const cities=[
         {name:'Hamburg',lat:53.55,lon:10.0},
@@ -268,6 +451,33 @@
           </div>
         `).join('');
     })();
+
+    // Filter-Funktionalität
+    document.addEventListener('DOMContentLoaded', function() {
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const categorySections = document.querySelectorAll('.category-section');
+
+      filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const targetCategory = this.getAttribute('data-category');
+          
+          // Button-Status aktualisieren
+          filterButtons.forEach(btn => btn.classList.remove('active'));
+          this.classList.add('active');
+          
+          // Kategorien ein-/ausblenden
+          categorySections.forEach(section => {
+            const sectionCategory = section.getAttribute('data-category');
+            
+            if (targetCategory === 'all' || sectionCategory === targetCategory) {
+              section.classList.remove('hidden');
+            } else {
+              section.classList.add('hidden');
+            }
+          });
+        });
+      });
+    });
   </script>
 </body>
 </html>

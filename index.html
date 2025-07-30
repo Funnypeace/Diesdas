@@ -527,42 +527,19 @@
       }catch(_){return {city,temp:'?',code:1};}
     }
 
-    // Nachrichten-Funktionen
-    async function fetchTagesschauNews() {
-      try {
-        // Funktionierender Homepage-Endpoint verwenden
-        const response = await fetch('https://www.tagesschau.de/api2/homepage/');
-        
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        
-        const data = await response.json();
-        
-        // Korrekte Datenstruktur für Homepage-Endpoint
-        const newsItems = data.news || [];
-        
-        return newsItems.slice(0, 8).map(item => ({
-          title: item.title || 'Kein Titel verfügbar',
-          link: item.shareURL || item.detailsweb || 'https://www.tagesschau.de',
-          source: 'Tagesschau',
-          time: item.date ? 
-            new Date(item.date).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'}) : 
-            new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
-        }));
-      } catch (error) {
-        console.log('Tagesschau API Fehler:', error.message);
-        return [];
-      }
-    }
-
-    async function fetchRSSNews() {
+    // Korrigierte Nachrichten-Funktionen
+    async function fetchTagesschauRSS() {
       try {
         const rssUrl = 'https://www.tagesschau.de/xml/rss2/';
         const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
         
         const response = await fetch(proxyUrl);
         const data = await response.json();
+        
+        if (!data.contents) {
+          throw new Error('Keine RSS-Daten erhalten');
+        }
+        
         const parser = new DOMParser();
         const xml = parser.parseFromString(data.contents, 'text/xml');
         
@@ -570,12 +547,24 @@
         const news = [];
         
         items.forEach((item, index) => {
-          if (index < 8) {
+          if (index < 8 && item.querySelector('title') && item.querySelector('link')) {
+            const pubDate = item.querySelector('pubDate')?.textContent;
+            let timeStr = 'Gerade eben';
+            
+            if (pubDate) {
+              try {
+                const date = new Date(pubDate);
+                timeStr = date.toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'});
+              } catch(e) {
+                timeStr = 'Unbekannt';
+              }
+            }
+            
             news.push({
-              title: item.querySelector('title')?.textContent || 'Kein Titel',
-              link: item.querySelector('link')?.textContent || 'https://www.tagesschau.de',
-              source: 'Tagesschau RSS',
-              time: new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
+              title: item.querySelector('title').textContent.trim(),
+              link: item.querySelector('link').textContent.trim(),
+              source: 'Tagesschau',
+              time: timeStr
             });
           }
         });
@@ -588,43 +577,46 @@
     }
 
     async function getFallbackNews() {
-      // Echte Fallback-Nachrichten mit realen Links
+      // Zuverlässige Fallback-Nachrichten mit echten Tagesschau-Links
+      const now = new Date();
+      const baseTime = now.getTime();
+      
       return [
         {
           title: "Aktuelle Entwicklungen in der deutschen Politik",
           link: "https://www.tagesschau.de/inland/",
           source: "Tagesschau",
-          time: new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
+          time: new Date(baseTime).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
         },
         {
           title: "Wirtschaftsnachrichten und Marktentwicklungen",
           link: "https://www.tagesschau.de/wirtschaft/",
           source: "Tagesschau",
-          time: new Date(Date.now() - 300000).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
+          time: new Date(baseTime - 300000).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
         },
         {
           title: "Internationale Nachrichten aus aller Welt",
           link: "https://www.tagesschau.de/ausland/",
           source: "Tagesschau",
-          time: new Date(Date.now() - 600000).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
+          time: new Date(baseTime - 600000).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
         },
         {
           title: "Wissenschaft und Technologie im Fokus",
           link: "https://www.tagesschau.de/wissen/",
           source: "Tagesschau",
-          time: new Date(Date.now() - 900000).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
+          time: new Date(baseTime - 900000).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
         },
         {
           title: "Sport und aktuelle Sportereignisse",
           link: "https://www.sportschau.de/",
           source: "Sportschau",
-          time: new Date(Date.now() - 1200000).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
+          time: new Date(baseTime - 1200000).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
         },
         {
           title: "Kultur und Gesellschaft in Deutschland",
           link: "https://www.tagesschau.de/inland/gesellschaft/",
           source: "Tagesschau",
-          time: new Date(Date.now() - 1500000).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
+          time: new Date(baseTime - 1500000).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
         }
       ];
     }
@@ -633,19 +625,15 @@
       const newsContainer = document.getElementById('news-container');
       
       try {
-        // Erst Homepage-API versuchen
-        let news = await fetchTagesschauNews();
+        console.log('Lade Nachrichten...');
         
-        // Falls leer oder wenig Inhalt, RSS-Feed versuchen
-        if (news.length < 3) {
-          const rssNews = await fetchRSSNews();
-          if (rssNews.length > 0) {
-            news = rssNews;
-          }
-        }
+        // Erst RSS versuchen
+        let news = await fetchTagesschauRSS();
+        console.log('RSS Nachrichten erhalten:', news.length);
         
-        // Falls immer noch leer, Fallback-Nachrichten verwenden
+        // Falls keine RSS-Nachrichten, Fallback verwenden
         if (news.length === 0) {
+          console.log('Verwende Fallback-Nachrichten');
           news = await getFallbackNews();
         }
 
@@ -659,12 +647,13 @@
               </div>
             </div>
           `).join('');
+          console.log('Nachrichten erfolgreich angezeigt');
         } else {
           newsContainer.innerHTML = '<div class="news-loading">Keine Nachrichten verfügbar</div>';
         }
       } catch (error) {
-        console.error('Kompletter Fehler beim Laden der Nachrichten:', error);
-        newsContainer.innerHTML = '<div class="news-loading">Nachrichten momentan nicht verfügbar</div>';
+        console.error('Fehler beim Laden der Nachrichten:', error);
+        newsContainer.innerHTML = '<div class="news-loading">Fehler beim Laden der Nachrichten</div>';
       }
     }
 
@@ -698,8 +687,8 @@
     }
     setInterval(updateTime,1000);
 
-    // Nachrichten alle 15 Minuten aktualisieren (API-Limits beachten)
-    setInterval(loadNews, 900000);
+    // Nachrichten alle 20 Minuten aktualisieren
+    setInterval(loadNews, 1200000);
 
     document.addEventListener('DOMContentLoaded', function() {
       updateTime();

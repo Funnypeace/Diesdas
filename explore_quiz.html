@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ExploreQuiz - Reise um die Welt</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -321,10 +317,12 @@
             margin-bottom: 10px;
         }
 
-        .category-score.japan { color: #ea4335; }
-        .category-score.europe { color: #34a853; }
-        .category-score.wonder { color: #4285f4; }
-        .category-score.capital { color: #34a853; }
+        /* Farben pro Kategorie (optional anpassen) */
+        .category-score.explore { color: #4285f4; }
+        .category-score.culture { color: #fbbc05; }
+        .category-score.literature { color: #ea4335; }
+        .category-score.movies { color: #34a853; }
+        .category-score.music { color: #a142f4; }
 
         .category-name {
             font-size: 16px;
@@ -342,11 +340,9 @@
             .action-grid {
                 grid-template-columns: 1fr;
             }
-            
             .category-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
-            
             .welcome-banner h1 {
                 font-size: 28px;
             }
@@ -418,24 +414,29 @@
         <div class="category-progress">
             <h2>Deine Kategorie-Fortschritte</h2>
             <div class="category-grid">
-                <div class="category-item" onclick="playCategory('japan')">
-                    <div class="category-score japan">0</div>
-                    <div class="category-name">Japan</div>
+                <div class="category-item" onclick="playCategory('explore')">
+                    <div class="category-score explore">0</div>
+                    <div class="category-name">Entdecken</div>
                     <div class="category-subtitle">Richtige Antworten</div>
                 </div>
-                <div class="category-item" onclick="playCategory('europe')">
-                    <div class="category-score europe">0</div>
-                    <div class="category-name">Europa</div>
+                <div class="category-item" onclick="playCategory('culture')">
+                    <div class="category-score culture">0</div>
+                    <div class="category-name">Kultur</div>
                     <div class="category-subtitle">Richtige Antworten</div>
                 </div>
-                <div class="category-item" onclick="playCategory('wonder')">
-                    <div class="category-score wonder">0</div>
-                    <div class="category-name">Weltwunder</div>
+                <div class="category-item" onclick="playCategory('literature')">
+                    <div class="category-score literature">0</div>
+                    <div class="category-name">Literatur</div>
                     <div class="category-subtitle">Richtige Antworten</div>
                 </div>
-                <div class="category-item" onclick="playCategory('capital')">
-                    <div class="category-score capital">0</div>
-                    <div class="category-name">Land & Hauptstadt</div>
+                <div class="category-item" onclick="playCategory('movies')">
+                    <div class="category-score movies">0</div>
+                    <div class="category-name">Filme</div>
+                    <div class="category-subtitle">Richtige Antworten</div>
+                </div>
+                <div class="category-item" onclick="playCategory('music')">
+                    <div class="category-score music">0</div>
+                    <div class="category-name">Musik</div>
                     <div class="category-subtitle">Richtige Antworten</div>
                 </div>
             </div>
@@ -443,183 +444,75 @@
     </div>
 
     <script>
-        // Sample quiz data with complex questions
+        // Neue Quiz-Daten (gekürzt dargestellt, hier deine vollständigen Quizdaten einfügen!)
         const quizData = {
-            japan: [
+            explore: [
                 {
-                    question: "Welche ist die Hauptstadt von Japan?",
-                    options: ["Tokyo", "Osaka", "Kyoto", "Hiroshima"],
-                    correct: 0,
-                    difficulty: "leicht"
-                },
-                {
-                    question: "Welcher Berg ist der höchste in Japan?",
-                    options: ["Mount Asama", "Mount Fuji", "Mount Hotaka", "Mount Kita"],
-                    correct: 1,
-                    difficulty: "leicht"
-                },
-                {
-                    question: "Welche japanische Insel ist die nördlichste der vier Hauptinseln?",
-                    options: ["Honshu", "Hokkaido", "Kyushu", "Shikoku"],
+                    question: "Welcher Berg ist der höchste der Welt?",
+                    options: ["K2", "Mount Everest", "Kangchenjunga", "Lhotse"],
                     correct: 1,
                     difficulty: "mittel"
                 },
                 {
-                    question: "In welcher Präfektur liegt die Stadt Hiroshima?",
-                    options: ["Hiroshima-ken", "Yamaguchi-ken", "Okayama-ken", "Shimane-ken"],
-                    correct: 0,
-                    difficulty: "schwer"
-                },
-                {
-                    question: "Wie heißt der berühmte Bambuswald in der Nähe von Kyoto?",
-                    options: ["Fushimi Bamboo Grove", "Arashiyama Bamboo Grove", "Nara Bamboo Forest", "Uji Bamboo Path"],
-                    correct: 1,
-                    difficulty: "schwer"
-                },
-                {
-                    question: "Welche Stadt war von 1603 bis 1868 unter dem Namen Edo bekannt?",
-                    options: ["Kyoto", "Osaka", "Tokyo", "Nagoya"],
-                    correct: 2,
-                    difficulty: "mittel"
-                }
-            ],
-            europe: [
-                {
-                    question: "Welche ist die Hauptstadt von Frankreich?",
-                    options: ["Lyon", "Marseille", "Paris", "Nice"],
-                    correct: 2,
-                    difficulty: "leicht"
-                },
-                {
-                    question: "In welchem Land liegt die Stadt Barcelona?",
-                    options: ["Portugal", "Spanien", "Italien", "Griechenland"],
-                    correct: 1,
-                    difficulty: "leicht"
-                },
-                {
-                    question: "Welches ist das kleinste Land der Europäischen Union?",
-                    options: ["Malta", "Luxemburg", "Zypern", "Slowenien"],
-                    correct: 0,
-                    difficulty: "mittel"
-                },
-                {
-                    question: "Wie heißt der längste Fluss Europas?",
-                    options: ["Donau", "Rhein", "Wolga", "Dnepr"],
-                    correct: 2,
-                    difficulty: "schwer"
-                },
-                {
-                    question: "Welche Stadt ist die Hauptstadt von Slowenien?",
-                    options: ["Ljubljana", "Bratislava", "Zagreb", "Sarajevo"],
-                    correct: 0,
-                    difficulty: "schwer"
-                },
-                {
-                    question: "In welchem Jahr fiel die Berliner Mauer?",
-                    options: ["1987", "1989", "1990", "1991"],
-                    correct: 1,
-                    difficulty: "mittel"
-                },
-                {
-                    question: "Welche europäische Hauptstadt liegt an beiden Seiten des Bosporus?",
-                    options: ["Bukarest", "Istanbul", "Athen", "Sofia"],
-                    correct: 1,
-                    difficulty: "schwer"
-                }
-            ],
-            wonder: [
-                {
-                    question: "Wo befindet sich das Taj Mahal?",
-                    options: ["Pakistan", "Indien", "Bangladesh", "Sri Lanka"],
-                    correct: 1,
-                    difficulty: "leicht"
-                },
-                {
-                    question: "Welches ist das älteste der sieben Weltwunder?",
-                    options: ["Koloss von Rhodos", "Pyramiden von Gizeh", "Hängende Gärten", "Leuchtturm von Alexandria"],
-                    correct: 1,
-                    difficulty: "mittel"
-                },
-                {
-                    question: "In welchem Land steht Angkor Wat?",
-                    options: ["Thailand", "Vietnam", "Kambodscha", "Laos"],
+                    question: "In welchem Land liegt die Stadt Marrakech?",
+                    options: ["Ägypten", "Tunesien", "Marokko", "Algerien"],
                     correct: 2,
                     difficulty: "mittel"
                 },
                 {
-                    question: "Welche antike Stadt in Jordanien ist berühmt für ihre in Fels gehauenen Gebäude?",
-                    options: ["Jerash", "Petra", "Amman", "Aqaba"],
+                    question: "In welchem Meer liegt die Insel Kreta?",
+                    options: ["Mittelmeer", "Ägäisches Meer", "Ionisches Meer", "Schwarzes Meer"],
                     correct: 1,
-                    difficulty: "schwer"
-                },
-                {
-                    question: "Wie viele Terrassen hat die Chinesische Mauer ungefähr?",
-                    options: ["Keine - sie ist keine Terrassenanlage", "2.000", "5.000", "10.000"],
-                    correct: 0,
-                    difficulty: "schwer"
-                },
-                {
-                    question: "Welcher Inka-Herrscher ließ Machu Picchu erbauen?",
-                    options: ["Atahualpa", "Huascar", "Pachacuti", "Manco Capac"],
-                    correct: 2,
-                    difficulty: "schwer"
-                },
-                {
-                    question: "Wie hoch ist der Cristo Redentor in Rio de Janeiro (ohne Sockel)?",
-                    options: ["28 Meter", "30 Meter", "35 Meter", "40 Meter"],
-                    correct: 1,
-                    difficulty: "schwer"
-                }
-            ],
-            capital: [
-                {
-                    question: "Welche ist die Hauptstadt von Australien?",
-                    options: ["Sydney", "Melbourne", "Canberra", "Brisbane"],
-                    correct: 2,
                     difficulty: "mittel"
                 },
                 {
-                    question: "Welche ist die Hauptstadt von Kanada?",
-                    options: ["Toronto", "Vancouver", "Montreal", "Ottawa"],
+                    question: "Welcher Staat grenzt nicht an Deutschland?",
+                    options: ["Belgien", "Dänemark", "Schweiz", "Spanien"],
                     correct: 3,
-                    difficulty: "mittel"
-                },
-                {
-                    question: "Welche Stadt ist die Hauptstadt von Bhutan?",
-                    options: ["Thimphu", "Paro", "Punakha", "Phuntsholing"],
-                    correct: 0,
-                    difficulty: "schwer"
-                },
-                {
-                    question: "Welche Stadt ist die Hauptstadt von Myanmar?",
-                    options: ["Yangon", "Naypyidaw", "Mandalay", "Bagan"],
-                    correct: 1,
-                    difficulty: "schwer"
-                },
-                {
-                    question: "Welche ist die Hauptstadt von Kasachstan?",
-                    options: ["Almaty", "Nur-Sultan", "Shymkent", "Aktobe"],
-                    correct: 1,
-                    difficulty: "schwer"
-                },
-                {
-                    question: "Welche Stadt ist die Hauptstadt von Eritrea?",
-                    options: ["Massawa", "Asmara", "Assab", "Keren"],
-                    correct: 1,
-                    difficulty: "schwer"
-                },
-                {
-                    question: "Welche Stadt ist die Hauptstadt von Palau?",
-                    options: ["Koror", "Ngerulmud", "Airai", "Melekeok"],
-                    correct: 1,
-                    difficulty: "schwer"
-                },
-                {
-                    question: "Welche Stadt ist sowohl Hauptstadt als auch größte Stadt von Neuseeland?",
-                    options: ["Wellington ist Hauptstadt, Auckland größte Stadt", "Auckland", "Wellington", "Christchurch"],
-                    correct: 0,
-                    difficulty: "mittel"
+                    difficulty: "leicht"
                 }
+            ],
+            culture: [
+                {
+                    question: "Welches Fest wird in München traditionell im Herbst gefeiert?",
+                    options: ["Weihnachtsmarkt", "Oktoberfest", "Karneval", "Volksfest"],
+                    correct: 1,
+                    difficulty: "leicht"
+                },
+                {
+                    question: "Welche Musikrichtung stammt aus Jamaika?",
+                    options: ["Reggae", "Salsa", "Hip-Hop", "Blues"],
+                    correct: 0,
+                    difficulty: "mittel"
+                },
+                // ... (weitere Fragen einfügen)
+            ],
+            literature: [
+                {
+                    question: "Wer schrieb 'Faust'?",
+                    options: ["Friedrich Schiller", "Johann Wolfgang von Goethe", "Thomas Mann", "Heinrich Heine"],
+                    correct: 1,
+                    difficulty: "leicht"
+                },
+                // ... (weitere Fragen einfügen)
+            ],
+            movies: [
+                {
+                    question: "Wer führte Regie bei 'Jurassic Park'?",
+                    options: ["Steven Spielberg", "James Cameron", "Ridley Scott", "Tim Burton"],
+                    correct: 0,
+                    difficulty: "leicht"
+                },
+                // ... (weitere Fragen einfügen)
+            ],
+            music: [
+                {
+                    question: "Welcher Komponist schrieb die 9. Symphonie?",
+                    options: ["Johann Sebastian Bach", "Ludwig van Beethoven", "Wolfgang Amadeus Mozart", "Joseph Haydn"],
+                    correct: 1,
+                    difficulty: "leicht"
+                },
+                // ... (weitere Fragen einfügen)
             ]
         };
 
@@ -635,12 +528,12 @@
             Object.keys(quizData).forEach(category => {
                 currentQuiz.push(...quizData[category]);
             });
-            
+
             // Shuffle questions
-            currentQuiz = currentQuiz.sort(() => Math.random() - 0.5).slice(0, 5);
+            currentQuiz = currentQuiz.sort(() => Math.random() - 0.5).slice(0, 100);
             currentQuestion = 0;
             score = 0;
-            
+
             showQuizInterface();
         }
 
@@ -648,7 +541,7 @@
             currentQuiz = [...quizData[category]];
             currentQuestion = 0;
             score = 0;
-            
+
             showQuizInterface();
         }
 
@@ -667,7 +560,7 @@
                         </div>
                         <div class="question-counter">Frage ${currentQuestion + 1} von ${currentQuiz.length}</div>
                     </div>
-                    
+
                     <div class="quiz-question">
                         <h2>${question.question}</h2>
                         <div class="quiz-options">
@@ -676,18 +569,18 @@
                             `).join('')}
                         </div>
                     </div>
-                    
-                    <button class="back-button" onclick="showMainInterface()">← Zurück</button>
+
+                    <button class="back-button" onclick="showMainInterface()">←Zurück</button>
                 </div>
             `;
-            
+
             document.querySelector('.container').innerHTML = quizHTML;
         }
 
         function selectAnswer(selectedIndex) {
             const question = currentQuiz[currentQuestion];
             const options = document.querySelectorAll('.quiz-option');
-            
+
             options.forEach((option, index) => {
                 option.disabled = true;
                 if (index === question.correct) {
@@ -698,14 +591,14 @@
                     option.style.color = 'white';
                 }
             });
-            
+
             if (selectedIndex === question.correct) {
                 score++;
                 correctAnswers++;
             }
-            
+
             totalQuestions++;
-            
+
             setTimeout(() => {
                 currentQuestion++;
                 showQuizInterface();
@@ -726,9 +619,9 @@
                     <button class="play-again-button" onclick="showMainInterface()">Zurück zur Startseite</button>
                 </div>
             `;
-            
+
             document.querySelector('.container').innerHTML = resultHTML;
-            
+
             // Update stats
             updateStats();
         }
@@ -750,30 +643,25 @@
                 margin: 0 auto;
                 padding: 20px;
             }
-            
             .quiz-progress {
                 margin-bottom: 30px;
             }
-            
             .question-counter {
                 text-align: center;
                 margin-top: 10px;
                 color: #666;
             }
-            
             .quiz-question h2 {
                 font-size: 24px;
                 margin-bottom: 30px;
                 text-align: center;
                 color: #333;
             }
-            
             .quiz-options {
                 display: flex;
                 flex-direction: column;
                 gap: 15px;
             }
-            
             .quiz-option {
                 padding: 15px 20px;
                 border: 2px solid #e0e0e0;
@@ -783,12 +671,10 @@
                 font-size: 16px;
                 transition: all 0.3s ease;
             }
-            
             .quiz-option:hover {
                 border-color: #4285f4;
                 background: #f8f9ff;
             }
-            
             .back-button {
                 margin-top: 30px;
                 padding: 12px 20px;
@@ -798,22 +684,18 @@
                 border-radius: 8px;
                 cursor: pointer;
             }
-            
             .quiz-result {
                 text-align: center;
                 padding: 40px;
             }
-            
             .quiz-result h2 {
                 font-size: 28px;
                 margin-bottom: 30px;
                 color: #333;
             }
-            
             .result-score {
                 margin-bottom: 30px;
             }
-            
             .score-circle {
                 width: 120px;
                 height: 120px;
@@ -826,15 +708,12 @@
                 color: white;
                 font-weight: bold;
             }
-            
             .score-number {
                 font-size: 36px;
             }
-            
             .score-total {
                 font-size: 18px;
             }
-            
             .play-again-button {
                 padding: 15px 30px;
                 background: #4285f4;
@@ -845,7 +724,7 @@
                 cursor: pointer;
             }
         `;
-        
+
         const styleSheet = document.createElement('style');
         styleSheet.textContent = quizStyles;
         document.head.appendChild(styleSheet);

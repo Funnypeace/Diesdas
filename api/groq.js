@@ -1,4 +1,4 @@
-// /api/groq.js - Vercel API Route für GroqCloud Integration
+// /api/groq.js - Vercel API Route für GroqCloud Integration mit Chat-Historie
 
 export default async function handler(req, res) {
     console.log('=== API Route Debug Info ===');
@@ -6,6 +6,7 @@ export default async function handler(req, res) {
     console.log('Headers:', req.headers);
     console.log('Body:', req.body);
     console.log('Query:', req.query);
+
     // Nur POST-Requests erlauben
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -22,26 +23,25 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { prompt, action } = req.body;
-
+        const { messages, action } = req.body;
         console.log('Extracted from body:');
-        console.log('- prompt:', prompt ? `${prompt.substring(0, 100)}...` : 'MISSING');
+        console.log('- messages:', messages ? `Array mit ${messages.length} Einträgen` : 'MISSING');
         console.log('- action:', action || 'MISSING');
 
         // Input-Validierung
-        if (!prompt || !action) {
-            console.log('Validation failed - missing prompt or action');
-            return res.status(400).json({ 
-                error: 'Prompt und Action sind erforderlich',
-                received: { prompt: !!prompt, action: !!action }
+        if (!messages || !Array.isArray(messages) || messages.length === 0 || !action) {
+            console.log('Validation failed - missing messages or action');
+            return res.status(400).json({
+                error: 'Messages-Array und Action sind erforderlich',
+                received: { messages: !!messages, action: !!action }
             });
         }
 
         // API Key prüfen
         if (!process.env.GROQ_API_KEY) {
             console.error('GROQ_API_KEY not found in environment variables');
-            return res.status(500).json({ 
-                error: 'API-Schlüssel nicht konfiguriert. Bitte GROQ_API_KEY in Vercel Environment Variables setzen.' 
+            return res.status(500).json({
+                error: 'API-Schlüssel nicht konfiguriert. Bitte GROQ_API_KEY in Vercel Environment Variables setzen.'
             });
         }
 
@@ -49,10 +49,10 @@ export default async function handler(req, res) {
         const apiKey = process.env.GROQ_API_KEY;
         console.log('API Key length:', apiKey.length);
         console.log('API Key starts with gsk_:', apiKey.startsWith('gsk_'));
-        
+
         if (!apiKey.startsWith('gsk_')) {
-            return res.status(500).json({ 
-                error: 'Ungültiges API-Schlüssel Format. Muss mit gsk_ beginnen.' 
+            return res.status(500).json({
+                error: 'Ungültiges API-Schlüssel Format. Muss mit gsk_ beginnen.'
             });
         }
 
@@ -60,23 +60,20 @@ export default async function handler(req, res) {
         console.log('API Key present:', !!apiKey);
         console.log('Model:', 'llama-3.3-70b-versatile');
 
+        // System-Prompt vorne hinzufügen (nur einmal, falls nicht schon vorhanden)
+        const fullMessages = [
+            {
+                role: 'system',
+                content: `Du bist ein kreativer Content-Generator und hilfreicher Assistent. Antworte präzise und professionell auf Deutsch. Formatiere Code-Beispiele mit Markdown Code-Blöcken. Sei konstruktiv und hilfreich in deinen Erklärungen. Berücksichtige die gesamte Konversation.`
+            },
+            ...messages  // User- und Assistant-Messages aus Historie
+        ];
+
         const requestBody = {
             model: 'llama-3.3-70b-versatile',
-            messages: [
-                {
-                    role: 'system',
-                    content: `Du bist ein erfahrener Software-Entwickler und Code-Experte. 
-                             Antworte präzise und professionell auf Deutsch. 
-                             Formatiere Code-Beispiele mit Markdown Code-Blöcken.
-                             Sei konstruktiv und hilfreich in deinen Erklärungen.`
-                },
-                {
-                    role: 'user',
-                    content: prompt
-                }
-            ],
+            messages: fullMessages,
             max_tokens: 2048,
-            temperature: 0.1,
+            temperature: 0.7,
             top_p: 1,
             stream: false
         };
@@ -100,14 +97,13 @@ export default async function handler(req, res) {
         if (!groqResponse.ok) {
             const errorData = await groqResponse.text();
             console.error('GroqCloud API Error:', groqResponse.status, errorData);
-            return res.status(groqResponse.status).json({ 
+            return res.status(groqResponse.status).json({
                 error: `GroqCloud API Fehler: ${groqResponse.status}`,
                 details: errorData
             });
         }
 
         console.log('GroqCloud response received successfully');
-
         const groqData = await groqResponse.json();
 
         // Antwort strukturieren
@@ -120,12 +116,11 @@ export default async function handler(req, res) {
         };
 
         return res.status(200).json(response);
-
     } catch (error) {
         console.error('API Route Error:', error);
-        return res.status(500).json({ 
+        return res.status(500).json({
             error: 'Interner Server-Fehler',
-            details: error.message 
+            details: error.message
         });
     }
 }
@@ -133,4 +128,4 @@ export default async function handler(req, res) {
 // Vercel Edge Runtime für bessere Performance (optional)
 // export const config = {
 //     runtime: 'edge',
-// }
+// };

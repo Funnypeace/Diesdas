@@ -1,7 +1,11 @@
 // /api/groq.js - Vercel API Route für GroqCloud Integration
 
 export default async function handler(req, res) {
-    console.log('API Route called:', req.method, req.body);
+    console.log('=== API Route Debug Info ===');
+    console.log('Method:', req.method);
+    console.log('Headers:', req.headers);
+    console.log('Body:', req.body);
+    console.log('Query:', req.query);
     // Nur POST-Requests erlauben
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -9,16 +13,27 @@ export default async function handler(req, res) {
 
     // CORS Headers für Frontend-Zugriff
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    // Handle preflight OPTIONS request
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
 
     try {
         const { prompt, action } = req.body;
 
+        console.log('Extracted from body:');
+        console.log('- prompt:', prompt ? `${prompt.substring(0, 100)}...` : 'MISSING');
+        console.log('- action:', action || 'MISSING');
+
         // Input-Validierung
         if (!prompt || !action) {
+            console.log('Validation failed - missing prompt or action');
             return res.status(400).json({ 
-                error: 'Prompt und Action sind erforderlich' 
+                error: 'Prompt und Action sind erforderlich',
+                received: { prompt: !!prompt, action: !!action }
             });
         }
 
@@ -42,34 +57,44 @@ export default async function handler(req, res) {
         }
 
         console.log('Making request to GroqCloud...');
+        console.log('API Key present:', !!apiKey);
+        console.log('Model:', 'llama-3.1-70b-versatile');
+
+        const requestBody = {
+            model: 'llama-3.1-70b-versatile',
+            messages: [
+                {
+                    role: 'system',
+                    content: `Du bist ein erfahrener Software-Entwickler und Code-Experte. 
+                             Antworte präzise und professionell auf Deutsch. 
+                             Formatiere Code-Beispiele mit Markdown Code-Blöcken.
+                             Sei konstruktiv und hilfreich in deinen Erklärungen.`
+                },
+                {
+                    role: 'user',
+                    content: prompt
+                }
+            ],
+            max_tokens: 2048,
+            temperature: 0.1,
+            top_p: 1,
+            stream: false
+        };
+
+        console.log('Request body structure:', {
+            model: requestBody.model,
+            messageCount: requestBody.messages.length,
+            maxTokens: requestBody.max_tokens
+        });
 
         // GroqCloud API Call
         const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+                'Authorization': `Bearer ${apiKey}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                model: 'llama-3.1-70b-versatile', // Schnellstes Modell für Code-Tasks
-                messages: [
-                    {
-                        role: 'system',
-                        content: `Du bist ein erfahrener Software-Entwickler und Code-Experte. 
-                                 Antworte präzise und professionell auf Deutsch. 
-                                 Formatiere Code-Beispiele mit Markdown Code-Blöcken.
-                                 Sei konstruktiv und hilfreich in deinen Erklärungen.`
-                    },
-                    {
-                        role: 'user',
-                        content: prompt
-                    }
-                ],
-                max_tokens: 2048,
-                temperature: 0.1, // Niedrige Temperatur für konsistente Code-Analyse
-                top_p: 1,
-                stream: false
-            }),
+            body: JSON.stringify(requestBody),
         });
 
         if (!groqResponse.ok) {

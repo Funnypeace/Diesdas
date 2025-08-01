@@ -485,7 +485,7 @@
         return {city,temp:Math.round(temperature),code:weathercode};
       }catch(_){return {city,temp:'?',code:1};}
     }
-    // Aktualisierte Nachrichten-Funktion mit kategorisierten RSS-Feeds
+    // Aktualisierte Nachrichten-Funktion mit allorigins.win als Proxy
     async function loadNews() {
       const newsContainer = document.getElementById('news-container');
       newsContainer.innerHTML = ''; // Leere den Container zunächst
@@ -494,24 +494,28 @@
         {
           title: 'Aktuelle Entwicklungen in der deutschen Politik',
           rssUrl: 'https://www.tagesschau.de/xml/rss-genios/inland',
+          fallbackLink: 'https://www.tagesschau.de/inland/',
         },
         {
           title: 'Wirtschaftsnachrichten und Marktentwicklungen',
           rssUrl: 'https://www.tagesschau.de/xml/rss-genios/wirtschaft',
+          fallbackLink: 'https://www.tagesschau.de/wirtschaft/',
         },
         {
           title: 'Internationale Nachrichten aus aller Welt',
           rssUrl: 'https://www.tagesschau.de/xml/rss-genios/ausland',
+          fallbackLink: 'https://www.tagesschau.de/ausland/',
         },
         {
           title: 'Wissenschaft und Technologie im Fokus',
           rssUrl: 'https://www.tagesschau.de/xml/rss-genios/wissen',
+          fallbackLink: 'https://www.tagesschau.de/wissen/',
         },
       ];
-      // Hilfsfunktion zum Parsen von RSS-XML
-      function parseRSS(xmlText) {
+      // Hilfsfunktion zum Parsen von RSS-XML (von allorigins.win Response)
+      function parseRSS(data) {
         const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+        const xmlDoc = parser.parseFromString(data.contents, 'text/xml');
         const items = xmlDoc.querySelectorAll('item');
         return Array.from(items).map(item => ({
           title: item.querySelector('title')?.textContent || 'Kein Titel',
@@ -520,8 +524,8 @@
           pubDate: item.querySelector('pubDate')?.textContent || new Date().toLocaleTimeString(),
         }));
       }
-      // Hilfsfunktion zum Erstellen eines Kategorie-Elements (angepasst an deine news-item-Style)
-      function createCategoryElement(title, time, newsItems) {
+      // Hilfsfunktion zum Erstellen eines Kategorie-Elements
+      function createCategoryElement(title, time, newsItems, fallback = false) {
         return `
           <div class="news-item">
             <div class="news-title">${title}</div>
@@ -532,7 +536,7 @@
             <ul style="list-style-type: none; padding: 0; margin-top: 0.5rem;">
               ${newsItems.map(item => `
                 <li onclick="window.open('${item.link}', '_blank')" style="cursor: pointer; margin-bottom: 0.5rem;">
-                  <strong>${item.title}</strong>: ${item.description}
+                  <strong>${item.title}</strong>${fallback ? '' : ': ' + item.description}
                 </li>
               `).join('')}
             </ul>
@@ -542,22 +546,20 @@
       // Lade Nachrichten für jede Kategorie
       for (const category of categories) {
         try {
-          // Verwende einen CORS-Proxy
-          const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(category.rssUrl);
+          // Verwende allorigins.win als Proxy
+          const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(category.rssUrl)}`;
           const response = await fetch(proxyUrl);
           if (!response.ok) throw new Error('Netzwerkfehler');
-          const xmlText = await response.text();
-          const newsItems = parseRSS(xmlText).slice(0, 5); // Begrenze auf 5 Neueste pro Kategorie
-          // Hole aktuelle Uhrzeit als Timestamp
+          const data = await response.json();
+          const newsItems = parseRSS(data).slice(0, 5); // Begrenze auf 5 Neueste
           const currentTime = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-          // Erstelle und füge Element hinzu
           newsContainer.innerHTML += createCategoryElement(category.title, currentTime, newsItems);
         } catch (error) {
           console.error('Fehler beim Laden der Nachrichten:', error);
-          // Fallback: Generische Kategorie anzeigen
+          // Fallback mit Link zur Kategorie-Seite
           const fallbackTime = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-          const fallbackItems = [{ title: 'Fallback-Nachricht', description: 'Aktuelle Daten konnten nicht geladen werden.', link: 'https://www.tagesschau.de' }];
-          newsContainer.innerHTML += createCategoryElement(category.title, fallbackTime, fallbackItems);
+          const fallbackItems = [{ title: 'Aktuelle Daten konnten nicht geladen werden. Klicke für mehr.', link: category.fallbackLink }];
+          newsContainer.innerHTML += createCategoryElement(category.title, fallbackTime, fallbackItems, true);
         }
       }
     }

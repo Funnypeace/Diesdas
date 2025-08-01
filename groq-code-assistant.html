@@ -359,23 +359,37 @@ console.log(fibonacci(10));</textarea>
                 </div>
             `;
 
+            console.log('=== Frontend Debug ===');
+            console.log('Prompt length:', prompt.length);
+            console.log('Action:', action);
+            console.log('Making request to:', '/api/groq');
+
+            const requestData = {
+                prompt: prompt,
+                action: action
+            };
+            console.log('Request data:', requestData);
+
             try {
                 const response = await fetch('/api/groq', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        prompt: prompt,
-                        action: action
-                    })
+                    body: JSON.stringify(requestData)
                 });
 
+                console.log('Response status:', response.status);
+                console.log('Response headers:', [...response.headers.entries()]);
+
+                const responseText = await response.text();
+                console.log('Raw response:', responseText);
+
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    throw new Error(`HTTP error! status: ${response.status}, body: ${responseText}`);
                 }
 
-                const data = await response.json();
+                const data = JSON.parse(responseText);
                 const endTime = Date.now();
                 const responseTime = endTime - startTime;
                 
@@ -388,11 +402,15 @@ console.log(fibonacci(10));</textarea>
                 displayResult(data.content, action, responseTime);
 
             } catch (error) {
-                console.error('Error:', error);
+                console.error('=== Error Details ===');
+                console.error('Error message:', error.message);
+                console.error('Error stack:', error.stack);
+                
                 outputElement.innerHTML = `
                     <div class="error">
                         <strong>Fehler beim Verarbeiten der Anfrage:</strong><br>
-                        ${error.message}
+                        ${error.message}<br><br>
+                        <small>Mehr Details in der Browser-Konsole (F12)</small>
                     </div>
                 `;
             }

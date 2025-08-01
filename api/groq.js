@@ -58,10 +58,10 @@ export default async function handler(req, res) {
 
         console.log('Making request to GroqCloud...');
         console.log('API Key present:', !!apiKey);
-        console.log('Model:', 'llama-3.1-70b-versatile');
+        console.log('Model:', 'llama-3.3-70b-versatile');
 
         const requestBody = {
-            model: 'llama-3.1-70b-versatile',
+            model: 'llama-3.3-70b-versatile',
             messages: [
                 {
                     role: 'system',

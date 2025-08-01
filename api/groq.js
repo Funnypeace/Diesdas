@@ -1,6 +1,7 @@
 // /api/groq.js - Vercel API Route für GroqCloud Integration
 
 export default async function handler(req, res) {
+    console.log('API Route called:', req.method, req.body);
     // Nur POST-Requests erlauben
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -20,6 +21,16 @@ export default async function handler(req, res) {
                 error: 'Prompt und Action sind erforderlich' 
             });
         }
+
+        // API Key prüfen
+        if (!process.env.GROQ_API_KEY) {
+            console.error('GROQ_API_KEY not found in environment variables');
+            return res.status(500).json({ 
+                error: 'API-Schlüssel nicht konfiguriert. Bitte GROQ_API_KEY in Vercel Environment Variables setzen.' 
+            });
+        }
+
+        console.log('Making request to GroqCloud...');
 
         // GroqCloud API Call
         const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -52,11 +63,14 @@ export default async function handler(req, res) {
 
         if (!groqResponse.ok) {
             const errorData = await groqResponse.text();
-            console.error('GroqCloud API Error:', errorData);
+            console.error('GroqCloud API Error:', groqResponse.status, errorData);
             return res.status(groqResponse.status).json({ 
-                error: `GroqCloud API Fehler: ${groqResponse.status}` 
+                error: `GroqCloud API Fehler: ${groqResponse.status}`,
+                details: errorData
             });
         }
+
+        console.log('GroqCloud response received successfully');
 
         const groqData = await groqResponse.json();
 
@@ -81,6 +95,6 @@ export default async function handler(req, res) {
 }
 
 // Vercel Edge Runtime für bessere Performance (optional)
-export const config = {
-    runtime: 'edge',
-}
+// export const config = {
+//     runtime: 'edge',
+// }

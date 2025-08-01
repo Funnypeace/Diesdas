@@ -30,6 +30,17 @@ export default async function handler(req, res) {
             });
         }
 
+        // API Key Format prüfen
+        const apiKey = process.env.GROQ_API_KEY;
+        console.log('API Key length:', apiKey.length);
+        console.log('API Key starts with gsk_:', apiKey.startsWith('gsk_'));
+        
+        if (!apiKey.startsWith('gsk_')) {
+            return res.status(500).json({ 
+                error: 'Ungültiges API-Schlüssel Format. Muss mit gsk_ beginnen.' 
+            });
+        }
+
         console.log('Making request to GroqCloud...');
 
         // GroqCloud API Call

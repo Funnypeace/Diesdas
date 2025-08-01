@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Content-Generator mit Groq über Vercel</title>
+    <title>AI-Chat-Content-Generator mit Groq über Vercel</title>
     <style>
         body {
             background-color: #f3f4f6;
@@ -19,10 +19,34 @@
             color: #1f2937;
             margin-bottom: 1rem;
         }
+        #chat-container {
+            width: 100%;
+            max-width: 28rem;
+            background-color: white;
+            border-radius: 0.375rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            overflow-y: auto;
+            max-height: 24rem;
+            margin-bottom: 1rem;
+        }
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+        }
+        .user {
+            background-color: #e0f2fe;
+            text-align: right;
+        }
+        .assistant {
+            background-color: #f3f4f6;
+            text-align: left;
+            white-space: pre-wrap;
+        }
         form {
             width: 100%;
             max-width: 28rem;
-            margin-bottom: 1rem;
         }
         input {
             width: 100%;
@@ -43,41 +67,49 @@
         button:disabled {
             background-color: #9ca3af;
         }
-        #output {
-            width: 100%;
-            max-width: 28rem;
-            background-color: white;
-            border-radius: 0.375rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 1rem;
-            overflow-y: auto;
-            max-height: 24rem;
-            white-space: pre-wrap;
-        }
     </style>
 </head>
 <body>
-    <h1>AI-Content-Generator mit Groq</h1>
-    <form id="generatorForm">
-        <input type="text" id="promptInput" placeholder="Thema eingeben, z.B. 'Vorteile von KI in der Bildung'..." required>
-        <button type="submit">Generieren</button>
+    <h1>AI-Chat-Content-Generator mit Groq</h1>
+    <div id="chat-container"></div>
+    <form id="chatForm">
+        <input type="text" id="promptInput" placeholder="Thema oder Nachfrage eingeben..." required>
+        <button type="submit">Senden</button>
     </form>
-    <div id="output"></div>
 
     <script>
-        const form = document.getElementById('generatorForm');
+        const form = document.getElementById('chatForm');
         const promptInput = document.getElementById('promptInput');
-        const outputDiv = document.getElementById('output');
+        const chatContainer = document.getElementById('chat-container');
         const button = form.querySelector('button');
+        let messages = [];  // Historie: Array von {role: 'user'/'assistant', content: '...'}
+        let isFirstMessage = true;  // Flag für ersten Prompt (als Content-Generierung formatieren)
+
+        function addMessage(role, content) {
+            const div = document.createElement('div');
+            div.classList.add('message', role);
+            div.textContent = content;
+            chatContainer.appendChild(div);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const prompt = promptInput.value.trim();
-            if (!prompt) return;
+            const userInput = promptInput.value.trim();
+            if (!userInput) return;
+
+            let userContent = userInput;
+            if (isFirstMessage) {
+                userContent = `Generiere einen detaillierten, informativen Text zu: ${userInput}. Halte es auf 500 Wörter.`;
+                isFirstMessage = false;
+            }
+
+            addMessage('user', userInput);  // Zeige User-Eingabe
+            messages.push({ role: 'user', content: userContent });
 
             button.disabled = true;
             button.textContent = 'Generiere...';
-            outputDiv.textContent = '';
+            promptInput.value = '';
 
             try {
                 const response = await fetch('/api/groq.js', {
@@ -86,8 +118,8 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        prompt: `Generiere einen detaillierten, informativen Text zu: ${prompt}. Halte es auf 500 Wörter.`,
-                        action: 'generate_content'  // Passe 'action' an deine Logik an; im Server-Code ist es erforderlich
+                        messages: messages,  // Sende volle Historie
+                        action: 'chat_generate'  // Neue Action für Chat-Modus
                     })
                 });
 
@@ -98,12 +130,13 @@
 
                 const data = await response.json();
                 const generatedText = data.content;
-                outputDiv.textContent = generatedText;
+                addMessage('assistant', generatedText);
+                messages.push({ role: 'assistant', content: generatedText });
             } catch (error) {
-                outputDiv.textContent = `Fehler: ${error.message}. Überprüfe die Vercel-Logs für Details.`;
+                addMessage('assistant', `Fehler: ${error.message}. Überprüfe die Vercel-Logs.`);
             } finally {
                 button.disabled = false;
-                button.textContent = 'Generieren';
+                button.textContent = 'Senden';
             }
         });
     </script>

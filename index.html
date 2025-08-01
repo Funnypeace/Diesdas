@@ -3,26 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <title>Übersichtsseite CDR</title>
-
   <!-- Progressive Enhancement für Mobile und Dark Mode -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#24496c" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0d1520" media="(prefers-color-scheme: dark)">
-
   <style>
     :root {
       --bg-light: #f6f8fa;
       --bg-dark : #0d1520;
       --card-light: #ffffff;
       --card-dark : #192534;
-      --accent    : #24496c;
+      --accent : #24496c;
       --text-main : #212529;
       --text-dark : #d5dee9;
       --radius-lg : 18px;
       --radius-md : 12px;
-      --gap-lg    : 2rem;
-      --gap-md    : 1rem;
+      --gap-lg : 2rem;
+      --gap-md : 1rem;
       --category-travel: #e8f5e8;
       --category-games: #fff3e0;
       --category-info: #e3f2fd;
@@ -30,7 +28,6 @@
       --category-demo: #f3e5f5;
       --category-art: #fce4ec;
     }
-
     @media (prefers-color-scheme: dark) {
       :root {
         --bg-light : var(--bg-dark);
@@ -44,7 +41,6 @@
         --category-art: #2e0a1f;
       }
     }
-
     *,*::before,*::after { box-sizing: border-box; }
     body{
       margin:0;
@@ -54,7 +50,6 @@
       overflow-x:hidden;
       -webkit-font-smoothing:antialiased;
     }
-
     h1{
       text-align:center;
       font-size:2.2rem;
@@ -62,7 +57,6 @@
       margin:2.3rem 0 1.8rem;
       letter-spacing:.4px;
     }
-
     .weather-section, .news-section{
       max-width:740px;
       margin:0 auto 2.5rem;
@@ -92,7 +86,6 @@
     .weather-icon{ font-size:2.2rem; }
     .weather-temp{ font-size:1.55rem; font-weight:700; }
     .time-display{ margin-top:0.6rem; font-size:1.2rem; font-weight:500; }
-
     .news-container {
       display: flex;
       flex-direction: column;
@@ -101,7 +94,6 @@
       overflow-y: auto;
       padding: 0 0.5rem;
     }
-
     .news-item {
       background: #fff9e6;
       border-radius: var(--radius-md);
@@ -112,12 +104,10 @@
       transition: transform 0.15s ease, box-shadow 0.15s ease;
       cursor: pointer;
     }
-
     .news-item:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(100, 120, 160, 0.15);
     }
-
     @media (prefers-color-scheme: dark) {
       .news-item {
         background: #2a1f0a;
@@ -125,7 +115,6 @@
         border-left-color: #ff8c42;
       }
     }
-
     .news-title {
       font-size: 1rem;
       font-weight: 600;
@@ -133,13 +122,11 @@
       color: #1a365d;
       line-height: 1.3;
     }
-
     @media (prefers-color-scheme: dark) {
       .news-title {
         color: #e2e8f0;
       }
     }
-
     .news-meta {
       display: flex;
       justify-content: space-between;
@@ -148,13 +135,11 @@
       color: #666;
       margin-top: 0.5rem;
     }
-
     @media (prefers-color-scheme: dark) {
       .news-meta {
         color: #a0aec0;
       }
     }
-
     .news-source {
       font-weight: 500;
       background: #ff6b35;
@@ -163,54 +148,45 @@
       border-radius: 4px;
       font-size: 0.7rem;
     }
-
     .news-time {
       font-style: italic;
     }
-
     .news-loading {
       text-align: center;
       padding: 2rem;
       color: #666;
       font-style: italic;
     }
-
     .content-wrapper {
       max-width: 1200px;
       margin: 0 auto;
       padding: 0 var(--gap-md);
     }
-
     .category-section {
       margin-bottom: 3rem;
     }
-
     .category-header {
       display: flex;
       align-items: center;
       margin-bottom: 1.5rem;
       padding: 0 0.5rem;
     }
-
     .category-icon {
       font-size: 1.8rem;
       margin-right: 0.8rem;
     }
-
     .category-title {
       font-size: 1.4rem;
       font-weight: 600;
       color: var(--accent);
       margin: 0;
     }
-
     .grid{
       display:grid;
       gap:var(--gap-md);
       width:100%;
       grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
     }
-
     .card{
       display:block;
       text-decoration:none;
@@ -225,23 +201,20 @@
       position: relative;
       border-left: 4px solid transparent;
     }
-
     .card:hover,.card:focus{
       transform:translateY(-6px) scale(1.025);
       box-shadow:0 14px 32px rgba(40,40,80,.18),0 3px 14px rgba(0,0,0,.08);
       outline:none;
     }
-    
+   
     .card h2{ margin:0 0 .45rem; font-size:1.25rem; font-weight:700; }
     .card p { margin:0; font-size:1.05rem; color:#495567; }
-
     .category-travel .card { border-left-color: #4caf50; }
     .category-games .card { border-left-color: #ff9800; }
     .category-info .card { border-left-color: #2196f3; }
     .category-tools .card { border-left-color: #ffc107; }
     .category-demo .card { border-left-color: #9c27b0; }
     .category-art .card { border-left-color: #e91e63; }
-
     .filter-nav {
       display: flex;
       justify-content: center;
@@ -249,7 +222,6 @@
       margin-bottom: 2rem;
       flex-wrap: wrap;
     }
-
     .filter-btn {
       background: var(--card-light);
       border: 2px solid var(--accent);
@@ -261,24 +233,20 @@
       font-size: 0.9rem;
       font-weight: 500;
     }
-
     .filter-btn:hover,
     .filter-btn.active {
       background: var(--accent);
       color: white;
     }
-
     .filter-btn.show-all {
       background: #28a745;
       border-color: #28a745;
       color: white;
     }
-
     .filter-btn.show-all:hover {
       background: #218838;
       border-color: #218838;
     }
-
     @media (max-width:650px){
       h1{font-size:1.9rem;margin-top:1.8rem;}
       .grid{gap:var(--gap-md);}
@@ -299,48 +267,39 @@
       .weather-card{min-width:110px;padding:.9rem .6rem;border-radius:10px;}
       .news-container{max-height:250px;}
     }
-
     .category-section {
       transition: opacity 0.3s ease, transform 0.3s ease;
     }
-
     .category-section.hidden {
       display: none;
     }
-
     /* Scrollbar Styling für News Container */
     .news-container::-webkit-scrollbar {
       width: 6px;
     }
-
     .news-container::-webkit-scrollbar-track {
       background: #f1f1f1;
       border-radius: 3px;
     }
-
     .news-container::-webkit-scrollbar-thumb {
       background: #c0c0c0;
       border-radius: 3px;
     }
-
     .news-container::-webkit-scrollbar-thumb:hover {
       background: #a0a0a0;
     }
   </style>
-
   <!-- GoatCounter Analytics -->
   <script data-goatcounter="https://funnypeace.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
   <h1>Übersichtsseite CDR</h1>
-
   <!-- ================= Wetter ================ -->
   <section class="weather-section">
     <div class="weather-header">Aktuelles Wetter</div>
     <div id="weather-container" class="weather-container" aria-live="polite"></div>
     <div id="time-container" class="time-display"></div>
   </section>
-
   <!-- ================= Nachrichten ================ -->
   <section class="news-section">
     <div class="news-header">📰 Aktuelle Nachrichten</div>
@@ -348,7 +307,6 @@
       <div class="news-loading">Nachrichten werden geladen...</div>
     </div>
   </section>
-
   <!-- ================= Filter-Navigation ================ -->
   <div class="content-wrapper">
     <nav class="filter-nav">
@@ -360,7 +318,6 @@
       <button class="filter-btn" data-category="travel">🌍 Reisen</button>
       <button class="filter-btn" data-category="demo">⚡ Demos</button>
     </nav>
-
     <!-- ================= Info ================ -->
     <section class="category-section category-info" data-category="info">
       <div class="category-header">
@@ -379,7 +336,6 @@
         </a>
       </div>
     </section>
-
     <!-- ================= Tools ================ -->
     <section class="category-section category-tools" data-category="tools">
       <div class="category-header">
@@ -407,7 +363,6 @@
         </a>
       </div>
     </section>
-
     <!-- ================= Kunst ================ -->
     <section class="category-section category-art" data-category="art">
       <div class="category-header">
@@ -423,7 +378,6 @@
         </a>
       </div>
     </section>
-
     <!-- ================= Spiele ================ -->
     <section class="category-section category-games" data-category="games">
       <div class="category-header">
@@ -469,7 +423,6 @@
         </a>
       </div>
     </section>
-
     <!-- ================= Reisen & Pläne ================ -->
     <section class="category-section category-travel" data-category="travel">
       <div class="category-header">
@@ -491,7 +444,6 @@
         </a>
       </div>
     </section>
-
     <!-- ================= Demos ================ -->
     <section class="category-section category-demo" data-category="demo">
       <div class="category-header">
@@ -514,18 +466,16 @@
       </div>
     </section>
   </div>
-
   <!-- ================= JS: Wetter + Nachrichten + Filter ================ -->
   <script>
-    const icon = c =>       ([0]      .includes(c)?'☀️':
-                             [1]      .includes(c)?'🌤️':
-                             [2,3]    .includes(c)?'⛅':
-                             [45,48]  .includes(c)?'🌫️':
+    const icon = c => ([0] .includes(c)?'☀️':
+                             [1] .includes(c)?'🌤️':
+                             [2,3] .includes(c)?'⛅':
+                             [45,48] .includes(c)?'🌫️':
                              (c>=51&&c<=67)?'🌧️':
                              (c>=71&&c<=77)?'❄️':
                              (c>=80&&c<=82)?'🌦️':
                              (c>=95&&c<=99)?'⛈️':'☁️');
-
     async function fetchWeather(city,lat,lon){
       const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
       try{
@@ -535,144 +485,89 @@
         return {city,temp:Math.round(temperature),code:weathercode};
       }catch(_){return {city,temp:'?',code:1};}
     }
-
-    // Korrigierte Nachrichten-Funktionen
-    async function fetchTagesschauRSS() {
-      try {
-        const rssUrl = 'https://www.tagesschau.de/xml/rss2/';
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
-        
-        const response = await fetch(proxyUrl);
-        const data = await response.json();
-        
-        if (!data.contents) {
-          throw new Error('Keine RSS-Daten erhalten');
-        }
-        
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(data.contents, 'text/xml');
-        
-        const items = xml.querySelectorAll('item');
-        const news = [];
-        
-        items.forEach((item, index) => {
-          if (index < 8 && item.querySelector('title') && item.querySelector('link')) {
-            const pubDate = item.querySelector('pubDate')?.textContent;
-            let timeStr = 'Gerade eben';
-            
-            if (pubDate) {
-              try {
-                const date = new Date(pubDate);
-                timeStr = date.toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'});
-              } catch(e) {
-                timeStr = 'Unbekannt';
-              }
-            }
-            
-            news.push({
-              title: item.querySelector('title').textContent.trim(),
-              link: item.querySelector('link').textContent.trim(),
-              source: 'Tagesschau',
-              time: timeStr
-            });
-          }
-        });
-        
-        return news;
-      } catch (error) {
-        console.log('RSS Feed Fehler:', error.message);
-        return [];
-      }
-    }
-
-    async function getFallbackNews() {
-      // Zuverlässige Fallback-Nachrichten mit echten Tagesschau-Links
-      const now = new Date();
-      const baseTime = now.getTime();
-      
-      return [
-        {
-          title: "Aktuelle Entwicklungen in der deutschen Politik",
-          link: "https://www.tagesschau.de/inland/",
-          source: "Tagesschau",
-          time: new Date(baseTime).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
-        },
-        {
-          title: "Wirtschaftsnachrichten und Marktentwicklungen",
-          link: "https://www.tagesschau.de/wirtschaft/",
-          source: "Tagesschau",
-          time: new Date(baseTime - 300000).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
-        },
-        {
-          title: "Internationale Nachrichten aus aller Welt",
-          link: "https://www.tagesschau.de/ausland/",
-          source: "Tagesschau",
-          time: new Date(baseTime - 600000).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
-        },
-        {
-          title: "Wissenschaft und Technologie im Fokus",
-          link: "https://www.tagesschau.de/wissen/",
-          source: "Tagesschau",
-          time: new Date(baseTime - 900000).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
-        },
-        {
-          title: "Sport und aktuelle Sportereignisse",
-          link: "https://www.sportschau.de/",
-          source: "Sportschau",
-          time: new Date(baseTime - 1200000).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
-        },
-        {
-          title: "Kultur und Gesellschaft in Deutschland",
-          link: "https://www.tagesschau.de/inland/gesellschaft/",
-          source: "Tagesschau",
-          time: new Date(baseTime - 1500000).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
-        }
-      ];
-    }
-
+    // Aktualisierte Nachrichten-Funktion mit kategorisierten RSS-Feeds
     async function loadNews() {
       const newsContainer = document.getElementById('news-container');
-      
-      try {
-        console.log('Lade Nachrichten...');
-        
-        // Erst RSS versuchen
-        let news = await fetchTagesschauRSS();
-        console.log('RSS Nachrichten erhalten:', news.length);
-        
-        // Falls keine RSS-Nachrichten, Fallback verwenden
-        if (news.length === 0) {
-          console.log('Verwende Fallback-Nachrichten');
-          news = await getFallbackNews();
-        }
-
-        if (news.length > 0) {
-          newsContainer.innerHTML = news.map(item => `
-            <div class="news-item" onclick="window.open('${item.link}', '_blank')">
-              <div class="news-title">${item.title}</div>
-              <div class="news-meta">
-                <span class="news-source">${item.source}</span>
-                <span class="news-time">${item.time}</span>
-              </div>
+      newsContainer.innerHTML = ''; // Leere den Container zunächst
+      // Definiere die Kategorien und ihre RSS-URLs (basierend auf Tagesschau)
+      const categories = [
+        {
+          title: 'Aktuelle Entwicklungen in der deutschen Politik',
+          rssUrl: 'https://www.tagesschau.de/xml/rss-genios/inland',
+        },
+        {
+          title: 'Wirtschaftsnachrichten und Marktentwicklungen',
+          rssUrl: 'https://www.tagesschau.de/xml/rss-genios/wirtschaft',
+        },
+        {
+          title: 'Internationale Nachrichten aus aller Welt',
+          rssUrl: 'https://www.tagesschau.de/xml/rss-genios/ausland',
+        },
+        {
+          title: 'Wissenschaft und Technologie im Fokus',
+          rssUrl: 'https://www.tagesschau.de/xml/rss-genios/wissen',
+        },
+      ];
+      // Hilfsfunktion zum Parsen von RSS-XML
+      function parseRSS(xmlText) {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+        const items = xmlDoc.querySelectorAll('item');
+        return Array.from(items).map(item => ({
+          title: item.querySelector('title')?.textContent || 'Kein Titel',
+          description: item.querySelector('description')?.textContent || 'Keine Beschreibung',
+          link: item.querySelector('link')?.textContent || '#',
+          pubDate: item.querySelector('pubDate')?.textContent || new Date().toLocaleTimeString(),
+        }));
+      }
+      // Hilfsfunktion zum Erstellen eines Kategorie-Elements (angepasst an deine news-item-Style)
+      function createCategoryElement(title, time, newsItems) {
+        return `
+          <div class="news-item">
+            <div class="news-title">${title}</div>
+            <div class="news-meta">
+              <span class="news-source">Tagesschau</span>
+              <span class="news-time">${time}</span>
             </div>
-          `).join('');
-          console.log('Nachrichten erfolgreich angezeigt');
-        } else {
-          newsContainer.innerHTML = '<div class="news-loading">Keine Nachrichten verfügbar</div>';
+            <ul style="list-style-type: none; padding: 0; margin-top: 0.5rem;">
+              ${newsItems.map(item => `
+                <li onclick="window.open('${item.link}', '_blank')" style="cursor: pointer; margin-bottom: 0.5rem;">
+                  <strong>${item.title}</strong>: ${item.description}
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+        `;
+      }
+      // Lade Nachrichten für jede Kategorie
+      for (const category of categories) {
+        try {
+          // Verwende einen CORS-Proxy
+          const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(category.rssUrl);
+          const response = await fetch(proxyUrl);
+          if (!response.ok) throw new Error('Netzwerkfehler');
+          const xmlText = await response.text();
+          const newsItems = parseRSS(xmlText).slice(0, 5); // Begrenze auf 5 Neueste pro Kategorie
+          // Hole aktuelle Uhrzeit als Timestamp
+          const currentTime = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+          // Erstelle und füge Element hinzu
+          newsContainer.innerHTML += createCategoryElement(category.title, currentTime, newsItems);
+        } catch (error) {
+          console.error('Fehler beim Laden der Nachrichten:', error);
+          // Fallback: Generische Kategorie anzeigen
+          const fallbackTime = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+          const fallbackItems = [{ title: 'Fallback-Nachricht', description: 'Aktuelle Daten konnten nicht geladen werden.', link: 'https://www.tagesschau.de' }];
+          newsContainer.innerHTML += createCategoryElement(category.title, fallbackTime, fallbackItems);
         }
-      } catch (error) {
-        console.error('Fehler beim Laden der Nachrichten:', error);
-        newsContainer.innerHTML = '<div class="news-loading">Fehler beim Laden der Nachrichten</div>';
       }
     }
-
     // Initialisierung
     (async()=>{
       // Wetter laden
       const cities=[
         {name:'Hamburg',lat:53.55,lon:10.0},
         {name:'Aveiro', lat:40.64,lon:-8.65},
-        {name:'Tokio',  lat:35.68,lon:139.76}
+        {name:'Tokio', lat:35.68,lon:139.76}
       ];
       const data=await Promise.all(cities.map(c=>fetchWeather(c.name,c.lat,c.lon)));
       document.getElementById('weather-container').innerHTML=
@@ -683,11 +578,9 @@
             <span class="weather-temp">${d.temp}°C</span>
           </div>
         `).join('');
-
       // Nachrichten laden
       await loadNews();
     })();
-
     function updateTime(){
       const now=new Date();
       const opts={hour:'2-digit',minute:'2-digit',second:'2-digit'};
@@ -695,25 +588,22 @@
         'Aktuelle Uhrzeit: '+now.toLocaleTimeString('de-DE',opts);
     }
     setInterval(updateTime,1000);
-
     // Nachrichten alle 20 Minuten aktualisieren
     setInterval(loadNews, 1200000);
-
     document.addEventListener('DOMContentLoaded', function() {
       updateTime();
       const filterButtons = document.querySelectorAll('.filter-btn');
       const categorySections = document.querySelectorAll('.category-section');
-
       filterButtons.forEach(button => {
         button.addEventListener('click', function() {
           const targetCategory = this.getAttribute('data-category');
-          
+         
           filterButtons.forEach(btn => btn.classList.remove('active'));
           this.classList.add('active');
-          
+         
           categorySections.forEach(section => {
             const sectionCategory = section.getAttribute('data-category');
-            
+           
             if (targetCategory === 'all' || sectionCategory === targetCategory) {
               section.classList.remove('hidden');
             } else {

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker mit AI-Insights</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #333; }
+        .input-section { margin-bottom: 20px; }
+        .input-section label { display: block; margin-bottom: 5px; }
+        .input-section input, .input-section textarea { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .buttons { display: flex; justify-content: space-around; margin-bottom: 20px; }
+        .buttons button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .buttons button:hover { background-color: #45a049; }
+        .output-section { background: #f9f9f9; padding: 15px; border-radius: 4px; min-height: 200px; }
+        .stats { display: flex; justify-content: space-around; margin-top: 20px; }
+        .stat { text-align: center; padding: 10px; background: #e0f7fa; border-radius: 4px; width: 30%; }
+        .expenses-list { margin-top: 20px; }
+        .expense-item { padding: 10px; border-bottom: 1px solid #ddd; }
+        @media (max-width: 600px) { .buttons { flex-direction: column; } .buttons button { margin-bottom: 10px; } .stats { flex-direction: column; } .stat { width: 100%; margin-bottom: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Expense Tracker mit AI-Insights</h1>
+        <p>Nutzen Sie die Kraft von GroqCloud für intelligente Finanz-Analysen und -Empfehlungen.</p>
+
+        <div class="input-section">
+            <h2>Ausgabe hinzufügen</h2>
+            <label for="description">Beschreibung:</label>
+            <textarea id="description" rows="3" placeholder="z.B. Einkauf im Supermarkt"></textarea>
+            
+            <label for="amount">Betrag (€):</label>
+            <input type="number" id="amount" placeholder="z.B. 45.67">
+            
+            <label for="date">Datum:</label>
+            <input type="date" id="date">
+            
+            <button onclick="addExpense()">Ausgabe speichern</button>
+        </div>
+
+        <div class="expenses-list" id="expensesList">
+            <h2>Gespeicherte Ausgaben</h2>
+            <!-- Hier werden Ausgaben dynamisch hinzugefügt -->
+        </div>
+
+        <div class="buttons">
+            <button onclick="categorizeExpenses()">💡 Automatische Kategorisierung</button>
+            <button onclick="generateInsights()">📊 Trends & Insights</button>
+            <button onclick="predictBudget()">🔮 Budget-Vorhersagen</button>
+            <button onclick="exportReport()">📤 Bericht exportieren</button>
+        </div>
+
+        <div class="output-section" id="output">
+            <h2>KI-Analyse</h2>
+            <p>Wählen Sie eine Aktion aus, um die KI-Analyse zu starten...</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <h3>Anfragen</h3>
+                <p id="requestCount">0</p>
+            </div>
+            <div class="stat">
+                <h3>∅ Antwortzeit</h3>
+                <p id="avgResponseTime">0ms</p>
+            </div>
+            <div class="stat">
+                <h3>Tokens verwendet</h3>
+                <p id="tokensUsed">0</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Globale Variablen
+        let expenses = []; // Array für gespeicherte Ausgaben
+        let requestCount = 0;
+        let totalResponseTime = 0;
+        let totalTokens = 0;
+
+        // Funktion zum Hinzufügen einer Ausgabe
+        function addExpense() {
+            const description = document.getElementById('description').value.trim();
+            const amount = parseFloat(document.getElementById('amount').value);
+            const date = document.getElementById('date').value;
+
+            if (!description || isNaN(amount) || !date) {
+                alert('Bitte alle Felder ausfüllen!');
+                return;
+            }
+
+            const expense = { description, amount, date, category: 'Unbekannt' };
+            expenses.push(expense);
+            renderExpenses();
+
+            // Felder leeren
+            document.getElementById('description').value = '';
+            document.getElementById('amount').value = '';
+            document.getElementById('date').value = '';
+        }
+
+        // Ausgaben rendern
+        function renderExpenses() {
+            const list = document.getElementById('expensesList');
+            list.innerHTML = '<h2>Gespeicherte Ausgaben</h2>';
+            expenses.forEach((exp, index) => {
+                const item = document.createElement('div');
+                item.className = 'expense-item';
+                item.innerHTML = `
+                    <strong>${exp.date}</strong>: ${exp.description} - €${exp.amount.toFixed(2)} 
+                    (Kategorie: ${exp.category})
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // Allgemeine Funktion zum Aufrufen der Groq API
+        async function callGroqAPI(prompt, action) {
+            console.log('=== Frontend Debug ===');
+            console.log('Prompt length:', prompt.length);
+            console.log('Action:', action);
+            console.log('Making request to: /api/groq');
+
+            const startTime = performance.now();
+
+            try {
+                const response = await fetch('/api/groq', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt, action })
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.log('Raw response:', errorText);
+                    throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`);
+                }
+
+                const data = await response.json();
+                const endTime = performance.now();
+                const responseTime = endTime - startTime;
+
+                // Stats aktualisieren
+                requestCount++;
+                totalResponseTime += responseTime;
+                totalTokens += data.usage?.total_tokens || 0;
+
+                document.getElementById('requestCount').textContent = requestCount;
+                document.getElementById('avgResponseTime').textContent = `${(totalResponseTime / requestCount).toFixed(0)}ms`;
+                document.getElementById('tokensUsed').textContent = totalTokens;
+
+                return data.content;
+
+            } catch (error) {
+                console.error('=== Error Details ===');
+                console.error('Error message:', error.message);
+                console.error('Error stack:', error.stack);
+                document.getElementById('output').innerHTML = `<p style="color: red;">Fehler: ${error.message}</p>`;
+                return null;
+            }
+        }
+
+        // Automatische Kategorisierung
+        async function categorizeExpenses() {
+            if (expenses.length === 0) {
+                alert('Keine Ausgaben vorhanden!');
+                return;
+            }
+
+            const prompt = `Kategorisiere die folgenden Ausgaben automatisch in Kategorien wie Essen, Transport, Unterhaltung, etc. Gib das Ergebnis als JSON-Array zurück: ${JSON.stringify(expenses)}`;
+            const result = await callGroqAPI(prompt, 'Kategorisierung');
+
+            if (result) {
+                try {
+                    const categorized = JSON.parse(result);
+                    expenses = categorized; // Aktualisiere die Ausgaben
+                    renderExpenses();
+                    document.getElementById('output').innerHTML = `<h2>Kategorisierung abgeschlossen</h2><pre>${result}</pre>`;
+                } catch (e) {
+                    document.getElementById('output').innerHTML = `<p>Ergebnis: ${result}</p>`;
+                }
+            }
+        }
+
+        // Trends & Insights generieren
+        async function generateInsights() {
+            if (expenses.length === 0) {
+                alert('Keine Ausgaben vorhanden!');
+                return;
+            }
+
+            const prompt = `Analysiere die folgenden Ausgaben und gib Trends, Insights und Empfehlungen: ${JSON.stringify(expenses)}`;
+            const result = await callGroqAPI(prompt, 'Insights');
+
+            if (result) {
+                document.getElementById('output').innerHTML = `<h2>Trends & Insights</h2><p>${result}</p>`;
+            }
+        }
+
+        // Budget-Vorhersagen
+        async function predictBudget() {
+            if (expenses.length === 0) {
+                alert('Keine Ausgaben vorhanden!');
+                return;
+            }
+
+            const prompt = `Basierend auf diesen Ausgaben, prognostiziere das Budget für den nächsten Monat und gib Empfehlungen: ${JSON.stringify(expenses)}`;
+            const result = await callGroqAPI(prompt, 'Budget-Vorhersage');
+
+            if (result) {
+                document.getElementById('output').innerHTML = `<h2>Budget-Vorhersagen</h2><p>${result}</p>`;
+            }
+        }
+
+        // Bericht exportieren (einfach als CSV)
+        function exportReport() {
+            if (expenses.length === 0) {
+                alert('Keine Ausgaben vorhanden!');
+                return;
+            }
+
+            const csvContent = "data:text/csv;charset=utf-8," + 
+                "Datum,Beschreibung,Betrag,Kategorie\n" +
+                expenses.map(exp => `${exp.date},${exp.description},${exp.amount},${exp.category}`).join("\n");
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "expenses_report.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>

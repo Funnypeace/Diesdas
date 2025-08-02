@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hot or Not - Hollywood</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        #game { max-width: 600px; margin: 0 auto; }
+        #image { max-width: 300px; height: auto; margin: 20px 0; }
+        button { padding: 10px 20px; margin: 10px; font-size: 16px; cursor: pointer; }
+        #result { margin-top: 20px; font-size: 18px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div id="game">
+        <h1>Hot or Not - Hollywood</h1>
+        <p>Bewerte 10 Stars als hot oder not. Klicke auf die Buttons!</p>
+        
+        <div id="round-info"></div>
+        <img id="image" src="" alt="Star Bild" class="hidden">
+        <p id="name"></p>
+        
+        <button id="hot-btn">Hot</button>
+        <button id="not-btn">Not</button>
+        
+        <div id="result" class="hidden"></div>
+    </div>
+
+    <script>
+        // Liste der Hollywood-Stars mit Bild-URLs (jetzt für alle verfügbar)
+        const celebrities = [
+            { name: "Scarlett Johansson", url: "https://m.media-amazon.com/images/M/MV5BMTM3OTUzMDg1OV5BMl5BanBnXkFtZTcwNTUyNzc3Ng@@._V1_.jpg" },
+            { name: "Chris Hemsworth", url: "https://m.media-amazon.com/images/M/MV5BMTk4NTc1NjU1Ml5BMl5BanBnXkFtZTcwODg1ODczMg@@._V1_.jpg" },
+            { name: "Angelina Jolie", url: "https://m.media-amazon.com/images/M/MV5BMTI5NDY5OTAt15c2My00YzE1LWIwZi00OGI1ODk2OTJkODQ4XkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg" },
+            { name: "Emma Stone", url: "https://m.media-amazon.com/images/M/MV5BMTY2ODQ3NjMyMl5BMl5BanBnXkFtZTcwODg0MTUzNw@@._V1_.jpg" },
+            { name: "Ryan Reynolds", url: "https://m.media-amazon.com/images/M/MV5BMTY2MTk3MDQ1N15BMl5BanBnXkFtZTcwMzI4NzA2NQ@@._V1_.jpg" },
+            { name: "Tom Holland", url: "https://m.media-amazon.com/images/M/MV5BNzZiNTEyNTItYjNhMS00YjI2LWIwMWQtZmEwNGV8MDdhNmQyXkEyXkFqcGdeQXVyMTExNzQzMDE0._V1_.jpg" },
+            { name: "Pedro Pascal", url: "https://m.media-amazon.com/images/M/MV5BMTc2ODg3OTU2MV5BMl5BanBnXkFtZTcwNzQyNTAzOQ@@._V1_.jpg" },
+            { name: "Anne Hathaway", url: "https://m.media-amazon.com/images/M/MV5BMTQ3ODM4MTY2MV5BMl5BanBnXkFtZTcwNzA5OTM5Mg@@._V1_.jpg" },
+            { name: "Jennifer Lawrence", url: "https://m.media-amazon.com/images/M/MV5BMTgwNjA4ODQ3N15BMl5BanBnXkFtZTgwNjI3NjgxMTE@._V1_.jpg" },
+            { name: "Zendaya", url: "https://m.media-amazon.com/images/M/MV5BMTc1MTc1ODM5MF5BMl5BanBnXkFtZTgwNjY2NTg4MTI@._V1_.jpg" },
+            { name: "Rachel McAdams", url: "https://m.media-amazon.com/images/M/MV5BMTI5NDY5OTAtNGUyMi00OTk3LWFmZDgtYzA3NCVyY2ZmYjQzXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg" },
+            { name: "Penélope Cruz", url: "https://m.media-amazon.com/images/M/MV5BMTc2ODg3MDY1N15BMl5BanBnXkFtZTcwNTM5MTI2OA@@._V1_UY317_CR2,0,214,317_AL_.jpg" },
+            { name: "Jennifer Garner", url: "https://m.media-amazon.com/images/M/MV5BMTM3OTUzNDg1OV5BMl5BanBnXkFtZTcwNTk2MTM5MQ@@._V1_.jpg" },
+            { name: "Rachel Zegler", url: "https://m.media-amazon.com/images/M/MV5BMTY2NjU2NzAyOV5BMl5BanBnXkFtZTgwNjA0NDM5MTI@._V1_.jpg" },
+            { name: "Leo Woodall", url: "https://m.media-amazon.com/images/M/MV5BMTY2NjI3Njg1MV5BMl5BanBnXkFtZTgwNjI1Njg1MzE@._V1_.jpg" }
+            // Füge mehr Stars hinzu, falls gewünscht
+        ];
+
+        let currentRound = 0;
+        let hotCount = 0;
+        const totalRounds = 10;
+
+        const roundInfo = document.getElementById('round-info');
+        const nameElement = document.getElementById('name');
+        const imageElement = document.getElementById('image');
+        const hotBtn = document.getElementById('hot-btn');
+        const notBtn = document.getElementById('not-btn');
+        const resultElement = document.getElementById('result');
+
+        function startRound() {
+            if (currentRound >= totalRounds) {
+                endGame();
+                return;
+            }
+
+            const star = celebrities[Math.floor(Math.random() * celebrities.length)];
+            roundInfo.textContent = `Runde ${currentRound + 1} von ${totalRounds}`;
+            nameElement.textContent = star.name;
+
+            // Immer ein Bild laden, da alle URLs vorhanden sind
+            imageElement.src = star.url;
+            imageElement.classList.remove('hidden');
+
+            currentRound++;
+        }
+
+        function endGame() {
+            hotBtn.classList.add('hidden');
+            notBtn.classList.add('hidden');
+            imageElement.classList.add('hidden');
+            nameElement.textContent = '';
+            roundInfo.textContent = 'Spielende!';
+            resultElement.textContent = `Du hast ${hotCount} von ${totalRounds} als hot bewertet. ${hotCount > 5 ? 'Du bist ein Fan von Hollywood-Glamour!' : 'Du bist wählerisch – gut so!'}`;
+            resultElement.classList.remove('hidden');
+        }
+
+        hotBtn.addEventListener('click', () => {
+            hotCount++;
+            startRound();
+        });
+
+        notBtn.addEventListener('click', () => {
+            startRound();
+        });
+
+        // Starte das erste Round
+        startRound();
+    </script>
+</body>
+</html>

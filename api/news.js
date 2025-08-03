@@ -1,8 +1,8 @@
 export default async function handler(req, res) {
   try {
-    const { category } = req.query; // z. B. '100' für inland
-    const baseUrl = 'https://www.tagesschau.de/xml/rss-genios/';
-    const rssUrl = `${baseUrl}${category || '100'}`; // Default: Inland
+    const { category } = req.query; // z. B. 'pol' für Politik
+    const baseUrl = 'https://rss.dw.com/xml/rss-de-';
+    const rssUrl = `${baseUrl}${category || 'pol'}`; // Default: Politik
 
     const response = await fetch(rssUrl, {
       headers: {
@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json({ xml: xmlText });
   } catch (error) {
-    console.error('Function Error:', error.message); // Log für Vercel
+    console.error('Function Error:', error.message);
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.status(500).json({ error: 'Fehler beim Laden des RSS: ' + error.message });
   }

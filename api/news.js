@@ -19,9 +19,18 @@ export default async function handler(req, res) {
   try {
     const { category } = req.query;
     
-    // Validiere Category Parameter
-    const validCategories = ['pol', 'wirtschaft', 'ausland', 'wissen', 'sport', 'kultur'];
-    const selectedCategory = validCategories.includes(category) ? category : 'pol';
+    // Mapping für Kategorien zu gültigen DW-Kürzeln
+    const categoryMap = {
+      'pol': 'news',        // Politik/Nachrichten
+      'wirtschaft': 'eco',  // Wirtschaft
+      'ausland': 'news',    // Ausland (Fallback auf Nachrichten)
+      'wissen': 'wissenschaft', // Wissenschaft
+      'sport': 'sport',     // Sport
+      'kultur': 'cul'       // Kultur
+    };
+    
+    // Validiere und mappe die Category
+    const selectedCategory = categoryMap[category] || 'all';  // Fallback auf Gesamtfeed
     
     const baseUrl = 'https://rss.dw.com/xml/rss-de-';
     const rssUrl = `${baseUrl}${selectedCategory}`;

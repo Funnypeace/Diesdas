@@ -515,22 +515,25 @@
         },
       ];
 
-      // Hilfsfunktion zum Parsen von XML im Frontend
+      // Hilfsfunktion zum Parsen von XML im Frontend (erweitert für DW-Struktur)
       function parseRSS(xmlText) {
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
         const items = xmlDoc.querySelectorAll('item');
         return Array.from(items).map(item => ({
           title: item.querySelector('title')?.textContent || 'Kein Titel',
-          description: item.querySelector('description')?.textContent || 'Keine Beschreibung',
+          description: item.querySelector('description')?.textContent || item.querySelector('*|encoded')?.textContent || 'Keine Beschreibung', // Fallback auf content:encoded
           link: item.querySelector('link')?.textContent || '#',
         })).slice(0, 5); // Begrenze auf 5
       }
 
       // Hilfsfunktion zum Erstellen eines Kategorie-Elements
       function createCategoryElement(title, time, newsItems, fallback = false) {
+        if (newsItems.length === 0 && !fallback) {
+          return '';
+        }
         return `
-          <div class="news-item">
+          <div class="news-item" onclick="window.open('${fallback ? fallbackLink : ''}', '_blank')" style="cursor: pointer;">
             <div class="news-title">${title}</div>
             <div class="news-meta">
               <span class="news-source">DW</span>

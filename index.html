@@ -490,9 +490,8 @@
     }
     async function loadNews() {
       const newsContainer = document.getElementById('news-container');
-      newsContainer.innerHTML = ''; // Leere den Container zunächst
+      newsContainer.innerHTML = ''; // Leere den Container
 
-      // Definiere die Kategorien (wie zuvor, mit category-Param für die API)
       const categories = [
         {
           title: 'Aktuelle Entwicklungen in der deutschen Politik',
@@ -516,7 +515,19 @@
         },
       ];
 
-      // Hilfsfunktion zum Erstellen eines Kategorie-Elements (angepasst an deine UI)
+      // Hilfsfunktion zum Parsen von XML im Frontend
+      function parseRSS(xmlText) {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+        const items = xmlDoc.querySelectorAll('item');
+        return Array.from(items).map(item => ({
+          title: item.querySelector('title')?.textContent || 'Kein Titel',
+          description: item.querySelector('description')?.textContent || 'Keine Beschreibung',
+          link: item.querySelector('link')?.textContent || '#',
+        })).slice(0, 5); // Begrenze auf 5
+      }
+
+      // Hilfsfunktion zum Erstellen eines Kategorie-Elements
       function createCategoryElement(title, time, newsItems, fallback = false) {
         return `
           <div class="news-item">
@@ -536,22 +547,18 @@
         `;
       }
 
-      // Lade Nachrichten für jede Kategorie über die Serverless Function
       for (const cat of categories) {
         try {
-          // Fetch von der internen API (kein Proxy mehr nötig!)
           const response = await fetch(`/api/news?category=${cat.category}`);
           if (!response.ok) throw new Error('API-Fehler');
           const data = await response.json();
-          const newsItems = data.items || []; // Items aus der JSON-Antwort
+          const xmlText = data.xml; // XML aus der Response
+          const newsItems = parseRSS(xmlText); // Parse im Frontend
 
           const currentTime = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-
-          // Erstelle und füge Element hinzu
           newsContainer.innerHTML += createCategoryElement(cat.title, currentTime, newsItems);
         } catch (error) {
-          console.error('Fehler beim Laden der Nachrichten:', error);
-          // Fallback: Generische Anzeige mit Link zur Tagesschau-Seite
+          console.error('Fehler:', error);
           const fallbackTime = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
           const fallbackItems = [{ title: 'Aktuelle Daten konnten nicht geladen werden. Klicke für mehr.', description: '', link: cat.fallbackLink }];
           newsContainer.innerHTML += createCategoryElement(cat.title, fallbackTime, fallbackItems, true);

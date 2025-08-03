@@ -21,16 +21,16 @@ export default async function handler(req, res) {
     
     // Mapping für Kategorien zu gültigen DW-Kürzeln
     const categoryMap = {
-      'pol': 'news',        // Politik/Nachrichten
-      'wirtschaft': 'eco',  // Wirtschaft
-      'ausland': 'news',    // Ausland (Fallback auf Nachrichten)
+      'pol': 'news',          // Politik/Nachrichten
+      'wirtschaft': 'eco',    // Wirtschaft
+      'ausland': 'news',      // Ausland (Fallback auf Nachrichten)
       'wissen': 'wissenschaft', // Wissenschaft
-      'sport': 'sport',     // Sport
-      'kultur': 'cul'       // Kultur
+      'sport': 'sport',       // Sport
+      'kultur': 'cul'         // Kultur
     };
     
-    // Validiere und mappe die Category
-    const selectedCategory = categoryMap[category] || 'all';  // Fallback auf Gesamtfeed
+    // Validiere und mappe die Category (Fallback auf 'news' statt 'pol')
+    const selectedCategory = categoryMap[category] || 'news';
     
     const baseUrl = 'https://rss.dw.com/xml/rss-de-';
     const rssUrl = `${baseUrl}${selectedCategory}`;

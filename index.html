@@ -157,6 +157,21 @@
       color: #666;
       font-style: italic;
     }
+    .news-error {
+      text-align: center;
+      padding: 1rem;
+      background: #ffe6e6;
+      border-left: 4px solid #ff4444;
+      border-radius: var(--radius-md);
+      color: #cc0000;
+      font-size: 0.9rem;
+    }
+    @media (prefers-color-scheme: dark) {
+      .news-error {
+        background: #4a1a1a;
+        color: #ff8888;
+      }
+    }
     .content-wrapper {
       max-width: 1200px;
       margin: 0 auto;
@@ -479,6 +494,7 @@
                              (c>=71&&c<=77)?'❄️':
                              (c>=80&&c<=82)?'🌦️':
                              (c>=95&&c<=99)?'⛈️':'☁️');
+
     async function fetchWeather(city,lat,lon){
       const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
       try{
@@ -488,138 +504,36 @@
         return {city,temp:Math.round(temperature),code:weathercode};
       }catch(_){return {city,temp:'?',code:1};}
     }
+
     async function loadNews() {
       const newsContainer = document.getElementById('news-container');
-      newsContainer.innerHTML = ''; // Leere den Container
+      newsContainer.innerHTML = '<div class="news-loading">Nachrichten werden geladen...</div>';
 
       const categories = [
         {
-          title: 'Aktuelle Entwicklungen in der deutschen Politik',
+          title: 'Deutsche Politik',
           category: 'pol',
           fallbackLink: 'https://www.dw.com/de/themen/politik/s-32789',
+          icon: '🏛️'
         },
         {
-          title: 'Wirtschaftsnachrichten und Marktentwicklungen',
-          category: 'wirtschaft',
+          title: 'Wirtschaft',
+          category: 'wirtschaft', 
           fallbackLink: 'https://www.dw.com/de/themen/wirtschaft/s-1441',
+          icon: '💼'
         },
         {
-          title: 'Internationale Nachrichten aus aller Welt',
+          title: 'Welt',
           category: 'ausland',
           fallbackLink: 'https://www.dw.com/de/themen/welt/s-30719',
+          icon: '🌍'
         },
         {
-          title: 'Wissenschaft und Technologie im Fokus',
+          title: 'Wissenschaft',
           category: 'wissen',
           fallbackLink: 'https://www.dw.com/de/themen/wissen/s-30618',
-        },
+          icon: '🔬'
+        }
       ];
 
-      // Hilfsfunktion zum Parsen von XML im Frontend (erweitert für DW-Struktur)
-      function parseRSS(xmlText) {
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-        const items = xmlDoc.querySelectorAll('item');
-        return Array.from(items).map(item => ({
-          title: item.querySelector('title')?.textContent || 'Kein Titel',
-          description: item.querySelector('description')?.textContent || item.querySelector('*|encoded')?.textContent || 'Keine Beschreibung', // Fallback auf content:encoded
-          link: item.querySelector('link')?.textContent || '#',
-        })).slice(0, 5); // Begrenze auf 5
-      }
-
-      // Hilfsfunktion zum Erstellen eines Kategorie-Elements
-      function createCategoryElement(title, time, newsItems, fallback = false) {
-        if (newsItems.length === 0 && !fallback) {
-          return '';
-        }
-        return `
-          <div class="news-item" onclick="window.open('${fallback ? fallbackLink : ''}', '_blank')" style="cursor: pointer;">
-            <div class="news-title">${title}</div>
-            <div class="news-meta">
-              <span class="news-source">DW</span>
-              <span class="news-time">${time}</span>
-            </div>
-            <ul style="list-style-type: none; padding: 0; margin-top: 0.5rem;">
-              ${newsItems.map(item => `
-                <li onclick="window.open('${item.link}', '_blank')" style="cursor: pointer; margin-bottom: 0.5rem;">
-                  <strong>${item.title}</strong>${fallback ? '' : ': ' + item.description}
-                </li>
-              `).join('')}
-            </ul>
-          </div>
-        `;
-      }
-
-      for (const cat of categories) {
-        try {
-          const response = await fetch(`/api/news?category=${cat.category}`);
-          if (!response.ok) throw new Error('API-Fehler');
-          const data = await response.json();
-          const xmlText = data.xml; // XML aus der Response
-          const newsItems = parseRSS(xmlText); // Parse im Frontend
-
-          const currentTime = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-          newsContainer.innerHTML += createCategoryElement(cat.title, currentTime, newsItems);
-        } catch (error) {
-          console.error('Fehler:', error);
-          const fallbackTime = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-          const fallbackItems = [{ title: 'Aktuelle Daten konnten nicht geladen werden. Klicke für mehr.', description: '', link: cat.fallbackLink }];
-          newsContainer.innerHTML += createCategoryElement(cat.title, fallbackTime, fallbackItems, true);
-        }
-      }
-    }
-    // Initialisierung
-    (async()=>{
-      // Wetter laden
-      const cities=[
-        {name:'Hamburg',lat:53.55,lon:10.0},
-        {name:'Aveiro', lat:40.64,lon:-8.65},
-        {name:'Tokio', lat:35.68,lon:139.76}
-      ];
-      const data=await Promise.all(cities.map(c=>fetchWeather(c.name,c.lat,c.lon)));
-      document.getElementById('weather-container').innerHTML=
-        data.map(d=>`
-          <div class="weather-card">
-            <strong>${d.city}</strong>
-            <span class="weather-icon">${icon(d.code)}</span>
-            <span class="weather-temp">${d.temp}°C</span>
-          </div>
-        `).join('');
-      // Nachrichten laden
-      await loadNews();
-    })();
-    function updateTime(){
-      const now=new Date();
-      const opts={hour:'2-digit',minute:'2-digit',second:'2-digit'};
-      document.getElementById('time-container').textContent=
-        'Aktuelle Uhrzeit: '+now.toLocaleTimeString('de-DE',opts);
-    }
-    setInterval(updateTime,1000);
-    // Nachrichten alle 20 Minuten aktualisieren
-    setInterval(loadNews, 1200000);
-    document.addEventListener('DOMContentLoaded', function() {
-      updateTime();
-      const filterButtons = document.querySelectorAll('.filter-btn');
-      const categorySections = document.querySelectorAll('.category-section');
-      filterButtons.forEach(button => {
-        button.addEventListener('click', function() {
-          const targetCategory = this.getAttribute('data-category');
-         
-          filterButtons.forEach(btn => btn.classList.remove('active'));
-          this.classList.add('active');
-         
-          categorySections.forEach(section => {
-            const sectionCategory = section.getAttribute('data-category');
-           
-            if (targetCategory === 'all' || sectionCategory === targetCategory) {
-              section.classList.remove('hidden');
-            } else {
-              section.classList.add('hidden');
-            }
-          });
-        });
-      });
-    });
-  </script>
-</body>
-</html>
+      //

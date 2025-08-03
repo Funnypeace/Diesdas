@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
   try {
-    const { category } = req.query; // z. B. 'inland'
+    const { category } = req.query;
     const baseUrl = 'https://www.tagesschau.de/xml/rss-genios/';
     const rssUrl = `${baseUrl}${category || 'inland'}`;
 
@@ -10,7 +10,7 @@ export default async function handler(req, res) {
 
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
-    res.status(200).json({ xml: xmlText }); // Sende rohen XML als JSON
+    res.status(200).json({ xml: xmlText }); // Roher XML
   } catch (error) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.status(500).json({ error: 'Fehler beim Laden des RSS' });

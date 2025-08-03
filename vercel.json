@@ -1,9 +1,4 @@
 {
-  "functions": {
-    "api/news.js": {
-      "runtime": "nodejs@20"
-    }
-  },
   "headers": [
     {
       "source": "/api/(.*)",

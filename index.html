@@ -221,7 +221,7 @@
       box-shadow:0 14px 32px rgba(40,40,80,.18),0 3px 14px rgba(0,0,0,.08);
       outline:none;
     }
-   
+  
     .card h2{ margin:0 0 .45rem; font-size:1.25rem; font-weight:700; }
     .card p { margin:0; font-size:1.05rem; color:#495567; }
     .category-travel .card { border-left-color: #4caf50; }
@@ -494,7 +494,6 @@
                              (c>=71&&c<=77)?'❄️':
                              (c>=80&&c<=82)?'🌦️':
                              (c>=95&&c<=99)?'⛈️':'☁️');
-
     async function fetchWeather(city,lat,lon){
       const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
       try{
@@ -504,11 +503,9 @@
         return {city,temp:Math.round(temperature),code:weathercode};
       }catch(_){return {city,temp:'?',code:1};}
     }
-
     async function loadNews() {
       const newsContainer = document.getElementById('news-container');
       newsContainer.innerHTML = '<div class="news-loading">Nachrichten werden geladen...</div>';
-
       const categories = [
         {
           title: 'Deutsche Politik',
@@ -518,7 +515,7 @@
         },
         {
           title: 'Wirtschaft',
-          category: 'wirtschaft', 
+          category: 'wirtschaft',
           fallbackLink: 'https://www.dw.com/de/themen/wirtschaft/s-1441',
           icon: '💼'
         },
@@ -536,4 +533,53 @@
         }
       ];
 
-      //
+      newsContainer.innerHTML = ''; // Lösche Loading
+
+      for (const cat of categories) {
+        try {
+          const response = await fetch(`/api/news?category=${cat.category}`);
+          const data = await response.json();
+          console.log(`API-Antwort für ${cat.category}:`, data); // Debug: Schaue in Browser-Console (F12)
+
+          if (!data.success) {
+            throw new Error(data.error || 'Unbekannter Fehler');
+          }
+
+          // Parse XML
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(data.xml, 'text/xml');
+          const items = xmlDoc.getElementsByTagName('item');
+
+          for (const item of items) {
+            const title = item.getElementsByTagName('title')[0]?.textContent || 'Kein Titel';
+            const link = item.getElementsByTagName('link')[0]?.textContent || cat.fallbackLink;
+            const pubDate = item.getElementsByTagName('pubDate')[0]?.textContent || 'Unbekannt';
+            const date = new Date(pubDate).toLocaleString('de-DE');
+
+            const newsItem = document.createElement('div');
+            newsItem.className = 'news-item';
+            newsItem.innerHTML = `
+              <div class="news-title">${cat.icon} ${title}</div>
+              <div class="news-meta">
+                <span class="news-source">${cat.title}</span>
+                <span class="news-time">${date}</span>
+              </div>
+            `;
+            newsItem.onclick = () => window.open(link, '_blank');
+            newsContainer.appendChild(newsItem);
+          }
+        } catch (error) {
+          console.error(`Fehler bei Kategorie ${cat.category}:`, error);
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'news-error';
+          errorDiv.textContent = `Fehler beim Laden von ${cat.title}: ${error.message}. Versuche den Fallback: ${cat.fallbackLink}`;
+          newsContainer.appendChild(errorDiv);
+        }
+      }
+    }
+
+    // Aufruf der Funktion
+    loadNews();
+  </script>
+</body>
+</html>

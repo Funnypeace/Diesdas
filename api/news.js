@@ -1,8 +1,8 @@
 export default async function handler(req, res) {
   try {
-    const { category } = req.query;
+    const { category } = req.query; // z. B. '100' für inland
     const baseUrl = 'https://www.tagesschau.de/xml/rss-genios/';
-    const rssUrl = `${baseUrl}${category || 'inland'}`;
+    const rssUrl = `${baseUrl}${category || '100'}`; // Default: Inland
 
     const response = await fetch(rssUrl, {
       headers: {
@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
-    res.status(200).json({ xml: xmlText }); // Roher XML
+    res.status(200).json({ xml: xmlText });
   } catch (error) {
     console.error('Function Error:', error.message); // Log für Vercel
     res.setHeader('Access-Control-Allow-Origin', '*');

@@ -87,12 +87,22 @@
     .weather-temp{ font-size:1.55rem; font-weight:700; }
     .time-display{ margin-top:0.6rem; font-size:1.2rem; font-weight:500; }
     .news-container {
-      display: flex;
-      flex-direction: column;
+      display: grid; /* Geändert zu Grid für Spalten */
+      grid-template-columns: repeat(3, 1fr); /* 3 Spalten standardmäßig */
       gap: 1rem;
       max-height: 400px;
       overflow-y: auto;
       padding: 0 0.5rem;
+    }
+    @media (max-width: 1024px) {
+      .news-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 Spalten für Tablets */
+      }
+    }
+    @media (max-width: 768px) {
+      .news-container {
+        grid-template-columns: 1fr; /* 1 Spalte für Mobile */
+      }
     }
     .news-item {
       background: #fff9e6;
@@ -156,6 +166,7 @@
       padding: 2rem;
       color: #666;
       font-style: italic;
+      grid-column: 1 / -1; /* Für Loading über alle Spalten */
     }
     .news-error {
       text-align: center;
@@ -165,6 +176,7 @@
       border-radius: var(--radius-md);
       color: #cc0000;
       font-size: 0.9rem;
+      grid-column: 1 / -1; /* Für Errors über alle Spalten */
     }
     @media (prefers-color-scheme: dark) {
       .news-error {

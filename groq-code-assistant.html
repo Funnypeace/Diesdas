@@ -352,6 +352,10 @@ console.log(fibonacci(10));</textarea>
             const startTime = Date.now();
             const outputElement = document.getElementById('outputContent');
             
+            // Disable buttons during request
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(btn => btn.disabled = true);
+            
             outputElement.innerHTML = `
                 <div class="loading">
                     <div class="spinner"></div>
@@ -364,8 +368,14 @@ console.log(fibonacci(10));</textarea>
             console.log('Action:', action);
             console.log('Making request to:', '/api/groq');
 
+            // Korrigierte Anfrage-Struktur - Messages-Array statt einzelner Prompt
             const requestData = {
-                prompt: prompt,
+                messages: [
+                    {
+                        role: "user",
+                        content: prompt
+                    }
+                ],
                 action: action
             };
             console.log('Request data:', requestData);
@@ -382,14 +392,15 @@ console.log(fibonacci(10));</textarea>
                 console.log('Response status:', response.status);
                 console.log('Response headers:', [...response.headers.entries()]);
 
-                const responseText = await response.text();
-                console.log('Raw response:', responseText);
-
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}, body: ${responseText}`);
+                    const errorText = await response.text();
+                    console.error('HTTP Error Response:', errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
                 }
 
-                const data = JSON.parse(responseText);
+                const data = await response.json();
+                console.log('Parsed response data:', data);
+                
                 const endTime = Date.now();
                 const responseTime = endTime - startTime;
                 
@@ -410,9 +421,12 @@ console.log(fibonacci(10));</textarea>
                     <div class="error">
                         <strong>Fehler beim Verarbeiten der Anfrage:</strong><br>
                         ${error.message}<br><br>
-                        <small>Mehr Details in der Browser-Konsole (F12)</small>
+                        <small>Überprüfen Sie die Browser-Konsole (F12) für Details</small>
                     </div>
                 `;
+            } finally {
+                // Re-enable buttons
+                buttons.forEach(btn => btn.disabled = false);
             }
         }
 

@@ -23,18 +23,18 @@ export default async function handler(req, res) {
     const validCategories = ['pol', 'wirtschaft', 'ausland', 'wissen', 'sport', 'kultur'];
     const userCategory = validCategories.includes(category) ? category : 'pol';
     
-    // Korrigiertes Mapping für Kategorien zu gültigen DW-Suffixen
+    // Korrigiertes Mapping für Kategorien zu gültigen DW-Suffixen (Stand 2025)
     const categoryMap = {
-      'pol': 'ger',         // Politik/Deutschland
-      'wirtschaft': 'bus',  // Wirtschaft
-      'ausland': 'world',   // Ausland/Welt
-      'wissen': 'sci',      // Wissenschaft
-      'sport': 'spo',       // Sport
-      'kultur': 'cul'       // Kultur
+      'pol': 'news',           // Nachrichten (oft Politik)
+      'wirtschaft': 'eco',     // Wirtschaft
+      'ausland': 'all',        // Ausland (Fallback auf Gesamt)
+      'wissen': 'wissenschaft',// Wissenschaft
+      'sport': 'sport',        // Sport
+      'kultur': 'cul'          // Kultur
     };
     
-    // Mappe und fallback auf 'top' (Top Stories)
-    const selectedCategory = categoryMap[userCategory] || 'top';
+    // Mappe und fallback auf 'all' (Gesamtfeed)
+    const selectedCategory = categoryMap[userCategory] || 'all';
 
     const baseUrl = 'https://rss.dw.com/xml/rss-de-';
     const rssUrl = `${baseUrl}${selectedCategory}`;
@@ -56,8 +56,8 @@ export default async function handler(req, res) {
 
     const xmlText = await response.text();
     
-    // Validiere XML Content
-    if (!xmlText || xmlText.length < 100) {
+    // Validiere XML Content (Schwelle gesenkt für kleine Feeds)
+    if (!xmlText || xmlText.length < 50) {
       throw new Error('Ungültige oder leere RSS-Antwort');
     }
 

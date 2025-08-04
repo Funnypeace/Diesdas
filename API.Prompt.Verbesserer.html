@@ -144,6 +144,7 @@
                     <option value="kreativ">Kreativ</option>
                     <option value="prägnant">Prägnant</option>
                     <option value="detailliert">Detailliert</option>
+                    <option value="bild">Bild Prompt verbessern</option>
                 </select>
                 <button onclick="improvePrompt()">Prompt verbessern</button>
             </div>
@@ -197,14 +198,25 @@
             loading.style.display = 'block';
             output.style.display = 'none';
 
-            try {
-                // Anpassung des User-Prompts für klarere Formatierung ohne unnötige Sternchen
-                const userContent = `Verbessere den folgenden Prompt im Stil "${style}": "${prompt}". 
+            let userContent;
+
+            if (style === 'bild') {
+                // Spezieller Prompt für Bild-Verbesserung
+                userContent = `Verbessere den folgenden Prompt speziell für KI-Bildgeneratoren wie DALL-E, Midjourney oder Stable Diffusion: "${prompt}".
+Strukturiere die Ausgabe so:
+- Zuerst den verbesserten Prompt in einer Zeile, beginnend mit "Verbesserter Prompt: ". Übersetze ihn ins Englische, mache ihn klarer und präziser, ergänze Details zu Stil, Auflösung, Perspektive, Licht, Emotionen, Farben, reduziere Ambiguitäten, füge technische Hinweise wie "ultra-realistic, high detail, 4K" hinzu und schlage Stil- oder Künstlernamen vor, falls passend.
+- Dann die Erklärung in einer neuen Zeile, beginnend mit "Erklärung der Änderungen: ". Gib Feedback, warum der optimierte Prompt besser ist (z.B. mehr Details, weniger Mehrdeutigkeiten).
+Verwende keine zusätzlichen Formatierungen wie Sternchen oder Anführungszeichen um die Abschnitte.`;
+            } else {
+                // Standard-Prompt für andere Stile
+                userContent = `Verbessere den folgenden Prompt im Stil "${style}": "${prompt}". 
 Gib die Ausgabe strukturiert aus:
 - Zuerst den verbesserten Prompt in einer Zeile, beginnend mit "Verbesserter Prompt: ".
 - Dann die Erklärung in einer neuen Zeile, beginnend mit "Erklärung der Änderungen: ".
 Verwende keine zusätzlichen Formatierungen wie Sternchen oder Anführungszeichen um die Abschnitte.`;
+            }
 
+            try {
                 const response = await fetch('/api/groq.js', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

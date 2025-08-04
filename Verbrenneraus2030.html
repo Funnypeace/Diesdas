@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Analyse zum EU-Verbrenner-Aus für Dienstwagen ab 2030: Wirtschaftlichkeit, Infrastruktur, Politik und Herausforderungen.">
+    <meta name="keywords" content="EU Verbrenner-Verbot 2030, Dienstwagen, E-Mobilität, TCO, Ladeinfrastruktur">
+    <meta property="og:title" content="Analyse: EU-Verbrenner-Aus für Dienstwagen 2030">
+    <meta property="og:description" content="Interaktive Analyse der wirtschaftlichen, technischen und politischen Dimensionen.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://your-site.com/analyse-verbrenner-aus.html">
+    <meta property="og:image" content="https://your-site.com/images/analyse-preview.jpg">
+    <title>Analyse: EU-Verbrenner-Aus für Dienstwagen 2030</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Subtle Accents -->
+    <!-- Application Structure Plan: A thematic, single-page dashboard structure. A sticky navigation bar allows users to jump to key sections: Overview, TCO Economics, Infrastructure, Political Landscape, and Challenges/Solutions. This non-linear design prioritizes user-driven exploration. Interactive elements like a filterable TCO chart and collapsible accordion sections for challenges make complex information digestible and engaging, transforming a static report into an interactive analytical tool. -->
+    <!-- Visualization & Content Choices: 1. TCO Data: Goal: Compare BEV vs. ICE costs. Method: Interactive horizontal bar chart (Chart.js) with buttons to filter by vehicle segment (Premium, Standard, Kleinwagen). Justification: Direct comparison, user-controlled focus. 2. Infrastructure Data: Goal: Show charging point disparity. Method: Static doughnut chart (Chart.js). Justification: High-impact visual, no interaction needed. 3. Political Stances: Goal: Organize actor positions. Method: Styled cards (HTML/Tailwind). Justification: Scannable and visually organized. 4. Challenges/Solutions: Goal: Detail complex issues without overload. Method: Accordion component (HTML/JS). Justification: Manages information density, user-led discovery. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #333;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 40vh;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+                max-height: 50vh;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #A37F5A;
+            border-bottom-color: #A37F5A;
+        }
+        .btn-filter {
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .btn-filter.active {
+            background-color: #A37F5A;
+            color: #FFFFFF;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-[#A37F5A]">Verbrenner-Aus 2030</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#overview" class="nav-link pb-1">Überblick</a>
+                <a href="#tco" class="nav-link pb-1">Wirtschaftlichkeit</a>
+                <a href="#infrastructure" class="nav-link pb-1">Infrastruktur</a>
+                <a href="#politics" class="nav-link pb-1">Politik</a>
+                <a href="#challenges" class="nav-link pb-1">Herausforderungen</a>
+            </div>
+            <div class="md:hidden">
+                <select id="mobile-nav" class="bg-white border border-gray-300 rounded-md py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#A37F5A]">
+                    <option value="#overview">Überblick</option>
+                    <option value="#tco">Wirtschaftlichkeit</option>
+                    <option value="#infrastructure">Infrastruktur</option>
+                    <option value="#politics">Politik</option>
+                    <option value="#challenges">Herausforderungen</option>
+                </select>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-8 md:py-12">
+
+        <section id="overview" class="text-center mb-16 md:mb-24 pt-12">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 text-[#4A4A4A]">Das EU-Verbrenner-Aus für Dienstwagen ab 2030</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 mb-8">
+                Die EU plant, das Ende für Verbrennungsmotoren in neuen Firmen- und Mietwagenflotten auf 2030 vorzuziehen – fünf Jahre früher als das allgemeine Verbot.<grok-card data-id="85c9e1" data-type="citation_card"></grok-card> Diese interaktive Analyse beleuchtet die wirtschaftlichen, technischen und politischen Dimensionen dieses weitreichenden Vorhabens.
+            </p>
+            <div class="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                    <h3 class="text-2xl font-bold text-[#A37F5A]">60%</h3>
+                    <p class="text-gray-600">aller Neuwagenzulassungen in der EU sind betroffen.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                    <h3 class="text-2xl font-bold text-[#A37F5A]">2030</h3>
+                    <p class="text-gray-600">geplantes Inkrafttreten für neue Flottenfahrzeuge.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                    <h3 class="text-2xl font-bold text-[#A37F5A]">100%</h3>
+                    <p class="text-gray-600">E-Auto-Quote für Neubestellungen ab 2030.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="tco" class="mb-16 md:mb-24 pt-12">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-[#4A4A4A]">Wirtschaftlichkeit im Fokus: Gesamtbetriebskosten (TCO)</h2>
+                <p class="max-w-3xl mx-auto text-lg text-gray-600 mt-4">
+                    Die Gesamtbetriebskosten (Total Cost of Ownership) sind entscheidend für die Flottenplanung. Vergleichen Sie die monatlichen Kosten von Elektroautos (BEV) mit Benzinern und Dieselfahrzeugen in verschiedenen Segmenten. Wählen Sie ein Segment aus, um die Daten zu visualisieren. Die Werte basieren auf Studien und sind Stand August 2025.<grok-card data-id="8fd866" data-type="citation_card"></grok-card><grok-card data-id="3124ed" data-type="citation_card"></grok-card>
+                </p>
+            </div>
+            <div class="text-center mb-8">
+                <button aria-label="Filter für Premium-Segment" class="btn-filter bg-gray-200 text-gray-700 py-2 px-6 rounded-full mr-2 active" data-segment="premium">Premium</button>
+                <button aria-label="Filter für Standard-Segment" class="btn-filter bg-gray-200 text-gray-700 py-2 px-6 rounded-full mr-2" data-segment="standard">Standard</button>
+                <button aria-label="Filter für Kleinwagen-Segment" class="btn-filter bg-gray-200 text-gray-700 py-2 px-6 rounded-full" data-segment="kleinwagen">Kleinwagen</button>
+            </div>
+            <div class="bg-white p-4 md:p-8 rounded-xl shadow-lg border border-gray-200">
+                <div class="chart-container">
+                    <canvas id="tcoChart" aria-label="Horizontaler Balkendiagramm für TCO-Vergleich"></canvas>
+                </div>
+                <p id="tco-context" class="text-center mt-6 text-gray-700 max-w-2xl mx-auto"></p>
+                <p class="text-center mt-4 text-sm text-gray-500">Beschreibung für Screenreader: Horizontaler Balkendiagramm zeigt monatliche TCO in € für BEV, Diesel und Benziner je nach Segment.</p>
+            </div>
+        </section>
+
+        <section id="infrastructure" class="mb-16 md:mb-24 pt-12">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-[#4A4A4A]">Die größte Hürde: Ladeinfrastruktur</h2>
+                <p class="max-w-3xl mx-auto text-lg text-gray-600 mt-4">
+                    Eine flächendeckende und zuverlässige Ladeinfrastruktur ist die Grundvoraussetzung für die E-Mobilität. Die Realität in der EU zeigt jedoch ein starkes Gefälle, das eine der größten Herausforderungen für den Plan darstellt.<grok-card data-id="9fb2ec" data-type="citation_card"></grok-card><grok-card data-id="96bc4e" data-type="citation_card"></grok-card>
+                </p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="bg-white p-4 md:p-8 rounded-xl shadow-lg border border-gray-200">
+                    <div class="chart-container" style="height: 400px; max-height: 50vh;">
+                        <canvas id="infraChart" aria-label="Doughnut-Diagramm für Verteilung der Ladepunkte in der EU"></canvas>
+                    </div>
+                    <p class="text-center mt-4 text-sm text-gray-500">Beschreibung für Screenreader: Doughnut-Diagramm zeigt den Anteil der Ladepunkte in DE/FR/NL (60%) vs. Rest der EU (40%).</p>
+                </div>
+                <div class="space-y-4">
+                     <h3 class="text-2xl font-bold text-[#4A4A4A]">Das Infrastruktur-Gefälle</h3>
+                    <p class="text-gray-700">
+                        Fast zwei Drittel aller öffentlichen Ladepunkte in der EU konzentrieren sich auf nur drei Länder: Deutschland, Frankreich und die Niederlande. Dies schafft eine Zweiklassengesellschaft der E-Mobilität.
+                    </p>
+                    <p class="text-gray-700">
+                        In vielen osteuropäischen Ländern liegt die Dichte bei unter drei Ladepunkten pro 1.000 Fahrzeuge, was Langstreckenfahrten und den Betrieb von Mietwagenflotten in touristischen Regionen extrem erschwert. Dieser ungleiche Ausbau muss dringend adressiert werden, um das Ziel für 2030 realistisch zu machen.
+                    </p>
+                     <div class="bg-amber-100/50 border-l-4 border-[#A37F5A] p-4 rounded-r-lg">
+                        <p class="font-semibold text-[#A37F5A]">Status in Deutschland (Juni 2025):</p>
+                        <ul class="list-disc list-inside text-gray-700 mt-2">
+                            <li>~169.000 öffentliche Ladepunkte</li>
+                            <li>Nur 17% durchschnittliche Auslastung</li>
+                            <li>1,9 Mrd. € Investition in 9.000 neue Schnellladepunkte</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="politics" class="mb-16 md:mb-24 pt-12">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-[#4A4A4A]">Politische Landschaft: Zwischen Zuspruch und Widerstand</h2>
+                <p class="max-w-3xl mx-auto text-lg text-gray-600 mt-4">
+                    Der Vorschlag der EU-Kommission hat eine intensive Debatte ausgelöst. Die Positionen von Politik und Industrie gehen weit auseinander und werden den weiteren Prozess maßgeblich beeinflussen.
+                </p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                    <h3 class="font-bold text-lg mb-2 text-[#4A4A4A]">EU-Kommission</h3>
+                    <p class="text-gray-600">Treibt den Plan voran, um die Klimaziele im Verkehrssektor zu erreichen. Sie sieht Flotten als entscheidenden Hebel.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                    <h3 class="font-bold text-lg mb-2 text-[#4A4A4A]">Friedrich Merz (CDU)</h3>
+                    <p class="text-gray-600">Strikte Ablehnung. Warnt vor "Technologieverengung" und fordert, die Entscheidung dem Markt zu überlassen.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                    <h3 class="font-bold text-lg mb-2 text-[#4A4A4A]">Carsten Schneider (SPD)</h3>
+                    <p class="text-gray-600">Bezeichnet den Vorschlag als "interessanten Ansatz", um die Transformation zu beschleunigen. Offen für eine Prüfung.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                    <h3 class="font-bold text-lg mb-2 text-[#4A4A4A]">VDA (Automobilverband)</h3>
+                    <p class="text-gray-600">Kritisiert die "Regulierungsoffensive" und fordert massiven Infrastruktur-Ausbau vor neuen Verboten.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                    <h3 class="font-bold text-lg mb-2 text-[#4A4A4A]">Mietwagenbranche</h3>
+                    <p class="text-gray-600">Warnt vor explodierenden Preisen und praktischen Problemen, insbesondere in touristischen Gebieten mit schlechter Ladeinfrastruktur.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                    <h3 class="font-bold text-lg mb-2 text-[#4A4A4A]">Patrick Schnieder (CDU)</h3>
+                    <p class="text-gray-600">Kündigt "strikten Widerstand" an und verweist auf den Mangel an Ladeinfrastruktur als Hauptproblem.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="challenges" class="pt-12">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-[#4A4A4A]">Herausforderungen & Lösungsansätze</h2>
+                <p class="max-w-3xl mx-auto text-lg text-gray-600 mt-4">
+                    Die Umstellung auf reine E-Flotten ist mehr als nur ein Fahrzeugtausch. Unternehmen und Politik stehen vor operativen, technischen und finanziellen Herausforderungen. Klicken Sie auf die Themen, um mehr zu erfahren.
+                </p>
+            </div>
+            <div class="max-w-3xl mx-auto space-y-4">
+                <div class="accordion-item bg-white rounded-lg shadow-md border border-gray-200">
+                    <button class="accordion-header w-full text-left p-6 font-semibold text-lg text-[#4A4A4A] flex justify-between items-center" aria-expanded="false" aria-controls="accordion-content-1">
+                        Operative Herausforderungen
+                        <span class="transform transition-transform duration-300">▼</span>
+                    </button>
+                    <div id="accordion-content-1" class="accordion-content px-6" aria-hidden="true">
+                        <div class="pb-6 text-gray-700 space-y-2">
+                            <p><strong>Reichweitenangst:</strong> Sorge der Fahrer, besonders im Außendienst, mit der Batterieladung nicht ans Ziel zu kommen.</p>
+                            <p><strong>Lademanagement:</strong> Hohe Komplexität bei der Planung von Ladezeiten und -orten, um den Betrieb nicht zu stören.</p>
+                            <p><strong>Netzkapazität:</strong> Risiko von Stromnetz-Überlastungen in Betrieben, wenn viele Fahrzeuge gleichzeitig laden. In Europa könnten bestehende Netze die zusätzliche Last nicht immer bewältigen, was zu teuren Upgrades führt.<grok-card data-id="72f21f" data-type="citation_card"></grok-card></p>
+                            <p><strong>Change Management:</strong> Notwendigkeit, Mitarbeiter zu schulen und von der neuen Technologie zu überzeugen.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item bg-white rounded-lg shadow-md border border-gray-200">
+                    <button class="accordion-header w-full text-left p-6 font-semibold text-lg text-[#4A4A4A] flex justify-between items-center" aria-expanded="false" aria-controls="accordion-content-2">
+                        Fördermaßnahmen & Anreize
+                        <span class="transform transition-transform duration-300">▼</span>
+                    </button>
+                    <div id="accordion-content-2" class="accordion-content px-6" aria-hidden="true">
+                        <div class="pb-6 text-gray-700 space-y-2">
+                            <p>Um den Übergang zu erleichtern, gibt es verschiedene Förderinstrumente:</p>
+                            <p><strong>Deutschland:</strong> Eine Sonderabschreibung erlaubt Unternehmen, 75% der Kosten für ein E-Fahrzeug im ersten Jahr abzusetzen. Zudem gilt eine vorteilhafte Dienstwagenbesteuerung und eine Kfz-Steuerbefreiung bis 2035.</p>
+                            <p><strong>EU-Ebene:</strong> Der EU-Klimasozialfonds mit einem Volumen von 65 Mrd. € soll die sozialen und wirtschaftlichen Folgen der Energiewende abfedern und könnte auch die Flottenelektrifizierung unterstützen.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item bg-white rounded-lg shadow-md border border-gray-200">
+                    <button class="accordion-header w-full text-left p-6 font-semibold text-lg text-[#4A4A4A] flex justify-between items-center" aria-expanded="false" aria-controls="accordion-content-3">
+                        Best Practices: Norwegen & Niederlande
+                        <span class="transform transition-transform duration-300">▼</span>
+                    </button>
+                    <div id="accordion-content-3" class="accordion-content px-6" aria-hidden="true">
+                        <div class="pb-6 text-gray-700 space-y-2">
+                            <p><strong>Norwegen:</strong> Gilt als Vorreiter durch einen umfassenden Maßnahmenmix: Mehrwertsteuerbefreiung, kostenloses Parken und Mautbefreiung für E-Autos sowie eine konsequente Beschaffung von E-Fahrzeugen für öffentliche Flotten.</p>
+                            <p><strong>Niederlande:</strong> Führend bei der Ladedichte mit 18 Ladepunkten pro 1.000 Fahrzeuge. Das Land plant bereits ein nationales Verbrenner-Verbot für 2030 und zeigt, wie wichtig ein proaktiver Infrastrukturausbau ist.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item bg-white rounded-lg shadow-md border border-gray-200">
+                    <button class="accordion-header w-full text-left p-6 font-semibold text-lg text-[#4A4A4A] flex justify-between items-center" aria-expanded="false" aria-controls="accordion-content-4">
+                        Weitere Contra-Argumente: Rohstoffabhängigkeit & Lieferketten
+                        <span class="transform transition-transform duration-300">▼</span>
+                    </button>
+                    <div id="accordion-content-4" class="accordion-content px-6" aria-hidden="true">
+                        <div class="pb-6 text-gray-700 space-y-2">
+                            <p>Europa ist stark abhängig von Importen kritischer Rohstoffe wie Lithium, Kobalt und Nickel für Batterien, was zu Preisvolatilität und Lieferrisiken führt.<grok-card data-id="fae96b" data-type="citation_card"></grok-card><grok-card data-id="9f1133" data-type="citation_card"></grok-card> Dies könnte die Kosten für EV-Flotten erhöhen und den Übergang verzögern.</p>
+                            <p>Zusätzlich bestehen Nachhaltigkeitsherausforderungen in der Batterieproduktion, einschließlich Umweltauswirkungen beim Abbau und Recycling.<grok-card data-id="e0b743" data-type="citation_card"></grok-card></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-24">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p>&copy; 2025 Interaktive Analyse. Alle Daten basieren auf öffentlich verfügbaren Berichten und Studien Stand August 2025. Quellen: <a href="https://www.emove360.com/eu-plan-vorgezogenes-verbrenner-aus-fuer-firmenflotten-ab-2030/" class="text-blue-300 hover:underline">EU-Plan (emove360)</a>, <a href="https://www.statista.com/statistics/1167285/electric-vehicles-charging-stations-number-germany/" class="text-blue-300 hover:underline">Statista Ladepunkte</a>, <a href="https://nickelinstitute.org/en/nickel-applications/nickel-in-batteries/total-cost-of-ownership-tco-for-electric-vehicles-ev-vs-internal-combustion-engine-vehicles-ice/" class="text-blue-300 hover:underline">TCO-Studie (Nickel Institute)</a>, <a href="https://www.ayvens.com/en-gb/support-and-insights/insights-hub/cost/tco-ev-ice-comparison/" class="text-blue-300 hover:underline">TCO-Vergleich (Ayvens)</a>, <a href="https://cdn.ceps.eu/2025/07/Formatted_IDA-ACEA-030725-2.pdf" class="text-blue-300 hover:underline">CEPS Analyse (Netzkapazität)</a>, <a href="https://www.euractiv.com/section/eet/news/europes-raw-material-shortages-threaten-ev-decarbonisation-goals/" class="text-blue-300 hover:underline">Euractiv (Rohstoffe)</a>, <a href="https://www.sciencedirect.com/science/article/pii/S1364032123010341" class="text-blue-300 hover:underline">ScienceDirect (Nachhaltigkeit)</a>.</p>
+            <p class="text-sm text-gray-400 mt-2">Dies ist eine konzeptionelle Anwendung zur Datenvisualisierung. Für Updates: <a href="https://ec.europa.eu/climate/eu-action/transport/road-transport_en" class="text-blue-300 hover:underline">EU-Kommission</a>.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tcoData = {
+                premium: {
+                    labels: ['BEV', 'Diesel', 'Benziner'],
+                    values: [1111, 1156, 1173],
+                    context: 'Im Premium-Segment sind Elektrofahrzeuge (BEV) bereits heute im monatlichen TCO-Vergleich die günstigste Option.'
+                },
+                standard: {
+                    labels: ['BEV', 'Diesel', 'Benziner'],
+                    values: [1045, 913, 928],
+                    context: 'In der Standard-Mittelklasse haben konventionelle Antriebe aktuell noch einen Kostenvorteil gegenüber Elektrofahrzeugen.'
+                },
+                kleinwagen: {
+                    labels: ['BEV', 'Benziner'],
+                    values: [890, 920],
+                    context: 'Bei Kleinwagen ist der Kostenvorteil von Elektroautos marginal, aber bereits vorhanden. Hinweis: Diesel-Modelle sind in diesem Segment selten verfügbar.'
+                }
+            };
+
+            const infraData = {
+                labels: ['DE/FR/NL', 'Rest der EU'],
+                values: [60, 40]
+            };
+
+            const tcoCtx = document.getElementById('tcoChart').getContext('2d');
+            let tcoChart = new Chart(tcoCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Monatliche Gesamtbetriebskosten in €',
+                        data: [],
+                        backgroundColor: ['#A37F5A', '#6B7280', '#9CA3AF'],
+                        borderColor: ['#A37F5A', '#6B7280', '#9CA3AF'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` ${context.raw} €`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Monatliche Kosten in €'
+                            }
+                        }
+                    }
+                }
+            });
+
+            const infraCtx = document.getElementById('infraChart').getContext('2d');
+            const infraChart = new Chart(infraCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: infraData.labels,
+                    datasets: [{
+                        label: 'Verteilung der EU-Ladepunkte',
+                        data: infraData.values,
+                        backgroundColor: ['#A37F5A', '#E5E7EB'],
+                        borderColor: ['#FFFFFF'],
+                        borderWidth: 4,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        tooltip: {
+                             callbacks: {
+                                label: function(context) {
+                                    return ` ${context.label}: ${context.raw}%`;
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Anteil an allen EU-Ladepunkten in %',
+                            padding: {
+                                bottom: 20
+                            }
+                        }
+                    }
+                }
+            });
+
+            const tcoContextP = document.getElementById('tco-context');
+            function updateTcoChart(segment) {
+                const data = tcoData[segment];
+                tcoChart.data.labels = data.labels;
+                tcoChart.data.datasets[0].data = data.values;
+                tcoChart.update();
+                tcoContextP.textContent = data.context;
+            }
+
+            const filterButtons = document.querySelectorAll('.btn-filter');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    updateTcoChart(button.dataset.segment);
+                });
+            });
+
+            updateTcoChart('premium');
+            
+            const accordionItems = document.querySelectorAll('.accordion-item');
+            accordionItems.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                const content = item.querySelector('.accordion-content');
+                const icon = header.querySelector('span');
+
+                header.addEventListener('click', () => {
+                    const isOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
+                    
+                    accordionItems.forEach(otherItem => {
+                        if (otherItem !== item) {
+                            const otherHeader = otherItem.querySelector('.accordion-header');
+                            const otherContent = otherItem.querySelector('.accordion-content');
+                            const otherIcon = otherHeader.querySelector('span');
+                            otherContent.style.maxHeight = '0px';
+                            otherHeader.setAttribute('aria-expanded', 'false');
+                            otherContent.setAttribute('aria-hidden', 'true');
+                            otherIcon.style.transform = 'rotate(0deg)';
+                        }
+                    });
+
+                    if (isOpen) {
+                        content.style.maxHeight = '0px';
+                        header.setAttribute('aria-expanded', 'false');
+                        content.setAttribute('aria-hidden', 'true');
+                        icon.style.transform = 'rotate(0deg)';
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                        header.setAttribute('aria-expanded', 'true');
+                        content.setAttribute('aria-hidden', 'false');
+                        icon.style.transform = 'rotate(180deg)';
+                    }
+                });
+            });
+
+            const mobileNav = document.getElementById('mobile-nav');
+            mobileNav.addEventListener('change', (e) => {
+                window.location.hash = e.target.value;
+            });
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('main section');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);
+                        });
+                        mobileNav.value = `#${entry.target.id}`;
+                    }
+                });
+            }, { rootMargin: "-50% 0px -50% 0px" });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>

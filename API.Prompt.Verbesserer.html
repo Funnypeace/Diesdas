@@ -63,6 +63,22 @@
         }
         .comparison div {
             flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+        .comparison h4 {
+            margin-top: 0;
+            color: #4a4a8c;
+        }
+        .improved-prompt {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .explanation {
+            font-style: italic;
+            color: #666;
         }
         .loading {
             display: none;
@@ -138,13 +154,14 @@
         <div class="output-section" id="output" style="display: none;">
             <h3>Vergleich:</h3>
             <div class="comparison">
-                <div>
-                    <strong>Original:</strong>
+                <div id="original-section">
+                    <h4>Original:</h4>
                     <p id="original-display"></p>
                 </div>
-                <div>
-                    <strong>Verbessert:</strong>
-                    <p id="improved"></p>
+                <div id="improved-section">
+                    <h4>Verbessert:</h4>
+                    <div id="improved-prompt" class="improved-prompt"></div>
+                    <div id="explanation" class="explanation"></div>
                 </div>
             </div>
             <button onclick="editImproved()" style="margin-top: 10px;">Weiter bearbeiten</button>
@@ -181,8 +198,12 @@
             output.style.display = 'none';
 
             try {
-                // System-Prompt für Verbesserung im User-Message integrieren, da API fix ist
-                const userContent = `Verbessere den folgenden Prompt im Stil "${style}": "${prompt}". Gib die verbesserte Version aus, gefolgt von einer kurzen Erklärung der Änderungen.`;
+                // Anpassung des User-Prompts für klarere Formatierung ohne unnötige Sternchen
+                const userContent = `Verbessere den folgenden Prompt im Stil "${style}": "${prompt}". 
+Gib die Ausgabe strukturiert aus:
+- Zuerst den verbesserten Prompt in einer Zeile, beginnend mit "Verbesserter Prompt: ".
+- Dann die Erklärung in einer neuen Zeile, beginnend mit "Erklärung der Änderungen: ".
+Verwende keine zusätzlichen Formatierungen wie Sternchen oder Anführungszeichen um die Abschnitte.`;
 
                 const response = await fetch('/api/groq.js', {
                     method: 'POST',
@@ -198,10 +219,16 @@
                 }
 
                 const data = await response.json();
-                const improved = data.content || 'Keine Verbesserung erhalten.';
+                let improved = data.content || 'Keine Verbesserung erhalten.';
+
+                // Parse die Ausgabe für bessere Übersichtlichkeit
+                const parts = improved.split('Erklärung der Änderungen:');
+                const improvedPrompt = (parts[0] || '').replace('Verbesserter Prompt:', '').trim();
+                const explanation = (parts[1] || '').trim();
 
                 document.getElementById('original-display').textContent = prompt;
-                document.getElementById('improved').textContent = improved;
+                document.getElementById('improved-prompt').textContent = improvedPrompt;
+                document.getElementById('explanation').textContent = explanation ? `Erklärung: ${explanation}` : '';
                 output.style.display = 'block';
             } catch (error) {
                 alert('Fehler: ' + error.message);
@@ -211,7 +238,7 @@
         }
 
         function editImproved() {
-            const improved = document.getElementById('improved').textContent;
+            const improved = document.getElementById('improved-prompt').textContent;
             document.getElementById('prompt').value = improved;
             document.getElementById('output').style.display = 'none';
         }

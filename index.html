@@ -238,7 +238,7 @@
       box-shadow:0 14px 32px rgba(40,40,80,.18),0 3px 14px rgba(0,0,0,.08);
       outline:none;
     }
-  
+ 
     .card h2{ margin:0 0 .45rem; font-size:1.25rem; font-weight:700; }
     .card p { margin:0; font-size:1.05rem; color:#495567; }
     .category-travel .card { border-left-color: #4caf50; }
@@ -573,7 +573,6 @@
           column: 3 // Unter Wissenschaft in Spalte 3
         }
       ];
-
       // Erstelle die 3 Spalten-Container
       newsContainer.innerHTML = '';
       const column1 = document.createElement('div');
@@ -585,33 +584,26 @@
       newsContainer.appendChild(column1);
       newsContainer.appendChild(column2);
       newsContainer.appendChild(column3);
-
       const columns = [column1, column2, column3];
-
       for (const cat of categories) {
         try {
           const response = await fetch(`/api/news?category=${cat.category}`);
           const data = await response.json();
           console.log(`API-Antwort für ${cat.category}:`, data); // Debug: Schaue in Browser-Console (F12)
-
           if (!data.success) {
             throw new Error(data.error || 'Unbekannter Fehler');
           }
-
           // Parse XML
           const parser = new DOMParser();
           const xmlDoc = parser.parseFromString(data.xml, 'text/xml');
           const items = xmlDoc.getElementsByTagName('item');
-
           // Wähle die Spalte basierend auf cat.column (1-based index)
           const targetColumn = columns[cat.column - 1];
-
           for (const item of items) {
             const title = item.getElementsByTagName('title')[0]?.textContent || 'Kein Titel';
             const link = item.getElementsByTagName('link')[0]?.textContent || cat.fallbackLink;
             const pubDate = item.getElementsByTagName('pubDate')[0]?.textContent || 'Unbekannt';
             const date = new Date(pubDate).toLocaleString('de-DE');
-
             const newsItem = document.createElement('div');
             newsItem.className = 'news-item';
             newsItem.innerHTML = `
@@ -635,9 +627,31 @@
         }
       }
     }
-
     // Aufruf der Funktion
     loadNews();
+
+    // Filter-Funktionalität hinzufügen
+    function initFilters() {
+      const buttons = document.querySelectorAll('.filter-btn');
+      const sections = document.querySelectorAll('.category-section');
+
+      buttons.forEach(button => {
+        button.addEventListener('click', () => {
+          const category = button.dataset.category;
+          buttons.forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+
+          sections.forEach(section => {
+            if (category === 'all' || section.dataset.category === category) {
+              section.classList.remove('hidden');
+            } else {
+              section.classList.add('hidden');
+            }
+          });
+        });
+      });
+    }
+    initFilters();
   </script>
 </body>
 </html>

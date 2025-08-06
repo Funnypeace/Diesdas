@@ -337,7 +337,6 @@
     <div id="login-message" style="margin-top:1rem;"></div>
   </div>
   <!-- ========== ENDE LOGIN FORMULAR ========== -->
-
   <!-- ========== HAUPTSEITENINHALT, STANDARD VERSTECKT ========== -->
   <div id="main-content" style="display:none;">
     <button id="logout-btn" style="position:absolute;top:1.2rem;right:1.2rem;padding:0.4rem 1.1rem;font-weight:bold;border-radius:10px;border:none;background:#24496c;color:#fff;cursor:pointer;">Logout</button>
@@ -527,7 +526,6 @@
   <script>
     // Supabase-Client initialisieren
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
     // Funktion: Seite nach Login freigeben
     function showMainContent() {
       document.getElementById('login-wrapper').style.display = 'none';
@@ -539,7 +537,6 @@
       setInterval(updateTime, 1000);
       initFilters();
     }
-
     // Session-Check: Schon eingeloggt?
     async function checkSession() {
       const { data: { session } } = await supabase.auth.getSession();
@@ -550,9 +547,7 @@
         document.getElementById('main-content').style.display = 'none';
       }
     }
-
     checkSession();
-
     // LOGIN HANDLER
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -576,53 +571,55 @@
         msg.style.color = 'red';
       }
     });
-
     // SIGNUP HANDLER
-    document.getElementById('signup-link').addEventListener('click', async (e) => { 
-      e.preventDefault(); 
-      const email = document.getElementById('email').value.trim(); 
-      const password = document.getElementById('password').value.trim(); 
-      const msg = document.getElementById('login-message'); 
-      msg.textContent = ''; 
-      if (!email || !password) { 
-        msg.textContent = 'Bitte zuerst E-Mail und Passwort eingeben.'; 
-        msg.style.color = 'orange'; 
-        return; 
-      } 
-      try { 
-        const { data, error } = await supabase.auth.signUp({ email, password }); 
-        if (error) { 
-          msg.textContent = 'Registrierung fehlgeschlagen: ' + error.message; 
-          msg.style.color = 'red'; 
-        } else { 
-          msg.textContent = 'Verifizierungsmail verschickt! Bitte bestätige deine Adresse.'; 
-          msg.style.color = 'green'; 
-        } 
-      } catch (err) { 
-        msg.textContent = 'Unerwarteter Fehler: ' + err.message; 
-        msg.style.color = 'red'; 
-      } 
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('signup-link').addEventListener('click', async (e) => {
+        console.log('Registrieren geklickt!');
+        e.preventDefault();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const msg = document.getElementById('login-message');
+        msg.textContent = '';
+        if (!email || !password) {
+          msg.textContent = 'Bitte zuerst E-Mail und Passwort eingeben.';
+          msg.style.color = 'orange';
+          return;
+        }
+        try {
+          const { data, error } = await supabase.auth.signUp({ email, password });
+          console.log('SignUp Response:', data, error);
+          if (error) {
+            msg.textContent = 'Registrierung fehlgeschlagen: ' + error.message;
+            msg.style.color = 'red';
+          } else {
+            msg.textContent = 'Verifizierungsmail verschickt! Bitte bestätige deine Adresse.';
+            msg.style.color = 'green';
+          }
+        } catch (err) {
+          console.log('SignUp Error:', err);
+          msg.textContent = 'Unerwarteter Fehler: ' + err.message;
+          msg.style.color = 'red';
+        }
+      });
     });
-
-    document.addEventListener('DOMContentLoaded', () => { 
-      const logoutBtn = document.getElementById('logout-btn'); 
-      if(logoutBtn){ 
-        logoutBtn.addEventListener('click', async () => { 
-          await supabase.auth.signOut(); 
-          location.reload(); // Seite neu laden, zurück zum Login 
-        }); 
-      } 
+    document.addEventListener('DOMContentLoaded', () => {
+      const logoutBtn = document.getElementById('logout-btn');
+      if(logoutBtn){
+        logoutBtn.addEventListener('click', async () => {
+          await supabase.auth.signOut();
+          location.reload(); // Seite neu laden, zurück zum Login
+        });
+      }
     });
-
     // ganz am Ende deines Scripts:
-    supabase.auth.onAuthStateChange((event, session) => { 
-      console.log('Auth Event:', event, session); 
-      if (event === 'SIGNED_IN') { 
-        showMainContent(); // das hast du ja schon definiert 
-      } 
-      if (event === 'SIGNED_OUT') { 
-        location.reload(); 
-      } 
+    supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth Event:', event, session);
+      if (event === 'SIGNED_IN') {
+        showMainContent(); // das hast du ja schon definiert
+      }
+      if (event === 'SIGNED_OUT') {
+        location.reload();
+      }
     });
   </script>
   <script>
@@ -643,23 +640,23 @@
         return {city,temp:Math.round(temperature),code:weathercode};
       }catch(_){return {city,temp:'?',code:1};}
     }
-    async function loadWeather() { 
-      const cities = [ 
-        {city: 'Hamburg', lat: 53.55, lon: 10.00}, 
-        {city: 'Berlin', lat: 52.52, lon: 13.40}, 
-        {city: 'München', lat: 48.14, lon: 11.58} 
-      ]; 
-      const weatherContainer = document.getElementById('weather-container'); 
-      for (const c of cities) { 
-        const w = await fetchWeather(c.city, c.lat, c.lon); 
-        const card = document.createElement('div'); 
-        card.className = 'weather-card'; 
-        card.innerHTML = `<div class="weather-icon">${icon(w.code)}</div> <div class="weather-temp">${w.temp}°C</div> <div>${w.city}</div>`; 
-        weatherContainer.appendChild(card); 
-      } 
+    async function loadWeather() {
+      const cities = [
+        {city: 'Hamburg', lat: 53.55, lon: 10.00},
+        {city: 'Berlin', lat: 52.52, lon: 13.40},
+        {city: 'München', lat: 48.14, lon: 11.58}
+      ];
+      const weatherContainer = document.getElementById('weather-container');
+      for (const c of cities) {
+        const w = await fetchWeather(c.city, c.lat, c.lon);
+        const card = document.createElement('div');
+        card.className = 'weather-card';
+        card.innerHTML = `<div class="weather-icon">${icon(w.code)}</div> <div class="weather-temp">${w.temp}°C</div> <div>${w.city}</div>`;
+        weatherContainer.appendChild(card);
+      }
     }
-    function updateTime() { 
-      document.getElementById('time-container').textContent = new Date().toLocaleString('de-DE'); 
+    function updateTime() {
+      document.getElementById('time-container').textContent = new Date().toLocaleString('de-DE');
     }
     async function loadNews() {
       const newsContainer = document.getElementById('news-container');
@@ -724,7 +721,7 @@
         try {
           const response = await fetch(`/api/news?category=${cat.category}`);
           const data = await response.json();
-          console.log(`API-Antwort für ${cat.category}:`, data); // Debug: Schaue in Browser-Console (F12)
+          console.log(`API-Antwort für ${cat.category}:`, data); // Debug: Schaue in Browser-Konsole (F12)
           if (!data.success) {
             throw new Error(data.error || 'Unbekannter Fehler');
           }

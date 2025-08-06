@@ -1,0 +1,3 @@
+// supabase-config.js
+const SUPABASE_URL = 'https://rmwlbznbkwkuxrghuruz.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtd2xiem5ia3drdXhyZ2h1cnV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzOTM4NzEsImV4cCI6MjA2OTk2OTg3MX0.jX2lvyulJ2_lifsEKPRGdVOYi6Cb9kkTO096CfSKniA';

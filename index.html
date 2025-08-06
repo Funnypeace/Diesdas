@@ -8,6 +8,8 @@
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#24496c" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0d1520" media="(prefers-color-scheme: dark)">
+  <!-- GoatCounter Analytics -->
+  <script data-goatcounter="https://funnypeace.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
   <style>
     :root {
       --bg-light: #f6f8fa;
@@ -238,7 +240,6 @@
       box-shadow:0 14px 32px rgba(40,40,80,.18),0 3px 14px rgba(0,0,0,.08);
       outline:none;
     }
- 
     .card h2{ margin:0 0 .45rem; font-size:1.25rem; font-weight:700; }
     .card p { margin:0; font-size:1.05rem; color:#495567; }
     .category-travel .card { border-left-color: #4caf50; }
@@ -321,11 +322,20 @@
       background: #a0a0a0;
     }
   </style>
-  <!-- GoatCounter Analytics -->
-  <script data-goatcounter="https://funnypeace.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
   <h1>Übersichtsseite CDR</h1>
+  <!-- ========== LOGIN FORMULAR ========== -->
+  <div style="max-width:340px;margin:2rem auto 1.3rem;background:#fff;border-radius:14px;box-shadow:0 2px 18px #223c6033;padding:2rem 1.2rem;">
+    <h2 style="margin-bottom:1.3rem;">Login</h2>
+    <form id="login-form">
+      <input type="email" id="email" placeholder="E-Mail" required style="width:100%;padding:0.6rem;margin-bottom:0.7rem;">
+      <input type="password" id="password" placeholder="Passwort" required style="width:100%;padding:0.6rem;margin-bottom:1rem;">
+      <button type="submit" style="width:100%;padding:0.7rem;font-weight:bold;">Login</button>
+    </form>
+    <div id="login-message" style="margin-top:1rem;"></div>
+  </div>
+  <!-- ========== ENDE LOGIN FORMULAR ========== -->
   <!-- ================= Wetter ================ -->
   <section class="weather-section">
     <div class="weather-header">Aktuelles Wetter</div>
@@ -504,7 +514,37 @@
       </div>
     </section>
   </div>
-  <!-- ================= JS: Wetter + Nachrichten + Filter ================ -->
+  <!-- ========== SCRIPTS ========== -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    // Supabase-Client initialisieren
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // LOGIN HANDLER
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const msg = document.getElementById('login-message');
+      msg.textContent = '';
+      msg.style.color = '';
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          msg.textContent = 'Fehler: ' + error.message;
+          msg.style.color = 'red';
+        } else {
+          msg.textContent = 'Login erfolgreich!';
+          msg.style.color = 'green';
+          // Optional: Weiterleitung nach Login
+          // window.location.href = "geheim.html";
+        }
+      } catch (err) {
+        msg.textContent = 'Unerwarteter Fehler: ' + err.message;
+        msg.style.color = 'red';
+      }
+    });
+  </script>
   <script>
     const icon = c => ([0] .includes(c)?'☀️':
                              [1] .includes(c)?'🌤️':
@@ -626,18 +666,15 @@
     }
     // Aufruf der Funktion
     loadNews();
-
     // Filter-Funktionalität hinzufügen
     function initFilters() {
       const buttons = document.querySelectorAll('.filter-btn');
       const sections = document.querySelectorAll('.category-section');
-
       buttons.forEach(button => {
         button.addEventListener('click', () => {
           const category = button.dataset.category;
           buttons.forEach(btn => btn.classList.remove('active'));
           button.classList.add('active');
-
           sections.forEach(section => {
             if (category === 'all' || section.dataset.category === category) {
               section.classList.remove('hidden');

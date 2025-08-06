@@ -334,7 +334,6 @@
       <button type="submit" style="width:100%;padding:0.7rem;font-weight:bold;">Login</button>
     </form>
     <p style="text-align:center;margin-top:0.5rem;"> Noch keinen Account? <a href="#" id="signup-link">Registrieren</a> </p>
-    <button id="google-login" type="button" style="width:100%;padding:0.7rem;margin-top:0.5rem; background:#4285F4;color:white;border:none; border-radius:4px;cursor:pointer;"> Mit Google anmelden </button>
     <div id="login-message" style="margin-top:1rem;"></div>
   </div>
   <!-- ========== ENDE LOGIN FORMULAR ========== -->
@@ -602,23 +601,6 @@
       } catch (err) { 
         msg.textContent = 'Unerwarteter Fehler: ' + err.message; 
         msg.style.color = 'red'; 
-      } 
-    });
-
-    // Google‐Button abfangen
-    document.getElementById('google-login').addEventListener('click', async (e) => { 
-      e.preventDefault(); 
-      // OAuth‐Flow starten 
-      const { data, error } = await supabase.auth.signInWithOAuth({ 
-        provider: 'google', 
-        options: { 
-          redirectTo: window.location.origin // nach dem Login wieder zurück zur Startseite 
-        } 
-      }); 
-      if (error) { 
-        console.error('Google Sign-In Fehler:', error); 
-        document.getElementById('login-message').textContent = 'Google Login fehlgeschlagen.'; 
-        document.getElementById('login-message').style.color = 'red'; 
       } 
     });
 

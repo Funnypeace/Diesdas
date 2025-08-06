@@ -525,7 +525,7 @@
   <script src="supabase-config.js"></script>
   <script>
     // Supabase-Client initialisieren
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     // Funktion: Seite nach Login freigeben
     function showMainContent() {
       document.getElementById('login-wrapper').style.display = 'none';
@@ -539,7 +539,7 @@
     }
     // Session-Check: Schon eingeloggt?
     async function checkSession() {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) {
         showMainContent();
       } else {
@@ -557,7 +557,7 @@
       msg.textContent = '';
       msg.style.color = '';
       try {
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
         if (error) {
           msg.textContent = 'Fehler: ' + error.message;
           msg.style.color = 'red';
@@ -586,7 +586,7 @@
           return;
         }
         try {
-          const { data, error } = await supabase.auth.signUp({ email, password });
+          const { data, error } = await supabaseClient.auth.signUp({ email, password });
           console.log('SignUp Response:', data, error);
           if (error) {
             msg.textContent = 'Registrierung fehlgeschlagen: ' + error.message;
@@ -606,13 +606,13 @@
       const logoutBtn = document.getElementById('logout-btn');
       if(logoutBtn){
         logoutBtn.addEventListener('click', async () => {
-          await supabase.auth.signOut();
+          await supabaseClient.auth.signOut();
           location.reload(); // Seite neu laden, zurück zum Login
         });
       }
     });
     // ganz am Ende deines Scripts:
-    supabase.auth.onAuthStateChange((event, session) => {
+    supabaseClient.auth.onAuthStateChange((event, session) => {
       console.log('Auth Event:', event, session);
       if (event === 'SIGNED_IN') {
         showMainContent(); // das hast du ja schon definiert

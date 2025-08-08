@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vollständiger NVIDIA RTX-Grafikkarten Vergleich</title>
+  <style>
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      margin: 20px 40px; 
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      line-height: 1.6;
+    }
+    
+    .container { 
+      max-width: 1200px; 
+      margin: 0 auto; 
+      background: white; 
+      padding: 30px; 
+      border-radius: 15px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    h1 { 
+      text-align: center; 
+      color: #2c3e50; 
+      margin-bottom: 30px;
+      font-size: 2.2em;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    
+    h2 { 
+      color: #34495e; 
+      border-bottom: 3px solid #3498db; 
+      padding-bottom: 10px; 
+      margin-top: 40px;
+    }
+    
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      margin: 20px 0; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    th { 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+      color: white; 
+      padding: 15px 12px; 
+      text-align: center; 
+      font-weight: 600;
+      font-size: 0.9em;
+    }
+    
+    td { 
+      border: 1px solid #ddd; 
+      padding: 12px; 
+      text-align: center; 
+      transition: background-color 0.3s ease;
+    }
+    
+    tr:nth-child(even) { background-color: #f8f9fa; }
+    tr:hover { background-color: #e8f4f8; }
+    
+    .gpu-name { 
+      font-weight: bold; 
+      color: #2c3e50; 
+      text-align: left !important; 
+    }
+    
+    .chart-container { 
+      width: 90%; 
+      margin: 30px auto; 
+      background: white; 
+      padding: 20px; 
+      border-radius: 10px; 
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    .performance-highlight { 
+      background: linear-gradient(45deg, #ff6b6b, #ee5a24); 
+      color: white; 
+      font-weight: bold; 
+    }
+    
+    .summary-box { 
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); 
+      padding: 20px; 
+      border-radius: 10px; 
+      margin: 20px 0; 
+      border-left: 5px solid #3498db;
+    }
+    
+    .comparison-table { font-size: 0.85em; }
+    .na { color: #999; font-style: italic; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>🎮 Vollständiger NVIDIA RTX-Grafikkarten Vergleich</h1>
+    
+    <div class="summary-box">
+      <strong>Zusammenfassung:</strong> Die RTX 5090 führt bei 4K (96% über 3080), während die RTX 4080 Super das beste Preis-Leistungs-Verhältnis für 1440p bietet (54% über 3080).
+    </div>
+
+    <h2>📊 Hauptperformance-Tabelle</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>GPU</th>
+          <th>1440p Raster<br>(Index vs. RTX 3080=100)</th>
+          <th>4K Raster<br>(Index vs. RTX 3080=100)</th>
+          <th>1440p Ray-Tracing<br>(Index vs. RTX 3080=100)</th>
+          <th>4K Ray-Tracing<br>(Index vs. RTX 3080=100)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="gpu-name">RTX 3080</td><td>100</td><td>100</td><td>100</td><td>100</td></tr>
+        <tr><td class="gpu-name">RTX 3090 Ti</td><td>115</td><td>117</td><td>180</td><td>185</td></tr>
+        <tr><td class="gpu-name">RTX 4080 Super</td><td class="performance-highlight">154</td><td>137</td><td>160</td><td>162</td></tr>
+        <tr><td class="gpu-name">RTX 5070 Ti</td><td>135</td><td>131</td><td>140</td><td class="na">n/a</td></tr>
+        <tr><td class="gpu-name">RTX 5080</td><td>150</td><td>146</td><td>175</td><td>175</td></tr>
+        <tr><td class="gpu-name">RTX 4090</td><td>170</td><td>152</td><td>185</td><td>187</td></tr>
+        <tr><td class="gpu-name">RTX 5090</td><td>184</td><td class="performance-highlight">196</td><td class="performance-highlight">229</td><td class="performance-highlight">196</td></tr>
+      </tbody>
+    </table>
+
+    <h2>🔥 Direkte Vergleiche zu RTX 3080</h2>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>GPU</th>
+          <th>1440p Vorteil (%)</th>
+          <th>4K Vorteil (%)</th>
+          <th>Empfohlener Einsatzzweck</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="gpu-name">RTX 3090 Ti</td><td>+15%</td><td>+17%</td><td>Minimales Upgrade</td></tr>
+        <tr><td class="gpu-name">RTX 4080 Super</td><td class="performance-highlight">+54%</td><td>+37%</td><td>1440p High-Refresh Gaming</td></tr>
+        <tr><td class="gpu-name">RTX 5070 Ti</td><td>+35%</td><td>+31%</td><td>Solides 1440p/4K Entry</td></tr>
+        <tr><td class="gpu-name">RTX 5080</td><td>+50%</td><td>+46%</td><td>4K Gaming mit DLSS</td></tr>
+        <tr><td class="gpu-name">RTX 4090</td><td>+70%</td><td>+52%</td><td>Enthusiasten-4K</td></tr>
+        <tr><td class="gpu-name">RTX 5090</td><td class="performance-highlight">+84%</td><td class="performance-highlight">+96%</td><td>Absolute Spitzenklasse</td></tr>
+      </tbody>
+    </table>
+
+    <h2>⚔️ Direkte Karten-zu-Karten Vergleiche</h2>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Karte A</th>
+          <th>vs.</th>
+          <th>Karte B</th>
+          <th>1440p Vorteil (%)</th>
+          <th>4K Vorteil (%)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="gpu-name">RTX 5090</td><td>vs</td><td>RTX 4090</td><td>+8.2%</td><td>+28.9%</td></tr>
+        <tr><td class="gpu-name">RTX 5090</td><td>vs</td><td>RTX 5080</td><td>+22.7%</td><td>+34.2%</td></tr>
+        <tr><td class="gpu-name">RTX 4090</td><td>vs</td><td>RTX 5080</td><td>+13.3%</td><td>+4.1%</td></tr>
+        <tr><td class="gpu-name">RTX 5080</td><td>vs</td><td>RTX 4080 Super</td><td>-2.6%</td><td>+6.6%</td></tr>
+        <tr><td class="gpu-name">RTX 4080 Super</td><td>vs</td><td>RTX 5070 Ti</td><td>+14.1%</td><td>+4.6%</td></tr>
+      </tbody>
+    </table>
+
+    <div class="chart-container">
+      <h3>1440p Raster Performance</h3>
+      <canvas id="chart1440p"></canvas>
+    </div>
+    
+    <div class="chart-container">
+      <h3>4K Raster Performance</h3>
+      <canvas id="chart4K"></canvas>
+    </div>
+    
+    <div class="chart-container">
+      <h3>Ray Tracing Performance (1440p)</h3>
+      <canvas id="chartRT1440p"></canvas>
+    </div>
+
+    <div class="summary-box">
+      <strong>💡 Kaufempfehlungen:</strong><br>
+      • <strong>RTX 4080 Super:</strong> Bestes Preis-Leistungs-Verhältnis für 1440p High-Refresh<br>
+      • <strong>RTX 5080:</strong> Ausgewogene 4K-Performance mit DLSS 4<br>
+      • <strong>RTX 4090:</strong> Bewährte High-End-Wahl, oft günstiger als 5090<br>
+      • <strong>RTX 5090:</strong> Absolute Spitze für 4K-Enthusiasten und Content Creator
+    </div>
+
+    <script>
+      const gpus = ['RTX 3080','RTX 3090 Ti','RTX 4080 Super','RTX 5070 Ti','RTX 5080','RTX 4090','RTX 5090'];
+      const colors = ['#e74c3c','#f39c12','#3498db','#9b59b6','#1abc9c','#2ecc71','#34495e'];
+      
+      // 1440p Raster Chart
+      new Chart(document.getElementById('chart1440p'), {
+        type: 'bar',
+        data: {
+          labels: gpus,
+          datasets: [{
+            label: '1440p Performance Index',
+            data: [100,115,154,135,150,170,184],
+            backgroundColor: colors,
+            borderColor: colors.map(c => c + '99'),
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: { 
+            y: { 
+              beginAtZero: true,
+              title: { display: true, text: 'Performance Index (RTX 3080 = 100)' }
+            } 
+          },
+          plugins: { 
+            legend: { display: false },
+            title: { display: true, text: '1440p Raster Performance Vergleich' }
+          }
+        }
+      });
+
+      // 4K Raster Chart
+      new Chart(document.getElementById('chart4K'), {
+        type: 'bar',
+        data: {
+          labels: gpus,
+          datasets: [{
+            label: '4K Performance Index',
+            data: [100,117,137,131,146,152,196],
+            backgroundColor: colors,
+            borderColor: colors.map(c => c + '99'),
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: { 
+            y: { 
+              beginAtZero: true,
+              title: { display: true, text: 'Performance Index (RTX 3080 = 100)' }
+            } 
+          },
+          plugins: { 
+            legend: { display: false },
+            title: { display: true, text: '4K Raster Performance Vergleich' }
+          }
+        }
+      });
+
+      // Ray Tracing 1440p Chart  
+      new Chart(document.getElementById('chartRT1440p'), {
+        type: 'bar',
+        data: {
+          labels: gpus,
+          datasets: [{
+            label: '1440p RT Performance Index',
+            data: [100,180,160,140,175,185,229],
+            backgroundColor: '#2ecc71',
+            borderColor: '#27ae60',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: { 
+            y: { 
+              beginAtZero: true,
+              title: { display: true, text: 'RT Performance Index (RTX 3080 = 100)' }
+            } 
+          },
+          plugins: { 
+            legend: { display: false },
+            title: { display: true, text: '1440p Ray Tracing Performance' }
+          }
+        }
+      });
+    </script>
+  </div>
+</body>
+</html>

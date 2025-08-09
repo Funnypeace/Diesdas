@@ -1,29 +1,30 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Übersichtsseite CDR</title>
-  
-  <!-- Progressive Enhancement für Mobile und Dark Mode -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#24496c" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#0d1520" media="(prefers-color-scheme: dark)">
-  
-  <!-- Content Security Policy für maximale Sicherheit -->
-  <meta http-equiv="Content-Security-Policy" 
-        content="default-src 'self'; 
-                 script-src 'self' https://cdn.jsdelivr.net https://gc.zgo.at; 
-                 style-src 'self' 'unsafe-inline'; 
-                 img-src 'self' data: https:; 
-                 connect-src 'self' https://*.supabase.co https://api.open-meteo.com; 
-                 object-src 'none'; 
-                 base-uri 'self'; 
+
+  <!-- Progressive Enhancement -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#24496c" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0d1520" media="(prefers-color-scheme: dark)" />
+
+  <!-- CSP: Inline erlaubt + GoatCounter bei connect-src -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self';
+                 script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://gc.zgo.at;
+                 style-src 'self' 'unsafe-inline';
+                 img-src 'self' data: https:;
+                 connect-src 'self' https://*.supabase.co https://api.open-meteo.com https://*.goatcounter.com;
+                 object-src 'none';
+                 base-uri 'self';
                  form-action 'self';">
-  
-  <!-- GoatCounter Analytics (HTTPS) -->
-  <script data-goatcounter="https://funnypeace.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
-  
+
+  <!-- GoatCounter -->
+  <script async src="https://gc.zgo.at/count.js"
+          data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
+
   <style>
     :root {
       /* Basis-Design-Tokens */
@@ -38,6 +39,7 @@
       --radius-md: 12px;
       --gap-lg: 2rem;
       --gap-md: 1rem;
+
       /* Kategorie-Farben (Light Mode) */
       --category-travel: #e8f5e8;
       --category-games: #fff3e0;
@@ -45,12 +47,14 @@
       --category-tools: #fff8e1;
       --category-demo: #f3e5f5;
       --category-art: #fce4ec;
+
       /* Status-Farben */
       --success-color: #28a745;
       --error-color: #dc3545;
       --warning-color: #ffc107;
       --info-color: #17a2b8;
     }
+
     /* Dark Mode Overrides */
     @media (prefers-color-scheme: dark) {
       :root {
@@ -65,6 +69,7 @@
         --category-art: #2e0a1f;
       }
     }
+
     /* Manuelle Dark Theme Klasse */
     html.dark-theme {
       --bg-light: var(--bg-dark);
@@ -77,13 +82,12 @@
       --category-demo: #2e0a2e;
       --category-art: #2e0a1f;
     }
+
     /* Reduzierte Bewegung respektieren */
     @media (prefers-reduced-motion: reduce) {
-      * {
-        animation: none !important;
-        transition: none !important;
-      }
+      * { animation: none !important; transition: none !important; }
     }
+
     /* Basis-Styles */
     *, *::before, *::after { box-sizing: border-box; }
     body {
@@ -95,6 +99,7 @@
       -webkit-font-smoothing: antialiased;
       line-height: 1.6;
     }
+
     h1 {
       text-align: center;
       font-size: 2.2rem;
@@ -103,12 +108,14 @@
       letter-spacing: 0.4px;
       color: var(--accent);
     }
+
     /* Verbesserte Fokus-Indikatoren */
     :focus-visible {
       outline: 3px solid var(--accent);
       outline-offset: 3px;
       border-radius: var(--radius-md);
     }
+
     /* Theme Toggle Button */
     .theme-toggle {
       position: fixed;
@@ -129,11 +136,8 @@
       align-items: center;
       justify-content: center;
     }
-    .theme-toggle:hover {
-      background: var(--accent);
-      color: white;
-      transform: scale(1.1);
-    }
+    .theme-toggle:hover { background: var(--accent); color: white; transform: scale(1.1); }
+
     /* Login Styles */
     .login-wrapper {
       max-width: 380px;
@@ -149,11 +153,7 @@
       color: var(--accent);
       font-size: 1.5rem;
     }
-    .login-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
+    .login-form { display: flex; flex-direction: column; gap: 1rem; }
     .login-form input {
       padding: 0.8rem;
       border: 2px solid #e1e5e9;
@@ -163,10 +163,7 @@
       color: var(--text-main);
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
-    .login-form input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(36, 73, 108, 0.1);
-    }
+    .login-form input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(36, 73, 108, 0.1); }
     .login-form button {
       padding: 0.8rem;
       background: var(--accent);
@@ -178,29 +175,14 @@
       cursor: pointer;
       transition: background-color 0.2s ease, transform 0.1s ease;
     }
-    .login-form button:hover {
-      background: #1e3a5f;
-    }
-    .login-form button:active {
-      transform: translateY(1px);
-    }
-    .login-form button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    .login-meta {
-      text-align: center;
-      margin-top: 1rem;
-      font-size: 0.9rem;
-    }
-    .login-link {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .login-link:hover {
-      text-decoration: underline;
-    }
+    .login-form button:hover { background: #1e3a5f; }
+    .login-form button:active { transform: translateY(1px); }
+    .login-form button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .login-meta { text-align: center; margin-top: 1rem; font-size: 0.9rem; }
+    .login-link { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .login-link:hover { text-decoration: underline; }
+
     .login-message {
       margin-top: 1rem;
       padding: 0.8rem;
@@ -208,21 +190,10 @@
       font-size: 0.9rem;
       text-align: center;
     }
-    .login-message.success {
-      background: rgba(40, 167, 69, 0.1);
-      color: var(--success-color);
-      border: 1px solid var(--success-color);
-    }
-    .login-message.error {
-      background: rgba(220, 53, 69, 0.1);
-      color: var(--error-color);
-      border: 1px solid var(--error-color);
-    }
-    .login-message.info {
-      background: rgba(255, 193, 7, 0.1);
-      color: var(--warning-color);
-      border: 1px solid var(--warning-color);
-    }
+    .login-message.success { background: rgba(40, 167, 69, 0.1); color: var(--success-color); border: 1px solid var(--success-color); }
+    .login-message.error   { background: rgba(220, 53, 69, 0.1); color: var(--error-color); border: 1px solid var(--error-color); }
+    .login-message.info    { background: rgba(255, 193, 7, 0.1); color: var(--warning-color); border: 1px solid var(--warning-color); }
+
     /* Logout Button */
     .logout-btn {
       position: fixed;
@@ -238,9 +209,8 @@
       z-index: 1000;
       transition: background-color 0.2s ease;
     }
-    .logout-btn:hover {
-      background: #1e3a5f;
-    }
+    .logout-btn:hover { background: #1e3a5f; }
+
     /* Wetter Section */
     .weather-section, .news-section {
       max-width: 740px;
@@ -253,12 +223,7 @@
       color: var(--accent);
       margin-bottom: 0.9rem;
     }
-    .weather-container {
-      display: flex;
-      gap: 1.5rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
+    .weather-container { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
     .weather-card {
       background: #e8f0fd;
       border-radius: var(--radius-md);
@@ -269,46 +234,18 @@
       color: #18426b;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .weather-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(100, 120, 160, 0.15);
-    }
-    .weather-card.loading {
-      opacity: 0.7;
-      background: #f0f0f0;
-    }
-    .weather-card.error {
-      background: #ffe6e6;
-      color: var(--error-color);
-    }
+    .weather-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(100, 120, 160, 0.15); }
+    .weather-card.loading { opacity: 0.7; background: #f0f0f0; }
+    .weather-card.error   { background: #ffe6e6; color: var(--error-color); }
     @media (prefers-color-scheme: dark) {
-      .weather-card {
-        background: #1a2e3a;
-        color: #b8d4e3;
-      }
-      .weather-card.error {
-        background: #4a1a1a;
-        color: #ff8888;
-      }
+      .weather-card { background: #1a2e3a; color: #b8d4e3; }
+      .weather-card.error { background: #4a1a1a; color: #ff8888; }
     }
-    .weather-icon { 
-      font-size: 2.2rem; 
-      margin-bottom: 0.5rem;
-    }
-    .weather-temp { 
-      font-size: 1.55rem; 
-      font-weight: 700; 
-      margin-bottom: 0.3rem;
-    }
-    .weather-city {
-      font-size: 0.9rem;
-      opacity: 0.8;
-    }
-    .time-display { 
-      margin-top: 0.6rem; 
-      font-size: 1.2rem; 
-      font-weight: 500; 
-    }
+    .weather-icon { font-size: 2.2rem; margin-bottom: 0.5rem; }
+    .weather-temp { font-size: 1.55rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .weather-city { font-size: 0.9rem; opacity: 0.8; }
+    .time-display { margin-top: 0.6rem; font-size: 1.2rem; font-weight: 500; }
+
     /* News Section */
     .news-container {
       display: grid;
@@ -318,21 +255,10 @@
       overflow-y: auto;
       padding: 0 0.5rem;
     }
-    .news-column {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    @media (max-width: 1024px) {
-      .news-container {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-    @media (max-width: 768px) {
-      .news-container {
-        grid-template-columns: 1fr;
-      }
-    }
+    .news-column { display: flex; flex-direction: column; gap: 1rem; }
+    @media (max-width: 1024px) { .news-container { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px)  { .news-container { grid-template-columns: 1fr; } }
+
     .news-item {
       display: block;
       background: #fff9e6;
@@ -345,234 +271,91 @@
       color: inherit;
       text-decoration: none;
     }
-    .news-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(100, 120, 160, 0.15);
-    }
+    .news-item:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(100, 120, 160, 0.15); }
     @media (prefers-color-scheme: dark) {
-      .news-item {
-        background: #2a1f0a;
-        color: var(--text-dark);
-        border-left-color: #ff8c42;
-      }
+      .news-item { background: #2a1f0a; color: var(--text-dark); border-left-color: #ff8c42; }
     }
-    .news-title {
-      font-size: 1rem;
-      font-weight: 600;
-      margin: 0 0 0.5rem 0;
-      color: #1a365d;
-      line-height: 1.3;
-    }
-    @media (prefers-color-scheme: dark) {
-      .news-title {
-        color: #e2e8f0;
-      }
-    }
-    .news-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.8rem;
-      color: #666;
-      margin-top: 0.5rem;
-    }
-    @media (prefers-color-scheme: dark) {
-      .news-meta {
-        color: #a0aec0;
-      }
-    }
-    .news-source {
-      font-weight: 500;
-      background: #ff6b35;
-      color: white;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.7rem;
-    }
-    .news-time {
-      font-style: italic;
-    }
-    .news-loading {
-      text-align: center;
-      padding: 2rem;
-      color: #666;
-      font-style: italic;
-      grid-column: 1 / -1;
-    }
+    .news-title { font-size: 1rem; font-weight: 600; margin: 0 0 0.5rem 0; color: #1a365d; line-height: 1.3; }
+    @media (prefers-color-scheme: dark) { .news-title { color: #e2e8f0; } }
+    .news-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #666; margin-top: 0.5rem; }
+    @media (prefers-color-scheme: dark) { .news-meta { color: #a0aec0; } }
+    .news-source { font-weight: 500; background: #ff6b35; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; }
+    .news-time { font-style: italic; }
+    .news-loading { text-align: center; padding: 2rem; color: #666; font-style: italic; grid-column: 1 / -1; }
     .news-error {
-      text-align: center;
-      padding: 1rem;
-      background: rgba(220, 53, 69, 0.1);
-      border-left: 4px solid var(--error-color);
-      border-radius: var(--radius-md);
-      color: var(--error-color);
-      font-size: 0.9rem;
-      grid-column: 1 / -1;
+      text-align: center; padding: 1rem; background: rgba(220, 53, 69, 0.1);
+      border-left: 4px solid var(--error-color); border-radius: var(--radius-md);
+      color: var(--error-color); font-size: 0.9rem; grid-column: 1 / -1;
     }
-    .news-error a {
-      color: inherit;
-      font-weight: 600;
-      text-decoration: underline;
-    }
+    .news-error a { color: inherit; font-weight: 600; text-decoration: underline; }
+
     /* Content Wrapper */
-    .content-wrapper {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 var(--gap-md);
-    }
+    .content-wrapper { max-width: 1200px; margin: 0 auto; padding: 0 var(--gap-md); }
+
     /* Category Sections */
-    .category-section {
-      margin-bottom: 3rem;
-      transition: opacity 0.3s ease;
-      padding: var(--gap-md);
-      border-radius: var(--radius-lg);
-    }
-    .category-section.hidden {
-      display: none;
-    }
+    .category-section { margin-bottom: 3rem; transition: opacity 0.3s ease; padding: var(--gap-md); border-radius: var(--radius-lg); }
+    .category-section.hidden { display: none; }
+
     .category-travel { background: var(--category-travel); }
-    .category-games { background: var(--category-games); }
-    .category-info { background: var(--category-info); }
-    .category-tools { background: var(--category-tools); }
-    .category-demo { background: var(--category-demo); }
-    .category-art { background: var(--category-art); }
-    .category-header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 1.5rem;
-      padding: 0 0.5rem;
-    }
-    .category-icon {
-      font-size: 1.8rem;
-      margin-right: 0.8rem;
-    }
-    .category-title {
-      font-size: 1.4rem;
-      font-weight: 600;
-      color: var(--accent);
-      margin: 0;
-    }
+    .category-games  { background: var(--category-games); }
+    .category-info   { background: var(--category-info); }
+    .category-tools  { background: var(--category-tools); }
+    .category-demo   { background: var(--category-demo); }
+    .category-art    { background: var(--category-art); }
+
+    .category-header { display: flex; align-items: center; margin-bottom: 1.5rem; padding: 0 0.5rem; }
+    .category-icon   { font-size: 1.8rem; margin-right: 0.8rem; }
+    .category-title  { font-size: 1.4rem; font-weight: 600; color: var(--accent); margin: 0; }
+
     /* Grid Layout */
-    .grid {
-      display: grid;
-      gap: var(--gap-md);
-      width: 100%;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    }
+    .grid { display: grid; gap: var(--gap-md); width: 100%; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
     .card {
-      display: block;
-      text-decoration: none;
-      background: var(--card-light);
-      color: inherit;
-      padding: 1.6rem 1.8rem;
-      border-radius: var(--radius-lg);
-      box-shadow: 0 6px 24px rgba(60, 60, 90, 0.08), 0 1.5px 6px rgba(0, 0, 0, 0.04);
-      transition: transform 0.16s ease, box-shadow 0.16s ease;
-      text-align: center;
-      min-height: 56px;
-      position: relative;
-      border-left: 4px solid transparent;
+      display: block; text-decoration: none; background: var(--card-light); color: inherit; padding: 1.6rem 1.8rem;
+      border-radius: var(--radius-lg); box-shadow: 0 6px 24px rgba(60, 60, 90, 0.08), 0 1.5px 6px rgba(0, 0, 0, 0.04);
+      transition: transform 0.16s ease, box-shadow 0.16s ease; text-align: center; min-height: 56px; position: relative; border-left: 4px solid transparent;
     }
-    .card:hover {
-      transform: translateY(-6px) scale(1.025);
-      box-shadow: 0 14px 32px rgba(40, 40, 80, 0.18), 0 3px 14px rgba(0, 0, 0, 0.08);
-    }
-    .card h2 { 
-      margin: 0 0 0.45rem; 
-      font-size: 1.25rem; 
-      font-weight: 700; 
-    }
-    .card p { 
-      margin: 0; 
-      font-size: 1.05rem; 
-      color: #495567; 
-    }
-    @media (prefers-color-scheme: dark) {
-      .card p { 
-        color: var(--text-dark); 
-        opacity: 0.8; 
-      }
-    }
+    .card:hover { transform: translateY(-6px) scale(1.025); box-shadow: 0 14px 32px rgba(40, 40, 80, 0.18), 0 3px 14px rgba(0, 0, 0, 0.08); }
+    .card h2 { margin: 0 0 0.45rem; font-size: 1.25rem; font-weight: 700; }
+    .card p  { margin: 0; font-size: 1.05rem; color: #495567; }
+    @media (prefers-color-scheme: dark) { .card p { color: var(--text-dark); opacity: 0.8; } }
+
     /* Category Border Colors */
     .category-travel .card { border-left-color: #4caf50; }
-    .category-games .card { border-left-color: #ff9800; }
-    .category-info .card { border-left-color: #2196f3; }
-    .category-tools .card { border-left-color: #ffc107; }
-    .category-demo .card { border-left-color: #9c27b0; }
-    .category-art .card { border-left-color: #e91e63; }
+    .category-games  .card { border-left-color: #ff9800; }
+    .category-info   .card { border-left-color: #2196f3; }
+    .category-tools  .card { border-left-color: #ffc107; }
+    .category-demo   .card { border-left-color: #9c27b0; }
+    .category-art    .card { border-left-color: #e91e63; }
+
     /* Filter Navigation */
     .filter-nav {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: var(--bg-light);
-      padding: 1rem 0;
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      border-radius: var(--radius-md);
+      position: sticky; top: 0; z-index: 10; background: var(--bg-light); padding: 1rem 0;
+      display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); border-radius: var(--radius-md);
     }
-    @media (prefers-color-scheme: dark) {
-      .filter-nav {
-        background: var(--bg-dark);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-      }
-    }
+    @media (prefers-color-scheme: dark) { .filter-nav { background: var(--bg-dark); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); } }
     .filter-btn {
-      background: var(--card-light);
-      border: 2px solid var(--accent);
-      color: var(--accent);
-      padding: 0.5rem 1rem;
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-size: 0.9rem;
-      font-weight: 500;
+      background: var(--card-light); border: 2px solid var(--accent); color: var(--accent);
+      padding: 0.5rem 1rem; border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s ease;
+      font-size: 0.9rem; font-weight: 500;
     }
     .filter-btn:hover,
     .filter-btn.active,
-    .filter-btn[aria-selected="true"] {
-      background: var(--accent);
-      color: white;
-    }
-    .filter-btn.show-all {
-      background: var(--success-color);
-      border-color: var(--success-color);
-      color: white;
-    }
-    .filter-btn.show-all:hover {
-      background: #218838;
-      border-color: #218838;
-    }
+    .filter-btn[aria-selected="true"] { background: var(--accent); color: white; }
+    .filter-btn.show-all { background: var(--success-color); border-color: var(--success-color); color: white; }
+    .filter-btn.show-all:hover { background: #218838; border-color: #218838; }
+
     /* Scrollbar Styling */
-    .news-container::-webkit-scrollbar {
-      width: 6px;
-    }
-    .news-container::-webkit-scrollbar-track {
-      background: var(--bg-light);
-      border-radius: 3px;
-    }
-    .news-container::-webkit-scrollbar-thumb {
-      background: #c0c0c0;
-      border-radius: 3px;
-    }
-    .news-container::-webkit-scrollbar-thumb:hover {
-      background: #a0a0a0;
-    }
+    .news-container::-webkit-scrollbar { width: 6px; }
+    .news-container::-webkit-scrollbar-track { background: var(--bg-light); border-radius: 3px; }
+    .news-container::-webkit-scrollbar-thumb { background: #c0c0c0; border-radius: 3px; }
+    .news-container::-webkit-scrollbar-thumb:hover { background: #a0a0a0; }
     @media (prefers-color-scheme: dark) {
-      .news-container::-webkit-scrollbar-track {
-        background: var(--card-dark);
-      }
-      .news-container::-webkit-scrollbar-thumb {
-        background: #555;
-      }
-      .news-container::-webkit-scrollbar-thumb:hover {
-        background: #777;
-      }
+      .news-container::-webkit-scrollbar-track { background: var(--card-dark); }
+      .news-container::-webkit-scrollbar-thumb { background: #555; }
+      .news-container::-webkit-scrollbar-thumb:hover { background: #777; }
     }
+
     /* Responsive Design */
     @media (max-width: 650px) {
       h1 { font-size: 1.9rem; margin-top: 1.8rem; }
@@ -584,12 +367,7 @@
       .news-container { max-height: 300px; }
       .news-item { padding: 0.8rem 1rem; }
       .news-title { font-size: 0.9rem; }
-      .theme-toggle, .logout-btn { 
-        top: 0.5rem; 
-        width: 2.5rem; 
-        height: 2.5rem; 
-        font-size: 1rem; 
-      }
+      .theme-toggle, .logout-btn { top: 0.5rem; width: 2.5rem; height: 2.5rem; font-size: 1rem; }
       .theme-toggle { left: 0.5rem; }
       .logout-btn { right: 0.5rem; }
     }
@@ -612,10 +390,11 @@
       <p>Diese Anwendung benötigt JavaScript, um zu funktionieren. Bitte aktivieren Sie JavaScript in Ihrem Browser.</p>
     </div>
   </noscript>
-  
+
   <button class="theme-toggle" aria-label="Theme umschalten" title="Zwischen hellem und dunklem Design wechseln">🌙</button>
+
   <h1>Übersichtsseite CDR</h1>
-  
+
   <!-- Login Formular -->
   <div id="login-wrapper" class="login-wrapper">
     <h2>Anmeldung</h2>
@@ -625,198 +404,234 @@
       <button type="submit" id="login-button">Anmelden</button>
     </form>
     <p class="login-meta">
-      Noch keinen Account? 
+      Noch keinen Account?
       <a href="#" id="signup-link" class="login-link">Registrieren</a>
     </p>
     <div id="login-message" class="login-message" role="alert" aria-live="polite"></div>
   </div>
-  
+
   <!-- Hauptinhalt (initial versteckt) -->
   <div id="main-content" style="display:none;">
-    <!-- Wetter Section -->
+    <button id="logout-btn" class="logout-btn" aria-label="Abmelden">Abmelden</button>
+
+    <!-- Wetter Sektion -->
     <section class="weather-section">
-      <h3 class="weather-header">Wetter</h3>
-      <div id="weather-container" class="weather-container">
-        <!-- Wetter-Karten werden dynamisch geladen -->
-      </div>
-      <p class="time-display" id="time-display"></p>
+      <h2 class="weather-header">Aktuelles Wetter</h2>
+      <div id="weather-container" class="weather-container" aria-live="polite"></div>
+      <div id="time-container" class="time-display" aria-live="polite"></div>
     </section>
-    <!-- News Section -->
+
+    <!-- Nachrichten Sektion -->
     <section class="news-section">
-      <h3 class="news-header">News</h3>
-      <div id="news-container" class="news-container">
-        <!-- News-Artikel werden dynamisch geladen -->
+      <h2 class="news-header">📰 Aktuelle Nachrichten</h2>
+      <div id="news-container" class="news-container" aria-live="polite" aria-busy="false">
+        <div class="news-loading">Nachrichten werden geladen...</div>
       </div>
     </section>
-    <!-- Filter Navigation -->
-    <nav class="filter-nav" aria-label="Kategorienavigation">
-      <button class="filter-btn show-all" data-category="all" aria-selected="true">Alle</button>
-      <button class="filter-btn" data-category="travel">Reisen</button>
-      <button class="filter-btn" data-category="games">Spiele</button>
-      <button class="filter-btn" data-category="info">Info</button>
-      <button class="filter-btn" data-category="tools">Tools</button>
-      <button class="filter-btn" data-category="demo">Demos</button>
-      <button class="filter-btn" data-category="art">Kunst</button>
-    </nav>
+
+    <!-- Filter Navigation & Content -->
     <div class="content-wrapper">
-      <!-- Beispiel für eine Kategorie-Sektion -->
-      <section class="category-section category-travel" data-category="travel">
-        <div class="category-header">
-          <span class="category-icon">✈️</span>
-          <h3 class="category-title">Reisen</h3>
-        </div>
+      <nav class="filter-nav" role="tablist" aria-label="Kategorie-Filter">
+        <button class="filter-btn show-all active" data-category="all" role="tab" aria-pressed="true" aria-selected="true">Alle anzeigen</button>
+        <button class="filter-btn" data-category="info"   role="tab" aria-selected="false" aria-controls="info-section">📊 Info</button>
+        <button class="filter-btn" data-category="tools"  role="tab" aria-selected="false" aria-controls="tools-section">🔧 Tools</button>
+        <button class="filter-btn" data-category="art"    role="tab" aria-selected="false" aria-controls="art-section">🎨 Kunst</button>
+        <button class="filter-btn" data-category="games"  role="tab" aria-selected="false" aria-controls="games-section">🎮 Spiele</button>
+        <button class="filter-btn" data-category="travel" role="tab" aria-selected="false" aria-controls="travel-section">🌍 Reisen</button>
+        <button class="filter-btn" data-category="demo"   role="tab" aria-selected="false" aria-controls="demo-section">⚡ Demos</button>
+      </nav>
+
+      <!-- Info -->
+      <section id="info-section" class="category-section category-info" data-category="info" role="tabpanel" aria-labelledby="info-tab">
+        <div class="category-header"><span class="category-icon">📊</span><h2 class="category-title">Information & Analysen</h2></div>
         <div class="grid">
-          <!-- Karten/Links zu Inhalten der Kategorie Reisen -->
-          <a href="agadir_reiseplan.html" class="card">
-            <h2>Reiseplan Agadir</h2>
-            <p>Urlaubsplanung für Agadir, Marokko</p>
-          </a>
-          <a href="agadir_reiseplan2.html" class="card">
-            <h2>Reiseplan Agadir 2</h2>
-            <p>Weiterer Reiseplan für Agadir</p>
-          </a>
+          <a class="card" href="Verbrenneraus2030.html" target="_blank" rel="noopener noreferrer"><h2>Verbrenner-Aus 2030</h2><p>Analyse für Dienstwagen</p></a>
+          <a class="card" href="CarPolice.html" target="_blank" rel="noopener noreferrer"><h2>Car Policy 100 Fahrzeuge</h2><p>Dienstwagen-Richtlinie</p></a>
+          <a class="card" href="TemparaturEuropa.html" target="_blank" rel="noopener noreferrer"><h2>Temperatur Europa</h2><p>Anhaltende Hitzewelle</p></a>
+          <a class="card" href="zoelletrump.html" target="_blank" rel="noopener noreferrer"><h2>Zoll-Deals 2025</h2><p>Trump-Analyse</p></a>
         </div>
       </section>
-      <!-- Weitere Kategorie-Sektionen (games, info, tools, demo, art) würden hier analog folgen -->
-      <!-- ... -->
+
+      <!-- Tools -->
+      <section id="tools-section" class="category-section category-tools" data-category="tools" role="tabpanel" aria-labelledby="tools-tab">
+        <div class="category-header"><span class="category-icon">🔧</span><h2 class="category-title">Produktivitäts-Tools</h2></div>
+        <div class="grid">
+          <a class="card" href="API.Prompt.Verbesserer.html" target="_blank" rel="noopener noreferrer"><h2>AI Prompt Verbesserer</h2><p>Prompts optimieren</p></a>
+          <a class="card" href="groq-code-assistant.html" target="_blank" rel="noopener noreferrer"><h2>Groq Code Assistant</h2><p>KI-Hilfswerkzeug</p></a>
+          <a class="card" href="moodify-app.html" target="_blank" rel="noopener noreferrer"><h2>Moodify</h2><p>Stimmungs-App</p></a>
+          <a class="card" href="https://gimini-app-black.vercel.app/" target="_blank" rel="noopener noreferrer"><h2>Geschichtenerzähler</h2><p>Externe App</p></a>
+          <a class="card" href="personality_test.html" target="_blank" rel="noopener noreferrer"><h2>Persönlichkeitstest</h2><p>Typ-Analyse</p></a>
+          <a class="card" href="ExpenseTrackerAI-Insights.html" target="_blank" rel="noopener noreferrer"><h2>Expense Tracker</h2><p>AI-Insights</p></a>
+          <a class="card" href="AI-Content-Generator.html" target="_blank" rel="noopener noreferrer"><h2>AI Content Generator</h2><p>Texte erzeugen</p></a>
+        </div>
+      </section>
+
+      <!-- Kunst -->
+      <section id="art-section" class="category-section category-art" data-category="art" role="tabpanel" aria-labelledby="art-tab">
+        <div class="category-header"><span class="category-icon">🎨</span><h2 class="category-title">Kunst & Kreatives</h2></div>
+        <div class="grid">
+          <a class="card" href="MangaJapanCL.html" target="_blank" rel="noopener noreferrer"><h2>MangaJapanCL</h2><p>Fotogalerie</p></a>
+          <a class="card" href="HommageJuliaEngelmann.html" target="_blank" rel="noopener noreferrer"><h2>Eines Tages, Baby</h2><p>Poetry Slam</p></a>
+        </div>
+      </section>
+
+      <!-- Spiele -->
+      <section id="games-section" class="category-section category-games" data-category="games" role="tabpanel" aria-labelledby="games-tab">
+        <div class="category-header"><span class="category-icon">🎮</span><h2 class="category-title">Spiele & Entertainment</h2></div>
+        <div class="grid">
+          <a class="card" href="Moorhuhn-Game.html" target="_blank" rel="noopener noreferrer"><h2>Moorhuhn Jagd</h2><p>Schießspaß</p></a>
+          <a class="card" href="snake.html" target="_blank" rel="noopener noreferrer"><h2>Snake</h2><p>Klassiker</p></a>
+          <a class="card" href="EndlessRunner.html" target="_blank" rel="noopener noreferrer"><h2>Endless Runner</h2><p>Laufspiel</p></a>
+          <a class="card" href="DungeonSpiel.html" target="_blank" rel="noopener noreferrer"><h2>Dungeon Spiel</h2><p>Rogue-like</p></a>
+          <a class="card" href="MemoryCardGame.html" target="_blank" rel="noopener noreferrer"><h2>Memory Game</h2><p>Kartenpaare</p></a>
+          <a class="card" href="retrosnow1.html" target="_blank" rel="noopener noreferrer"><h2>Retro Battle</h2><p>8-bit Action</p></a>
+          <a class="card" href="ArcticDriftEndlessSnowboarder.html" target="_blank" rel="noopener noreferrer"><h2>Arctic Drift</h2><p>Snowboard Endless</p></a>
+          <a class="card" href="NeonByte-Racer.html" target="_blank" rel="noopener noreferrer"><h2>Neon Byte-Racer</h2><p>Futuristisches Rennen</p></a>
+          <a class="card" href="OrbMiner.html" target="_blank" rel="noopener noreferrer"><h2>Orb Miner</h2><p>Sammel-Game</p></a>
+          <a class="card" href="GlitchGhost.html" target="_blank" rel="noopener noreferrer"><h2>Glitch Ghost</h2><p>Geister ausweichen</p></a>
+          <a class="card" href="PocketDungeon.html" target="_blank" rel="noopener noreferrer"><h2>Pocket Dungeon</h2><p>Mini-Abenteuer</p></a>
+          <a class="card" href="explore_quiz.html" target="_blank" rel="noopener noreferrer"><h2>Explore Quiz</h2><p>Flaggen-Spiel</p></a>
+        </div>
+      </section>
+
+      <!-- Reisen -->
+      <section id="travel-section" class="category-section category-travel" data-category="travel" role="tabpanel" aria-labelledby="travel-tab">
+        <div class="category-header"><span class="category-icon">🌍</span><h2 class="category-title">Reisen & Planung</h2></div>
+        <div class="grid">
+          <a class="card" href="agadir_reiseplan.html" target="_blank" rel="noopener noreferrer"><h2>Agadir Reiseplan</h2><p>Interaktive Reiseübersicht</p></a>
+          <a class="card" href="agadir_reiseplan2.html" target="_blank" rel="noopener noreferrer"><h2>Agadir Reiseplan 2</h2><p>Erweiterte Reiseübersicht</p></a>
+          <a class="card" href="https://japan2025-mauve.vercel.app/" target="_blank" rel="noopener noreferrer"><h2>Japan Plan 2025</h2><p>Interaktiver Reiseplan</p></a>
+          <a class="card" href="Flüge2026HamburgJapan.html" target="_blank" rel="noopener noreferrer"><h2>Flüge 2026 Hamburg–Japan</h2><p>Flugsuche</p></a>
+        </div>
+      </section>
+
+      <!-- Demos -->
+      <section id="demo-section" class="category-section category-demo" data-category="demo" role="tabpanel" aria-labelledby="demo-tab">
+        <div class="category-header"><span class="category-icon">⚡</span><h2 class="category-title">Technische Demos</h2></div>
+        <div class="grid">
+          <a class="card" href="rotierendes-oktagon-mit-ball.html" target="_blank" rel="noopener noreferrer"><h2>Oktagon + Ball</h2><p>Canvas Demo</p></a>
+          <a class="card" href="3derde.html" target="_blank" rel="noopener noreferrer"><h2>3D Erde</h2><p>WebGL Demo</p></a>
+          <a class="card" href="Kugel3D.html" target="_blank" rel="noopener noreferrer"><h2>Kugel 3D</h2><p>Three.js Beispiel</p></a>
+          <a class="card" href="Lavalampe.html" target="_blank" rel="noopener noreferrer"><h2>Virtuelle Lavalampe</h2><p>Hypnotische Animation</p></a>
+        </div>
+      </section>
     </div>
-    <!-- Logout Button (sichtbar nur, wenn eingeloggt) -->
-    <button id="logout-btn" class="logout-btn" aria-label="Abmelden">Abmelden</button>
   </div>
-  
-  <!-- JavaScript -->
+
+  <!-- Bibliotheken zuerst laden -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
   <script src="supabase-config.js"></script>
+
+  <!-- App-Script (inline, durch CSP erlaubt) -->
   <script>
     /**
-     * API Service Klasse für robuste HTTP-Requests mit Retry-Logik
+     * API Service mit Retry + Timeout (pro Versuch)
      */
     class APIService {
       static async fetchWithRetry(url, options = {}, retries = 3) {
-        for (let attempt = 1; attempt <= retries; attempt++) {
+        for (let attempt = 0; attempt < retries; attempt++) {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 10000);
           try {
-            const response = await fetch(url, options);
-            if (!response.ok) throw new Error(\`HTTP ${response.status}\`);
-            return response.json();
-          } catch (error) {
-            if (attempt === retries) {
-              throw error;
-            }
-            console.warn(\`Fetch-Versuch \${attempt} fehlgeschlagen. Erneuter Versuch...\`);
-            await new Promise(res => setTimeout(res, 1000 * attempt));
+            const res = await fetch(url, { ...options, signal: controller.signal });
+            clearTimeout(timeoutId);
+            if (!res.ok) throw new Error(\`HTTP \${res.status}: \${res.statusText}\`);
+            return res;
+          } catch (err) {
+            clearTimeout(timeoutId);
+            if (attempt === retries - 1) throw err;
+            await new Promise(r => setTimeout(r, 1000 * Math.pow(2, attempt)));
           }
         }
       }
     }
+
     /**
-     * Utility-Funktionen
+     * Utils
      */
     const utils = {
-      // Shortcut für document.querySelector
-      $: (selector) => document.querySelector(selector),
-      // Neues DOM-Element erzeugen (mit Klasse und optionalem Text)
-      createElement(tag, className, textContent) {
-        const element = document.createElement(tag);
-        if (className) element.className = className;
-        if (textContent) element.textContent = textContent;
-        return element;
-      },
-      // Datum formatieren
-      formatDate: (dateString) => {
-        try {
-          const date = new Date(dateString);
-          return date.toLocaleString('de-DE', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit'
-          });
-        } catch {
-          return 'Unbekannt';
-        }
-      }
+      $: (sel, ctx=document) => ctx.querySelector(sel),
+      $$: (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel)),
+      getWeatherIcon: (c) => ({
+        0:'☀️',1:'🌤️',2:'⛅',3:'⛅',45:'🌫️',48:'🌫️',
+        51:'🌧️',53:'🌧️',55:'🌧️',56:'🌧️',57:'🌧️',
+        61:'🌧️',63:'🌧️',65:'🌧️',66:'🌧️',67:'🌧️',
+        71:'❄️',73:'❄️',75:'❄️',77:'❄️',
+        80:'🌦️',81:'🌦️',82:'🌦️',
+        85:'🌨️',86:'🌨️',
+        95:'⛈️',96:'⛈️',99:'⛈️'
+      }[c] || '☁️'),
+      createElement: (tag, className='', text='') => { const el=document.createElement(tag); if(className) el.className=className; if(text) el.textContent=text; return el; },
+      formatDate: (s) => { try { const d=new Date(s); return d.toLocaleString('de-DE',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});} catch { return 'Unbekannt'; } }
     };
+
     /**
-     * Theme Management
+     * Theme Manager
      */
     const themeManager = {
       init() {
-        const toggleBtn = utils.$('.theme-toggle');
-        const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        // Initialer Theme-Status
-        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-          this.setDarkTheme(true);
-        }
-        toggleBtn?.addEventListener('click', () => {
+        const btn = utils.$('.theme-toggle');
+        const saved = localStorage.getItem('theme');
+        const prefersDark = matchMedia('(prefers-color-scheme: dark)').matches;
+        if (saved==='dark' || (!saved && prefersDark)) this.setDarkTheme(true);
+        btn?.addEventListener('click', () => {
           const isDark = document.documentElement.classList.contains('dark-theme');
           this.setDarkTheme(!isDark);
         });
       },
-      setDarkTheme(isDark) {
-        const toggleBtn = utils.$('.theme-toggle');
-        if (isDark) {
+      setDarkTheme(on) {
+        const btn = utils.$('.theme-toggle');
+        if (on) {
           document.documentElement.classList.add('dark-theme');
-          toggleBtn.textContent = '☀️';
-          toggleBtn.setAttribute('aria-label', 'Zum hellen Design wechseln');
+          btn.textContent = '☀️';
+          btn.setAttribute('aria-label', 'Zum hellen Design wechseln');
           localStorage.setItem('theme', 'dark');
         } else {
           document.documentElement.classList.remove('dark-theme');
-          toggleBtn.textContent = '🌙';
-          toggleBtn.setAttribute('aria-label', 'Zum dunklen Design wechseln');
+          btn.textContent = '🌙';
+          btn.setAttribute('aria-label', 'Zum dunklen Design wechseln');
           localStorage.setItem('theme', 'light');
         }
       }
     };
+
     /**
-     * Supabase Authentication Manager
+     * Supabase Auth Manager
      */
     const authManager = {
       client: null,
+
       init() {
-        if (typeof supabase !== 'undefined' && typeof SUPABASE_URL !== 'undefined' && typeof SUPABASE_KEY !== 'undefined') {
-          this.client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-          this.setupEventListeners();
-          this.checkSession();
-        } else {
-          console.warn('Supabase nicht konfiguriert - zeige Hauptinhalt direkt an');
+        if (typeof supabase === 'undefined' || typeof SUPABASE_URL === 'undefined' || typeof SUPABASE_KEY === 'undefined') {
+          console.warn('Supabase nicht konfiguriert – zeige Hauptinhalt');
           this.showMainContent();
+          return;
         }
+        this.client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        this.setupEventListeners();
+        this.checkSession();
       },
+
       async checkSession() {
-        if (!this.client) return;
         try {
           const { data: { session } } = await this.client.auth.getSession();
-          if (session) {
-            this.showMainContent();
-          } else {
-            this.showLogin();
-          }
-        } catch (error) {
-          console.error('Session-Check Fehler:', error);
-          this.showMainContent(); // Fallback: Hauptinhalt anzeigen, falls Session-Abfrage fehlschlägt
+          session ? this.showMainContent() : this.showLogin();
+        } catch (e) {
+          console.error('Session-Check Fehler:', e);
+          this.showLogin();
         }
       },
+
       setupEventListeners() {
-        // Login Form abschicken
-        const loginForm = utils.$('#login-form');
-        loginForm?.addEventListener('submit', this.handleLogin.bind(this));
-        // Signup-Link klicken
-        const signupLink = utils.$('#signup-link');
-        signupLink?.addEventListener('click', this.handleSignup.bind(this));
-        // Logout Button klicken
-        const logoutBtn = utils.$('#logout-btn');
-        logoutBtn?.addEventListener('click', this.handleLogout.bind(this));
-        // Auth State Changes (Login/Logout Events)
-        this.client?.auth.onAuthStateChange((event, session) => {
-          if (event === 'SIGNED_IN') {
-            this.showMainContent();
-          }
-          // Hinweis: Event 'SIGNED_OUT' wird hier nicht separat behandelt, 
-          // da der Logout-Button die Seite bereits neu lädt.
+        utils.$('#login-form')?.addEventListener('submit', this.handleLogin.bind(this));
+        utils.$('#signup-link')?.addEventListener('click', this.handleSignup.bind(this));
+        utils.$('#logout-btn')?.addEventListener('click', this.handleLogout.bind(this));
+        this.client.auth.onAuthStateChange((event) => {
+          if (event === 'SIGNED_IN') this.showMainContent();
+          // 'SIGNED_OUT' ohne reload – reload machen wir nur im Button-Handler
         });
       },
+
       async handleLogin(e) {
         e.preventDefault();
         const email = utils.$('#email').value.trim();
@@ -824,246 +639,247 @@
         this.setLoginLoading(true);
         try {
           const { error } = await this.client.auth.signInWithPassword({ email, password });
-          if (error) {
-            this.showLoginMessage('Fehler: ' + error.message, 'error');
-          } else {
-            this.showLoginMessage('Login erfolgreich!', 'success');
-          }
+          if (error) this.showLoginMessage('Fehler: ' + error.message, 'error');
+          else this.showLoginMessage('Login erfolgreich!', 'success');
         } catch (err) {
           this.showLoginMessage('Unerwarteter Fehler: ' + err.message, 'error');
         } finally {
           this.setLoginLoading(false);
         }
       },
+
       async handleSignup(e) {
         e.preventDefault();
         const email = utils.$('#email').value.trim();
         const password = utils.$('#password').value.trim();
-        if (!email || !password) {
-          this.showLoginMessage('Bitte E-Mail und Passwort eingeben.', 'info');
-          return;
-        }
+        if (!email || !password) return this.showLoginMessage('Bitte E-Mail und Passwort eingeben.', 'info');
+
         try {
           const { error } = await this.client.auth.signUp({ email, password });
-          if (error) {
-            this.showLoginMessage('Registrierung fehlgeschlagen: ' + error.message, 'error');
-          } else {
-            this.showLoginMessage('Verifizierungsmail verschickt! Bitte bestätigen Sie Ihre E-Mail-Adresse.', 'success');
-          }
+          if (error) this.showLoginMessage('Registrierung fehlgeschlagen: ' + error.message, 'error');
+          else this.showLoginMessage('Verifizierungsmail verschickt! Bitte E-Mail bestätigen.', 'success');
         } catch (err) {
           this.showLoginMessage('Unerwarteter Fehler: ' + err.message, 'error');
         }
       },
+
       async handleLogout() {
-        try {
-          await this.client?.auth.signOut();
-        } catch (error) {
-          console.error('Logout-Fehler:', error);
-        } finally {
-          // Seite neu laden, um Zustand zurückzusetzen
-          location.reload();
-        }
+        try { await this.client.auth.signOut(); }
+        catch (e) { console.error('Logout-Fehler:', e); }
+        finally { location.reload(); }
       },
-      setLoginLoading(isLoading) {
-        const loginBtn = utils.$('#login-button');
-        if (loginBtn) {
-          loginBtn.disabled = isLoading;
-          loginBtn.textContent = isLoading ? 'Wird angemeldet...' : 'Anmelden';
-        }
+
+      setLoginLoading(on) {
+        const btn = utils.$('#login-button');
+        if (btn) { btn.disabled = on; btn.textContent = on ? 'Wird angemeldet...' : 'Anmelden'; }
       },
-      showLoginMessage(message, type = 'info') {
-        const msgEl = utils.$('#login-message');
-        if (msgEl) {
-          msgEl.textContent = message;
-          msgEl.className = `login-message ${type}`;
-        }
+
+      showLoginMessage(msg, type='info') {
+        const el = utils.$('#login-message');
+        if (el) { el.textContent = msg; el.className = `login-message ${type}`; }
       },
+
       showLogin() {
         utils.$('#login-wrapper').style.display = 'block';
         utils.$('#main-content').style.display = 'none';
       },
+
       showMainContent() {
         utils.$('#login-wrapper').style.display = 'none';
         utils.$('#main-content').style.display = 'block';
-        // Inhalte laden nach erfolgreichem Login
         weatherManager.load();
         newsManager.load();
         timeManager.start();
         filterManager.init();
       }
     };
+
     /**
      * Weather Manager
      */
     const weatherManager = {
       cities: [
         { city: 'Hamburg', lat: 53.55, lon: 10.00 },
-        { city: 'Berlin', lat: 52.52, lon: 13.40 },
+        { city: 'Berlin',  lat: 52.52, lon: 13.40 },
         { city: 'München', lat: 48.14, lon: 11.58 }
       ],
+
       async load() {
         const container = utils.$('#weather-container');
         if (!container) return;
-        // Zeige Lade-Karten
-        this.showLoadingCards(container);
+
+        // Lade-Karten
+        container.innerHTML = '';
+        this.cities.forEach(c => {
+          const card = utils.createElement('div', 'weather-card loading', 'Lade Wetter…');
+          container.appendChild(card);
+        });
+
         try {
-          const weatherPromises = this.cities.map(city => this.fetchWeather(city));
-          const results = await Promise.all(weatherPromises);
-          // Ersetze Lade-Karten mit echten Daten
+          const results = await Promise.all(this.cities.map(({city,lat,lon}) => this.fetchWeather({city,lat,lon})));
           container.innerHTML = '';
-          results.forEach(weather => {
-            const card = this.createWeatherCard(weather);
-            container.appendChild(card);
-          });
-        } catch (error) {
-          console.error('Fehler beim Laden der Wetterdaten:', error);
-          container.innerHTML = '<div class="weather-card error">Wetterdaten konnten nicht geladen werden.</div>';
+          results.forEach(w => container.appendChild(this.createCard(w)));
+        } catch (e) {
+          console.error('Fehler beim Laden der Wetterdaten:', e);
+          container.innerHTML = '<div class="weather-card error">Fehler beim Laden der Wetterdaten</div>';
         }
       },
+
       async fetchWeather({ city, lat, lon }) {
         try {
-          const data = await APIService.fetchWithRetry(
-            \`https://api.open-meteo.com/v1/forecast?latitude=\${lat}&longitude=\${lon}&current_weather=true&timezone=Europe/Berlin\`
-          );
-          return { city, ...data.current_weather };
-        } catch (error) {
-          return { city, error: true };
+          const res = await APIService.fetchWithRetry(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+          const data = await res.json();
+          const { temperature, weathercode } = data.current_weather || {};
+          return { city, temp: Math.round(temperature), code: weathercode };
+        } catch (e) {
+          return { city, temp: '?', code: 1, isError: true, errorMessage: e.message };
         }
       },
-      showLoadingCards(container) {
-        container.innerHTML = '';
-        for (let i = 0; i < this.cities.length; i++) {
-          const loadingCard = utils.createElement('div', 'weather-card loading', 'Lade Wetter...');
-          container.appendChild(loadingCard);
-        }
-      },
-      createWeatherCard(weather) {
-        if (weather.error) {
-          return utils.createElement('div', 'weather-card error', \`\${weather.city}: Daten nicht verfügbar\`);
-        }
-        const card = utils.createElement('div', 'weather-card');
-        const icon = utils.createElement('div', 'weather-icon', (weather.weathercode < 3 ? '☀️' : '☁️'));
-        const temp = utils.createElement('div', 'weather-temp', weather.temperature + '°C');
-        const city = utils.createElement('div', 'weather-city', weather.city);
-        card.append(icon, temp, city);
+
+      createCard({ city, temp, code, isError=false }) {
+        const card = utils.createElement('div', 'weather-card' + (isError ? ' error' : ''));
+        const icon = utils.createElement('div', 'weather-icon', isError ? '❌' : utils.getWeatherIcon(code));
+        const t    = utils.createElement('div', 'weather-temp', isError ? 'Fehler' : `${temp}°C`);
+        const cty  = utils.createElement('div', 'weather-city', city);
+        card.append(icon, t, cty);
         return card;
       }
     };
+
     /**
      * News Manager
      */
     const newsManager = {
+      categories: [
+        { title: 'Welt',              category: 'ausland',   fallbackLink: 'https://www.dw.com/de/themen/welt/s-30719',       icon: '🌍', column: 1 },
+        { title: 'Sport',             category: 'sport',     fallbackLink: 'https://www.dw.com/de/themen/sport/s-1267',       icon: '⚽', column: 1 },
+        { title: 'Deutsche Politik',  category: 'pol',       fallbackLink: 'https://www.dw.com/de/themen/politik/s-32789',    icon: '🏛️', column: 2 },
+        { title: 'Kultur',            category: 'kultur',    fallbackLink: 'https://www.dw.com/de/themen/kultur/s-1441',      icon: '🎭', column: 2 },
+        { title: 'Wissenschaft',      category: 'wissen',    fallbackLink: 'https://www.dw.com/de/themen/wissen/s-30618',     icon: '🔬', column: 3 },
+        { title: 'Wirtschaft',        category: 'wirtschaft',fallbackLink: 'https://www.dw.com/de/themen/wirtschaft/s-30605', icon: '💼', column: 3 }
+      ],
+
       async load() {
         const container = utils.$('#news-container');
         if (!container) return;
-        // Lade-Anzeige
-        container.innerHTML = '<p class="news-loading">Lade aktuelle Nachrichten...</p>';
+
+        container.setAttribute('aria-busy', 'true');
+        container.innerHTML = '<div class="news-loading">Nachrichten werden geladen...</div>';
+
+        // Spalten erzeugen
+        const columns = this.createColumns(container);
+
         try {
-          const data = await APIService.fetchWithRetry('https://groq-zwischenfrage.vercel.app/api/news');
-          this.renderNews(data.articles);
-        } catch (error) {
-          console.error('Fehler beim Laden der Nachrichten:', error);
-          container.innerHTML = '<div class="news-error">Nachrichten konnten nicht geladen werden. <a href="#" onclick="location.reload()">Erneut versuchen</a></div>';
+          await Promise.all(this.categories.map(cat => this.loadCategory(cat, columns)));
+        } finally {
+          container.setAttribute('aria-busy', 'false');
         }
       },
-      renderNews(articles) {
-        const container = utils.$('#news-container');
-        if (!container) return;
+
+      createColumns(container) {
         container.innerHTML = '';
-        if (!articles || articles.length === 0) {
-          container.innerHTML = '<p class="news-loading">Keine Nachrichten gefunden.</p>';
-          return;
+        const cols = [];
+        for (let i = 0; i < 3; i++) {
+          const col = utils.createElement('div', 'news-column');
+          cols.push(col);
+          container.appendChild(col);
         }
-        // Teile Artikel in 3 Spalten auf
-        const columns = [[], [], []];
-        articles.forEach((article, index) => {
-          columns[index % 3].push(article);
-        });
-        // Erstelle Spalten-Container
-        columns.forEach(colArticles => {
-          const colDiv = utils.createElement('div', 'news-column');
-          colArticles.forEach(article => {
-            const link = utils.createElement('a', 'news-item');
-            link.href = article.url;
-            link.target = '_blank';
-            // Titel
-            const title = utils.createElement('h4', 'news-title', article.title);
-            // Quelle und Zeit
-            const meta = utils.createElement('div', 'news-meta');
-            const source = utils.createElement('span', 'news-source', article.source);
-            const time = utils.createElement('span', 'news-time', utils.formatDate(article.published_at));
-            meta.append(source, time);
-            link.append(title, meta);
-            colDiv.appendChild(link);
-          });
-          container.appendChild(colDiv);
-        });
+        return cols;
+      },
+
+      async loadCategory(cat, columns) {
+        const target = columns[cat.column - 1];
+        try {
+          const res = await APIService.fetchWithRetry(`/api/news?category=${encodeURIComponent(cat.category)}`);
+          const data = await res.json();
+          if (!data.success) throw new Error(data.error || 'API-Fehler');
+
+          const doc = new DOMParser().parseFromString(data.xml, 'text/xml');
+          const items = Array.from(doc.getElementsByTagName('item')).slice(0, 8);
+          if (!items.length) return this.showNoNews(target, cat);
+
+          items.forEach(item => target.appendChild(this.createItem(item, cat)));
+        } catch (e) {
+          this.showError(target, cat, e.message);
+        }
+      },
+
+      createItem(item, cat) {
+        const title = item.querySelector('title')?.textContent?.trim() || 'Kein Titel';
+        const link  = item.querySelector('link')?.textContent?.trim()  || cat.fallbackLink;
+        const date  = utils.formatDate(item.querySelector('pubDate')?.textContent);
+
+        const a = utils.createElement('a', 'news-item');
+        a.href = link; a.target = '_blank'; a.rel = 'noopener noreferrer';
+
+        const t = utils.createElement('div', 'news-title', `${cat.icon} ${title}`);
+        const meta = utils.createElement('div', 'news-meta');
+        meta.appendChild(utils.createElement('span', 'news-source', cat.title));
+        meta.appendChild(utils.createElement('span', 'news-time', date));
+
+        a.append(t, meta);
+        return a;
+      },
+
+      showError(col, cat, msg) {
+        const d = utils.createElement('div', 'news-error');
+        d.appendChild(document.createTextNode(`Fehler beim Laden von ${cat.title}: ${msg}. `));
+        const link = utils.createElement('a');
+        link.href = cat.fallbackLink; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.textContent = 'Zum Fallback';
+        d.appendChild(link);
+        col.appendChild(d);
+      },
+
+      showNoNews(col, cat) {
+        col.appendChild(utils.createElement('div', 'news-item', `Keine Nachrichten für ${cat.title} verfügbar.`));
       }
     };
+
     /**
-     * Time Manager (für die laufende Uhrzeit-Anzeige)
+     * Time Manager
      */
     const timeManager = {
-      intervalId: null,
-      start() {
-        const display = utils.$('#time-display');
-        if (!display) return;
-        this.stop(); // sicherstellen, dass kein doppelter Intervall läuft
-        // Starte einen Intervall, der jede Minute die Uhrzeit aktualisiert
-        this.intervalId = setInterval(() => {
-          const now = new Date();
-          display.textContent = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-        }, 60000);
-        // Setze initial die aktuelle Zeit
-        const now = new Date();
-        display.textContent = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-      },
-      stop() {
-        if (this.intervalId) {
-          clearInterval(this.intervalId);
-          this.intervalId = null;
-        }
+      id: null,
+      start() { this.update(); this.id = setInterval(() => this.update(), 30000); },
+      stop()  { if (this.id) { clearInterval(this.id); this.id = null; } },
+      update() {
+        const el = utils.$('#time-container');
+        if (el) el.textContent = new Date().toLocaleString('de-DE', {
+          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+          hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });
       }
     };
+
     /**
-     * Filter Manager (für Kategorie-Filter auf der Übersichtsseite)
+     * Filter Manager
      */
     const filterManager = {
       init() {
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        const sections = document.querySelectorAll('.category-section');
-        filterButtons.forEach(btn => {
+        const buttons  = utils.$$('.filter-btn');
+        const sections = utils.$$('.category-section');
+
+        buttons.forEach(btn => {
           btn.addEventListener('click', () => {
-            const category = btn.getAttribute('data-category');
-            // aktive Markierung aktualisieren
-            filterButtons.forEach(b => {
-              const isActive = b.getAttribute('data-category') === category;
-              b.classList.toggle('active', isActive);
-              b.setAttribute('aria-selected', isActive);
-            });
-            // Sektionen filtern
-            sections.forEach(section => {
-              if (category === 'all' || section.classList.contains(\`category-\${category}\`)) {
-                section.classList.remove('hidden');
-              } else {
-                section.classList.add('hidden');
-              }
+            const cat = btn.dataset.category;
+            buttons.forEach(b => { b.classList.toggle('active', b === btn); b.setAttribute('aria-selected', b === btn); });
+            sections.forEach(sec => {
+              (cat === 'all' || sec.dataset.category === cat) ? sec.classList.remove('hidden')
+                                                              : sec.classList.add('hidden');
             });
           });
         });
       }
     };
+
     /**
-     * Anwendung initialisieren, sobald DOM geladen ist
+     * App-Init
      */
     document.addEventListener('DOMContentLoaded', () => {
       themeManager.init();
       authManager.init();
     });
-    // Bereinigung beim Verlassen der Seite
-    window.addEventListener('beforeunload', () => {
-      timeManager.stop();
-    });
+    window.addEventListener('beforeunload', () => timeManager.stop());
   </script>
 </body>
 </html>

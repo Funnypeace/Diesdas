@@ -535,7 +535,7 @@
           try {
             const res = await fetch(url, { ...options, signal: controller.signal });
             clearTimeout(timeoutId);
-            if (!res.ok) throw new Error(\`HTTP \${res.status}: \${res.statusText}\`);
+            if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
             return res;
           } catch (err) {
             clearTimeout(timeoutId);

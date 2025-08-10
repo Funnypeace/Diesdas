@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regenradar Timelapse</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            gap: 1rem;
+        }
+
+        .map-container {
+            flex: 1;
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            min-height: 500px;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            min-height: 500px;
+        }
+
+        .controls {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .time-display {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            color: #333;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #ff6b6b;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .info {
+            background: rgba(102, 126, 234, 0.1);
+            color: #333;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.5rem;
+            }
+            
+            .controls {
+                padding: 1rem;
+            }
+            
+            .button-group {
+                justify-content: center;
+            }
+            
+            .slider-container {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .time-display {
+                min-width: auto;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌧️ Regenradar Timelapse</h1>
+        <p>Aktuelle Niederschlagsdaten in Echtzeit</p>
+    </div>
+
+    <div class="container">
+        <div class="map-container">
+            <div id="map"></div>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Lade Radardaten...</p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="error" id="error"></div>
+            
+            <div class="info">
+                <strong>ℹ️ Hinweis:</strong> Diese Demo verwendet RainViewer API für Radardaten. 
+                Die Timelapse zeigt die letzten 2 Stunden Niederschlag in 10-Minuten-Intervallen.
+            </div>
+            
+            <div class="control-group">
+                <label>Wiedergabe-Steuerung</label>
+                <div class="button-group">
+                    <button id="playBtn">▶️ Abspielen</button>
+                    <button id="pauseBtn" disabled>⏸️ Pausieren</button>
+                    <button id="stopBtn" disabled>⏹️ Stoppen</button>
+                    <button id="refreshBtn">🔄 Aktualisieren</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>Zeitpunkt</label>
+                <div class="slider-container">
+                    <input type="range" id="timeSlider" min="0" max="0" value="0" disabled>
+                    <div class="time-display" id="timeDisplay">--:--</div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>Geschwindigkeit</label>
+                <div class="button-group">
+                    <button id="speed1x" class="speed-btn">1x</button>
+                    <button id="speed2x" class="speed-btn">2x</button>
+                    <button id="speed4x" class="speed-btn">4x</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        class RegenRadar {
+            constructor() {
+                this.map = null;
+                this.radarLayer = null;
+                this.timestamps = [];
+                this.currentIndex = 0;
+                this.isPlaying = false;
+                this.playInterval = null;
+                this.speed = 1000; // milliseconds
+                
+                this.initMap();
+                this.initControls();
+                this.loadRadarData();
+            }
+
+            initMap() {
+                // Karte auf Deutschland zentrieren
+                this.map = L.map('map').setView([51.1657, 10.4515], 6);
+
+                // OpenStreetMap als Basiskarte
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(this.map);
+
+                // Karte responsive machen
+                setTimeout(() => {
+                    this.map.invalidateSize();
+                }, 100);
+            }
+
+            initControls() {
+                // Buttons
+                document.getElementById('playBtn').addEventListener('click', () => this.play());
+                document.getElementById('pauseBtn').addEventListener('click', () => this.pause());
+                document.getElementById('stopBtn').addEventListener('click', () => this.stop());
+                document.getElementById('refreshBtn').addEventListener('click', () => this.loadRadarData());
+
+                // Zeitslider
+                document.getElementById('timeSlider').addEventListener('input', (e) => {
+                    this.currentIndex = parseInt(e.target.value);
+                    this.updateRadarLayer();
+                });
+
+                // Geschwindigkeits-Buttons
+                document.getElementById('speed1x').addEventListener('click', () => this.setSpeed(1000));
+                document.getElementById('speed2x').addEventListener('click', () => this.setSpeed(500));
+                document.getElementById('speed4x').addEventListener('click', () => this.setSpeed(250));
+            }
+
+            async loadRadarData() {
+                this.showLoading(true);
+                this.hideError();
+
+                try {
+                    // RainViewer API für verfügbare Zeitstempel
+                    const response = await fetch('https://api.rainviewer.com/public/weather-maps.json');
+                    
+                    if (!response.ok) {
+                        throw new Error('Fehler beim Laden der API-Daten');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Letzte verfügbare Radardaten verwenden
+                    if (data.radar && data.radar.past && data.radar.past.length > 0) {
+                        this.timestamps = data.radar.past.map(item => ({
+                            time: new Date(item.time * 1000),
+                            path: item.path
+                        }));
+                    } else {
+                        // Fallback: Simulierte Timestamps
+                        this.timestamps = this.generateTimestamps();
+                    }
+                    
+                    // Slider aktualisieren
+                    const slider = document.getElementById('timeSlider');
+                    slider.max = this.timestamps.length - 1;
+                    slider.value = this.timestamps.length - 1;
+                    slider.disabled = false;
+                    
+                    this.currentIndex = this.timestamps.length - 1;
+                    this.updateRadarLayer();
+                    this.updateTimeDisplay();
+                    
+                    // Buttons aktivieren
+                    document.getElementById('playBtn').disabled = false;
+                    
+                } catch (error) {
+                    console.error('API Error:', error);
+                    // Fallback zu simulierten Daten
+                    this.timestamps = this.generateTimestamps();
+                    
+                    const slider = document.getElementById('timeSlider');
+                    slider.max = this.timestamps.length - 1;
+                    slider.value = this.timestamps.length - 1;
+                    slider.disabled = false;
+                    
+                    this.currentIndex = this.timestamps.length - 1;
+                    this.updateRadarLayer();
+                    this.updateTimeDisplay();
+                    
+                    document.getElementById('playBtn').disabled = false;
+                    
+                    this.showError('API nicht verfügbar - Demo-Modus aktiv');
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            generateTimestamps() {
+                const timestamps = [];
+                const now = new Date();
+                
+                // Letzte 2 Stunden, alle 10 Minuten
+                for (let i = 12; i >= 0; i--) {
+                    const time = new Date(now.getTime() - (i * 10 * 60 * 1000));
+                    timestamps.push({
+                        time: time,
+                        path: null // Kein echter Pfad für Demo
+                    });
+                }
+                
+                return timestamps;
+            }
+
+            updateRadarLayer() {
+                if (this.radarLayer) {
+                    this.map.removeLayer(this.radarLayer);
+                }
+
+                if (this.timestamps.length === 0) return;
+
+                const currentTimestamp = this.timestamps[this.currentIndex];
+                
+                // Wenn ein echter Pfad verfügbar ist, verwende RainViewer
+                if (currentTimestamp.path) {
+                    this.radarLayer = L.tileLayer(
+                        `https://tilecache.rainviewer.com${currentTimestamp.path}/512/{z}/{x}/{y}/2/1_1.png`,
+                        {
+                            attribution: '© RainViewer',
+                            opacity: 0.6,
+                            maxZoom: 18
+                        }
+                    );
+                } else {
+                    // Fallback zu OpenWeatherMap
+                    this.radarLayer = L.tileLayer(
+                        'https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=demo',
+                        {
+                            attribution: '© OpenWeatherMap',
+                            opacity: 0.6,
+                            maxZoom: 18
+                        }
+                    );
+                }
+
+                this.radarLayer.addTo(this.map);
+                this.updateTimeDisplay();
+            }
+
+            updateTimeDisplay() {
+                if (this.timestamps.length === 0) return;
+                
+                const currentTime = this.timestamps[this.currentIndex].time;
+                const timeString = currentTime.toLocaleTimeString('de-DE', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                document.getElementById('timeDisplay').textContent = timeString;
+                document.getElementById('timeSlider').value = this.currentIndex;
+            }
+
+            play() {
+                if (this.isPlaying) return;
+                
+                this.isPlaying = true;
+                document.getElementById('playBtn').disabled = true;
+                document.getElementById('pauseBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = false;
+                
+                this.playInterval = setInterval(() => {
+                    this.currentIndex++;
+                    if (this.currentIndex >= this.timestamps.length) {
+                        this.currentIndex = 0; // Loop
+                    }
+                    this.updateRadarLayer();
+                }, this.speed);
+            }
+
+            pause() {
+                this.isPlaying = false;
+                clearInterval(this.playInterval);
+                
+                document.getElementById('playBtn').disabled = false;
+                document.getElementById('pauseBtn').disabled = true;
+            }
+
+            stop() {
+                this.pause();
+                this.currentIndex = this.timestamps.length - 1;
+                this.updateRadarLayer();
+                
+                document.getElementById('stopBtn').disabled = true;
+            }
+
+            setSpeed(speed) {
+                this.speed = speed;
+                
+                // Alle Speed-Buttons zurücksetzen
+                document.querySelectorAll('.speed-btn').forEach(btn => {
+                    btn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                });
+                
+                // Aktiven Button hervorheben
+                const activeBtn = speed === 1000 ? 'speed1x' : speed === 500 ? 'speed2x' : 'speed4x';
+                document.getElementById(activeBtn).style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)';
+                
+                // Wenn gerade abgespielt wird, Intervall neu starten
+                if (this.isPlaying) {
+                    clearInterval(this.playInterval);
+                    this.playInterval = setInterval(() => {
+                        this.currentIndex++;
+                        if (this.currentIndex >= this.timestamps.length) {
+                            this.currentIndex = 0;
+                        }
+                        this.updateRadarLayer();
+                    }, this.speed);
+                }
+            }
+
+            showLoading(show) {
+                document.getElementById('loading').style.display = show ? 'block' : 'none';
+            }
+
+            showError(message) {
+                const errorDiv = document.getElementById('error');
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            }
+
+            hideError() {
+                document.getElementById('error').style.display = 'none';
+            }
+        }
+
+        // App initialisieren wenn DOM geladen ist
+        document.addEventListener('DOMContentLoaded', () => {
+            window.radarApp = new RegenRadar();
+        });
+
+        // Responsive Karte bei Fenstergröße-Änderung
+        window.addEventListener('resize', () => {
+            if (window.radarApp && window.radarApp.map) {
+                setTimeout(() => {
+                    window.radarApp.map.invalidateSize();
+                }, 100);
+            }
+        });
+    </script>
+</body>
+</html>

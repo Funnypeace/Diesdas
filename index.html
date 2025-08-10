@@ -597,7 +597,7 @@
     };
 
     /**
-     * Supabase Auth Manager
+     * Supabase Auth Manager mit Login-Tracking
      */
     const authManager = {
       client: null,
@@ -627,9 +627,12 @@
         utils.$('#login-form')?.addEventListener('submit', this.handleLogin.bind(this));
         utils.$('#signup-link')?.addEventListener('click', this.handleSignup.bind(this));
         utils.$('#logout-btn')?.addEventListener('click', this.handleLogout.bind(this));
-        this.client.auth.onAuthStateChange((event) => {
-          if (event === 'SIGNED_IN') this.showMainContent();
-          // 'SIGNED_OUT' ohne reload – reload machen wir nur im Button-Handler
+        this.client.auth.onAuthStateChange((event, session) => {
+          if (event === 'SIGNED_IN' && session) {
+            // Login-Historie tracken bei Auth State Change
+            this.trackLogin(session.user);
+            this.showMainContent();
+          }
         });
       },
 
@@ -639,13 +642,47 @@
         const password = utils.$('#password').value.trim();
         this.setLoginLoading(true);
         try {
-          const { error } = await this.client.auth.signInWithPassword({ email, password });
-          if (error) this.showLoginMessage('Fehler: ' + error.message, 'error');
-          else this.showLoginMessage('Login erfolgreich!', 'success');
+          const { data, error } = await this.client.auth.signInWithPassword({ email, password });
+          if (error) {
+            this.showLoginMessage('Fehler: ' + error.message, 'error');
+          } else {
+            // Login erfolgreich - tracke den Login
+            if (data.user) {
+              await this.trackLogin(data.user);
+            }
+            this.showLoginMessage('Login erfolgreich!', 'success');
+          }
         } catch (err) {
           this.showLoginMessage('Unerwarteter Fehler: ' + err.message, 'error');
         } finally {
           this.setLoginLoading(false);
+        }
+      },
+
+      /**
+       * Neue Methode: Login in der Historie speichern
+       */
+      async trackLogin(user) {
+        if (!user) return;
+        
+        try {
+          const { error } = await this.client
+            .from('login_history')
+            .insert([
+              {
+                user_id: user.id,
+                email: user.email,
+                login_at: new Date().toISOString()
+              }
+            ]);
+          
+          if (error) {
+            console.error('Fehler beim Speichern der Login-Historie:', error);
+          } else {
+            console.log('Login erfolgreich in Historie gespeichert');
+          }
+        } catch (err) {
+          console.error('Unerwarteter Fehler beim Login-Tracking:', err);
         }
       },
 
@@ -656,28 +693,45 @@
         if (!email || !password) return this.showLoginMessage('Bitte E-Mail und Passwort eingeben.', 'info');
 
         try {
-          const { error } = await this.client.auth.signUp({ email, password });
-          if (error) this.showLoginMessage('Registrierung fehlgeschlagen: ' + error.message, 'error');
-          else this.showLoginMessage('Verifizierungsmail verschickt! Bitte E-Mail bestätigen.', 'success');
+          const { data, error } = await this.client.auth.signUp({ email, password });
+          if (error) {
+            this.showLoginMessage('Registrierung fehlgeschlagen: ' + error.message, 'error');
+          } else {
+            this.showLoginMessage('Verifizierungsmail verschickt! Bitte E-Mail bestätigen.', 'success');
+            // Optional: Auch bei Registrierung tracken
+            if (data.user && data.session) {
+              await this.trackLogin(data.user);
+            }
+          }
         } catch (err) {
           this.showLoginMessage('Unerwarteter Fehler: ' + err.message, 'error');
         }
       },
 
       async handleLogout() {
-        try { await this.client.auth.signOut(); }
-        catch (e) { console.error('Logout-Fehler:', e); }
-        finally { location.reload(); }
+        try { 
+          await this.client.auth.signOut(); 
+        } catch (e) { 
+          console.error('Logout-Fehler:', e); 
+        } finally { 
+          location.reload(); 
+        }
       },
 
       setLoginLoading(on) {
         const btn = utils.$('#login-button');
-        if (btn) { btn.disabled = on; btn.textContent = on ? 'Wird angemeldet...' : 'Anmelden'; }
+        if (btn) { 
+          btn.disabled = on; 
+          btn.textContent = on ? 'Wird angemeldet...' : 'Anmelden'; 
+        }
       },
 
       showLoginMessage(msg, type='info') {
         const el = utils.$('#login-message');
-        if (el) { el.textContent = msg; el.className = `login-message ${type}`; }
+        if (el) { 
+          el.textContent = msg; 
+          el.className = `login-message ${type}`; 
+        }
       },
 
       showLogin() {

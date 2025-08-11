@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>News‑Zusammenfassung (Firecrawl + Groq)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .prose p { margin: 0.4rem 0; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+  <main class="max-w-3xl mx-auto p-6">
+    <header class="mb-6">
+      <h1 class="text-2xl font-bold">News‑Zusammenfassung: Firecrawl → Groq</h1>
+      <p class="text-sm text-slate-600">Dieses Frontend nutzt <span class="font-semibold">/api/groq</span> (serverseitig) – keine Client‑Keys, kein Demo‑Modus.</p>
+    </header>
+
+    <section class="bg-white rounded-2xl shadow p-4 mb-4">
+      <label class="block text-sm font-medium mb-2">Quellen (eine Domain oder URL pro Zeile)</label>
+      <textarea id="sources" class="w-full h-32 rounded-xl border border-slate-200 p-3 text-sm mono" placeholder="https://www.tagesschau.de
+https://www.zeit.de/index
+spiegel.de/politik"></textarea>
+
+      <label class="block text-sm font-medium mt-4 mb-2">Themen/Keywords (optional)</label>
+      <input id="keywords" class="w-full rounded-xl border border-slate-200 p-3 text-sm" placeholder="wirtschaft, politik, energie …" />
+
+      <div class="flex items-center gap-3 mt-4">
+        <button id="btnSummarize" class="px-4 py-2 rounded-xl bg-indigo-600 text-white">Zusammenfassen (3 Sätze)</button>
+        <button id="btnClear" class="px-4 py-2 rounded-xl border">Zurücksetzen</button>
+      </div>
+      <p class="text-xs text-slate-500 mt-2">Server‑Route: <span class="mono">/api/groq</span>. Die Route übernimmt Firecrawl‑Suche/Scrapes serverseitig (wenn ein Query übergeben wird) und lässt Groq zusammenfassen.</p>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow p-4 mb-4">
+      <h2 class="font-semibold mb-2">Zusammenfassung</h2>
+      <div id="summary" class="prose text-sm text-slate-800 bg-slate-50 rounded-xl p-3 min-h-[6rem]"></div>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow p-4">
+      <h3 class="font-semibold mb-2">Protokoll</h3>
+      <div id="log" class="mono text-xs whitespace-pre-wrap bg-slate-50 rounded-xl p-3 h-40 overflow-auto"></div>
+    </section>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const log = (msg) => { const el = $("log"); el.textContent += `[${new Date().toLocaleTimeString()}] ${msg}\n`; el.scrollTop = el.scrollHeight; };
+
+    function toSiteParts(lines) {
+      const parts = [];
+      for (let raw of lines) {
+        if (!raw) continue;
+        raw = raw.trim();
+        try {
+          // Wenn vollständige URL → Hostname extrahieren
+          const u = new URL(raw.startsWith('http') ? raw : ('https://' + raw));
+          if (u.hostname) parts.push(`site:${u.hostname.replace(/^www\./,'')}`);
+        } catch {
+          // Fallback: nimm den String als Domain‑Fragment
+          parts.push(`site:${raw.replace(/^https?:\/\//,'').replace(/^www\./,'')}`);
+        }
+      }
+      // Duplikate vermeiden
+      return [...new Set(parts)];
+    }
+
+    function buildQuery() {
+      const srcLines = ($("sources").value || '').split(/\n+/).map(s => s.trim()).filter(Boolean);
+      const sites = toSiteParts(srcLines);
+      const kw = ($("keywords").value || '').trim();
+      let q = sites.join(' OR ');
+      if (kw) q = q ? `${q} ${kw}` : kw;
+      return q;
+    }
+
+    function enforceThreeSentences(text) {
+      const sentences = (text || '').match(/[^.!?\n]+[.!?]/g) || [text];
+      return sentences.slice(0,3).join(' ').trim();
+    }
+
+    $("btnClear").addEventListener('click', () => {
+      $("summary").textContent = '';
+      $("log").textContent = '';
+      $("keywords").value = '';
+      $("sources").value = '';
+    });
+
+    $("btnSummarize").addEventListener('click', async () => {
+      const query = buildQuery();
+      if (!query) { alert('Bitte mindestens eine Quelle oder ein Keyword angeben.'); return; }
+      $("summary").textContent = 'Erstelle Zusammenfassung …';
+      log('Sende Anfrage an /api/groq …');
+
+      try {
+        const body = {
+          action: 'news_summary',
+          model: 'llama-3.3-70b-versatile',
+          temperature: 0.2,
+          top_p: 1,
+          max_tokens: 300,
+          stream: false,
+          query,
+          messages: [
+            {
+              role: 'user',
+              content: 'Fasse die wichtigsten Nachrichten aus den Eingangsdaten präzise und neutral in höchstens drei Sätzen zusammen. Wenn keine relevanten Treffer vorhanden sind, schreibe: "Keine relevanten Nachrichten gefunden."'
+            }
+          ]
+        };
+
+        const res = await fetch('/api/groq', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+
+        if (!res.ok) {
+          const t = await res.text();
+          throw new Error(`HTTP ${res.status}: ${t}`);
+        }
+
+        const data = await res.json();
+        const content = data?.content || '';
+        $("summary").textContent = enforceThreeSentences(content);
+        log(`Fertig. Modell: ${data?.model || 'n/a'} | Tokens: ${data?.usage?.total_tokens || 'n/a'}`);
+      } catch (e) {
+        $("summary").textContent = '';
+        log('Fehler: ' + (e?.message || e));
+        alert('Fehler bei der Zusammenfassung. Details siehe Protokoll.');
+      }
+    });
+  </script>
+</body>
+</html>

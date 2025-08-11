@@ -66,13 +66,16 @@ spiegel.de/politik"></textarea>
       return [...new Set(parts)];
     }
 
-    function buildQuery() {
-      const srcLines = ($("sources").value || '').split(/\n+/).map(s => s.trim()).filter(Boolean);
+    function buildQuery(){
+      const srcLines = ($("sources").value || '').split(/
++/).map(s => s.trim()).filter(Boolean);
       const sites = toSiteParts(srcLines);
       const kw = ($("keywords").value || '').trim();
-      let q = sites.join(' OR ');
-      if (kw) q = q ? `${q} ${kw}` : kw;
-      return q;
+      if (!sites.length && !kw) return '';
+      if (!kw) return sites.join(' OR ');
+      // gruppiere: (site:welt.de wirtschaft) OR (site:tagesschau.de wirtschaft)
+      const grouped = sites.length ? sites.map(s => `(${s} ${kw})`).join(' OR ') : kw;
+      return grouped;
     }
 
     function enforceThreeSentences(text) {
@@ -89,7 +92,9 @@ spiegel.de/politik"></textarea>
 
     $("btnSummarize").addEventListener('click', async () => {
       const query = buildQuery();
-      if (!query) { alert('Bitte mindestens eine Quelle oder ein Keyword angeben.'); return; }
+      const srcLines = ($("sources").value || '').split(/
++/).map(s => s.trim()).filter(Boolean);
+      if (!query && !srcLines.length) { alert('Bitte mindestens eine Quelle oder ein Keyword angeben.'); return; }
       $("summary").textContent = 'Erstelle Zusammenfassung …';
       log('Sende Anfrage an /api/groq …');
 
@@ -102,6 +107,7 @@ spiegel.de/politik"></textarea>
           max_tokens: 300,
           stream: false,
           query,
+          sources: srcLines,
           messages: [
             {
               role: 'user',
@@ -115,6 +121,33 @@ spiegel.de/politik"></textarea>
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body)
         });
+
+        if (!res.ok) {
+          const t = await res.text();
+          throw new Error(`HTTP ${res.status}: ${t}`);
+        }
+
+        const data = await res.json();
+        const content = data?.content || '';
+        $("summary").textContent = enforceThreeSentences(content);
+        if (data?.debug) {
+          const info = [];
+          if (typeof data.debug.firecrawlUsed !== 'undefined') info.push(`Firecrawl: ${data.debug.firecrawlUsed ? 'aktiv' : 'inaktiv'}`);
+          if (Array.isArray(data.debug.targets)) info.push(`Treffer: ${data.debug.targets.length}`);
+          if (typeof data.debug.scrapedCount === 'number') info.push(`Scrapes: ${data.debug.scrapedCount}`);
+          if (info.length) log(info.join(' | '));
+          if (Array.isArray(data.debug.targets) && data.debug.targets.length) {
+            log('URLs:');
+            data.debug.targets.forEach(u => log(' - ' + u));
+          }
+        }
+        log(`Fertig. Modell: ${data?.model || 'n/a'} | Tokens: ${data?.usage?.total_tokens || 'n/a'}`);
+      } catch (e) {
+        $("summary").textContent = '';
+        log('Fehler: ' + (e?.message || e));
+        alert('Fehler bei der Zusammenfassung. Details siehe Protokoll.');
+      }
+    });
 
         if (!res.ok) {
           const t = await res.text();

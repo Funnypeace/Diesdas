@@ -30,7 +30,13 @@ spiegel.de/politik"></textarea>
         <button id="btnSummarize" class="px-4 py-2 rounded-xl bg-indigo-600 text-white">Zusammenfassen (3 Sätze)</button>
         <button id="btnClear" class="px-4 py-2 rounded-xl border">Zurücksetzen</button>
       </div>
-      <p class="text-xs text-slate-500 mt-2">Server‑Route: <span class="mono">/api/groq</span>. Die Route übernimmt Firecrawl‑Suche/Scrapes serverseitig (wenn ein Query übergeben wird) und lässt Groq zusammenfassen.</p>
+      <p class="text-xs text-slate-500 mt-2">Server‑Route: <span class="mono">/api/groq</span>. Die Route übernimmt Firecrawl‑Suche/Scrapes serverseitig (wenn ein Query übergeben wird) und lässt Groq zusammenfassen. <span class="font-semibold">Tipp:</span> Trage <u>mehrere Domains</u> plus <u>1–2 Keywords</u> ein (z. B. „Politik“). Das ergibt meist 3–5 relevante Treffer.</p>
+    </section>
+
+    <!-- Quellenliste -->
+    <section class="bg-white rounded-2xl shadow p-4 mb-4">
+      <h2 class="font-semibold mb-2">Quellen (Treffer)</h2>
+      <ul id="sourcesList" class="list-disc pl-6 text-sm text-slate-700 space-y-1"></ul>
     </section>
 
     <section class="bg-white rounded-2xl shadow p-4 mb-4">
@@ -85,8 +91,22 @@ spiegel.de/politik"></textarea>
     }
 
     function enforceThreeSentences(text) {
-      const sentences = (text || '').match(/[^.!?\n]+[.!?]/g) || [text];
+      const sentences = (text || '').match(/[^.!?
+]+[.!?]/g) || [text];
       return sentences.slice(0,3).join(' ').trim();
+    }
+
+    function renderSources(urls) {
+      const ul = $("sourcesList");
+      ul.innerHTML = '';
+      const unique = [...new Set(Array.isArray(urls) ? urls : [])];
+      unique.forEach(u => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = u; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = u;
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
     }
 
     async function postGroq(payload) {
@@ -111,6 +131,7 @@ spiegel.de/politik"></textarea>
       $("log").textContent = '';
       $("keywords").value = '';
       $("sources").value = '';
+      renderSources([]);
     });
 
     $("btnSummarize").addEventListener('click', async () => {
@@ -142,6 +163,13 @@ spiegel.de/politik"></textarea>
         const data = await postGroq(body);
         const content = data?.content || '';
         $("summary").textContent = enforceThreeSentences(content);
+
+        // Quellenliste sichtbar rendern
+        if (Array.isArray(data?.debug?.targets)) {
+          renderSources(data.debug.targets);
+        } else {
+          renderSources([]);
+        }
 
         if (data?.debug) {
           const info = [];

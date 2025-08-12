@@ -45,6 +45,9 @@ spiegel.de/politik"></textarea>
   </main>
 
   <script>
+    // ----------------------
+    // Helpers
+    // ----------------------
     const $ = (id) => document.getElementById(id);
     const log = (msg) => { const el = $("log"); el.textContent += `[${new Date().toLocaleTimeString()}] ${msg}\n`; el.scrollTop = el.scrollHeight; };
 
@@ -54,26 +57,29 @@ spiegel.de/politik"></textarea>
         if (!raw) continue;
         raw = raw.trim();
         try {
-          // Wenn vollständige URL → Hostname extrahieren
+          // Sicher per URL-Parser, füge Protokoll hinzu wenn nötig
           const u = new URL(raw.startsWith('http') ? raw : ('https://' + raw));
-          if (u.hostname) parts.push(`site:${u.hostname.replace(/^www\./,'')}`);
+          const host = u.hostname.replace(/^www\./, '');
+          if (host) parts.push(`site:${host}`);
         } catch {
-          // Fallback: nimm den String als Domain‑Fragment
-          parts.push(`site:${raw.replace(/^https?:\/\//,'').replace(/^www\./,'')}`);
+          // Fallback ohne URL-Parser – Regex korrekt escapen
+          const host = raw
+            .replace(/^https?:\/\/+/, '')
+            .replace(/^www\./, '')
+            .split('/')[0];
+          if (host) parts.push(`site:${host}`);
         }
       }
-      // Duplikate vermeiden
       return [...new Set(parts)];
     }
 
     function buildQuery(){
-      const srcLines = ($("sources").value || '').split(/
-+/).map(s => s.trim()).filter(Boolean);
+      const srcLines = ($("sources").value || '').split(/\n+/).map(s => s.trim()).filter(Boolean);
       const sites = toSiteParts(srcLines);
       const kw = ($("keywords").value || '').trim();
       if (!sites.length && !kw) return '';
       if (!kw) return sites.join(' OR ');
-      // gruppiere: (site:welt.de wirtschaft) OR (site:tagesschau.de wirtschaft)
+      // (site:X kw) OR (site:Y kw)
       const grouped = sites.length ? sites.map(s => `(${s} ${kw})`).join(' OR ') : kw;
       return grouped;
     }
@@ -83,6 +89,23 @@ spiegel.de/politik"></textarea>
       return sentences.slice(0,3).join(' ').trim();
     }
 
+    async function postGroq(payload) {
+      async function tryPost(url) {
+        const r = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!r.ok) throw new Error(`HTTP ${r.status}: ` + (await r.text()).slice(0,400));
+        return r.json();
+      }
+      try { return await tryPost('/api/groq'); }
+      catch (e1) { console.warn('Primary failed:', e1.message); return await tryPost('/api/groq.js'); }
+    }
+
+    // ----------------------
+    // Events
+    // ----------------------
     $("btnClear").addEventListener('click', () => {
       $("summary").textContent = '';
       $("log").textContent = '';
@@ -92,9 +115,9 @@ spiegel.de/politik"></textarea>
 
     $("btnSummarize").addEventListener('click', async () => {
       const query = buildQuery();
-      const srcLines = ($("sources").value || '').split(/
-+/).map(s => s.trim()).filter(Boolean);
+      const srcLines = ($("sources").value || '').split(/\n+/).map(s => s.trim()).filter(Boolean);
       if (!query && !srcLines.length) { alert('Bitte mindestens eine Quelle oder ein Keyword angeben.'); return; }
+
       $("summary").textContent = 'Erstelle Zusammenfassung …';
       log('Sende Anfrage an /api/groq …');
 
@@ -116,20 +139,10 @@ spiegel.de/politik"></textarea>
           ]
         };
 
-        const res = await fetch('/api/groq', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-        });
-
-        if (!res.ok) {
-          const t = await res.text();
-          throw new Error(`HTTP ${res.status}: ${t}`);
-        }
-
-        const data = await res.json();
+        const data = await postGroq(body);
         const content = data?.content || '';
         $("summary").textContent = enforceThreeSentences(content);
+
         if (data?.debug) {
           const info = [];
           if (typeof data.debug.firecrawlUsed !== 'undefined') info.push(`Firecrawl: ${data.debug.firecrawlUsed ? 'aktiv' : 'inaktiv'}`);
@@ -141,22 +154,6 @@ spiegel.de/politik"></textarea>
             data.debug.targets.forEach(u => log(' - ' + u));
           }
         }
-        log(`Fertig. Modell: ${data?.model || 'n/a'} | Tokens: ${data?.usage?.total_tokens || 'n/a'}`);
-      } catch (e) {
-        $("summary").textContent = '';
-        log('Fehler: ' + (e?.message || e));
-        alert('Fehler bei der Zusammenfassung. Details siehe Protokoll.');
-      }
-    });
-
-        if (!res.ok) {
-          const t = await res.text();
-          throw new Error(`HTTP ${res.status}: ${t}`);
-        }
-
-        const data = await res.json();
-        const content = data?.content || '';
-        $("summary").textContent = enforceThreeSentences(content);
         log(`Fertig. Modell: ${data?.model || 'n/a'} | Tokens: ${data?.usage?.total_tokens || 'n/a'}`);
       } catch (e) {
         $("summary").textContent = '';

@@ -1,11 +1,7 @@
-// /api/groq.js
-// Next.js / Vercel Serverless‑Funktion für News‑Zusammenfassungen
-// Nutzt Firecrawl (Search + Scrape) serverseitig und Groq für die 3‑Satz‑Summary.
+// /api/groq.js  (CommonJS für Vercel Functions ohne package.json)
 // ENV: GROQ_API_KEY, FIRECRAWL_API_KEY
 
-export const config = { api: { bodyParser: true } };
-
-export default async function handler(req, res) {
+module.exports = async function (req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'Method Not Allowed' });
@@ -20,18 +16,18 @@ export default async function handler(req, res) {
       top_p = 1,
       max_tokens = 300,
       stream = false,
-      query = '',               // z. B. (site:welt.de wirtschaft) OR (site:tagesschau.de wirtschaft)
-      sources = []              // optionale URL-/Domainliste als Fallback fürs Scrapen
+      query = '',         // z. B. (site:welt.de wirtschaft) OR (site:tagesschau.de wirtschaft)
+      sources = []        // optionale URL-/Domainliste als Fallback fürs Scrapen
     } = req.body || {};
 
     // --- Firecrawl: Search + Scrape (nur wenn query vorhanden und kein Chat) ---
     let scrapedBlocks = [];
     let targets = [];
-    const useFirecrawl = (
+    const useFirecrawl =
       action !== 'chat' &&
-      typeof query === 'string' && query.trim().length > 0 &&
-      !!process.env.FIRECRAWL_API_KEY
-    );
+      typeof query === 'string' &&
+      query.trim().length > 0 &&
+      !!process.env.FIRECRAWL_API_KEY;
 
     if (useFirecrawl) {
       try {
@@ -44,7 +40,6 @@ export default async function handler(req, res) {
         const sr = await fetch('https://api.firecrawl.dev/v1/search', {
           method: 'POST',
           headers: fcHeaders,
-          // manche Deploys erwarten "query", andere "q" – sende beides
           body: JSON.stringify({ query, q: query, limit: 5 })
         });
 
@@ -86,9 +81,9 @@ export default async function handler(req, res) {
     }
 
     // --- Groq: Anfrage vorbereiten ---
-    const systemInstruction = 'Fasse die wichtigsten heutigen Nachrichten in höchstens drei Sätzen zusammen. Sei präzise, neutral und vermeide Ausschmückungen.';
+    const systemInstruction =
+      'Fasse die wichtigsten heutigen Nachrichten in höchstens drei Sätzen zusammen. Sei präzise, neutral und vermeide Ausschmückungen.';
 
-    // Wenn wir nichts gescraped haben UND keine Chat‑Nachrichten da sind → kurzer Early‑Return
     if (scrapedBlocks.length === 0 && (!Array.isArray(messages) || messages.length === 0)) {
       return res.status(200).json({
         content: 'Keine relevanten Nachrichten gefunden. Es liegen keine Eingangsdaten vor, um eine Zusammenfassung zu erstellen.',
@@ -100,16 +95,13 @@ export default async function handler(req, res) {
     }
 
     let groqMessages = [];
-
     if (scrapedBlocks.length > 0) {
-      // News‑Summary mit konkatenierten Quellen als Benutzer‑Nachricht
       const joined = scrapedBlocks.join('\n\n---\n\n');
       groqMessages = [
         { role: 'system', content: systemInstruction },
         { role: 'user', content: `Quelleninhalte (Auszug):\n\n${joined}` }
       ];
     } else {
-      // Chat‑Pfad (falls z. B. action==='chat' oder nur messages gesendet wurden)
       groqMessages = messages;
     }
 
@@ -120,7 +112,9 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
       },
-      body: JSON.stringify({ model, temperature, top_p, max_tokens, stream: false, messages: groqMessages })
+      body: JSON.stringify({
+        model, temperature, top_p, max_tokens, stream: false, messages: groqMessages
+      })
     });
 
     if (!gr.ok) {
@@ -130,8 +124,6 @@ export default async function handler(req, res) {
 
     const groqData = await gr.json();
     const content = groqData?.choices?.[0]?.message?.content?.trim?.() || '';
-
-    // Begrenze (zusätzlich zur Prompt) client‑seitig oft noch einmal auf 3 Sätze; hier serverseitig weiche Begrenzung
     const limited = (() => {
       const sentences = (content || '').match(/[^.!?\n]+[.!?]/g) || [content];
       return sentences.slice(0, 3).join(' ').trim();
@@ -149,4 +141,4 @@ export default async function handler(req, res) {
     console.error('API /api/groq error:', err);
     return res.status(500).json({ error: 'Internal Server Error', details: String(err && err.message || err) });
   }
-}
+};

@@ -263,11 +263,34 @@
             }
 
             let resultsToRender = [];
-            // Expecting a single object: {"languageCode": string, "languageName": string, "text": string}
-            if (parsedTranslation && typeof parsedTranslation === 'object' && parsedTranslation.text) {
-                resultsToRender = [parsedTranslation];
+            if (parsedTranslation && typeof parsedTranslation === 'object') {
+                let finalTranslationText = '';
+                // Prioritize API's language code, but fall back to the requested code
+                let finalLanguageCode = parsedTranslation.languageCode || code;
+                // Prioritize API's language name, but fall back to the requested name
+                let finalLanguageName = parsedTranslation.languageName || languageMeta(code).name;
+
+                if (typeof parsedTranslation.text === 'string') {
+                    // Case 1: text is a direct string
+                    finalTranslationText = parsedTranslation.text;
+                } else if (typeof parsedTranslation.text === 'object' && parsedTranslation.text.translation) {
+                    // Case 2: text is an object with a 'translation' key
+                    finalTranslationText = parsedTranslation.text.translation;
+                } else if (typeof content === 'string' && content.trim().length > 0) {
+                    // Fallback for cases where `parsedTranslation` is an object but doesn't have a direct 'text' or 'text.translation'
+                    // This handles cases where the content itself is the raw translation string.
+                    finalTranslationText = content.trim();
+                }
+
+                if (finalTranslationText.length > 0) {
+                    resultsToRender = [{
+                        languageCode: finalLanguageCode,
+                        languageName: finalLanguageName,
+                        text: finalTranslationText
+                    }];
+                }
             } else if (typeof content === 'string' && content.trim().length > 0) {
-                // Fallback: if it's just a non-empty string, assume it's the translation for the selected language
+                // Fallback: if the API returns only a plain string (not a JSON object at all)
                 resultsToRender = [{
                     languageCode: code, // Use the selected code
                     languageName: languageMeta(code).name, // Use the selected name

@@ -3,342 +3,481 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Battlefield 6 Open Beta: Reaktionen, Performance und Beste Loadouts</title>
+  <title>Battlefield 6: Preisvergleich, Open Beta Reaktionen, Performance & Loadouts</title>
+  <!-- Tailwind CSS CDN für modernes Styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="description" content="Umfassender Vergleich der effektiven Endpreise für Battlefield 6 (Standard & Phantom) auf Epic, Steam und EA, inklusive EA Play-Rabatt und Epic Rewards, sowie eine Analyse der Open Beta: Reaktionen, Performance-Bewertungen und beste Loadouts." />
   <style>
+    /* Spezifische Anpassungen für Schriftart und Textschatten, die nicht direkt in Tailwind sind */
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      line-height: 1.6;
+      font-family: 'Inter', sans-serif; /* Standard-Schriftart für moderne Webseiten */
     }
-  
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      background: white;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    }
-  
     h1 {
-      text-align: center;
-      color: #2c3e50;
-      margin-bottom: 30px;
-      font-size: 2.2em;
       text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
     }
-  
-    h2 {
-      color: #34495e;
-      border-bottom: 3px solid #3498db;
-      padding-bottom: 10px;
-      margin-top: 40px;
-    }
-  
-    .table-wrapper {
-      overflow-x: auto;
-      margin: 20px 0;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      border-radius: 8px;
-    }
-  
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 0;
-    }
-  
-    th {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 15px 12px;
-      text-align: center;
-      font-weight: 600;
-      font-size: 0.9em;
-    }
-  
-    td {
-      border: 1px solid #ddd;
-      padding: 12px;
-      text-align: center;
-      transition: background-color 0.3s ease;
-    }
-  
-    tr:nth-child(even) { background-color: #f8f9fa; }
-    tr:hover { background-color: #e8f4f8; }
-  
-    .weapon-name {
-      font-weight: bold;
-      color: #2c3e50;
-      text-align: left !important;
-    }
-  
-    .chart-container {
-      width: 100%;
-      margin: 30px auto;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    }
-  
-    .performance-highlight {
-      background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-      color: white;
-      font-weight: bold;
-    }
-  
-    .summary-box {
-      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-      padding: 20px;
-      border-radius: 10px;
-      margin: 20px 0;
-      border-left: 5px solid #3498db;
-    }
-  
-    .comparison-table { font-size: 0.85em; }
-    .na { color: #999; font-style: italic; }
-  
-    /* Responsive Styles */
-    @media (max-width: 768px) {
-      body {
-        padding: 10px;
-      }
-  
-      .container {
-        padding: 15px;
-      }
-  
-      h1 {
-        font-size: 1.8em;
-      }
-  
-      h2 {
-        font-size: 1.4em;
-      }
-  
-      th, td {
-        padding: 10px 8px;
-        font-size: 0.85em;
-        text-align: left !important;
-      }
-  
-      .table-wrapper {
-        margin: 10px 0;
-      }
-  
-      .chart-container {
-        padding: 15px;
-      }
-  
-      .summary-box {
-        padding: 15px;
-      }
-    }
-  
+    /* Zusätzliche responsive Anpassungen für Tabellen, falls overflow-x-auto nicht ausreicht */
     @media (max-width: 480px) {
-      h1 {
-        font-size: 1.5em;
-      }
-  
-      h2 {
-        font-size: 1.2em;
-      }
-  
-      th, td {
-        font-size: 0.8em;
-        padding: 8px 6px;
-      }
-  
-      /* Stack table cells for very small screens */
       table, thead, tbody, th, td, tr {
         display: block;
       }
-  
+
       thead tr {
         position: absolute;
         top: -9999px;
         left: -9999px;
       }
-  
+
       tr {
-        border: 1px solid #ccc;
-        margin-bottom: 10px;
+        border: 1px solid #e2e8f0; /* border-gray-200 */
+        margin-bottom: 1rem; /* mb-4 */
+        border-radius: 0.5rem; /* rounded-lg */
       }
-  
+
       td {
         border: none;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid #edf2f7; /* border-gray-100 */
         position: relative;
-        padding-left: 50%;
-        text-align: right !important;
+        padding-left: 50%; /* Für den data-label Inhalt */
+        text-align: right !important; /* Inhalt rechtsbündig ausrichten */
       }
-  
+
+      td:last-child {
+        border-bottom: 0;
+      }
+
       td:before {
         position: absolute;
-        top: 6px;
-        left: 6px;
+        top: 0.75rem; /* pt-3 */
+        left: 0.75rem; /* pl-3 */
         width: 45%;
-        padding-right: 10px;
+        padding-right: 0.5rem; /* pr-2 */
         white-space: nowrap;
         content: attr(data-label);
         font-weight: bold;
         text-align: left;
+        color: #4a5568; /* text-gray-700 */
       }
-  
+
       .weapon-name {
-        text-align: left !important;
+        text-align: left !important; /* Waffenname soll immer links bleiben */
       }
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
-  <div class="container">
-    <h1>🎮 Battlefield 6 Open Beta: Reaktionen, Performance und Beste Loadouts</h1>
-  
-    <div class="summary-box">
-      <strong>Zusammenfassung:</strong> Die Battlefield 6 Open Beta erzielt Rekord-Spielerzahlen mit über 521.000 gleichzeitigen Spielern auf Steam und erhält überwiegend positive Feedbacks zur Performance und Rückkehr zu den Wurzeln. Die M87A1 Shotgun dominiert als Meta-Waffe, während Kritik an kleinen Maps und schneller TTK besteht. Erweiterte Infos aus Community-Quellen bestätigen ähnliche Trends mit zusätzlichen starken Waffen wie der PW7A2 SMG und L110 LMG.
+<body class="bg-gradient-to-br from-gray-100 to-gray-200 text-gray-900 leading-relaxed">
+  <div class="max-w-7xl mx-auto my-8 p-4 sm:p-6 lg:p-10 space-y-8">
+    <h1 class="text-4xl font-extrabold text-center text-gray-800 mb-8">🎮 Battlefield 6: Preisvergleich, Open Beta Reaktionen, Performance & Loadouts</h1>
+
+    <!-- Preisvergleich Sektion - Zuerst platziert -->
+    <div class="bg-white rounded-3xl shadow-xl p-8">
+      <header class="mb-8">
+        <h2 class="text-3xl font-bold text-gray-700 border-b-4 border-blue-500 pb-2 mb-6">Battlefield 6 – Effektivpreise</h2>
+        <p class="mt-2 text-gray-600">Vergleich für <span class="font-medium">Epic Games Store</span>, <span class="font-medium">Steam</span> und <span class="font-medium">EA App</span> mit <span class="font-medium">10 % EA Play‑Rabatt</span> und (bei Epic) <span class="font-medium">20 % Epic Rewards</span>.</p>
+      </header>
+      <!-- Controls -->
+      <section class="mb-6 grid gap-6 lg:grid-cols-3">
+        <div class="bg-gray-50 rounded-2xl shadow-sm border p-6">
+          <h3 class="font-semibold mb-4 text-xl text-gray-800">Grundpreise</h3>
+          <label class="block text-sm mb-2" for="priceStandard">Standard Edition (€)</label>
+          <input id="priceStandard" type="number" step="0.01" class="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-blue-500 focus:border-blue-500" value="69.99" />
+          <label class="block text-sm mt-4 mb-2" for="pricePhantom">Phantom Edition (€)</label>
+          <input id="pricePhantom" type="number" step="0.01" class="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-blue-500 focus:border-blue-500" value="99.99" />
+        </div>
+        <div class="bg-gray-50 rounded-2xl shadow-sm border p-6">
+          <h3 class="font-semibold mb-4 text-xl text-gray-800">Rabatte & Rewards</h3>
+          <label class="block text-sm mb-2" for="eaPlayDiscount">EA Play Rabatt (%)</label>
+          <input id="eaPlayDiscount" type="number" step="0.1" class="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-blue-500 focus:border-blue-500" value="10" />
+          <div class="mt-4 flex items-center justify-between gap-4">
+            <div class="flex-1">
+              <label class="block text-sm mb-2" for="epicRewards">Epic Rewards (%)</label>
+              <input id="epicRewards" type="number" step="0.1" class="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-blue-500 focus:border-blue-500" value="20" />
+            </div>
+            <label class="mt-6 inline-flex items-center gap-2 text-sm text-gray-700">
+              <input id="useRewards" type="checkbox" class="rounded text-blue-600 focus:ring-blue-500" checked />
+              Epic Rewards anwenden (Epic)
+            </label>
+          </div>
+        </div>
+        <div class="bg-gray-50 rounded-2xl shadow-sm border p-6">
+          <h3 class="font-semibold mb-4 text-xl text-gray-800">EA Play Monatskosten</h3>
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs mb-1" for="feeEpic">Epic (€)</label>
+              <input id="feeEpic" type="number" step="0.01" class="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500" value="0.95" />
+            </div>
+            <div>
+              <label class="block text-xs mb-1" for="feeSteam">Steam (€)</label>
+              <input id="feeSteam" type="number" step="0.01" class="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500" value="0.99" />
+            </div>
+            <div>
+              <label class="block text-xs mb-1" for="feeEA">EA App (€)</label>
+              <input id="feeEA" type="number" step="0.01" class="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500" value="0.99" />
+            </div>
+          </div>
+          <div class="mt-5 grid grid-cols-1 md:grid-cols-3 gap-3 text-sm text-gray-700">
+            <label class="inline-flex items-center gap-2"><input id="epicEAPlay" type="checkbox" class="rounded text-blue-600 focus:ring-blue-500" checked /> Epic: EA Play aktiv</label>
+            <label class="inline-flex items-center gap-2"><input id="steamEAPlay" type="checkbox" class="rounded text-blue-600 focus:ring-blue-500" checked /> Steam: EA Play aktiv</label>
+            <label class="inline-flex items-center gap-2"><input id="eaappEAPlay" type="checkbox" class="rounded text-blue-600 focus:ring-blue-500" checked /> EA App: EA Play aktiv</label>
+          </div>
+        </div>
+      </section>
+      <section class="mb-6 text-xs text-gray-600">
+        <p>Hinweise: Der 10 % EA Play‑Rabatt ist plattformgebunden und gilt nur, wenn EA Play auf der jeweiligen Plattform aktiv ist. Epic Rewards werden (falls aktiviert) nur auf den Kauf bei Epic angewendet und als Store‑Guthaben gutgeschrieben. Open Beta/Demo ist hier bewusst ausgeschlossen.</p>
+      </section>
+      <div id="errorBanner" class="hidden mb-4 rounded-xl border border-red-200 bg-red-50 text-red-700 p-3 text-sm"></div>
+      <!-- Results -->
+      <section class="space-y-10">
+        <!-- Standard Edition -->
+        <div>
+          <h2 class="text-2xl font-bold mb-4 text-gray-800">Standard Edition</h2>
+          <div class="grid gap-6 md:grid-cols-3">
+            <div class="bg-gray-50 rounded-2xl border border-gray-200 shadow-sm p-6" id="card-std-epic"></div>
+            <div class="bg-gray-50 rounded-2xl border border-gray-200 shadow-sm p-6" id="card-std-steam"></div>
+            <div class="bg-gray-50 rounded-2xl border border-gray-200 shadow-sm p-6" id="card-std-ea"></div>
+          </div>
+        </div>
+        <!-- Phantom Edition -->
+        <div>
+          <h2 class="text-2xl font-bold mb-4 text-gray-800">Phantom Edition</h2>
+          <div class="grid gap-6 md:grid-cols-3">
+            <div class="bg-gray-50 rounded-2xl border border-gray-200 shadow-sm p-6" id="card-ph-epic"></div>
+            <div class="bg-gray-50 rounded-2xl border border-gray-200 shadow-sm p-6" id="card-ph-steam"></div>
+            <div class="bg-gray-50 rounded-2xl border border-gray-200 shadow-sm p-6" id="card-ph-ea"></div>
+          </div>
+        </div>
+        <!-- Tests -->
+        <div class="bg-gray-50 rounded-2xl border border-gray-200 shadow-sm p-6">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold text-gray-800">Selbsttest</h2>
+            <button id="runTests" class="text-sm px-4 py-2 rounded-lg border border-gray-300 bg-white hover:bg-gray-100 transition-colors duration-200">Tests ausführen</button>
+          </div>
+          <p class="text-gray-600 text-sm mt-3">Prüft Beispielrechnungen mit den Standardwerten oben (69,99 €/99,99 €, 10 % Rabatt, 20 % Rewards, EA Play 0,95 €/0,99 €).</p>
+          <ul id="testList" class="mt-4 text-sm list-disc pl-5 space-y-2 text-gray-800"></ul>
+        </div>
+      </section>
     </div>
-    <h2>📊 Performance-Bewertungen</h2>
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Hardware</th>
-            <th>Auflösung & Einstellungen</th>
-            <th>Durchschnittliche FPS</th>
-            <th>Bemerkungen</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td class="weapon-name" data-label="Hardware">Ryzen 7 5800X + RTX 3060 Ti</td><td data-label="Auflösung & Einstellungen">1440p, Mittel</td><td data-label="Durchschnittliche FPS">70-75</td><td data-label="Bemerkungen">Stabil, keine Crashes</td></tr>
-          <tr><td class="weapon-name" data-label="Hardware">GTX 1080 (10 Jahre alt)</td><td data-label="Auflösung & Einstellungen">Nicht spezifiziert</td><td data-label="Durchschnittliche FPS">80-100</td><td data-label="Bemerkungen">Gute Performance auf älterer Hardware</td></tr>
-          <tr><td class="weapon-name" data-label="Hardware">RTX 4070 + i5 11400F</td><td data-label="Auflösung & Einstellungen">1440p, Max mit DLSS Quality</td><td data-label="Durchschnittliche FPS">100-120</td><td data-label="Bemerkungen">Exzellent</td></tr>
-          <tr><td class="weapon-name" data-label="Hardware">RTX 4090 + Ryzen 9800X3D</td><td data-label="Auflösung & Einstellungen">4K, Ultra</td><td class="performance-highlight" data-label="Durchschnittliche FPS">130-160</td><td data-label="Bemerkungen">High-End Performance</td></tr>
-          <tr><td class="weapon-name" data-label="Hardware">Ryzen 9 5950X + RTX 3070 Ti</td><td data-label="Auflösung & Einstellungen">Nicht spezifiziert</td><td data-label="Durchschnittliche FPS">Variabel (Einbrüche)</td><td data-label="Bemerkungen">CPU-Bottleneck-Probleme</td></tr>
-        </tbody>
-      </table>
+
+    <!-- Battlefield 6 Open Beta Sektion -->
+    <div class="bg-white rounded-3xl shadow-xl p-8">
+      <div class="bg-blue-50 border-l-4 border-blue-400 text-blue-800 p-6 rounded-lg my-6 shadow-md">
+        <strong>Zusammenfassung:</strong> Die Battlefield 6 Open Beta erzielt Rekord-Spielerzahlen mit über 521.000 gleichzeitigen Spielern auf Steam und erhält überwiegend positive Feedbacks zur Performance und Rückkehr zu den Wurzeln. Die M87A1 Shotgun dominiert als Meta-Waffe, während Kritik an kleinen Maps und schneller TTK besteht. Erweiterte Infos aus Community-Quellen bestätigen ähnliche Trends mit zusätzlichen starken Waffen wie der PW7A2 SMG und L110 LMG.
+      </div>
+
+      <h2 class="text-3xl font-bold text-gray-700 border-b-4 border-blue-500 pb-2 mb-6 mt-10">📊 Performance-Bewertungen</h2>
+      <div class="overflow-x-auto my-6 shadow-lg rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-blue-600">
+            <tr>
+              <th class="px-6 py-4 text-white text-center text-sm font-semibold uppercase tracking-wider">Hardware</th>
+              <th class="px-6 py-4 text-white text-center text-sm font-semibold uppercase tracking-wider">Auflösung & Einstellungen</th>
+              <th class="px-6 py-4 text-white text-center text-sm font-semibold uppercase tracking-wider">Durchschnittliche FPS</th>
+              <th class="px-6 py-4 text-white text-center text-sm font-semibold uppercase tracking-wider">Bemerkungen</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr class="odd:bg-gray-50 hover:bg-blue-50">
+              <td class="weapon-name px-6 py-4 whitespace-nowrap text-gray-800 text-left" data-label="Hardware">Ryzen 7 5800X + RTX 3060 Ti</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Auflösung & Einstellungen">1440p, Mittel</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Durchschnittliche FPS">70-75</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Bemerkungen">Stabil, keine Crashes</td>
+            </tr>
+            <tr class="odd:bg-gray-50 hover:bg-blue-50">
+              <td class="weapon-name px-6 py-4 whitespace-nowrap text-gray-800 text-left" data-label="Hardware">GTX 1080 (10 Jahre alt)</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Auflösung & Einstellungen">Nicht spezifiziert</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Durchschnittliche FPS">80-100</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Bemerkungen">Gute Performance auf älterer Hardware</td>
+            </tr>
+            <tr class="odd:bg-gray-50 hover:bg-blue-50">
+              <td class="weapon-name px-6 py-4 whitespace-nowrap text-gray-800 text-left" data-label="Hardware">RTX 4070 + i5 11400F</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Auflösung & Einstellungen">1440p, Max mit DLSS Quality</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Durchschnittliche FPS">100-120</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Bemerkungen">Exzellent</td>
+            </tr>
+            <tr class="odd:bg-gray-50 hover:bg-blue-50">
+              <td class="weapon-name px-6 py-4 whitespace-nowrap text-gray-800 text-left" data-label="Hardware">RTX 4090 + Ryzen 9800X3D</td>
+              <td class="px-6 py-4 whitespace-nowrap text-white text-center bg-red-500 font-bold rounded-full" data-label="Auflösung & Einstellungen">4K, Ultra</td>
+              <td class="px-6 py-4 whitespace-nowrap text-white text-center bg-red-500 font-bold rounded-full" data-label="Durchschnittliche FPS">130-160</td>
+              <td class="px-6 py-4 whitespace-nowrap text-white text-center bg-red-500 font-bold rounded-full" data-label="Bemerkungen">High-End Performance</td>
+            </tr>
+            <tr class="odd:bg-gray-50 hover:bg-blue-50">
+              <td class="weapon-name px-6 py-4 whitespace-nowrap text-gray-800 text-left" data-label="Hardware">Ryzen 9 5950X + RTX 3070 Ti</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Auflösung & Einstellungen">Nicht spezifiziert</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Durchschnittliche FPS">Variabel (Einbrüche)</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Bemerkungen">CPU-Bottleneck-Probleme</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="text-3xl font-bold text-gray-700 border-b-4 border-blue-500 pb-2 mb-6 mt-10">🔥 Community-Reaktionen</h2>
+      <div class="overflow-x-auto my-6 shadow-lg rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-blue-600">
+            <tr>
+              <th class="px-6 py-4 text-white text-center text-sm font-semibold uppercase tracking-wider">Aspekt</th>
+              <th class="px-6 py-4 text-white text-center text-sm font-semibold uppercase tracking-wider">Positive Punkte</th>
+              <th class="px-6 py-4 text-white text-center text-sm font-semibold uppercase tracking-wider">Kritikpunkte</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr class="odd:bg-gray-50 hover:bg-blue-50">
+              <td class="weapon-name px-6 py-4 whitespace-nowrap text-gray-800 text-left" data-label="Aspekt">Gameplay</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Positive Punkte">Rückkehr zu Wurzeln, besseres Zerstörungssystem, Drag-to-Revive</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Kritikpunkte">Zu kleine Maps, fühlt sich wie COD an, zu schnelle TTK</td>
+            </tr>
+            <tr class="odd:bg-gray-50 hover:bg-blue-50">
+              <td class="weapon-name px-6 py-4 whitespace-nowrap text-gray-800 text-left" data-label="Aspekt">Performance</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Positive Punkte">Stabil auf vielen Systemen, hohe FPS</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Kritikpunkte">Vereinzelte CPU-Probleme, anfängliche Server-Warteschlangen</td>
+            </tr>
+            <tr class="odd:bg-gray-50 hover:bg-blue-50">
+              <td class="weapon-name px-6 py-4 whitespace-nowrap text-gray-800 text-left" data-label="Aspekt">Waffenbalance</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Positive Punkte">Vielseitige Optionen, starke Meta-Waffen</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Kritikpunkte">Überpowered Shotguns, unbalancierte Sniper-Glints</td>
+            </tr>
+            <tr class="odd:bg-gray-50 hover:bg-blue-50">
+              <td class="weapon-name px-6 py-4 whitespace-nowrap text-gray-800 text-left" data-label="Aspekt">Gesamt</td>
+              <td class="px-6 py-4 whitespace-nowrap text-white text-center bg-red-500 font-bold rounded-full" data-label="Positive Punkte">Rekord-Spielerzahlen, positives Feedback</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Kritikpunkte">Bedenken zur Ausrichtung auf COD-Spieler</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="text-3xl font-bold text-gray-700 border-b-4 border-blue-500 pb-2 mb-6 mt-10">⚔️ Beste Waffen und Loadouts</h2>
+      <div class="overflow-x-auto my-6 shadow-lg rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-blue-600">
+            <tr>
+              <th class="px-6 py-4 text-white text-center text-sm font-semibold uppercase tracking-wider">Waffe</th>
+              <th class="px-6 py-4 text-white text-center text-sm font-semibold uppercase tracking-wider">Klasse</th>
+              <th class="px-6 py-4 text-white text-center text-sm font-semibold uppercase tracking-wider">Stärken</th>
+              <th class="px-6 py-4 text-white text-center text-sm font-semibold uppercase tracking-wider">Empfohlenes Loadout</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr class="odd:bg-gray-50 hover:bg-blue-50">
+              <td class="weapon-name px-6 py-4 whitespace-nowrap text-gray-800 text-left" data-label="Waffe">M87A1 Shotgun</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Klasse">Assault</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Stärken">One-Shot Nahkampf, gute Reichweite</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Empfohlenes Loadout">Mündung: CQB Suppressor, Lauf: 20" Factory, Unterlauf: Kurz gerippt, Magazin: 7 Shell Tube, Munition: Slugs</td>
+            </tr>
+            <tr class="odd:bg-gray-50 hover:bg-blue-50">
+              <td class="weapon-name px-6 py-4 whitespace-nowrap text-gray-800 text-left" data-label="Waffe">SGX Maschinenpistole</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Klasse">Engineer</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Stärken">Niedrige TTK, Nahkampf-König</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Empfohlenes Loadout">Mündung: Linear Compensator, Lauf: 8" Extended, Unterlauf: 6H64 Vertical, Magazin: 36RND, Munition: Soft Point, Visier: OSA-7 1.00x, Laser: 5MW Green</td>
+            </tr>
+            <tr class="odd:bg-gray-50 hover:bg-blue-50">
+              <td class="weapon-name px-6 py-4 whitespace-nowrap text-gray-800 text-left" data-label="Waffe">NVO-228E Sturmgewehr</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Klasse">Assault</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Stärken">Schnellste TTK unter ARs, aggressiv</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Empfohlenes Loadout">Mündung: Double-Port Brake, Lauf: 409mm Fluted, Unterlauf: Classical Vertical, Magazin: 30RND, Munition: Soft Point, Visier: SU-123 1.25X</td>
+            </tr>
+            <tr class="odd:bg-gray-50 hover:bg-blue-50">
+              <td class="weapon-name px-6 py-4 whitespace-nowrap text-gray-800 text-left" data-label="Waffe">M4A1 Karabiner</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Klasse">Engineer</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Stärken">Vielseitig, hohe Feuerrate</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Empfohlenes Loadout">Mündung: Compensated Brake, Lauf: 14.5" Carbine, Unterlauf: 6H64 Vertical, Magazin: 36RND, Munition: Soft Point, Visier: CCO 2.00x</td>
+            </tr>
+            <tr class="odd:bg-gray-50 hover:bg-blue-50">
+              <td class="weapon-name px-6 py-4 whitespace-nowrap text-gray-800 text-left" data-label="Waffe">PW7A2 SMG</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Klasse">Engineer</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Stärken">Stark in Nah- und Mitteldistanz</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Empfohlenes Loadout">Mündung: Suppressor, Lauf: Extended, Unterlauf: Vertical Grip, Magazin: Extended, Munition: Soft Point (aus Community-Quellen)</td>
+            </tr>
+            <tr class="odd:bg-gray-50 hover:bg-blue-50">
+              <td class="weapon-name px-6 py-4 whitespace-nowrap text-gray-800 text-left" data-label="Waffe">L110 LMG</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Klasse">Support</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Stärken">Hochvolumiges Feuer, Unterstützung</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Empfohlenes Loadout">Mündung: Brake, Lauf: Heavy, Unterlauf: Bipod, Magazin: Drum, Munition: High Power (aus Community-Quellen)</td>
+            </tr>
+            <tr class="odd:bg-gray-50 hover:bg-blue-50">
+              <td class="weapon-name px-6 py-4 whitespace-nowrap text-gray-800 text-left" data-label="Waffe">M2010 ESR Sniper</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Klasse">Recon</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Stärken">Präzise Kopfschüsse</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-800 text-center" data-label="Empfohlenes Loadout">Mündung: Suppressor, Lauf: Long, Visier: 6x Scope, Unterlauf: Bipod, Munition: Armor Piercing</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="bg-blue-50 border-l-4 border-blue-400 text-blue-800 p-6 rounded-lg my-6 shadow-md">
+        <strong>💡 Tipps für die Beta:</strong><br>
+        • <strong>M87A1 Shotgun:</strong> Nutze sie für Nahkämpfe, aber rechne mit Nerfs<br>
+        • <strong>NVO-228E:</strong> Ideal für aggressive Spieler in Mitteldistanz<br>
+        • <strong>Assault-Klasse:</strong> Trage zwei Primärwaffen für Vielseitigkeit<br>
+        • <strong>Allgemein:</strong> Fokussiere auf Soft Point Munition und höhere Projektilgeschwindigkeit für bessere Treffer
+      </div>
     </div>
-    <h2>🔥 Community-Reaktionen</h2>
-    <div class="table-wrapper">
-      <table class="comparison-table">
-        <thead>
-          <tr>
-            <th>Aspekt</th>
-            <th>Positive Punkte</th>
-            <th>Kritikpunkte</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td class="weapon-name" data-label="Aspekt">Gameplay</td><td data-label="Positive Punkte">Rückkehr zu Wurzeln, besseres Zerstörungssystem, Drag-to-Revive</td><td data-label="Kritikpunkte">Zu kleine Maps, fühlt sich wie COD an, zu schnelle TTK</td></tr>
-          <tr><td class="weapon-name" data-label="Aspekt">Performance</td><td data-label="Positive Punkte">Stabil auf vielen Systemen, hohe FPS</td><td data-label="Kritikpunkte">Vereinzelte CPU-Probleme, anfängliche Server-Warteschlangen</td></tr>
-          <tr><td class="weapon-name" data-label="Aspekt">Waffenbalance</td><td data-label="Positive Punkte">Vielseitige Optionen, starke Meta-Waffen</td><td data-label="Kritikpunkte">Überpowered Shotguns, unbalancierte Sniper-Glints</td></tr>
-          <tr><td class="weapon-name" data-label="Aspekt">Gesamt</td><td class="performance-highlight" data-label="Positive Punkte">Rekord-Spielerzahlen, positives Feedback</td><td data-label="Kritikpunkte">Bedenken zur Ausrichtung auf COD-Spieler</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <h2>⚔️ Beste Waffen und Loadouts</h2>
-    <div class="table-wrapper">
-      <table class="comparison-table">
-        <thead>
-          <tr>
-            <th>Waffe</th>
-            <th>Klasse</th>
-            <th>Stärken</th>
-            <th>Empfohlenes Loadout</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td class="weapon-name" data-label="Waffe">M87A1 Shotgun</td><td data-label="Klasse">Assault</td><td data-label="Stärken">One-Shot Nahkampf, gute Reichweite</td><td data-label="Empfohlenes Loadout">Mündung: CQB Suppressor, Lauf: 20" Factory, Unterlauf: Kurz gerippt, Magazin: 7 Shell Tube, Munition: Slugs</td></tr>
-          <tr><td class="weapon-name" data-label="Waffe">SGX Maschinenpistole</td><td data-label="Klasse">Engineer</td><td data-label="Stärken">Niedrige TTK, Nahkampf-König</td><td data-label="Empfohlenes Loadout">Mündung: Linear Compensator, Lauf: 8" Extended, Unterlauf: 6H64 Vertical, Magazin: 36RND, Munition: Soft Point, Visier: OSA-7 1.00x, Laser: 5MW Green</td></tr>
-          <tr><td class="weapon-name" data-label="Waffe">NVO-228E Sturmgewehr</td><td data-label="Klasse">Assault</td><td data-label="Stärken">Schnellste TTK unter ARs, aggressiv</td><td data-label="Empfohlenes Loadout">Mündung: Double-Port Brake, Lauf: 409mm Fluted, Unterlauf: Classical Vertical, Magazin: 30RND, Munition: Soft Point, Visier: SU-123 1.25X</td></tr>
-          <tr><td class="weapon-name" data-label="Waffe">M4A1 Karabiner</td><td data-label="Klasse">Engineer</td><td data-label="Stärken">Vielseitig, hohe Feuerrate</td><td data-label="Empfohlenes Loadout">Mündung: Compensated Brake, Lauf: 14.5" Carbine, Unterlauf: 6H64 Vertical, Magazin: 36RND, Munition: Soft Point, Visier: CCO 2.00x</td></tr>
-          <tr><td class="weapon-name" data-label="Waffe">PW7A2 SMG</td><td data-label="Klasse">Engineer</td><td data-label="Stärken">Stark in Nah- und Mitteldistanz</td><td data-label="Empfohlenes Loadout">Mündung: Suppressor, Lauf: Extended, Unterlauf: Vertical Grip, Magazin: Extended, Munition: Soft Point (aus Community-Quellen)</td></tr>
-          <tr><td class="weapon-name" data-label="Waffe">L110 LMG</td><td data-label="Klasse">Support</td><td data-label="Stärken">Hochvolumiges Feuer, Unterstützung</td><td data-label="Empfohlenes Loadout">Mündung: Brake, Lauf: Heavy, Unterlauf: Bipod, Magazin: Drum, Munition: High Power (aus Community-Quellen)</td></tr>
-          <tr><td class="weapon-name" data-label="Waffe">M2010 ESR Sniper</td><td data-label="Klasse">Recon</td><td data-label="Stärken">Präzise Kopfschüsse</td><td data-label="Empfohlenes Loadout">Mündung: Suppressor, Lauf: Long, Visier: 6x Scope, Unterlauf: Bipod, Munition: Armor Piercing</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="chart-container">
-      <h3>FPS Performance bei Verschiedenen Auflösungen</h3>
-      <canvas id="chartFPS"></canvas>
-    </div>
-  
-    <div class="chart-container">
-      <h3>Beste Waffen nach TTK (Time-to-Kill)</h3>
-      <canvas id="chartTTK"></canvas>
-    </div>
-  
-    <div class="summary-box">
-      <strong>💡 Tipps für die Beta:</strong><br>
-      • <strong>M87A1 Shotgun:</strong> Nutze sie für Nahkämpfe, aber rechne mit Nerfs<br>
-      • <strong>NVO-228E:</strong> Ideal für aggressive Spieler in Mitteldistanz<br>
-      • <strong>Assault-Klasse:</strong> Trage zwei Primärwaffen für Vielseitigkeit<br>
-      • <strong>Allgemein:</strong> Fokussiere auf Soft Point Munition und höhere Projektilgeschwindigkeit für bessere Treffer
-    </div>
-    <script>
-      const hardware = ['RTX 3060 Ti (1440p Mittel)','GTX 1080','RTX 4070 (1440p Max)','RTX 4090 (4K Ultra)','RTX 3070 Ti (Variabel)'];
-      const colors = ['#e74c3c','#f39c12','#3498db','#9b59b6','#1abc9c'];
-    
-      // FPS Chart
-      new Chart(document.getElementById('chartFPS'), {
-        type: 'bar',
-        data: {
-          labels: hardware,
-          datasets: [{
-            label: 'Durchschnittliche FPS',
-            data: [72.5,90,110,145,80],
-            backgroundColor: colors,
-            borderColor: colors.map(c => c + '99'),
-            borderWidth: 2
-          }]
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true,
-              title: { display: true, text: 'FPS' }
-            }
-          },
-          plugins: {
-            legend: { display: false },
-            title: { display: true, text: 'Performance Vergleich' }
-          }
-        }
-      });
-      // TTK Chart
-      const weapons = ['M87A1 Shotgun','SGX SMG','NVO-228E AR','M4A1 Carbine','PW7A2 SMG','L110 LMG','M2010 ESR Sniper'];
-      new Chart(document.getElementById('chartTTK'), {
-        type: 'bar',
-        data: {
-          labels: weapons,
-          datasets: [{
-            label: 'TTK Index (Niedriger = Besser)',
-            data: [0.2,0.25,0.3,0.35,0.28,0.4,0.5],
-            backgroundColor: '#2ecc71',
-            borderColor: '#27ae60',
-            borderWidth: 2
-          }]
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true,
-              title: { display: true, text: 'TTK (Sekunden)' }
-            }
-          },
-          plugins: {
-            legend: { display: false },
-            title: { display: true, text: 'Time-to-Kill Vergleich' }
-          }
-        }
-      });
-    </script>
+
+    <footer class="mt-10 text-xs text-gray-500 text-center">
+      <p>Stand: 13.08.2025 · Werte anpassbar oben. Diese Seite rechnet rein mathematisch und berücksichtigt keine zukünftigen Preisaktionen.</p>
+    </footer>
   </div>
+
+  <script>
+    // Helper: Währungsformat ohne Sonderzeichen im Funktionsnamen
+    const formatEuro = (n) => Number(n).toLocaleString("de-DE", { style: "currency", currency: "EUR" });
+
+    // Funktion zur Berechnung des effektiven Preises
+    function calcEffective(base, opts) {
+      const { eaPlayActive, eaPlayFee, discountPct, rewardsPct, applyRewards } = opts;
+      const b = isFinite(base) ? base : 0;
+      const discount = eaPlayActive ? (discountPct / 100) * b : 0;
+      const afterDiscount = b - discount;
+      const rewards = applyRewards ? (rewardsPct / 100) * afterDiscount : 0;
+      const net = afterDiscount - rewards;
+      const fee = eaPlayActive ? (isFinite(eaPlayFee) ? eaPlayFee : 0) : 0;
+      const effective = net + fee;
+      return { discount, afterDiscount, rewards, net, fee, effective };
+    }
+
+    // Generiert HTML für die Preiskarten
+    function cardHTML(platform, base, r) {
+      return `
+        <div class="flex items-baseline justify-between">
+          <h3 class="text-lg font-semibold text-gray-900">${platform}</h3>
+          <div class="text-sm px-3 py-1 rounded-full bg-blue-100 text-blue-800">Effektiv</div>
+        </div>
+        <div class="mt-2 text-4xl font-bold text-gray-900">${formatEuro(r.effective)}</div>
+        <dl class="mt-4 space-y-1.5 text-base text-gray-700">
+          <div class="flex justify-between"><dt class="text-gray-600">Grundpreis</dt><dd>${formatEuro(base)}</dd></div>
+          <div class="flex justify-between"><dt class="text-gray-600">EA Play Rabatt</dt><dd>${r.discount > 0 ? `− ${formatEuro(r.discount)}` : "–"}</dd></div>
+          <div class="flex justify-between"><dt class="text-gray-600">Zwischensumme</dt><dd>${formatEuro(r.afterDiscount)}</dd></div>
+          <div class="flex justify-between"><dt class="text-gray-600">Epic Rewards</dt><dd>${r.rewards > 0 ? `− ${formatEuro(r.rewards)}` : "–"}</dd></div>
+          <div class="flex justify-between"><dt class="text-gray-600">EA Play Monat</dt><dd>${r.fee > 0 ? `+ ${formatEuro(r.fee)}` : "–"}</dd></div>
+        </dl>
+      `;
+    }
+
+    // Zeigt Fehlermeldungen an
+    function showError(msg) {
+      const el = document.getElementById('errorBanner');
+      if (!msg) {
+        el.classList.add('hidden');
+        el.textContent = '';
+      } else {
+        el.classList.remove('hidden');
+        el.textContent = msg;
+      }
+    }
+
+    // Rendert die Preisberechnungen
+    function renderPrices() {
+      try {
+        showError('');
+        const ps = parseFloat(document.getElementById('priceStandard').value || '0');
+        const pp = parseFloat(document.getElementById('pricePhantom').value || '0');
+        const eaPlayPct = parseFloat(document.getElementById('eaPlayDiscount').value || '0');
+        const rewardsPct = parseFloat(document.getElementById('epicRewards').value || '0');
+        const useRewards = document.getElementById('useRewards').checked;
+        const feeEpic = parseFloat(document.getElementById('feeEpic').value || '0');
+        const feeSteam = parseFloat(document.getElementById('feeSteam').value || '0');
+        const feeEA = parseFloat(document.getElementById('feeEA').value || '0');
+        const epicEAPlay = document.getElementById('epicEAPlay').checked;
+        const steamEAPlay = document.getElementById('steamEAPlay').checked;
+        const eaappEAPlay = document.getElementById('eaappEAPlay').checked;
+
+        // Standard Edition
+        const stdEpic = calcEffective(ps, { eaPlayActive: epicEAPlay, eaPlayFee: feeEpic, discountPct: eaPlayPct, rewardsPct, applyRewards: useRewards });
+        const stdSteam = calcEffective(ps, { eaPlayActive: steamEAPlay, eaPlayFee: feeSteam, discountPct: eaPlayPct, rewardsPct: 0, applyRewards: false });
+        const stdEA = calcEffective(ps, { eaPlayActive: eaappEAPlay, eaPlayFee: feeEA, discountPct: eaPlayPct, rewardsPct: 0, applyRewards: false });
+        document.getElementById('card-std-epic').innerHTML = cardHTML('Epic Games Store', ps, stdEpic);
+        document.getElementById('card-std-steam').innerHTML = cardHTML('Steam', ps, stdSteam);
+        document.getElementById('card-std-ea').innerHTML = cardHTML('EA App', ps, stdEA);
+
+        // Phantom Edition
+        const phEpic = calcEffective(pp, { eaPlayActive: epicEAPlay, eaPlayFee: feeEpic, discountPct: eaPlayPct, rewardsPct, applyRewards: useRewards });
+        const phSteam = calcEffective(pp, { eaPlayActive: steamEAPlay, eaPlayFee: feeSteam, discountPct: eaPlayPct, rewardsPct: 0, applyRewards: false });
+        const phEA = calcEffective(pp, { eaPlayActive: eaappEAPlay, eaPlayFee: feeEA, discountPct: eaPlayPct, rewardsPct: 0, applyRewards: false });
+        document.getElementById('card-ph-epic').innerHTML = cardHTML('Epic Games Store', pp, phEpic);
+        document.getElementById('card-ph-steam').innerHTML = cardHTML('Steam', pp, phSteam);
+        document.getElementById('card-ph-ea').innerHTML = cardHTML('EA App', pp, phEA);
+      } catch (e) {
+        showError('Fehler beim Berechnen/Rendern: ' + (e && e.message ? e.message : e));
+        console.error(e);
+      }
+    }
+
+    // Hilfsfunktion für numerischen Vergleich
+    function nearlyEqual(a, b, tol = 0.02) { // 2 Cent Toleranz wegen Rundungen
+      return Math.abs(a - b) <= tol;
+    }
+
+    // Führt die Tests für die Preisberechnung aus
+    function runTests() {
+      const out = [];
+      // Erwartete Effektivpreise bei Defaults:
+      const expected = {
+        stdEpic: 51.34,
+        stdSteam: 63.98,
+        stdEA: 63.98,
+        phEpic: 72.94,
+        phSteam: 90.98,
+        phEA: 90.98
+      };
+
+      // Prüfe, ob die aktuellen Eingaben von den Standardwerten abweichen
+      const psCurrent = parseFloat(document.getElementById('priceStandard').value || '0');
+      const ppCurrent = parseFloat(document.getElementById('pricePhantom').value || '0');
+      const eaPlayPctCurrent = parseFloat(document.getElementById('eaPlayDiscount').value || '0');
+      const rewardsPctCurrent = parseFloat(document.getElementById('epicRewards').value || '0');
+      const feeEpicCurrent = parseFloat(document.getElementById('feeEpic').value || '0');
+      const feeSteamCurrent = parseFloat(document.getElementById('feeSteam').value || '0');
+      const feeEACurrent = parseFloat(document.getElementById('feeEA').value || '0');
+      const epicEAPlayCurrent = document.getElementById('epicEAPlay').checked;
+      const steamEAPlayCurrent = document.getElementById('steamEAPlay').checked;
+      const eaappEAPlayCurrent = document.getElementById('eaappEAPlay').checked;
+      const useRewardsCurrent = document.getElementById('useRewards').checked;
+
+      const noteChanged = !(
+        nearlyEqual(psCurrent, 69.99, 0.001) && nearlyEqual(ppCurrent, 99.99, 0.001) &&
+        nearlyEqual(eaPlayPctCurrent, 10, 0.001) && nearlyEqual(rewardsPctCurrent, 20, 0.001) &&
+        nearlyEqual(feeEpicCurrent, 0.95, 0.001) && nearlyEqual(feeSteamCurrent, 0.99, 0.001) && nearlyEqual(feeEACurrent, 0.99, 0.001) &&
+        epicEAPlayCurrent && steamEAPlayCurrent && eaappEAPlayCurrent && useRewardsCurrent
+      );
+
+      // Rechne erneut mit Defaults (unabhängig von UI-Zustand), um klare Tests zu haben
+      const stdEpic = calcEffective(69.99, { eaPlayActive: true, eaPlayFee: 0.95, discountPct: 10, rewardsPct: 20, applyRewards: true }).effective;
+      const stdSteam = calcEffective(69.99, { eaPlayActive: true, eaPlayFee: 0.99, discountPct: 10, rewardsPct: 0, applyRewards: false }).effective;
+      const stdEA = calcEffective(69.99, { eaPlayActive: true, eaPlayFee: 0.99, discountPct: 10, rewardsPct: 0, applyRewards: false }).effective;
+      const phEpic = calcEffective(99.99, { eaPlayActive: true, eaPlayFee: 0.95, discountPct: 10, rewardsPct: 20, applyRewards: true }).effective;
+      const phSteam = calcEffective(99.99,{ eaPlayActive: true, eaPlayFee: 0.99, discountPct: 10, rewardsPct: 0, applyRewards: false }).effective;
+      const phEA = calcEffective(99.99, { eaPlayActive: true, eaPlayFee: 0.99, discountPct: 10, rewardsPct: 0, applyRewards: false }).effective;
+
+      const tests = [
+        ['Standard · Epic', stdEpic, expected.stdEpic],
+        ['Standard · Steam', stdSteam, expected.stdSteam],
+        ['Standard · EA App', stdEA, expected.stdEA],
+        ['Phantom · Epic', phEpic, expected.phEpic],
+        ['Phantom · Steam', phSteam, expected.phSteam],
+        ['Phantom · EA App', phEA, expected.phEA],
+      ];
+
+      tests.forEach(([name, got, exp]) => {
+        const pass = nearlyEqual(got, exp, 0.02);
+        out.push(`<li class="flex items-center gap-2">${pass ? '✅' : '❌'} <strong>${name}</strong>: ${formatEuro(got)} (erwartet ≈ ${formatEuro(exp)})</li>`);
+      });
+
+      if (noteChanged) {
+        out.unshift('<li class="text-orange-600">ℹ️ Hinweis: Deine aktuellen Eingaben weichen von den Test‑Standardwerten ab. Die Tests rechnen absichtlich mit den Standardwerten.</li>');
+      }
+      document.getElementById('testList').innerHTML = out.join('');
+    }
+
+    // Event Listener für Preisberechnung
+    ['priceStandard','pricePhantom','eaPlayDiscount','epicRewards','useRewards','feeEpic','feeSteam','feeEA','epicEAPlay','steamEAPlay','eaappEAPlay']
+      .forEach(id => document.getElementById(id).addEventListener('input', renderPrices));
+    
+    // Event Listener für Tests
+    document.getElementById('runTests').addEventListener('click', runTests);
+
+    // Initiales Rendern und Chart-Initialisierung, sobald das DOM geladen ist
+    document.addEventListener('DOMContentLoaded', () => {
+        renderPrices();
+        runTests(); /* Führt Tests beim Laden aus, um den initialen Zustand zu zeigen */
+    });
+  </script>
 </body>
 </html>

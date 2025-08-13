@@ -71,9 +71,6 @@
       <div class="card">
         <h3>Quelltext</h3>
         <textarea id="source" placeholder="Text hier einfügen…"></textarea>
-        <div class="row" style="margin-top:10px">
-          <input type="url" id="apiUrl" placeholder="/api/groq oder /api/groq.js" style="flex:1; padding:8px 10px; background:var(--soft); border:1px solid rgba(255,255,255,.12); color:var(--text); border-radius:10px" />
-        </div>
       </div>
 
       <div class="card">
@@ -95,7 +92,7 @@
           <label class="row" style="gap:6px"><input type="checkbox" id="keepFormatting" checked> Formatierung beibehalten</label>
           <label class="row" style="gap:6px"><input type="checkbox" id="ttsEnable"> Vorlesen aktivieren</label>
         </div>
-        <div class="row"><span class="hint">API: <span class="tag" id="apiVis">/api/groq</span></span></div>
+        <div class="row"><span class="hint">API: <span class="tag">/api/groq → Fallback /api/groq.js</span></span></div>
       </div>
       <div class="sep"></div>
       <div id="results" class="result-grid" style="margin-top:12px"></div>
@@ -108,7 +105,7 @@
 
   <footer>
     <div class="bar">
-      <span class="hint">Erstellt als Single‑File Client. Erkennt Quellsprache automatisch und liefert mehrere Zielsprachen in einem Request.</span>
+      <span class="hint">Erstellt als Single-File Client. Erkennt Quellsprache automatisch und liefert mehrere Zielsprachen in einem Request.</span>
       <span class="sp"></span>
       <span class="hint">Action: <span class="tag">chat</span> · Body: <code>{ messages: [...], action: "chat" }</code></span>
     </div>
@@ -121,8 +118,6 @@
   const app = $('#app');
   const source = $('#source');
   const translateBtn = $('#translateBtn');
-  const apiUrl = $('#apiUrl');
-  const apiVis = $('#apiVis');
   const results = $('#results');
   const debugOut = $('#debugOut');
   const selectAllBtn = $('#selectAll');
@@ -134,7 +129,7 @@
   const ttsEnable = $('#ttsEnable');
   const status = $('#status');
 
-  const LS = { THEME:'tx.theme', LANGS:'tx.langs', API:'tx.api', KEEP:'tx.keepFmt', TTS:'tx.tts' };
+  const LS = { THEME:'tx.theme', LANGS:'tx.langs', KEEP:'tx.keepFmt', TTS:'tx.tts' };
 
   const ALL_LANGS = [
     { code:'en', name:'Englisch' },
@@ -186,9 +181,6 @@
   selectNoneBtn.addEventListener('click', ()=>{ langList.querySelectorAll('input').forEach(i=>i.checked=false); persistLangs(); });
 
   // Inputs init
-  apiUrl.value = load(LS.API, '');
-  apiVis.textContent = apiUrl.value || '/api/groq';
-  apiUrl.addEventListener('input', ()=>{ save(LS.API, apiUrl.value); apiVis.textContent = apiUrl.value || '/api/groq'; });
   keepFormatting.checked = load(LS.KEEP, true); keepFormatting.addEventListener('change', ()=> save(LS.KEEP, keepFormatting.checked));
   ttsEnable.checked = load(LS.TTS, false); ttsEnable.addEventListener('change', ()=> save(LS.TTS, ttsEnable.checked));
 
@@ -204,7 +196,7 @@
     const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='translations.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(url), 1000);
   });
 
-  function getApi(){ return (apiUrl.value || '/api/groq').replace(/\/$/, '') }
+  function getApi(){ return '/api/groq' }
 
   function setBusy(on, msg='Sendet…'){
     translateBtn.disabled = on; source.disabled = on; status.textContent = on? msg : 'Bereit';
@@ -241,7 +233,9 @@
     // 3) find first bracketed array using a simple stack
     const iStart = text.indexOf('[');
     if(iStart !== -1){
-      let depth = 0; for(let i=iStart;i<text.length;i++){ const ch=text[i]; if(ch==='[') depth++; else if(ch===']'){ depth--; if(depth===0){ const sub = text.slice(iStart, i+1); try { const j = JSON.parse(sub); if(Array.isArray(j)) return j; } catch {} break; } } }
+      let depth = 0; for(let i=iStart;i<text.length;i++){ const ch=text[i];
+        if(ch==='[') depth++; else if(ch===']'){ depth--; if(depth===0){ const sub = text.slice(iStart, i+1);
+          try { const j = JSON.parse(sub); if(Array.isArray(j)) return j; } catch {} break; } } }
     }
     return null;
   }
@@ -259,14 +253,21 @@
     const body = { messages: buildMessages(text, codes), action:'chat' };
 
     try{
-      const data = await callApi(body);
-      const content = extractContent(data);
-      debugOut.textContent = typeof data==='string' ? data : (JSON.stringify(data, null, 2));
+      // primary call
+      let r = await fetch(getApi(), { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+      // fallback to /api/groq.js on 404
+      if(r.status === 404){
+        r = await fetch('/api/groq.js', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+      }
+      const raw = await r.text();
+      debugOut.textContent = raw || '—';
 
-      let arr = extractJsonArray(content);
+      const content = extractContent( parseMaybeJSON(raw) ?? raw );
+      let arr = extractJsonArray(typeof content === 'string' ? content : JSON.stringify(content));
+
       if(!Array.isArray(arr)){
-        // Fallback: one card per language with same content (unlikely, but keeps UI usable)
-        arr = codes.map(c=>({ languageCode:c, languageName: languageMeta(c).name, text: content }));
+        // Fallback: one card per language with same content (keine JSON-Schlüssel ausgeben)
+        arr = codes.map(c=>({ languageCode:c, languageName: languageMeta(c).name, text: (typeof content === 'string' ? content : JSON.stringify(content)) }));
       }
 
       renderResults(arr);
@@ -284,7 +285,8 @@
       const wrap = document.createElement('div'); wrap.className='res';
       const h = document.createElement('h4'); h.textContent = `${item.languageName||item.languageCode}`;
       const tools = document.createElement('div'); tools.className='tools';
-      const copyBtn = document.createElement('button'); copyBtn.className='tool'; copyBtn.textContent='Kopieren'; copyBtn.onclick=()=>navigator.clipboard.writeText(item.text||'');
+      const copyBtn = document.createElement('button'); copyBtn.className='tool'; copyBtn.textContent='Kopieren';
+      copyBtn.onclick=()=>navigator.clipboard.writeText(item.text||'');
       const speakBtn = document.createElement('button'); speakBtn.className='tool'; speakBtn.textContent='Vorlesen'; speakBtn.title='Web Speech API';
       speakBtn.onclick=()=>{
         if(!ttsEnable.checked){ alert('Vorlesen ist deaktiviert. Häkchen bei "Vorlesen aktivieren" setzen.'); return }
@@ -307,32 +309,14 @@
     results.querySelectorAll('.res').forEach(card=>{
       const title = card.querySelector('h4')?.textContent || '';
       const text = card.querySelector('pre')?.textContent || '';
-      const meta = ALL_LANGS.find(l=>l.name===title) || { name:title, code:title };
-      out.push({ languageName: meta.name, languageCode: meta.code, text });
+      out.push({ languageName: title, text });
     });
     return out;
   }
 
-  async function callApi(body){
-    const primary = getApi();
-    try{
-      const r = await fetch(primary, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
-      if(r.status===404 && !/\.js$/.test(primary)){
-        // Retry with .js suffix
-        const fallback = primary + '.js';
-        const r2 = await fetch(fallback, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
-        const t2 = await r2.text();
-        return parseMaybeJSON(t2);
-      }
-      const t = await r.text();
-      return parseMaybeJSON(t);
-    }catch(e){ throw e }
-  }
-
   function parseMaybeJSON(text){
-    try{ return JSON.parse(text) } catch{ return text }
+    try{ return JSON.parse(text) } catch{ return null }
   }
-
 })();
 </script>
 </body>

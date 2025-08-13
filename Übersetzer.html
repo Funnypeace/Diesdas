@@ -73,9 +73,7 @@
         <textarea id="source" placeholder="Text hier einfügen…"></textarea>
         <div class="row" style="margin-top:10px">
           <input type="url" id="apiUrl" placeholder="/api/groq oder /api/groq.js" style="flex:1; padding:8px 10px; background:var(--soft); border:1px solid rgba(255,255,255,.12); color:var(--text); border-radius:10px" />
-          <button class="btn" id="testBtn">Verbindung testen</button>
         </div>
-        <div class="hint" style="margin-top:6px">Die Server-Route liegt in deinem Projekt unter <code>/api/groq.js</code>. Leer lassen nutzt automatisch <span class="tag">/api/groq</span> (Fallback auf <span class="tag">/api/groq.js</span> bei 404).</div>
       </div>
 
       <div class="card">
@@ -132,7 +130,6 @@
   const themeBtn = $('#themeBtn');
   const exportBtn = $('#exportBtn');
   const clearBtn = $('#clearBtn');
-  const testBtn = $('#testBtn');
   const keepFormatting = $('#keepFormatting');
   const ttsEnable = $('#ttsEnable');
   const status = $('#status');
@@ -206,23 +203,11 @@
     const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
     const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='translations.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(url), 1000);
   });
-  testBtn.addEventListener('click', testConnection);
 
   function getApi(){ return (apiUrl.value || '/api/groq').replace(/\/$/, '') }
 
-  async function testConnection(){
-    const body = { messages:[{role:'system', content:'Return exactly: OK'},{role:'user', content:'Say only OK.'}], action:'chat' };
-    setBusy(true, 'Teste Verbindung…');
-    try{
-      const data = await callApi(body);
-      debugOut.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
-      alert('Antwort erhalten. Siehe Debug unten.');
-    }catch(e){ alert('Fehler: '+ (e.message||e)); }
-    finally{ setBusy(false) }
-  }
-
   function setBusy(on, msg='Sendet…'){
-    translateBtn.disabled = on; testBtn.disabled = on; source.disabled = on; status.textContent = on? msg : 'Bereit';
+    translateBtn.disabled = on; source.disabled = on; status.textContent = on? msg : 'Bereit';
     translateBtn.textContent = on? 'Sendet…' : 'Übersetzen ▶';
   }
 
@@ -230,7 +215,7 @@
 
   function buildMessages(text, codes){
     const targets = codes.map(c=>languageMeta(c));
-    const system = `You are a professional translation engine. Detect the source language. Translate the user's input into the requested target languages. Return ONLY a raw JSON array, no code fences, with items: {"languageCode": string, "languageName": string, "text": string}. Preserve tone, emojis, punctuation, and (if present) Markdown formatting. Keep URLs and code blocks unchanged; translate only natural-language commentary. Do not add any explanations or headings.`;
+    const system = `You are a professional translation engine. Detect the source language. Translate the user's input into the requested target languages. Return EXACTLY a raw JSON array, no code fences, with items: {"languageCode": string, "languageName": string, "text": string}. Preserve tone, emojis, punctuation, and (if present) Markdown formatting. Keep URLs and code blocks unchanged; translate only natural-language commentary. Do not add any explanations or headings.`;
     const user = JSON.stringify({ sourceText: text, targets, keepFormatting: !!keepFormatting.checked });
     return [ { role:'system', content: system }, { role:'user', content: user } ];
   }
@@ -246,11 +231,19 @@
     return JSON.stringify(payload);
   }
 
-  function tryParseJSON(text){
-    // Try fenced block first
-    const m = text.match(/```json\s*([\s\S]*?)```/i) || text.match(/```\s*([\s\S]*?)```/);
-    const raw = m ? m[1] : text;
-    try { return JSON.parse(raw) } catch { return null }
+  // Robust JSON array extraction from messy text
+  function extractJsonArray(text){
+    // 1) direct parse
+    try { const j = JSON.parse(text); if(Array.isArray(j)) return j; if(Array.isArray(j?.translations)) return j.translations; } catch {}
+    // 2) fenced blocks
+    const mFence = text.match(/```json\s*([\s\S]*?)```/i) || text.match(/```\s*([\s\S]*?)```/);
+    if(mFence){ try { const j = JSON.parse(mFence[1]); if(Array.isArray(j)) return j; if(Array.isArray(j?.translations)) return j.translations; } catch {} }
+    // 3) find first bracketed array using a simple stack
+    const iStart = text.indexOf('[');
+    if(iStart !== -1){
+      let depth = 0; for(let i=iStart;i<text.length;i++){ const ch=text[i]; if(ch==='[') depth++; else if(ch===']'){ depth--; if(depth===0){ const sub = text.slice(iStart, i+1); try { const j = JSON.parse(sub); if(Array.isArray(j)) return j; } catch {} break; } } }
+    }
+    return null;
   }
 
   async function translate(){
@@ -270,9 +263,9 @@
       const content = extractContent(data);
       debugOut.textContent = typeof data==='string' ? data : (JSON.stringify(data, null, 2));
 
-      let arr = tryParseJSON(content);
+      let arr = extractJsonArray(content);
       if(!Array.isArray(arr)){
-        // Fallback: create an array with a single generic item
+        // Fallback: one card per language with same content (unlikely, but keeps UI usable)
         arr = codes.map(c=>({ languageCode:c, languageName: languageMeta(c).name, text: content }));
       }
 
@@ -297,7 +290,6 @@
         if(!ttsEnable.checked){ alert('Vorlesen ist deaktiviert. Häkchen bei "Vorlesen aktivieren" setzen.'); return }
         try{
           const u = new SpeechSynthesisUtterance(item.text||'');
-          // Try set language hint (may be ignored by browser)
           u.lang = (item.languageCode||'').toLowerCase();
           speechSynthesis.speak(u);
         }catch(e){ alert('TTS nicht verfügbar: '+ e.message) }

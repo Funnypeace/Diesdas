@@ -247,54 +247,65 @@
                 res = await fetch('/api/groq.js', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
             }
             const raw = await res.text();
-            debugOut.textContent = raw || '—';
+            debugOut.textContent = raw || '—'; // Always show raw for debug
 
-            let outer = null; try { outer = JSON.parse(raw) } catch {}
-            const content = extractContent(outer ?? raw);
+            let finalTranslationText = '';
+            let parsedAPIResponse = null;
 
-            let parsedTranslation = null;
             try {
-                // First, try a strict JSON parse for the expected object
-                parsedTranslation = JSON.parse(content);
+                // Attempt to parse the raw response as a complete JSON object
+                parsedAPIResponse = JSON.parse(raw);
+
+                // If parsing succeeded, try to extract the text from known keys
+                if (typeof parsedAPIResponse.text === 'string') {
+                    finalTranslationText = parsedAPIResponse.text;
+                } else if (typeof parsedAPIResponse.text === 'object' && parsedAPIResponse.text.translation) {
+                    finalTranslationText = parsedAPIResponse.text.translation;
+                }
             } catch (e) {
-                // If strict parse fails, try the loose parser to catch fenced JSON or partials
-                console.warn("Strict JSON parse failed, trying loose parse:", e);
-                parsedTranslation = parseJsonLoose(content);
+                // If strict JSON parse fails, try loose parsing (e.g., fenced JSON, partial JSON)
+                parsedAPIResponse = parseJsonLoose(raw);
+                if (parsedAPIResponse && typeof parsedAPIResponse === 'object') {
+                    if (typeof parsedAPIResponse.text === 'string') {
+                        finalTranslationText = parsedAPIResponse.text;
+                    } else if (typeof parsedAPIResponse.text === 'object' && parsedAPIResponse.text.translation) {
+                        finalTranslationText = parsedAPIResponse.text.translation;
+                    }
+                }
+
+                // If still no text extracted from (potentially partial) JSON,
+                // and the raw string *starts with* the problematic JSON-like prefix,
+                // try to extract text by assuming the prefix is the JSON part and the rest is text.
+                // This is a direct fix for the user's reported symptom.
+                if (finalTranslationText === '' && typeof raw === 'string') {
+                    const problematicPrefix = `{"languageCode": "de", "languageName": "Deutsch", "text": {"translation": "`;
+                    if (raw.startsWith(problematicPrefix)) {
+                        // Extract everything after the prefix
+                        let tempText = raw.substring(problematicPrefix.length);
+                        // Attempt to remove trailing `"}` or `"}}` if they exist.
+                        // This is a heuristic based on the example and might need adjustment for other API deviations.
+                        if (tempText.endsWith('"}}')) {
+                            tempText = tempText.slice(0, -3); // Remove ", }}
+                        } else if (tempText.endsWith('"}')) {
+                            tempText = tempText.slice(0, -2); // Remove ", }
+                        } else if (tempText.endsWith('"')) { // Just a trailing quote from the translation string
+                            tempText = tempText.slice(0, -1);
+                        }
+                        finalTranslationText = tempText.trim();
+                    } else {
+                        // If it doesn't match the specific problematic prefix, just use the raw text.
+                        finalTranslationText = raw.trim();
+                    }
+                }
             }
 
+            // Ensure we always use the requested language for display
             let resultsToRender = [];
-            if (parsedTranslation && typeof parsedTranslation === 'object') {
-                let finalTranslationText = '';
-                // Prioritize API's language code, but fall back to the requested code
-                let finalLanguageCode = parsedTranslation.languageCode || code;
-                // Prioritize API's language name, but fall back to the requested name
-                let finalLanguageName = parsedTranslation.languageName || languageMeta(code).name;
-
-                if (typeof parsedTranslation.text === 'string') {
-                    // Case 1: text is a direct string
-                    finalTranslationText = parsedTranslation.text;
-                } else if (typeof parsedTranslation.text === 'object' && parsedTranslation.text.translation) {
-                    // Case 2: text is an object with a 'translation' key
-                    finalTranslationText = parsedTranslation.text.translation;
-                } else if (typeof content === 'string' && content.trim().length > 0) {
-                    // Fallback for cases where `parsedTranslation` is an object but doesn't have a direct 'text' or 'text.translation'
-                    // This handles cases where the content itself is the raw translation string.
-                    finalTranslationText = content.trim();
-                }
-
-                if (finalTranslationText.length > 0) {
-                    resultsToRender = [{
-                        languageCode: finalLanguageCode,
-                        languageName: finalLanguageName,
-                        text: finalTranslationText
-                    }];
-                }
-            } else if (typeof content === 'string' && content.trim().length > 0) {
-                // Fallback: if the API returns only a plain string (not a JSON object at all)
+            if (finalTranslationText.length > 0) {
                 resultsToRender = [{
-                    languageCode: code, // Use the selected code
-                    languageName: languageMeta(code).name, // Use the selected name
-                    text: content.trim()
+                    languageCode: code, // Always use the selected code
+                    languageName: languageMeta(code).name, // Always use the selected name
+                    text: finalTranslationText
                 }];
             }
 

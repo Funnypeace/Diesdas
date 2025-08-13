@@ -17,8 +17,25 @@
         .grid { display: grid; gap: 16px; grid-template-columns: 1.2fr .8fr; }
         @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
         .card { background: #12141a; padding: 16px; border-radius: 14px; border: 1px solid #1d2028; }
-        .lang-list { display: grid; grid-template-columns: repeat(auto-fill,minmax(170px,1fr)); gap: 8px; }
-        .lang { display: flex; align-items: center; gap: 8px; background: #171a22; padding: 8px; border-radius: 10px; border: 1px solid #2b2f38; }
+        .lang-select-container { /* Renamed from lang-list for dropdown */
+            background: #171a22;
+            border: 1px solid #2b2f38;
+            border-radius: 10px;
+            padding: 8px;
+        }
+        select.lang-select { /* Added styling for the select element */
+            width: 100%;
+            padding: 8px;
+            background: #171a22;
+            color: #e7e9ee;
+            border: 1px solid #2b2f38;
+            border-radius: 8px;
+            -webkit-appearance: none; /* Remove default dropdown arrow */
+            -moz-appearance: none;
+            appearance: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
         .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         @media (max-width: 900px) { .result-grid { grid-template-columns: 1fr; } }
         .res { background: #171a22; padding: 12px; border-radius: 10px; border: 1px solid #2b2f38; position: relative; }
@@ -52,11 +69,11 @@
             </div>
 
             <div class="card">
-                <h3>Zielsprachen</h3>
-                <div class="lang-list" id="langList"></div>
+                <h3>Zielsprache</h3>
+                <div class="lang-select-container">
+                    <select id="langSelect" class="lang-select"></select>
+                </div>
                 <div class="bar" style="margin-top:10px">
-                    <button class="btn" id="selectAll">Alle</button>
-                    <button class="btn" id="selectNone">Keine</button>
                     <span class="sp"></span>
                     <span class="hint">Tipp: Ctrl/Cmd + Enter sendet sofort.</span>
                 </div>
@@ -82,7 +99,7 @@
 
     <footer>
         <div class="bar">
-            <span class="hint">Erstellt als Single-File Client. Erkennt Quellsprache automatisch und liefert mehrere Zielsprachen in einem Request.</span>
+            <span class="hint">Erstellt als Single-File Client. Erkennt Quellsprache automatisch und liefert eine Zielsprache in einem Request.</span>
             <span class="sp"></span>
             <span class="hint">Action: <span style="padding:2px 6px;border:1px solid #2b2f38;border-radius:999px">chat</span> · Body: { messages: [...], action: "chat" }</span>
         </div>
@@ -97,16 +114,17 @@
     const translateBtn = $('#translateBtn');
     const results = $('#results');
     const debugOut = $('#debugOut');
-    const selectAllBtn = $('#selectAll');
-    const selectNoneBtn = $('#selectNone');
+    // const selectAllBtn = $('#selectAll'); // Removed
+    // const selectNoneBtn = $('#selectNone'); // Removed
     const themeBtn = $('#themeBtn');
     const exportBtn = $('#exportBtn');
     const clearBtn = $('#clearBtn');
     const keepFormatting = $('#keepFormatting');
     const ttsEnable = $('#ttsEnable');
     const status = $('#status');
+    const langSelect = $('#langSelect'); // New: reference to the select dropdown
 
-    const LS = { THEME:'tx.theme', LANGS:'tx.langs', KEEP:'tx.keepFmt', TTS:'tx.tts' };
+    const LS = { THEME:'tx.theme', LANGS:'tx.langs', KEEP:'tx.keepFmt', TTS:'tx.tts' }; // LANGS will now store a single code
 
     const ALL_LANGS = [
         { code:'en', name:'Englisch' },
@@ -136,25 +154,24 @@
     setTheme(localStorage.getItem(LS.THEME)||'dark');
     themeBtn.addEventListener('click', ()=> setTheme((document.body.dataset.theme||'dark')==='dark'?'light':'dark'));
 
-    // Language list
-    const langList = $('#langList');
-    const savedLangs = load(LS.LANGS, ['en','es','fr','pt']);
+    // Language select initialization
+    const savedLang = load(LS.LANGS, 'en'); // Load a single language code
     ALL_LANGS.forEach(l => {
-        const row = document.createElement('label');
-        row.className = 'lang';
-        const cb = document.createElement('input');
-        cb.type='checkbox';
-        cb.value=l.code;
-        cb.checked = savedLangs.includes(l.code);
-        cb.addEventListener('change', persistLangs);
-        const span = document.createElement('span'); span.textContent = l.name;
-        row.append(cb, span);
-        langList.appendChild(row);
+        const option = document.createElement('option');
+        option.value = l.code;
+        option.textContent = l.name;
+        langSelect.appendChild(option);
     });
-    function selectedLangs(){ return [...langList.querySelectorAll('input[type="checkbox"]')].filter(x=>x.checked).map(x=>x.value) }
-    function persistLangs(){ save(LS.LANGS, selectedLangs()); }
-    selectAllBtn.addEventListener('click', ()=>{ langList.querySelectorAll('input').forEach(i=>i.checked=true); persistLangs(); });
-    selectNoneBtn.addEventListener('click', ()=>{ langList.querySelectorAll('input').forEach(i=>i.checked=false); persistLuts(); });
+    langSelect.value = savedLang; // Set selected value from localStorage
+    langSelect.addEventListener('change', persistLang); // Listen for changes
+
+    function selectedLang(){ return langSelect.value; } // Get the single selected language
+    function persistLang(){ save(LS.LANGS, selectedLang()); } // Save the single selected language
+
+    // Removed event listeners for selectAllBtn and selectNoneBtn
+    // selectAllBtn.addEventListener('click', ()=>{ langList.querySelectorAll('input').forEach(i=>i.checked=true); persistLangs(); });
+    // selectNoneBtn.addEventListener('click', ()=>{ langList.querySelectorAll('input').forEach(i=>i.checked=false); persistLuts(); });
+
 
     // Inputs init
     keepFormatting.checked = load(LS.KEEP, true); keepFormatting.addEventListener('change', ()=> save(LS.KEEP, keepFormatting.checked));
@@ -179,10 +196,10 @@
 
     function languageMeta(code){ return ALL_LANGS.find(l=>l.code===code) || { code, name: code } }
 
-    function buildMessages(text, codes){
-        const targets = codes.map(c=>languageMeta(c));
-        const system = `You are a professional translation engine. Detect the source language. Translate the user's input into the requested target languages. Return EXACTLY a raw JSON array in the SAME order as the requested targets, no code fences, with items: {"languageCode": string, "languageName": string, "text": string}. Preserve tone, emojis, punctuation, and (if present) Markdown formatting. Keep URLs and code blocks unchanged; translate only natural-language commentary. Do not echo the source. Do not add explanations.`;
-        const user = JSON.stringify({ sourceText: text, targets, keepFormatting: !!keepFormatting.checked });
+    function buildMessages(text, code){ // Changed to accept a single code
+        const target = languageMeta(code); // Get meta for single target
+        const system = `You are a professional translation engine. Detect the source language. Translate the user's input into the requested target language. Return EXACTLY a raw JSON object, no code fences, with item: {"languageCode": string, "languageName": string, "text": string}. Preserve tone, emojis, punctuation, and (if present) Markdown formatting. Keep URLs and code blocks unchanged; translate only natural-language commentary. Do not echo the source. Do not add explanations.`;
+        const user = JSON.stringify({ sourceText: text, target, keepFormatting: !!keepFormatting.checked }); // Changed targets to target
         return [ { role:'system', content: system }, { role:'user', content: user } ];
     }
 
@@ -204,24 +221,24 @@
         // 2) fenced
         const m = text.match(/```json\s*([\s\S]*?)```/i) || text.match(/```\s*([\s\S]*?)```/);
         if(m){ try{ return JSON.parse(m[1]) }catch{} }
-        // 3) first array
-        const i = text.indexOf('['); if(i!==-1){ let d=0; for(let k=i;k<text.length;k++){ const c=text[k]; if(c==='[') d++; else if(c===']'){ d--; if(d===0){ try{ return JSON.parse(text.slice(i,k+1)) }catch{} break; } } } }
-        // 4) first object
+        // 3) first object (most relevant for single response)
         const j = text.indexOf('{'); if(j!==-1){ let d=0; for(let k=j;k<text.length;k++){ const c=text[k]; if(c==='{') d++; else if(c==='}'){ d--; if(d===0){ try{ return JSON.parse(text.slice(j,k+1)) }catch{} break; } } } }
+        // 4) first array (less likely for single response, but kept for robustness)
+        const i = text.indexOf('['); if(i!==-1){ let d=0; for(let k=i;k<text.length;k++){ const c=text[k]; if(c==='[') d++; else if(c===']'){ d--; if(d===0){ try{ return JSON.parse(text.slice(i,k+1)) }catch{} break; } } } }
         return null;
     }
 
     async function translate(){
         const text = source.value.trim();
-        const codes = selectedLangs();
+        const code = selectedLang(); // Get single selected language code
         if(!text){ alert('Bitte Quelltext eingeben.'); return }
-        if(codes.length===0){ alert('Mindestens eine Zielsprache wählen.'); return }
+        if(!code){ alert('Bitte eine Zielsprache wählen.'); return } // Check for single selected code
 
         setBusy(true);
         results.innerHTML = ''; // Clear previous results
         debugOut.textContent = '—';
 
-        const body = { messages: buildMessages(text, codes), action:'chat' };
+        const body = { messages: buildMessages(text, code), action:'chat' }; // Pass single code
 
         try{
             // Primär: /api/groq, Fallback: /api/groq.js bei 404
@@ -235,46 +252,31 @@
             let outer = null; try { outer = JSON.parse(raw) } catch {}
             const content = extractContent(outer ?? raw);
 
-            let parsedTranslations = null;
+            let parsedTranslation = null;
             try {
-                // First, try a strict JSON parse for the expected array
-                parsedTranslations = JSON.parse(content);
+                // First, try a strict JSON parse for the expected object
+                parsedTranslation = JSON.parse(content);
             } catch (e) {
                 // If strict parse fails, try the loose parser to catch fenced JSON or partials
                 console.warn("Strict JSON parse failed, trying loose parse:", e);
-                parsedTranslations = parseJsonLoose(content);
+                parsedTranslation = parseJsonLoose(content);
             }
 
             let resultsToRender = [];
-            if (Array.isArray(parsedTranslations)) {
-                // If it's an array, assume it's the expected multi-language output
-                resultsToRender = parsedTranslations;
-            } else if (parsedTranslations && typeof parsedTranslations === 'object' && parsedTranslations.text) {
-                // If it's a single object with a 'text' field, treat it as a single translation
-                // and assume it's for the first selected language if multiple were chosen.
-                const targetLang = codes[0];
-                if (targetLang) {
-                    resultsToRender = [{
-                        languageCode: targetLang,
-                        languageName: languageMeta(targetLang).name,
-                        text: parsedTranslations.text
-                    }];
-                }
+            // Expecting a single object: {"languageCode": string, "languageName": string, "text": string}
+            if (parsedTranslation && typeof parsedTranslation === 'object' && parsedTranslation.text) {
+                resultsToRender = [parsedTranslation];
             } else if (typeof content === 'string' && content.trim().length > 0) {
-                // If it's just a non-empty string (LLM didn't return JSON),
-                // assume it's a single translation for the *first* selected language.
-                const firstLangCode = codes[0];
-                if (firstLangCode) {
-                    resultsToRender = [{
-                        languageCode: firstLangCode,
-                        languageName: languageMeta(firstLangCode).name,
-                        text: content.trim()
-                    }];
-                }
+                // Fallback: if it's just a non-empty string, assume it's the translation for the selected language
+                resultsToRender = [{
+                    languageCode: code, // Use the selected code
+                    languageName: languageMeta(code).name, // Use the selected name
+                    text: content.trim()
+                }];
             }
 
             if (resultsToRender.length === 0) {
-                results.innerHTML = '<div class="res"><pre class="hint">Keine gültigen Übersetzungen erhalten. Bitte prüfen Sie die Debug-Ausgabe.</pre></div>';
+                results.innerHTML = '<div class="res"><pre class="hint">Keine gültige Übersetzung erhalten. Bitte prüfen Sie die Debug-Ausgabe.</pre></div>';
             } else {
                 renderResults(resultsToRender);
             }
@@ -342,8 +344,7 @@
         return out;
     }
 
-    // Fix for select None button.
-    function persistLuts(){ save(LS.LANGS, selectedLangs()); } // Corrected function name
+    // Removed the persistLuts function as it's no longer needed after removing selectAll/selectNone buttons.
 
 })();
 </script>

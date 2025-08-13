@@ -6,60 +6,38 @@
   <title>Mehrsprachiger Übersetzer · Groq ⟷ Vercel</title>
   <meta name="description" content="Einseiten-Übersetzer: sendet an /api/groq(.js) und liefert mehrere Sprachen zugleich." />
   <style>
-    :root { --bg:#0b0c10; --panel:#12141a; --soft:#171a22; --text:#e7e9ee; --muted:#a6acb8; --acc:#5aa2ff; --ok:#22c55e; --warn:#f59e0b; --danger:#ef4444; }
-    [data-theme="light"] { --bg:#f6f7fb; --panel:#ffffff; --soft:#eef1f6; --text:#16181d; --muted:#4d5461; --acc:#2f6bff; --ok:#16a34a; --warn:#b7791f; --danger:#dc2626; }
-    html,body{height:100%}
-    body{margin:0; background:var(--bg); color:var(--text); font:14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial}
-    .app{display:grid; grid-template-rows:auto 1fr auto; height:100%}
-    header{position:sticky; top:0; z-index:10; background:linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,0));}
-    .bar{display:flex; gap:10px; align-items:center; padding:14px 16px}
-    .brand{font-weight:800; letter-spacing:.2px}
-    .pill{font-size:12px; color:var(--muted); background:var(--soft); border:1px solid rgba(255,255,255,.08); padding:4px 8px; border-radius:999px}
-    .sp{flex:1}
-    .btn{background:var(--panel); color:var(--text); border:1px solid rgba(255,255,255,.08); padding:8px 12px; border-radius:10px; cursor:pointer}
-    .btn:hover{border-color:rgba(255,255,255,.18)}
-    .btn[disabled]{opacity:.6; cursor:not-allowed}
-    main{max-width:1060px; margin:0 auto; width:100%; padding:0 14px 100px; display:grid; gap:14px}
-    .grid{display:grid; grid-template-columns:1.2fr .8fr; gap:14px}
-    @media (max-width: 880px){ .grid{grid-template-columns:1fr} }
-    .card{background:var(--panel); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:14px}
-    .card h3{margin:0 0 10px 0; font-size:16px}
-    textarea{min-height:160px; resize:vertical; width:100%; box-sizing:border-box; padding:12px; background:var(--soft); border:1px solid rgba(255,255,255,.12); color:var(--text); border-radius:12px}
-    textarea:focus{outline:none; border-color:var(--acc)}
-    .row{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
-    .hint{font-size:12px; color:var(--muted)}
-    .lang-list{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px}
-    @media (max-width:640px){ .lang-list{grid-template-columns:1fr} }
-    .lang{display:flex; align-items:center; gap:8px; background:var(--soft); border:1px solid rgba(255,255,255,.08); padding:8px; border-radius:12px}
-    .lang input{transform:translateY(1px)}
-    .lang .code{font-size:11px; color:var(--muted); margin-left:auto}
-    .actions{display:flex; gap:10px; align-items:center}
-    .primary{background:var(--acc); color:white; border:none}
-    .result-grid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px}
-    @media (max-width:900px){ .result-grid{grid-template-columns:1fr} }
-    .res{background:var(--panel); border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:12px; position:relative}
-    .res h4{margin:0 0 6px 0}
-    .tools{position:absolute; right:8px; top:8px; display:flex; gap:6px}
-    .tool{font-size:12px; padding:4px 8px; background:var(--soft); border:1px solid rgba(255,255,255,.1); border-radius:8px; cursor:pointer}
-    .tool:hover{border-color:rgba(255,255,255,.18)}
-    pre, code{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New",monospace}
-    pre{white-space:pre-wrap; word-wrap:break-word; background:var(--soft); border:1px solid rgba(255,255,255,.08); padding:10px; border-radius:10px; margin:0}
-    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono"; background:var(--soft); border:1px solid rgba(255,255,255,.1); border-radius:6px; padding:0 6px; font-size:12px}
-    footer{position:fixed; bottom:0; left:0; right:0; background:linear-gradient(0deg, var(--bg), transparent)}
-    footer .bar{padding:10px 16px}
-    .sep{height:1px; background:rgba(255,255,255,.08); margin:10px -14px 0}
-    .tag{font-size:11px; padding:2px 6px; border-radius:999px; border:1px solid rgba(255,255,255,.12); color:var(--muted)}
-    .status{font-size:12px; color:var(--muted)}
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; background: #0b0c10; color: #e7e9ee; }
+    .app { max-width: 1060px; margin: auto; padding: 20px; }
+    .bar { display: flex; align-items: center; gap: 10px; }
+    .sp { flex: 1; }
+    .btn { padding: 8px 12px; background: #171a22; color: #fff; border: 1px solid #2b2f38; border-radius: 10px; cursor: pointer; }
+    .btn.primary { background: #5aa2ff; border: none; color: #fff; }
+    .btn:hover { opacity: 0.9; }
+    textarea { width: 100%; min-height: 180px; padding: 12px; background: #171a22; color: #e7e9ee; border: 1px solid #2b2f38; border-radius: 12px; }
+    .grid { display: grid; gap: 16px; grid-template-columns: 1.2fr .8fr; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+    .card { background: #12141a; padding: 16px; border-radius: 14px; border: 1px solid #1d2028; }
+    .lang-list { display: grid; grid-template-columns: repeat(auto-fill,minmax(170px,1fr)); gap: 8px; }
+    .lang { display: flex; align-items: center; gap: 8px; background: #171a22; padding: 8px; border-radius: 10px; border: 1px solid #2b2f38; }
+    .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 900px) { .result-grid { grid-template-columns: 1fr; } }
+    .res { background: #171a22; padding: 12px; border-radius: 10px; border: 1px solid #2b2f38; position: relative; }
+    .res h4 { margin: 0 0 6px 0; }
+    .tools { position: absolute; right: 8px; top: 8px; display: flex; gap: 6px; }
+    .tool { font-size: 12px; padding: 4px 8px; background: #0f1116; border: 1px solid #2b2f38; border-radius: 8px; cursor: pointer; }
+    .hint { font-size: 12px; color: #a6acb8; }
+    .sep { height: 1px; background: #232731; margin: 10px 0; }
+    pre { white-space: pre-wrap; word-wrap: break-word; background: #0f1116; border: 1px solid #2b2f38; padding: 10px; border-radius: 10px; margin: 0; color: #e7e9ee; }
   </style>
 </head>
 <body>
-<div class="app" data-theme="dark" id="app">
+<div class="app" id="app">
   <header>
     <div class="bar">
-      <div class="brand">Mehrsprachiger Übersetzer</div>
-      <span class="pill">Groq ⟷ Vercel API</span>
+      <div class="brand" style="font-weight:800">Mehrsprachiger Übersetzer</div>
+      <span class="pill" style="font-size:12px; color:#a6acb8; background:#171a22; border:1px solid #2b2f38; padding:4px 8px; border-radius:999px">Groq ⟷ Vercel API</span>
       <span class="sp"></span>
-      <span class="status" id="status">Bereit</span>
+      <span class="status hint" id="status">Bereit</span>
       <button class="btn" id="themeBtn" title="Theme umschalten">🌓</button>
       <button class="btn" id="exportBtn" title="Ergebnisse als JSON speichern">⬇️ Export</button>
       <button class="btn" id="clearBtn" title="Ergebnisse leeren">🗑️ Leeren</button>
@@ -76,23 +54,22 @@
       <div class="card">
         <h3>Zielsprachen</h3>
         <div class="lang-list" id="langList"></div>
-        <div class="row" style="margin-top:10px">
+        <div class="bar" style="margin-top:10px">
           <button class="btn" id="selectAll">Alle</button>
           <button class="btn" id="selectNone">Keine</button>
           <span class="sp"></span>
-          <span class="hint">Tipp: <span class="kbd">Ctrl/Cmd</span> + <span class="kbd">Enter</span> sendet sofort.</span>
+          <span class="hint">Tipp: Ctrl/Cmd + Enter sendet sofort.</span>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="row" style="justify-content:space-between">
-        <div class="row actions">
+      <div class="bar" style="justify-content:space-between">
+        <div class="bar actions">
           <button class="btn primary" id="translateBtn">Übersetzen ▶</button>
-          <label class="row" style="gap:6px"><input type="checkbox" id="keepFormatting" checked> Formatierung beibehalten</label>
-          <label class="row" style="gap:6px"><input type="checkbox" id="ttsEnable"> Vorlesen aktivieren</label>
+          <label class="bar" style="gap:6px"><input type="checkbox" id="keepFormatting" checked> Formatierung beibehalten</label>
+          <label class="bar" style="gap:6px"><input type="checkbox" id="ttsEnable"> Vorlesen aktivieren</label>
         </div>
-        <div class="row"><span class="hint">API: <span class="tag">/api/groq → Fallback /api/groq.js</span></span></div>
       </div>
       <div class="sep"></div>
       <div id="results" class="result-grid" style="margin-top:12px"></div>
@@ -107,7 +84,7 @@
     <div class="bar">
       <span class="hint">Erstellt als Single-File Client. Erkennt Quellsprache automatisch und liefert mehrere Zielsprachen in einem Request.</span>
       <span class="sp"></span>
-      <span class="hint">Action: <span class="tag">chat</span> · Body: <code>{ messages: [...], action: "chat" }</code></span>
+      <span class="hint">Action: <span style="padding:2px 6px;border:1px solid #2b2f38;border-radius:999px">chat</span> · Body: { messages: [...], action: "chat" }</span>
     </div>
   </footer>
 </div>
@@ -155,11 +132,11 @@
   function save(k,v){ localStorage.setItem(k, JSON.stringify(v)) }
 
   // Theme
-  function setTheme(t){ app.setAttribute('data-theme', t); localStorage.setItem(LS.THEME, t) }
+  function setTheme(t){ document.body.dataset.theme = t; localStorage.setItem(LS.THEME, t) }
   setTheme(localStorage.getItem(LS.THEME)||'dark');
-  themeBtn.addEventListener('click', ()=> setTheme(app.getAttribute('data-theme')==='dark'?'light':'dark'));
+  themeBtn.addEventListener('click', ()=> setTheme((document.body.dataset.theme||'dark')==='dark'?'light':'dark'));
 
-  // Populate language list
+  // Language list
   const langList = $('#langList');
   const savedLangs = load(LS.LANGS, ['en','es','fr','pt']);
   ALL_LANGS.forEach(l => {
@@ -171,8 +148,7 @@
     cb.checked = savedLangs.includes(l.code);
     cb.addEventListener('change', persistLangs);
     const span = document.createElement('span'); span.textContent = l.name;
-    const code = document.createElement('span'); code.className='code'; code.textContent = l.code;
-    row.append(cb, span, code);
+    row.append(cb, span);
     langList.appendChild(row);
   });
   function selectedLangs(){ return [...langList.querySelectorAll('input[type="checkbox"]')].filter(x=>x.checked).map(x=>x.value) }
@@ -196,8 +172,6 @@
     const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='translations.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(url), 1000);
   });
 
-  function getApi(){ return '/api/groq' }
-
   function setBusy(on, msg='Sendet…'){
     translateBtn.disabled = on; source.disabled = on; status.textContent = on? msg : 'Bereit';
     translateBtn.textContent = on? 'Sendet…' : 'Übersetzen ▶';
@@ -207,12 +181,13 @@
 
   function buildMessages(text, codes){
     const targets = codes.map(c=>languageMeta(c));
-    const system = `You are a professional translation engine. Detect the source language. Translate the user's input into the requested target languages. Return EXACTLY a raw JSON array, no code fences, with items: {"languageCode": string, "languageName": string, "text": string}. Preserve tone, emojis, punctuation, and (if present) Markdown formatting. Keep URLs and code blocks unchanged; translate only natural-language commentary. Do not add any explanations or headings.`;
+    const system = `You are a professional translation engine. Detect the source language. Translate the user's input into the requested target languages. Return EXACTLY a raw JSON array in the SAME order as the requested targets, no code fences, with items: {"languageCode": string, "languageName": string, "text": string}. Preserve tone, emojis, punctuation, and (if present) Markdown formatting. Keep URLs and code blocks unchanged; translate only natural-language commentary. Do not echo the source. Do not add explanations.`;
     const user = JSON.stringify({ sourceText: text, targets, keepFormatting: !!keepFormatting.checked });
     return [ { role:'system', content: system }, { role:'user', content: user } ];
   }
 
   function extractContent(payload){
+    // Accept many backend shapes and always return a string
     if(typeof payload === 'string') return payload;
     if(payload?.content) return payload.content;
     if(payload?.message?.content) return payload.message.content;
@@ -223,20 +198,16 @@
     return JSON.stringify(payload);
   }
 
-  // Robust JSON array extraction from messy text
-  function extractJsonArray(text){
-    // 1) direct parse
-    try { const j = JSON.parse(text); if(Array.isArray(j)) return j; if(Array.isArray(j?.translations)) return j.translations; } catch {}
-    // 2) fenced blocks
-    const mFence = text.match(/```json\s*([\s\S]*?)```/i) || text.match(/```\s*([\s\S]*?)```/);
-    if(mFence){ try { const j = JSON.parse(mFence[1]); if(Array.isArray(j)) return j; if(Array.isArray(j?.translations)) return j.translations; } catch {} }
-    // 3) find first bracketed array using a simple stack
-    const iStart = text.indexOf('[');
-    if(iStart !== -1){
-      let depth = 0; for(let i=iStart;i<text.length;i++){ const ch=text[i];
-        if(ch==='[') depth++; else if(ch===']'){ depth--; if(depth===0){ const sub = text.slice(iStart, i+1);
-          try { const j = JSON.parse(sub); if(Array.isArray(j)) return j; } catch {} break; } } }
-    }
+  function parseJsonLoose(text){
+    // 1) direct
+    try{ return JSON.parse(text) }catch{}
+    // 2) fenced
+    const m = text.match(/```json\s*([\s\S]*?)```/i) || text.match(/```\s*([\s\S]*?)```/);
+    if(m){ try{ return JSON.parse(m[1]) }catch{} }
+    // 3) first array
+    const i = text.indexOf('['); if(i!==-1){ let d=0; for(let k=i;k<text.length;k++){ const c=text[k]; if(c==='[') d++; else if(c===']'){ d--; if(d===0){ try{ return JSON.parse(text.slice(i,k+1)) }catch{} break; } } } }
+    // 4) first object
+    const j = text.indexOf('{'); if(j!==-1){ let d=0; for(let k=j;k<text.length;k++){ const c=text[k]; if(c==='{') d++; else if(c==='}'){ d--; if(d===0){ try{ return JSON.parse(text.slice(j,k+1)) }catch{} break; } } } }
     return null;
   }
 
@@ -253,21 +224,28 @@
     const body = { messages: buildMessages(text, codes), action:'chat' };
 
     try{
-      // primary call
-      let r = await fetch(getApi(), { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
-      // fallback to /api/groq.js on 404
-      if(r.status === 404){
-        r = await fetch('/api/groq.js', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+      // Primär: /api/groq, Fallback: /api/groq.js bei 404
+      let res = await fetch('/api/groq', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+      if(res.status === 404){
+        res = await fetch('/api/groq.js', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
       }
-      const raw = await r.text();
+      const raw = await res.text();
       debugOut.textContent = raw || '—';
 
-      const content = extractContent( parseMaybeJSON(raw) ?? raw );
-      let arr = extractJsonArray(typeof content === 'string' ? content : JSON.stringify(content));
+      // Outer may be JSON, inner content may be JSON-string
+      let outer = null; try { outer = JSON.parse(raw) } catch {}
+      const content = extractContent(outer ?? raw);
 
-      if(!Array.isArray(arr)){
-        // Fallback: one card per language with same content (keine JSON-Schlüssel ausgeben)
-        arr = codes.map(c=>({ languageCode:c, languageName: languageMeta(c).name, text: (typeof content === 'string' ? content : JSON.stringify(content)) }));
+      // Try to get an array of {languageCode, languageName, text}
+      let parsed = typeof content === 'string' ? parseJsonLoose(content) : content;
+      let arr = [];
+      if(Array.isArray(parsed)) arr = parsed;
+      else if(parsed && typeof parsed === 'object' && parsed.text) arr = [parsed];
+
+      // Fallback: if still not an array, replicate same text for all selected targets
+      if(!arr.length){
+        const fallbackText = typeof content === 'string' ? content : JSON.stringify(content);
+        arr = codes.map(c=>({ languageCode:c, languageName: languageMeta(c).name, text: fallbackText }));
       }
 
       renderResults(arr);
@@ -295,9 +273,8 @@
           u.lang = (item.languageCode||'').toLowerCase();
           speechSynthesis.speak(u);
         }catch(e){ alert('TTS nicht verfügbar: '+ e.message) }
-      }
+      };
       tools.append(copyBtn, speakBtn);
-
       const pre = document.createElement('pre'); pre.textContent = item.text || '';
       wrap.append(h, tools, pre);
       results.appendChild(wrap);
@@ -312,10 +289,6 @@
       out.push({ languageName: title, text });
     });
     return out;
-  }
-
-  function parseMaybeJSON(text){
-    try{ return JSON.parse(text) } catch{ return null }
   }
 })();
 </script>

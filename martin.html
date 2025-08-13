@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Martin Garrix – Hannover | 23.08.2025</title>
   <meta name="description" content="Alles zum Martin-Garrix-Open-Air in Hannover: Zeiten, Voracts, Location, Anreise, Tipps & Erwartung." />
+  <meta name="theme-color" content="#0a0b10" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -16,207 +17,163 @@
       --stroke: rgba(255,255,255,0.12);
       --text: #e7e9ee;
       --muted: #a6adbb;
-      --accent: #7c5cff; /* neon purple */
-      --accent-2: #00ffd5; /* aqua */
+      --accent: #7c5cff;
+      --accent-2: #00ffd5;
       --good: #71ffa0;
       --warn: #ffd36e;
+
+      /* type scale */
+      --fs-base: clamp(16px, 2.6vw, 18px);
+      --fs-sm: clamp(14px, 2.2vw, 16px);
+      --fs-h3: clamp(18px, 2.4vw, 22px);
+      --fs-title: clamp(28px, 6vw, 44px);
+      --fs-subtitle: clamp(15px, 3.5vw, 19px);
+
+      /* touch sizes */
+      --touch-min: 44px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
     }
+
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0; background: radial-gradient(1200px 600px at 10% -10%, rgba(124,92,255,.25), transparent),
-                         radial-gradient(1000px 600px at 90% 10%, rgba(0,255,213,.18), transparent),
-                         linear-gradient(180deg, #0a0b10 0%, #0b0d14 100%);
+      margin:0;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(124,92,255,.25), transparent),
+        radial-gradient(1000px 600px at 90% 10%, rgba(0,255,213,.18), transparent),
+        linear-gradient(180deg, #0a0b10 0%, #0b0d14 100%);
       color:var(--text);
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
       letter-spacing: .1px;
+      font-size: var(--fs-base);
+      line-height: 1.6;
+      padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
     }
-    a{color:var(--accent)}
-    .container{max-width:1100px;margin:0 auto;padding:24px}
+
+    a{color:var(--accent); text-decoration: none}
+    a:hover{text-decoration: underline}
+    :focus-visible{outline: 2px solid var(--accent-2); outline-offset: 3px; border-radius: 8px}
+
+    .container{max-width:1100px;margin:0 auto;padding:20px 16px}
+
     header{
-      position:relative; border:1px solid var(--stroke); border-radius:20px; overflow:hidden;
+      position:relative;
+      border:1px solid var(--stroke);
+      border-radius:var(--radius-xl);
+      overflow:hidden;
       background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
       backdrop-filter: blur(10px);
       box-shadow: 0 20px 50px rgba(0,0,0,.45);
-      padding:32px; display:grid; grid-template-columns: 1.2fr .8fr; gap:24px;
+      padding:20px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:16px;
     }
-    .title{font-size: clamp(28px, 4vw, 44px); font-weight:800; line-height:1.1;}
-    .subtitle{font-size:clamp(14px, 2vw, 18px); color:var(--muted)}
-    .chip{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--stroke);border-radius:999px;background:var(--card)}
-    .badge-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    @media (min-width: 860px){
+      header{grid-template-columns: 1.2fr .8fr; padding:32px; gap:24px}
+    }
+
+    .title{font-size: var(--fs-title); font-weight:800; line-height:1.15; margin:6px 0 6px}
+    .subtitle{font-size: var(--fs-subtitle); color:var(--muted); margin:0 0 8px}
+
+    .chip,.pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:10px 14px;
+      min-height: 36px;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      background:var(--card);
+      font-size: var(--fs-sm);
+      line-height: 1.2;
+    }
+    .pill{background:var(--card-strong)}
+
+    .badge-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+
     .glow{position:absolute; inset:-1px; pointer-events:none; background: radial-gradient(300px 120px at 20% 0%, rgba(124,92,255,.25), transparent), radial-gradient(300px 120px at 80% 20%, rgba(0,255,213,.15), transparent)}
 
-    .grid{display:grid; gap:20px; grid-template-columns: repeat(12,1fr); margin-top:24px}
-    .card{grid-column: span 12; border:1px solid var(--stroke); background:var(--card); border-radius:16px; padding:20px}
-    .card strong.code{font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; letter-spacing:.2px}
-    .card h3{margin:0 0 8px 0; font-size:20px}
-    .muted{color:var(--muted)}
-
+    .grid{display:grid; gap:16px; grid-template-columns: 1fr; margin-top:20px}
     @media (min-width: 860px){
+      .grid{gap:20px; grid-template-columns: repeat(12,1fr)}
       .span-4{grid-column: span 4}
       .span-6{grid-column: span 6}
       .span-8{grid-column: span 8}
+      .span-12{grid-column: span 12}
+    }
+    .card{
+      grid-column: 1 / -1;
+      border:1px solid var(--stroke);
+      background:var(--card);
+      border-radius:var(--radius-lg);
+      padding:18px;
+    }
+    @media (min-width: 860px){
+      .card{padding:20px}
     }
 
+    .card strong.code{
+      font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      letter-spacing:.2px
+    }
+    .card h3{
+      margin:0 0 8px 0;
+      font-size: var(--fs-h3);
+      line-height: 1.3;
+    }
+    .muted{color:var(--muted)}
+
+    /* timeline */
     .timeline{position:relative; padding-left:18px;}
     .timeline:before{content:""; position:absolute; left:6px; top:0; bottom:0; width:2px; background: linear-gradient(var(--accent), var(--accent-2)); opacity:.6;}
-    .tl-item{position:relative; margin:14px 0 14px 0}
+    .tl-item{position:relative; margin:16px 0}
     .tl-item:before{content:""; position:absolute; left:-2px; top:3px; width:12px; height:12px; border-radius:50%; background:linear-gradient(145deg, var(--accent), var(--accent-2)); box-shadow:0 0 0 4px rgba(124,92,255,.15)}
-    .tl-time{font-family:"JetBrains Mono", monospace; font-weight:700; opacity:.9}
+    .tl-time{font-family:"JetBrains Mono", monospace; font-weight:700; opacity:.95}
 
+    /* list rows */
     .list{display:grid; gap:10px}
-    .list .row{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 12px; border:1px dashed var(--stroke); border-radius:12px}
+    .list .row{
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
+      padding:12px 14px; border:1px dashed var(--stroke); border-radius:12px
+    }
 
-    .pill{display:inline-flex;gap:8px;align-items:center; padding:6px 10px; border-radius:999px; border:1px solid var(--stroke); background:var(--card-strong)}
-
-    .footer{opacity:.7; font-size:12px; text-align:center; margin:26px 0}
-
-    /* playful hover */
-    .hover-tilt{transition: transform .25s ease, box-shadow .25s ease}
-    .hover-tilt:hover{transform: translateY(-3px); box-shadow: 0 20px 40px rgba(0,0,0,.35)}
-
-    .cta{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
-    .btn{display:inline-flex;align-items:center;gap:10px; padding:10px 14px; border-radius:12px; border:1px solid var(--stroke); background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)); text-decoration:none; color:var(--text); font-weight:600}
+    /* CTA buttons */
+    .cta{display:flex; flex-wrap:wrap; gap:12px; margin-top:12px}
+    .btn{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:12px 16px;
+      min-height: var(--touch-min);
+      min-width: var(--touch-min);
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      text-decoration:none; color:var(--text); font-weight:700; letter-spacing:.2px
+    }
     .btn:active{transform: translateY(1px)}
 
-    .kpi{display:grid; grid-template-columns: repeat(3,1fr); gap:10px}
+    /* KPIs */
+    .kpi{display:grid; grid-template-columns: 1fr; gap:10px}
+    @media (min-width: 520px){
+      .kpi{grid-template-columns: repeat(3,1fr)}
+    }
     .kpi .cell{border:1px solid var(--stroke); border-radius:14px; padding:14px; text-align:center; background:var(--card-strong)}
-    .kpi .value{font-family:"JetBrains Mono", monospace; font-size:20px; font-weight:700}
-    .kpi .label{font-size:12px; color:var(--muted)}
-  </style>
-</head>
-<body>
-  <div class="container">
-    <header class="hover-tilt">
-      <div>
-        <div class="badge-row">
-          <span class="chip">🎆 Open Air</span>
-          <span class="chip">🟪 Hannover</span>
-          <span class="chip">🗓 23. August 2025</span>
-          <span class="chip">🎧 EDM / Mainstage</span>
-        </div>
-        <h1 class="title">Martin Garrix – Expo Plaza, Hannover</h1>
-        <p class="subtitle">Alle Key-Facts, Zeitplan, Anreise & was du erwarten kannst – kompakt auf einen Blick.</p>
-        <div class="cta">
-          <a class="btn" href="#zeitplan">⏱ Zeitplan</a>
-          <a class="btn" href="#infos">📍 Location & Tickets</a>
-          <a class="btn" href="#expect">🔮 Erwartungen</a>
-          <a class="btn" href="#prep">🧭 Vorbereitung</a>
-        </div>
-      </div>
-      <div>
-        <div class="kpi">
-          <div class="cell">
-            <div class="value">17:30</div>
-            <div class="label">Einlass</div>
-          </div>
-          <div class="cell">
-            <div class="value">18:45</div>
-            <div class="label">Beginn</div>
-          </div>
-          <div class="cell">
-            <div class="value">20:30–22:30</div>
-            <div class="label">Garrix Set (≈2h)</div>
-          </div>
-        </div>
-        <div class="badge-row" style="margin-top:12px">
-          <span class="pill">♿ Barrierefrei</span>
-          <span class="pill">🎟️ VVK ab 76,50 €</span>
-          <span class="pill">🚊 U-Bahn: „Expo Plaza“</span>
-          <span class="pill">🧍‍♂️ Stehplätze Innenraum</span>
-        </div>
-      </div>
-      <div class="glow" aria-hidden="true"></div>
-    </header>
+    .kpi .value{font-family:"JetBrains Mono", monospace; font-size:clamp(18px, 4.5vw, 22px); font-weight:700}
+    .kpi .label{font-size:var(--fs-sm); color:var(--muted)}
 
-    <section id="zeitplan" class="grid" style="margin-top:28px">
-      <article class="card span-8">
-        <h3>⏱ Detaillierter Zeitplan (Sa, 23.08.2025)</h3>
-        <div class="timeline">
-          <div class="tl-item">
-            <div class="tl-time">17:30</div>
-            <div class="muted">Einlass – Früher da sein lohnt sich für vordere Plätze.</div>
-          </div>
-          <div class="tl-item">
-            <div class="tl-time">18:05 – 19:20</div>
-            <div><strong>Marten Hørger</strong> (Support) – Treibender House / Tech-House zum Warmwerden.</div>
-          </div>
-          <div class="tl-item">
-            <div class="tl-time">19:20 – 20:20</div>
-            <div><strong>Lavern</strong> (Support) – Melodischer EDM/House mit Vocal-Momenten.</div>
-          </div>
-          <div class="tl-item">
-            <div class="tl-time">20:30 – 22:30</div>
-            <div><strong>Martin Garrix</strong> – Mainset ~2 Stunden, Drops, Laser, CO₂, IDs.</div>
-          </div>
-          <div class="tl-item">
-            <div class="tl-time">bis ~23:00</div>
-            <div class="muted">Mögliche Zugaben/Verlängerung, Puffer für Abreise einplanen.</div>
-          </div>
-        </div>
-      </article>
+    .footer{opacity:.7; font-size:var(--fs-sm); text-align:center; margin:26px 0}
 
-      <aside class="card span-4">
-        <h3>🎚️ Showdauer & Format</h3>
-        <p class="muted">Open-Air-Soloshows von Garrix liegen üblicherweise bei <strong class="code">~2–2,5 h</strong>. Festival-Slots sind kürzer (<strong class="code">~1–1,5 h</strong>). Für Hannover ist <strong class="code">~2 h</strong> realistisch.</p>
-        <ul class="list" style="margin-top:10px">
-          <li class="row"><span>🔊 Druckvolle Mainstage-Inszenierung</span><span class="muted">Laser • Pyro • Visuals</span></li>
-          <li class="row"><span>🆕 Unveröffentlichte IDs</span><span class="muted">Sneak Previews</span></li>
-          <li class="row"><span>🎶 Klassiker & Collabs</span><span class="muted">„Animals“, „Scared to Be Lonely“ u. a.</span></li>
-        </ul>
-      </aside>
-    </section>
+    /* playful hover (kept, but motion-respectful) */
+    @media (hover:hover){
+      .hover-tilt{transition: transform .25s ease, box-shadow .25s ease}
+      .hover-tilt:hover{transform: translateY(-3px); box-shadow: 0 20px 40px rgba(0,0,0,.35)}
+    }
 
-    <section id="infos" class="grid">
-      <article class="card span-6">
-        <h3>📍 Venue & Address</h3>
-        <p><strong>Expo Plaza</strong>, 30539 Hannover</p>
-        <ul class="list">
-          <li class="row"><span>🚊 Stadtbahn</span><span class="muted">Haltestelle „Expo Plaza“</span></li>
-          <li class="row"><span>🧍‍♀️ Plätze</span><span class="muted">Stehplätze im Innenraum</span></li>
-          <li class="row"><span>♿ Zugang</span><span class="muted">Barrierefrei gewährleistet</span></li>
-        </ul>
-      </article>
-      <article class="card span-6">
-        <h3>🎟️ Tickets</h3>
-        <ul class="list">
-          <li class="row"><span>💶 Vorverkaufspreis</span><span class="muted">ab 76,50 € (inkl. Gebühren)</span></li>
-          <li class="row"><span>🗓️ Presale</span><span class="muted">Ticketmaster 20.12.2024 – 10:00 Uhr</span></li>
-          <li class="row"><span>🗓️ Allgemeiner VVK</span><span class="muted">21.12.2024 – 10:00 Uhr</span></li>
-          <li class="row"><span>✅ Tipp</span><span class="muted">Nur offizielle Stellen: Ticketmaster, Eventim & autorisierte VVK</span></li>
-        </ul>
-      </article>
-    </section>
-
-    <section id="prep" class="grid">
-      <article class="card span-8">
-        <h3>🧭 Vorbereitung & On‑Site Tipps</h3>
-        <ul class="list">
-          <li class="row"><span>⏰ Früh anreisen</span><span class="muted">Gegen 17:00 da sein → schneller Einlass, bessere Spots</span></li>
-          <li class="row"><span>🌦️ Wetter-Check</span><span class="muted">Open Air: leichte Regen-/Windjacke (Schirme meist verboten)</span></li>
-          <li class="row"><span>👟 Komfort</span><span class="muted">Bequeme Schuhe, ggf. Ohrstöpsel; kleine Bauchtasche</span></li>
-          <li class="row"><span>🍔 Verpflegung</span><span class="muted">Vorher snacken → vor Ort nur Drinks/kleine Happen</span></li>
-          <li class="row"><span>🚦 Abreise-Plan</span><span class="muted">Nach Ende 10–15 Min warten entspannt die U‑Bahn‑Mengen</span></li>
-        </ul>
-      </article>
-      <aside class="card span-4">
-        <h3>💡 Quick Notes</h3>
-        <div class="list">
-          <div class="row"><span>🪪 Einlass</span><span class="muted">Ticket + Ausweis parat halten</span></div>
-          <div class="row"><span>📵 Geräte</span><span class="muted">Powerbank einpacken</span></div>
-          <div class="row"><span>🧊 Cooling</span><span class="muted">Hydration nicht vergessen</span></div>
-        </div>
-      </aside>
-    </section>
-
-    <section id="expect" class="grid">
-      <article class="card span-12">
-        <h3>🔮 Was du erwarten kannst</h3>
-        <p class="muted">Volle Mainstage‑Power mit schneller Abfolge – kaum Downtime zwischen den Tracks. Garrix testet häufig neue IDs und fährt das volle Visual‑Programm. Überraschungsgäste sind selten, aber möglich.</p>
-      </article>
-    </section>
-
-    <p class="footer">Stand: aus Chat‑Infos zusammengeführt • Nicht-offizielle Fanseite • © 2025</p>
-  </div>
-</body>
-</html>
+    /* collapsible sections */
+    details.collapsible{
+      border:1px solid var(--stroke);
+      background:var(--card);
+      border-radius:var(--radius-lg);
+      padding:0;
+      over

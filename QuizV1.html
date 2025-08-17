@@ -51,7 +51,7 @@
 
     .header p { color: var(--text-muted); font-size: 1.2rem; animation: fadeInUp 0.8s ease-out 0.2s both; }
 
-    .progress-container { margin-bottom: 30px; animation: fadeInUp 0.8s ease-out 0.4s both; }
+    .progress-container { margin-bottom: 16px; animation: fadeInUp 0.8s ease-out 0.4s both; }
 
     .progress-bar { width: 100%; height: 8px; background: var(--surface); border-radius: 20px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); }
 
@@ -67,6 +67,7 @@
     }
 
     .progress-text { text-align: center; margin-top: 10px; color: var(--text-muted); font-weight: 600; }
+    #stats { margin-top: 4px; }
 
     .quiz-card { background: var(--surface); border-radius: 24px; padding: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); border: 1px solid var(--border); backdrop-filter: blur(10px); flex: 1; animation: slideInUp 0.6s ease-out 0.6s both; }
 
@@ -169,6 +170,7 @@
     <div class="progress-container">
       <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
       <div class="progress-text" id="progressText">Frage 1 von 100</div>
+      <div class="progress-text" id="stats">Richtig: 0 · Falsch: 0</div>
     </div>
 
     <div class="quiz-card" id="quizCard">
@@ -301,6 +303,7 @@
         this.currentQuestion = 0;
         this.score = 0;
         this.answered = false;
+        this.userAnswers = {}; // für Live-Statistik
 
         this.renderQuestions();
         this.questions = Array.from(this.form.querySelectorAll('.question'));
@@ -310,6 +313,7 @@
         this.cacheDom();
         this.initializeEvents();
         this.updateProgress();
+        this.updateStats(); // initial 0/0
         this.updateButtons();
       }
 
@@ -318,7 +322,7 @@
           const qId = `q${idx+1}`;
           const qDiv = document.createElement('div');
           qDiv.className = 'question';
-          if(idx===0) qDiv.classList.add('active');
+          if (idx === 0) qDiv.classList.add('active');
           qDiv.id = qId;
           qDiv.innerHTML = `<h3>${item.q}</h3>`;
           const optionsDiv = document.createElement('div');
@@ -327,13 +331,13 @@
             const label = document.createElement('label');
             label.className = 'option';
             label.innerHTML = `<input type="radio" name="${qId}" value="${letter}" />
-            <div class="option-content"><div class="option-indicator"></div>${letter}) ${item.opts[i]}</div>`;
+              <div class="option-content"><div class="option-indicator"></div>${letter}) ${item.opts[i]}</div>`;
             optionsDiv.appendChild(label);
           });
           qDiv.appendChild(optionsDiv);
           this.form.appendChild(qDiv);
         });
-        // Antworten-Mapping
+        // Antwort-Map
         this.answers = {};
         QUESTIONS.forEach((item,idx)=> this.answers[`q${idx+1}`]=item.ans);
       }
@@ -341,6 +345,7 @@
       cacheDom(){
         this.progressFill = document.getElementById('progressFill');
         this.progressText = document.getElementById('progressText');
+        this.statsEl = document.getElementById('stats');
         this.feedbackEl = document.getElementById('feedback');
         this.prevBtn = document.getElementById('prevBtn');
         this.submitBtn = document.getElementById('submitBtn');
@@ -352,7 +357,7 @@
       }
 
       static shuffleArray(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
-      shuffleQuestions(){ const shuffled=QuizApp.shuffleArray([...this.questions]); shuffled.forEach(q=>{ q.classList.remove('active'); this.form.appendChild(q); }); shuffled[0].classList.add('active'); this.questions=shuffled; this.currentQuestion=0; }
+      shuffleQuestions(){ const shuffled=QuizApp.shuffleArray([...this.questions]); shuffled.forEach(q=>{ q.classList.remove('active'); this.form.appendChild(q);}); shuffled[0].classList.add('active'); this.questions=shuffled; this.currentQuestion=0; }
       shuffleOptions(questionEl){ const container=questionEl.querySelector('.options'); const labels=Array.from(container.querySelectorAll('label.option')); QuizApp.shuffleArray(labels).forEach(l=>container.appendChild(l)); }
 
       initializeEvents(){
@@ -378,13 +383,32 @@
         const checked=this.getCheckedInput(qEl);
         if(!checked){ this.showFeedback('Bitte wähle eine Antwort aus.','incorrect'); return; }
         this.answered=true;
+
+        // gegebene Antwort für Stats speichern
+        const qName = qEl.querySelector('input[type="radio"]').name;
+        this.userAnswers[qName] = checked.value;
+
         const qId=qEl.id; const correctVal=this.answers[qId];
         const selectedLabel=checked.closest('label.option');
         qEl.querySelectorAll('label.option').forEach(l=>l.classList.remove('correct','incorrect'));
         if(checked.value===correctVal){ selectedLabel.classList.add('correct'); this.score++; this.showFeedback('Richtig! 🎉','correct'); }
         else { selectedLabel.classList.add('incorrect'); const correctInput=qEl.querySelector(`input[value="${correctVal}"]`); if(correctInput) correctInput.closest('label.option').classList.add('correct'); this.showFeedback('Leider falsch.','incorrect'); }
         qEl.querySelectorAll('input[type="radio"]').forEach(r=>r.disabled=true);
-        this.submitBtn.disabled=true; this.nextBtn.style.display='inline-block'; this.updateButtons();
+        this.submitBtn.disabled=true; this.nextBtn.style.display='inline-block';
+        this.updateButtons();
+        this.updateStats(); // Aktualisiere Stats nach Bewertung
+      }
+
+      updateStats(){
+        // zählt nur vorherige Fragen (Index < currentQuestion)
+        let correct=0, wrong=0;
+        for(let i=0;i<this.currentQuestion;i++){
+          const name='q'+(i+1);
+          const given=this.userAnswers[name];
+          if(!given) continue;
+          if(given===this.answers[name]) correct++; else wrong++;
+        }
+        if(this.statsEl) this.statsEl.textContent = `Richtig: ${correct} · Falsch: ${wrong}`;
       }
 
       showFeedback(msg,type){ this.feedbackEl.textContent=msg; this.feedbackEl.className='feedback visible '+(type==='correct'?'correct':'incorrect'); }
@@ -403,9 +427,13 @@
         qEl.querySelectorAll('input[type="radio"]').forEach(r=>r.disabled=false);
         qEl.querySelectorAll('label.option').forEach(l=>l.classList.remove('correct','incorrect'));
         this.updateButtons();
+        this.updateStats(); // beim Navigieren updaten
       }
 
-      nextQuestion(){ if(this.currentQuestion<this.totalQuestions-1){ this.goTo(this.currentQuestion+1); } else { this.finish(); } }
+      nextQuestion(){ 
+        if(this.currentQuestion<this.totalQuestions-1){ this.goTo(this.currentQuestion+1); } 
+        else { this.finish(); } 
+      }
       prevQuestion(){ if(this.currentQuestion>0){ this.goTo(this.currentQuestion-1); } }
       updateButtons(){ this.prevBtn.disabled=this.currentQuestion===0; }
 
@@ -429,7 +457,7 @@
       }
 
       restart(){
-        this.score=0; this.currentQuestion=0; this.answered=false;
+        this.score=0; this.currentQuestion=0; this.answered=false; this.userAnswers={};
         this.questions.forEach(q=>{
           q.querySelectorAll('input[type="radio"]').forEach(r=>{ r.checked=false; r.disabled=false; });
           q.querySelectorAll('label.option').forEach(l=>l.classList.remove('selected','correct','incorrect'));
@@ -437,7 +465,7 @@
         this.shuffleQuestions(); this.questions.forEach(q=>this.shuffleOptions(q));
         this.resultCard.style.display='none'; this.quizCard.style.display='block';
         this.submitBtn.disabled=true; this.nextBtn.style.display='none';
-        this.clearFeedback(); this.updateProgress(); this.updateButtons();
+        this.clearFeedback(); this.updateProgress(); this.updateStats(); this.updateButtons();
       }
     }
 

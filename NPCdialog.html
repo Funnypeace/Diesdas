@@ -1,38 +1,118 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>NPC‑Dialog — Simple • Seed‑Lore → endlose Gespräche</title>
   <style>
-    :root{ --bg:#0b0f14; --panel:#0f1520; --text:#e6eefc; --muted:#a2b1c7; --border:rgba(255,255,255,.14); --accent:#7c9cf5; --radius:14px }
-    @media (prefers-color-scheme: light){:root{--bg:#f7f9fd;--panel:#ffffff;--text:#0b1220;--muted:#4b5563;--border:rgba(0,0,0,.1)}}
-    html,body{height:100%}
-    body{margin:0; background:var(--bg); color:var(--text); font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial}
-    .wrap{max-width:980px;margin:0 auto;padding:16px}
-    header{position:sticky;top:0;background:linear-gradient(180deg,rgba(124,156,245,.15),rgba(124,156,245,0));backdrop-filter:saturate(130%) blur(8px);border-bottom:1px solid var(--border)}
-    h1{font-size:18px;margin:0}
-    .grid{display:grid;gap:16px;grid-template-columns:320px 1fr;margin-top:16px}
-    @media (max-width:920px){.grid{grid-template-columns:1fr}}
-    .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:12px}
-    label{font-size:12px;color:var(--muted);display:block;margin:10px 0 6px}
-    input,textarea,select{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:10px}
-    textarea{min-height:110px;resize:vertical}
-    .row{display:flex;gap:8px;align-items:center}
-    .row>*{flex:1}
-    button{appearance:none;border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--text);padding:10px 12px;border-radius:10px;cursor:pointer}
-    button.primary{border-color:transparent;background:linear-gradient(90deg,#7c9cf5,#22d3ee);color:#0b1220;font-weight:700}
-    button[disabled]{opacity:.6;cursor:not-allowed}
+    :root {
+      --bg: #0b0f14;
+      --panel: #0f1520;
+      --text: #e6eefc;
+      --muted: #a2b1c7;
+      --border: rgba(255, 255, 255, .14);
+      --accent: #7c9cf5;
+      --radius: 14px;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f7f9fd;
+        --panel: #ffffff;
+        --text: #0b1220;
+        --muted: #4b5563;
+        --border: rgba(0, 0, 0, .1);
+      }
+    }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
+    }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 16px; }
+    header {
+      position: sticky;
+      top: 0;
+      background: linear-gradient(180deg, rgba(124, 156, 245, .15), rgba(124, 156, 245, 0));
+      backdrop-filter: saturate(130%) blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    h1 { font-size: 18px; margin: 0; }
+    .grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 320px 1fr;
+      margin-top: 16px;
+    }
+    @media (max-width: 920px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+    }
+    label {
+      font-size: 12px;
+      color: var(--muted);
+      display: block;
+      margin: 10px 0 6px;
+    }
+    input, textarea, select {
+      width: 100%;
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      padding: 10px;
+    }
+    textarea { min-height: 110px; resize: vertical; }
+    .row { display: flex; gap: 8px; align-items: center; }
+    .row > * { flex: 1; }
+    button {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, .06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button.primary {
+      border-color: transparent;
+      background: linear-gradient(90deg, #7c9cf5, #22d3ee);
+      color: #0b1220;
+      font-weight: 700;
+    }
+    button[disabled] { opacity: .6; cursor: not-allowed; }
     /* Chat */
-    #log{display:flex;flex-direction:column;gap:10px;max-height:65vh;overflow:auto}
-    .msg{display:flex;gap:8px}
-    .msg .bubble{max-width:78%;padding:10px 12px;border:1px solid var(--border);border-radius:12px}
-    .msg.user{justify-content:flex-end}
-    .msg.user .bubble{background:rgba(255,255,255,.06)}
-    .msg.npc .bubble{background:linear-gradient(180deg,rgba(124,156,245,.09),rgba(34,211,238,.06))}
-    .hint{font-size:12px;color:var(--muted)}
-    .foot{margin-top:8px;color:var(--muted);font-size:12px}
+    #log {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 65vh;
+      overflow: auto;
+    }
+    .msg { display: flex; gap: 8px; }
+    .msg .bubble {
+      max-width: 78%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .msg.user { justify-content: flex-end; }
+    .msg.user .bubble { background: rgba(255, 255, 255, .06); }
+    .msg.npc .bubble {
+      background: linear-gradient(180deg, rgba(124, 156, 245, .09), rgba(34, 211, 238, .06));
+    }
+    .hint { font-size: 12px; color: var(--muted); }
+    .foot { margin-top: 8px; color: var(--muted); font-size: 12px; }
   </style>
+  <!-- GoatCounter -->
+  <script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
+  <!-- End GoatCounter -->
 </head>
 <body>
   <header>
@@ -41,24 +121,21 @@
       <div class="hint">Einzelne HTML • spricht mit <code>/api/groq</code></div>
     </div>
   </header>
-
   <div class="wrap grid">
     <!-- Left: Seed & Persona -->
     <section class="card" aria-label="Seed & Persona">
       <label for="lore">Seed‑Lore</label>
       <textarea id="lore" placeholder="Kurzbeschreibung, Rolle, Ort, Ziele, Stimmung …">Garruk Eisenbart ist der grimmige Nachtwächter von Dämmerhafen. Er liebt Ordnung, hasst Lärm und kennt jede Gasse. Im Schatten der alten Mauern rumort eine Schmugglerbande.</textarea>
-
       <div class="row">
         <div>
           <label for="name">Name (optional)</label>
-          <input id="name" placeholder="z. B. Garruk Eisenbart" />
+          <input id="name" placeholder="z. B. Garruk Eisenbart" />
         </div>
         <div>
           <label for="role">Rolle (optional)</label>
-          <input id="role" placeholder="z. B. Nachtwächter" />
+          <input id="role" placeholder="z. B. Nachtwächter" />
         </div>
       </div>
-
       <label for="style">Stil/Ton</label>
       <select id="style">
         <option value="neutral" selected>Neutral</option>
@@ -67,7 +144,6 @@
         <option value="mage">Magisch (mysteriös)</option>
         <option value="merchant">Händler:in (schlitzohrig)</option>
       </select>
-
       <div class="row" style="margin-top:10px">
         <button id="start" class="primary">Starten / Reset</button>
         <button id="copy" title="Persona in Zwischenablage kopieren">Persona kopieren</button>
@@ -78,131 +154,127 @@
     <!-- Right: Chat -->
     <section class="card" aria-label="Chat">
       <div id="log" aria-live="polite"></div>
-      <form id="composer" style="margin-top:10px;display:flex;gap:8px">
-        <textarea id="message" placeholder="Deine Nachricht …" rows="2" style="flex:1"></textarea>
-        <button id="send" class="primary">Senden</button>
-      </form>
-      <div id="status" class="foot"></div>
+      <div class="row" style="margin-top:10px">
+        <textarea id="input" placeholder="Spreche den NPC an…" style="min-height:40px;resize:vertical"></textarea>
+        <button id="send">Senden</button>
+      </div>
     </section>
   </div>
 
-  <script>
-    // --- Configuration ---
-    // Same origin (Vercel project) → '/api/groq' ist korrekt; als Fallback versuchen wir '/api/groq.js'.
-    const API_URLS = ['/api/groq', '/api/groq.js'];
+<script>
+const $ = id => document.getElementById(id);
+const log = $('log');
+const input = $('input');
+const lore = $('lore');
+const name = $('name');
+const role = $('role');
+const style = $('style');
 
-    // --- State ---
-    let messages = []; // OpenAI/Groq Chat Format: {role:'user'|'assistant'|'system', content:string}
+let messages = [];
 
-    // --- DOM helpers ---
-    const $ = sel => document.querySelector(sel);
-    const log = $('#log');
-    const btnSend = $('#send');
-    const btnStart = $('#start');
-    const statusEl = $('#status');
+const styles = {
+  neutral: 'Du antwortest höflich und sachlich.',
+  tavern: 'Du bist herzlich, warmherzig und redest wie ein Wirt oder eine Wirtin.',
+  guard: 'Du bist knapp, direkt und etwas mürrisch wie eine Stadtwache.',
+  mage: 'Du sprichst geheimnisvoll, weise und manchmal kryptisch.',
+  merchant: 'Du bist geschäftstüchtig, schlitzohrig und immer auf Profit aus.'
+};
 
-    function add(role, text){
-      const div = document.createElement('div');
-      div.className = 'msg ' + (role === 'assistant' ? 'npc' : role);
-      const bub = document.createElement('div');
-      bub.className = 'bubble';
-      bub.textContent = text;
-      div.appendChild(bub);
-      log.appendChild(div);
-      log.scrollTop = log.scrollHeight;
-    }
+function addMessage(text, isUser) {
+  const msg = document.createElement('div');
+  msg.className = `msg ${isUser ? 'user' : 'npc'}`;
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.textContent = text;
+  msg.appendChild(bubble);
+  log.appendChild(msg);
+  log.scrollTop = log.scrollHeight;
+}
 
-    function personaText(){
-      const lore = $('#lore').value.trim();
-      const name = $('#name').value.trim();
-      const role = $('#role').value.trim();
-      const tone = $('#style').value;
+function buildPrompt() {
+  const persona = lore.value.trim();
+  const charName = name.value.trim();
+  const charRole = role.value.trim();
+  const styleDesc = styles[style.value] || styles.neutral;
+  
+  let prompt = 'Du bist ein Charakter in einem Rollenspiel. ';
+  
+  if (persona) prompt += persona + ' ';
+  if (charName) prompt += `Du heißt ${charName}. `;
+  if (charRole) prompt += `Du bist ${charRole}. `;
+  
+  prompt += styleDesc + ' Antworte kurz und bleibe im Charakter. Stelle gelegentlich Gegenfragen.';
+  
+  return prompt;
+}
 
-      const toneLine = {
-        neutral: 'Ton: neutral, präzise, knapp.',
-        tavern: 'Ton: herzlich, bodenständig, gastfreundlich.',
-        guard: 'Ton: kurz angebunden, dienstlich, wachsam.',
-        mage: 'Ton: mysteriös, bildhaft, gelehrt.',
-        merchant: 'Ton: gewitzt, geschäftstüchtig, charmant.'
-      }[tone] || 'Ton: neutral.';
+async function sendMessage() {
+  const userText = input.value.trim();
+  if (!userText) return;
+  
+  input.value = '';
+  addMessage(userText, true);
+  
+  const systemPrompt = buildPrompt();
+  messages.push({ role: 'user', content: userText });
+  
+  try {
+    const response = await fetch('/api/groq', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{ role: 'system', content: systemPrompt }, ...messages],
+        model: 'llama-3.1-8b-instant',
+        max_tokens: 200,
+        temperature: 0.8
+      })
+    });
+    
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    
+    const data = await response.json();
+    const npcText = data.choices?.[0]?.message?.content || 'Fehler beim Laden der Antwort.';
+    
+    messages.push({ role: 'assistant', content: npcText });
+    addMessage(npcText, false);
+    
+  } catch (error) {
+    console.error('Error:', error);
+    addMessage('Fehler: Verbindung zum Server fehlgeschlagen.', false);
+  }
+}
 
-      const lines = [
-        'Du bist ein NPC in einem Rollenspiel (bleibe strikt in Charakter).',
-        name ? `Name: ${name}` : null,
-        role ? `Rolle: ${role}` : null,
-        lore ? `Hintergrund/Lore: ${lore}` : null,
-        toneLine,
-        'Regeln: Antworte in 1–3 kurzen Sätzen. Stelle gelegentlich kurze Gegenfragen. Keine Meta-Erklärungen.'
-      ].filter(Boolean);
-      return lines.join('\n');
-    }
+function startConversation() {
+  messages = [];
+  log.innerHTML = '';
+  const greeting = 'Gespräch gestartet. Spreche den NPC an!';
+  addMessage(greeting, false);
+}
 
-    async function callGroq(currentMessages){
-      let lastErr;
-      for (const url of API_URLS){
-        try{
-          const res = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ messages: currentMessages, action: 'npc_chat' })
-          });
-          if(!res.ok){
-            // Try to read JSON error, else plain text
-            let errText;
-            try { const j = await res.json(); errText = (j && (j.error || j.details)) || JSON.stringify(j); }
-            catch{ errText = await res.text(); }
-            throw new Error(`HTTP ${res.status} – ${errText}`);
-          }
-          const data = await res.json();
-          return data; // { content, usage, model, ... }
-        }catch(e){ lastErr = e; }
-      }
-      throw lastErr || new Error('Unbekannter Fehler');
-    }
+function copyPersona() {
+  const persona = buildPrompt();
+  navigator.clipboard.writeText(persona).then(() => {
+    const btn = $('copy');
+    const orig = btn.textContent;
+    btn.textContent = 'Kopiert!';
+    setTimeout(() => btn.textContent = orig, 1000);
+  });
+}
 
-    function setBusy(b){ btnSend.disabled = b; btnStart.disabled = b; statusEl.textContent = b ? 'Wird gesendet …' : '' }
+// Event Listeners
+$('start').addEventListener('click', startConversation);
+$('send').addEventListener('click', sendMessage);
+$('copy').addEventListener('click', copyPersona);
 
-    async function startConversation(){
-      log.innerHTML = '';
-      messages = [];
-      const persona = personaText();
-      // Wir senden die Persona als erste User-Nachricht (Backend fügt bereits einen allgemeinen System-Prompt hinzu).
-      messages.push({ role: 'user', content: persona + '\nStarte mit einer kurzen In-Character-Begrüßung.' });
-      setBusy(true);
-      try{
-        const data = await callGroq(messages);
-        const reply = data.content || '—';
-        messages.push({ role:'assistant', content: reply });
-        add('assistant', reply);
-      }catch(err){ add('system', `Fehler: ${err.message}`); }
-      finally{ setBusy(false); }
-    }
+input.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
 
-    async function sendMessage(e){
-      e && e.preventDefault();
-      const text = $('#message').value.trim();
-      if(!text) return;
-      $('#message').value = '';
-      add('user', text);
-      messages.push({ role: 'user', content: text });
-      setBusy(true);
-      try{
-        const data = await callGroq(messages);
-        const reply = data.content || '—';
-        messages.push({ role:'assistant', content: reply });
-        add('assistant', reply);
-      }catch(err){ add('system', `Fehler: ${err.message}`); }
-      finally{ setBusy(false); }
-    }
-
-    // Wire up
-    $('#composer').addEventListener('submit', sendMessage);
-    btnSend.addEventListener('click', sendMessage);
-    btnStart.addEventListener('click', startConversation);
-    $('#copy').addEventListener('click', ()=> navigator.clipboard.writeText(personaText()).then(()=>{ statusEl.textContent = 'Persona kopiert.'; setTimeout(()=>statusEl.textContent='',1000); }));
-
-    // Auto-start with default demo
-    startConversation();
-  </script>
+// Initialize
+startConversation();
+</script>
 </body>
 </html>

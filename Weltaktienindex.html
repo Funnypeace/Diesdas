@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="utf-8">
@@ -15,12 +15,16 @@
     .card { @apply rounded-2xl shadow-sm bg-white; }
     .card-dark { @apply bg-slate-900 text-white; }
   </style>
+  <!-- GoatCounter -->
+  <script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
+  <!-- End GoatCounter -->
 </head>
 <body class="bg-slate-50 text-slate-900">
   <div class="p-6 mx-auto max-w-7xl space-y-6">
     <header class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h1 class="text-3xl font-bold tracking-tight">Weltaktienindex &amp; BIP – Übersicht</h1>
+        <h1 class="text-3xl font-bold tracking-tight">
+Weltaktienindex & BIP – Übersicht</h1>
         <p class="text-slate-600 mt-1">
           Zusammenfassung aus unserem Chat: Ländergewichtungen in globalen Indizes und nominales BIP (Anteile am Welt‑BIP).
           Stand: ca. Mitte 2025. Werte gerundet. Export‑Buttons entfernt.
@@ -31,9 +35,12 @@
     <!-- Tabs -->
     <div>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 w-full">
-        <button data-tab="MSCI World" class="tab-btn px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-100">MSCI World</button>
-        <button data-tab="MSCI ACWI" class="tab-btn px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-100">MSCI ACWI</button>
-        <button data-tab="FTSE All-World" class="tab-btn px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-100">FTSE All‑World</button>
+        <button data-tab="MSCI World" class="tab-btn px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-100">
+MSCI World</button>
+        <button data-tab="MSCI ACWI" class="tab-btn px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-100">
+MSCI ACWI</button>
+        <button data-tab="FTSE All-World" class="tab-btn px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-100">
+FTSE All‑World</button>
       </div>
     </div>
 
@@ -44,8 +51,12 @@
         <div class="card">
           <div class="p-6">
             <div class="flex items-center gap-2 mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.25 3.75A8.25 8.25 0 1 0 19.5 12h-8.25V3.75z"/></svg>
-              <h2 class="text-xl font-semibold"><span id="pie-title-index">MSCI World</span>: Ländergewichtungen</h2>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.25 3.75A8.25 8.25 0 1 0 19.5 12h-8.25V3.75z"/>
+              </svg>
+              <h2 class="text-xl font-semibold">
+                <span id="pie-title-index">MSCI World</span>: Ländergewichtungen
+              </h2>
             </div>
             <div class="h-80">
               <canvas id="pieCanvas"></canvas>
@@ -57,8 +68,12 @@
         <div class="card">
           <div class="p-6">
             <div class="flex items-center gap-2 mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 6.75h18M3 12h18M3 17.25h18"/></svg>
-              <h2 class="text-xl font-semibold">Tabelle – Ländergewichtungen (<span id="table-title-index">MSCI World</span>)</h2>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 6.75h18M3 12h18M3 17.25h18"/>
+              </svg>
+              <h2 class="text-xl font-semibold">
+                Tabelle – Ländergewichtungen (<span id="table-title-index">MSCI World</span>)
+              </h2>
             </div>
             <div class="flex items-center gap-2 mb-3">
               <input id="filterInput" type="text" placeholder="Land filtern…" class="max-w-xs w-full px-3 py-2 rounded-md border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-400">
@@ -80,338 +95,7 @@
           </div>
         </div>
       </div>
-
-      <!-- Bar: Indexgewicht vs Welt-BIP -->
-      <div class="card">
-        <div class="p-6">
-          <div class="flex items-center gap-2 mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3v18h18"/></svg>
-            <h2 class="text-xl font-semibold">Vergleich: Indexgewicht vs. Anteil am Welt‑BIP</h2>
-          </div>
-          <div class="h-96">
-            <canvas id="barCanvas"></canvas>
-          </div>
-          <p class="text-sm text-slate-600 mt-3">
-            Hinweis: Schwellenländer sind im MSCI World <span class="font-semibold">nicht</span> enthalten (z. B. China, Indien).
-            In ACWI/FTSE All‑World erscheinen sie mit kleineren Gewichten als ihr Anteil am Welt‑BIP.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- GDP table -->
-    <section class="card">
-      <div class="p-6 space-y-3">
-        <div class="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3.75v16.5M3.75 12h16.5"/></svg>
-          <h2 class="text-xl font-semibold">BIP – Tabelle (nominal, Schätzwerte 2025; Anteile am Welt‑BIP)</h2>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm" id="gdpTable">
-            <thead>
-              <tr class="text-left border-b">
-                <th class="py-2 pr-4">Land</th>
-                <th class="py-2 pr-4">BIP (Billionen USD)</th>
-                <th class="py-2">Anteil Welt‑BIP (%)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- rows injected -->
-            </tbody>
-          </table>
-        </div>
-        <p class="text-xs text-slate-500">
-          Quellen (aus dem Chat zusammengefasst): MSCI/FTSE Angaben (Sommer 2025, u. a. Anbieter‑Factsheets, Wikipedia),
-          IMF/Weltbank/BEA für nominales BIP und Welt‑BIP‑Anteile. Werte gerundet; können sich ändern.
-        </p>
-      </div>
-    </section>
-
-    <!-- Diagnostics / Tests -->
-    <section class="card">
-      <div class="p-6">
-        <details>
-          <summary class="cursor-pointer font-semibold">Diagnostik & Tests (klicken zum Aufklappen)</summary>
-          <ul id="testList" class="list-disc pl-6 mt-3 text-sm"></ul>
-          <p class="text-xs text-slate-500 mt-2">Alle Tests laufen auch in der Browser‑Konsole.</p>
-        </details>
-      </div>
     </section>
   </div>
-
-  <script>
-    // --------------------------
-    // Data (as in our chat)
-    // --------------------------
-    const DATA_INDEX = {
-      "MSCI World": [
-        { country: "USA",          weight: 72.0 },
-        { country: "Japan",        weight: 5.2 },
-        { country: "UK",           weight: 3.7 },
-        { country: "Kanada",       weight: 3.2 },
-        { country: "Frankreich",   weight: 2.8 },
-        { country: "Deutschland",  weight: 2.6 },
-        { country: "Schweiz",      weight: 2.0 },
-        { country: "Australien",   weight: 2.0 },
-        { country: "Niederlande",  weight: 1.3 },
-        { country: "Schweden",     weight: 0.8 },
-        { country: "Übrige",       weight: 4.4 },
-      ],
-      "MSCI ACWI": [
-        { country: "USA",          weight: 62.6 },
-        { country: "Japan",        weight: 5.4 },
-        { country: "China",        weight: 3.6 },
-        { country: "UK",           weight: 3.6 },
-        { country: "Frankreich",   weight: 2.9 },
-        { country: "Deutschland",  weight: 2.2 },
-        { country: "Kanada",       weight: 2.5 },
-        { country: "Schweiz",      weight: 2.4 },
-        { country: "Indien",       weight: 1.7 },
-        { country: "Australien",   weight: 1.9 },
-        { country: "Übrige",       weight: 11.2 },
-      ],
-      "FTSE All-World": [
-        { country: "USA",          weight: 63.68 },
-        { country: "Japan",        weight: 5.54 },
-        { country: "UK",           weight: 3.38 },
-        { country: "China",        weight: 3.37 },
-        { country: "Deutschland",  weight: 2.19 },
-        { country: "Schweiz",      weight: 2.04 },
-        { country: "Frankreich",   weight: 2.7 },
-        { country: "Kanada",       weight: 2.6 },
-        { country: "Indien",       weight: 1.8 },
-        { country: "Australien",   weight: 1.9 },
-        { country: "Übrige",       weight: 10.8 },
-      ],
-    };
-
-    const DATA_GDP = [
-      { country: "USA",         gdpTUSD: 30.51, worldShare: 26.8 },
-      { country: "China",       gdpTUSD: 19.23, worldShare: 16.9 },
-      { country: "Japan",       gdpTUSD: 4.20,  worldShare: 3.7  },
-      { country: "Deutschland", gdpTUSD: 4.74,  worldShare: 4.2  },
-      { country: "Indien",      gdpTUSD: 4.19,  worldShare: 3.7  },
-      { country: "UK",          gdpTUSD: 3.84,  worldShare: 3.4  },
-      { country: "Frankreich",  gdpTUSD: 3.21,  worldShare: 2.8  },
-      { country: "Italien",     gdpTUSD: 2.42,  worldShare: 2.1  },
-      { country: "Kanada",      gdpTUSD: 2.23,  worldShare: 2.0  },
-      { country: "Brasilien",   gdpTUSD: 2.13,  worldShare: 1.9  },
-      { country: "Südkorea",    gdpTUSD: 1.80,  worldShare: 1.5  },
-      { country: "Mexiko",      gdpTUSD: 1.50,  worldShare: 1.3  },
-      { country: "Australien",  gdpTUSD: 1.73,  worldShare: 1.5  },
-      { country: "Schweiz",     gdpTUSD: 0.88,  worldShare: 0.8  },
-    ];
-
-    const COLORS = [
-      "#60a5fa", "#34d399", "#fbbf24", "#f87171", "#a78bfa",
-      "#f472b6", "#2dd4bf", "#fb923c", "#93c5fd", "#4ade80", "#94a3b8",
-    ];
-
-    const numberFormat = (n) => new Intl.NumberFormat("de-DE", { maximumFractionDigits: 2 }).format(n);
-
-    // --------------------------
-    // State & elements
-    // --------------------------
-    let currentIndex = "MSCI World";
-    const tabButtons = Array.from(document.querySelectorAll(".tab-btn"));
-    const pieTitleIndex = document.getElementById("pie-title-index");
-    const tableTitleIndex = document.getElementById("table-title-index");
-    const filterInput = document.getElementById("filterInput");
-    const entryCountEl = document.getElementById("entryCount");
-    const indexTableBody = document.querySelector("#indexTable tbody");
-    const gdpTableBody = document.querySelector("#gdpTable tbody");
-    let pieChart, barChart;
-
-    // --------------------------
-    // Render functions
-    // --------------------------
-    function renderTabs() {
-      tabButtons.forEach(btn => {
-        if (btn.dataset.tab === currentIndex) {
-          btn.classList.add("bg-slate-900", "text-white");
-        } else {
-          btn.classList.remove("bg-slate-900", "text-white");
-        }
-      });
-    }
-
-    function renderPie() {
-      const arr = DATA_INDEX[currentIndex];
-      const ctx = document.getElementById("pieCanvas").getContext("2d");
-      if (pieChart) pieChart.destroy();
-      pieChart = new Chart(ctx, {
-        type: "doughnut",
-        data: {
-          labels: arr.map(d => d.country),
-          datasets: [{
-            data: arr.map(d => d.weight),
-            backgroundColor: arr.map((_, i) => COLORS[i % COLORS.length]),
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: true, position: "bottom" },
-            tooltip: {
-              callbacks: {
-                label: ctx => `${ctx.label}: ${numberFormat(ctx.parsed)} %`
-              }
-            }
-          },
-          cutout: "50%"
-        }
-      });
-      pieTitleIndex.textContent = currentIndex;
-    }
-
-    function renderIndexTable() {
-      const arr = DATA_INDEX[currentIndex];
-      const filter = (filterInput.value || "").trim().toLowerCase();
-      const filtered = filter ? arr.filter(d => d.country.toLowerCase().includes(filter)) : arr;
-
-      indexTableBody.innerHTML = "";
-      filtered.forEach(d => {
-        const tr = document.createElement("tr");
-        tr.className = "border-b last:border-0";
-        tr.innerHTML = `
-          <td class="py-2 pr-4">${d.country}</td>
-          <td class="py-2">${numberFormat(d.weight)}</td>
-        `;
-        indexTableBody.appendChild(tr);
-      });
-      entryCountEl.textContent = filtered.length;
-      tableTitleIndex.textContent = currentIndex;
-    }
-
-    function renderBar() {
-      const arr = DATA_GDP.map(g => {
-        const idxEntry = DATA_INDEX[currentIndex].find(x => x.country === g.country);
-        return {
-          country: g.country,
-          gdpShare: g.worldShare,
-          indexWeight: idxEntry ? idxEntry.weight : 0
-        };
-      });
-
-      const ctx = document.getElementById("barCanvas").getContext("2d");
-      if (barChart) barChart.destroy();
-      barChart = new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: arr.map(d => d.country),
-          datasets: [
-            {
-              label: "Welt‑BIP (%)",
-              data: arr.map(d => d.gdpShare),
-            },
-            {
-              label: "Index‑Gewicht (%)",
-              data: arr.map(d => d.indexWeight),
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          scales: {
-            x: { ticks: { maxRotation: 0, minRotation: 0 } },
-            y: { beginAtZero: true }
-          },
-          plugins: {
-            legend: { position: "bottom" },
-            tooltip: {
-              callbacks: {
-                label: ctx => `${ctx.dataset.label}: ${numberFormat(ctx.parsed.y)} %`
-              }
-            }
-          }
-        }
-      });
-    }
-
-    function renderGdpTable() {
-      gdpTableBody.innerHTML = "";
-      DATA_GDP.forEach(g => {
-        const tr = document.createElement("tr");
-        tr.className = "border-b last:border-0";
-        tr.innerHTML = `
-          <td class="py-2 pr-4">${g.country}</td>
-          <td class="py-2 pr-4">${numberFormat(g.gdpTUSD)}</td>
-          <td class="py-2">${numberFormat(g.worldShare)}</td>
-        `;
-        gdpTableBody.appendChild(tr);
-      });
-    }
-
-    // --------------------------
-    // Tests / Diagnostics
-    // --------------------------
-    function approxEqual(a, b, tol = 1.0) { return Math.abs(a - b) <= tol; }
-
-    function runTests() {
-      const out = [];
-      const push = (ok, msg) => out.push({ ok, msg });
-
-      // Test 1: Each index weights sum approximately to 100
-      Object.entries(DATA_INDEX).forEach(([k, arr]) => {
-        const sum = arr.reduce((s, d) => s + d.weight, 0);
-        const ok = approxEqual(sum, 100, 1.5); // allow small rounding drift
-        push(ok, `Summe der Gewichte für "${k}" ≈ 100 (ist ${sum.toFixed(2)})`);
-      });
-
-      // Test 2: GDP world share sum within a reasonable band (we list subset of countries)
-      const gdpSum = DATA_GDP.reduce((s, d) => s + d.worldShare, 0);
-      const okGdp = gdpSum > 65 && gdpSum < 85; // we expect ~72.6%
-      push(okGdp, `Summe der Welt‑BIP‑Anteile der aufgeführten Länder liegt im erwarteten Bereich (ist ${gdpSum.toFixed(1)}%)`);
-
-      // Test 3: Countries not in MSCI World should have 0 index weight in comparison (e.g., China, Indien)
-      ["China", "Indien"].forEach(c => {
-        const idxEntry = DATA_INDEX["MSCI World"].find(x => x.country === c);
-        push(!idxEntry, `In MSCI World existiert kein Gewicht für ${c} (Schwellenland)`);
-      });
-
-      // Render to DOM
-      const ul = document.getElementById("testList");
-      ul.innerHTML = "";
-      out.forEach(t => {
-        const li = document.createElement("li");
-        li.textContent = (t.ok ? "✅ " : "❌ ") + t.msg;
-        li.className = t.ok ? "text-green-700" : "text-red-700";
-        ul.appendChild(li);
-      });
-
-      // Also log to console
-      console.group("Diagnostik/Tests");
-      out.forEach(t => console[t.ok ? "log" : "error"](t.msg));
-      console.groupEnd();
-    }
-
-    // --------------------------
-    // Init
-    // --------------------------
-    function init() {
-      // default tab
-      currentIndex = "MSCI World";
-      renderTabs();
-      renderPie();
-      renderIndexTable();
-      renderBar();
-      renderGdpTable();
-      runTests();
-
-      // Events
-      tabButtons.forEach(btn => {
-        btn.addEventListener("click", () => {
-          currentIndex = btn.dataset.tab;
-          renderTabs();
-          renderPie();
-          renderIndexTable();
-          renderBar();
-        });
-      });
-      filterInput.addEventListener("input", renderIndexTable);
-    }
-
-    document.addEventListener("DOMContentLoaded", init);
-  </script>
 </body>
 </html>

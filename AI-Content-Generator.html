@@ -86,7 +86,6 @@
         const button = form.querySelector('button');
         let messages = [];  // Historie: Array von {role: 'user'/'assistant', content: '...'}
         let isFirstMessage = true;  // Flag für ersten Prompt (als Content-Generierung formatieren)
-
         function addMessage(role, content) {
             const div = document.createElement('div');
             div.classList.add('message', role);
@@ -94,27 +93,22 @@
             chatContainer.appendChild(div);
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
-
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const userInput = promptInput.value.trim();
             if (!userInput) return;
-
             let userContent = userInput;
             if (isFirstMessage) {
                 userContent = `Generiere einen detaillierten, informativen Text zu: ${userInput}. Halte es auf 500 Wörter.`;
                 isFirstMessage = false;
             }
-
             addMessage('user', userInput);  // Zeige User-Eingabe
             messages.push({ role: 'user', content: userContent });
-
             button.disabled = true;
             button.textContent = 'Generiere...';
             promptInput.value = '';
-
             try {
-                const response = await fetch('/api/groq.js', {
+                const response = await fetch('/api/groq', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -124,18 +118,14 @@
                         action: 'chat_generate'  // Neue Action für Chat-Modus
                     })
                 });
-
                 if (!response.ok) {
                     const errorData = await response.json();
                     throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
                 }
-
                 const data = await response.json();
                 const generatedText = data.content;
-
                 addMessage('assistant', generatedText);
                 messages.push({ role: 'assistant', content: generatedText });
-
             } catch (error) {
                 addMessage('assistant', `Fehler: ${error.message}. Überprüfe die Vercel-Logs.`);
             } finally {

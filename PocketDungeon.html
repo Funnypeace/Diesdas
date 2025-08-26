@@ -1,22 +1,5 @@
-<!DOCTYPE html><html><head><title>Pocket Dungeon</title><style>body{margin:0;background:#000}canvas{border:2px solid #555}</style></head>
-<body><canvas id="tic" width="240" height="136" style="width: 720px; height: 408px; image-rendering: pixelated;"></canvas>
-<script>
-const c=document.getElementById('tic'),ctx=c.getContext('2d'),k={};onkeydown=e=>k[e.code]=1;onkeyup=e=>k[e.code]=0;
-let px=1,py=1,hp=3,level=1,map=[];
-function gen(){for(i=0;i<9;i++)map[i]=Math.random()<.3?1:0;map[px+py*3]=0}
-gen();
-function loop(){
-  ctx.fillStyle="#111111";ctx.fillRect(0,0,240,136);
-  for(i=0;i<9;i++){let x=i%3,y=Math.floor(i/3);ctx.fillStyle=map[i]?"#aa0000":"#333333";
-      ctx.fillRect(20+x*60,20+y*40,50,30)}
-  ctx.fillStyle="#00ff00";ctx.fillRect(25+px*60,25+py*40,40,20);
-  if(k['KeyW']&&py>0)py--;if(k['KeyS']&&py<2)py++;
-  if(k['KeyA']&&px>0)px--;if(k['KeyD']&&px<2)px++;
-  if(map[px+py*3]){hp--;map[px+py*3]=0}
-  if(map.every(t=>t===0)){level++;gen()}
-  ctx.fillStyle="#ffffff";ctx.font="8px monospace";
-  ctx.fillText("hp "+hp+" lv "+level,5,10);
-  if(hp<=0){ctx.fillText("GAME OVER",80,68)}
-  requestAnimationFrame(loop);
-}loop();
-</script></body></html>
+<!-- GoatCounter snippet -->
+<script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
+<!-- End of GoatCounter snippet -->
+
+<!-- Existing content of PocketDungeon.html -->

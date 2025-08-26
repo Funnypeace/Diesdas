@@ -1,5 +1,575 @@
-<!-- GoatCounter snippet -->
-<script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
-<!-- End of GoatCounter snippet -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Arctic Drift</title>
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(180deg, #001122 0%, #003366 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: monospace;
+            color: white;
+        }
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        canvas {
+            border: 2px solid #555;
+            box-shadow: 0 0 30px rgba(0,150,255,0.3);
+            border-radius: 5px;
+        }
+        #controls {
+            text-align: center;
+            color: #aaa;
+            font-size: 12px;
+        }
+        #info {
+            text-align: center;
+            color: #00aaff;
+            font-size: 14px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="info">🎿 Arctic Drift - Ski Adventure 🎿</div>
+        <canvas id="gameCanvas" width="320" height="180" style="width: 640px; height: 360px; image-rendering: pixelated;"></canvas>
+        <div id="controls">
+            ← → Pfeiltasten: Lenken | Leertaste: Springen | R: Neustart<br>
+            Sammle Münzen, vermeide Bäume und Felsen!
+        </div>
+    </div>
 
-<!-- Existing content of ArcticDriftEndlessSnowboarder.html -->
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Game state
+        let gameState = {
+            player: { 
+                x: 160, 
+                y: 120, 
+                vx: 0, 
+                vy: 0,
+                speed: 3,
+                jumping: false,
+                onGround: true,
+                rotation: 0
+            },
+            obstacles: [],
+            coins: [],
+            particles: [],
+            snowflakes: [],
+            clouds: [],
+            score: 0,
+            lives: 3,
+            gameSpeed: 2,
+            gameOver: false,
+            distance: 0,
+            combo: 0,
+            powerUpTime: 0
+        };
+        
+        const keys = {};
+        let lastTime = 0;
+        let frame = 0;
+        
+        // Input handling
+        document.addEventListener('keydown', (e) => {
+            keys[e.code] = true;
+            
+            // Jump
+            if (e.code === 'Space' && gameState.player.onGround && !gameState.gameOver) {
+                gameState.player.vy = -8;
+                gameState.player.jumping = true;
+                gameState.player.onGround = false;
+                addParticles(gameState.player.x, gameState.player.y + 10, '#ffffff', 5);
+            }
+            
+            // Restart
+            if (e.code === 'KeyR' && gameState.gameOver) {
+                initGame();
+            }
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            keys[e.code] = false;
+        });
+        
+        // Particle system
+        class Particle {
+            constructor(x, y, color, vx = 0, vy = 0, life = 60, size = 2) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.vx = vx;
+                this.vy = vy;
+                this.life = life;
+                this.maxLife = life;
+                this.size = size;
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life--;
+                this.vy += 0.2; // gravity
+                this.vx *= 0.98; // friction
+            }
+            
+            draw() {
+                const alpha = this.life / this.maxLife;
+                ctx.globalAlpha = alpha;
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x - this.size/2, this.y - this.size/2, this.size, this.size);
+                ctx.globalAlpha = 1;
+            }
+        }
+        
+        function addParticles(x, y, color, count = 5, spread = 1) {
+            for (let i = 0; i < count; i++) {
+                const vx = (Math.random() - 0.5) * 6 * spread;
+                const vy = (Math.random() - 0.5) * 6 * spread - 2;
+                const size = Math.random() * 3 + 1;
+                gameState.particles.push(new Particle(x, y, color, vx, vy, 30 + Math.random() * 30, size));
+            }
+        }
+        
+        function initGame() {
+            gameState = {
+                player: { 
+                    x: 160, 
+                    y: 120, 
+                    vx: 0, 
+                    vy: 0,
+                    speed: 3,
+                    jumping: false,
+                    onGround: true,
+                    rotation: 0
+                },
+                obstacles: [],
+                coins: [],
+                particles: [],
+                snowflakes: [],
+                clouds: [],
+                score: 0,
+                lives: 3,
+                gameSpeed: 2,
+                gameOver: false,
+                distance: 0,
+                combo: 0,
+                powerUpTime: 0
+            };
+            
+            // Initialize snowflakes
+            for (let i = 0; i < 80; i++) {
+                gameState.snowflakes.push({
+                    x: Math.random() * 320,
+                    y: Math.random() * 180,
+                    vx: Math.random() * 2 - 1,
+                    vy: Math.random() * 2 + 1,
+                    size: Math.random() * 2 + 1
+                });
+            }
+            
+            // Initialize clouds
+            for (let i = 0; i < 5; i++) {
+                gameState.clouds.push({
+                    x: Math.random() * 400,
+                    y: Math.random() * 60 + 10,
+                    size: Math.random() * 30 + 20,
+                    speed: Math.random() * 0.5 + 0.2
+                });
+            }
+        }
+        
+        function spawnObstacle() {
+            if (Math.random() < 0.02) {
+                const type = Math.random() < 0.7 ? 'tree' : 'rock';
+                gameState.obstacles.push({
+                    x: 320,
+                    y: type === 'tree' ? 105 : 135,
+                    width: type === 'tree' ? 8 : 12,
+                    height: type === 'tree' ? 25 : 15,
+                    type: type
+                });
+            }
+        }
+        
+        function spawnCoin() {
+            if (Math.random() < 0.015) {
+                gameState.coins.push({
+                    x: 320,
+                    y: Math.random() < 0.5 ? 90 : 120,
+                    collected: false,
+                    rotation: 0
+                });
+            }
+        }
+        
+        function updatePlayer() {
+            const player = gameState.player;
+            
+            // Horizontal movement
+            if (keys['ArrowLeft']) {
+                player.vx = Math.max(player.vx - 0.5, -player.speed);
+                player.rotation = Math.max(player.rotation - 0.1, -0.3);
+            } else if (keys['ArrowRight']) {
+                player.vx = Math.min(player.vx + 0.5, player.speed);
+                player.rotation = Math.min(player.rotation + 0.1, 0.3);
+            } else {
+                player.vx *= 0.9;
+                player.rotation *= 0.9;
+            }
+            
+            player.x += player.vx;
+            
+            // Vertical movement (gravity and jumping)
+            if (!player.onGround) {
+                player.vy += 0.5; // gravity
+                player.y += player.vy;
+                
+                // Ground collision
+                if (player.y >= 120) {
+                    player.y = 120;
+                    player.vy = 0;
+                    player.onGround = true;
+                    player.jumping = false;
+                    if (Math.abs(player.vy) > 3) {
+                        addParticles(player.x, player.y + 10, '#ffffff', 3);
+                    }
+                }
+            }
+            
+            // Boundary checking
+            if (player.x < 10) player.x = 10;
+            if (player.x > 310) player.x = 310;
+            
+            // Power-up timer
+            if (gameState.powerUpTime > 0) {
+                gameState.powerUpTime--;
+            }
+        }
+        
+        function updateObstacles() {
+            gameState.obstacles = gameState.obstacles.filter(obstacle => {
+                obstacle.x -= gameState.gameSpeed + 1;
+                
+                // Collision detection
+                if (!gameState.powerUpTime && 
+                    Math.abs(gameState.player.x - obstacle.x) < obstacle.width + 8 && 
+                    Math.abs(gameState.player.y - obstacle.y) < obstacle.height + 8) {
+                    
+                    gameState.lives--;
+                    gameState.combo = 0;
+                    addParticles(obstacle.x, obstacle.y, '#ff0000', 10, 2);
+                    
+                    if (gameState.lives <= 0) {
+                        gameState.gameOver = true;
+                    } else {
+                        // Brief invincibility
+                        gameState.powerUpTime = 60;
+                    }
+                }
+                
+                return obstacle.x > -20;
+            });
+        }
+        
+        function updateCoins() {
+            gameState.coins = gameState.coins.filter(coin => {
+                coin.x -= gameState.gameSpeed;
+                coin.rotation += 0.1;
+                
+                // Collection detection
+                if (!coin.collected && 
+                    Math.abs(gameState.player.x - coin.x) < 15 && 
+                    Math.abs(gameState.player.y - coin.y) < 15) {
+                    
+                    coin.collected = true;
+                    gameState.score += 10 + gameState.combo;
+                    gameState.combo++;
+                    addParticles(coin.x, coin.y, '#ffff00', 8, 1.5);
+                    
+                    // Bonus for combo
+                    if (gameState.combo % 5 === 0) {
+                        addParticles(gameState.player.x, gameState.player.y, '#00ff00', 15, 2);
+                    }
+                }
+                
+                return coin.x > -10 && !coin.collected;
+            });
+        }
+        
+        function updateEnvironment() {
+            // Update snowflakes
+            gameState.snowflakes.forEach(flake => {
+                flake.x += flake.vx - gameState.gameSpeed * 0.3;
+                flake.y += flake.vy;
+                
+                if (flake.x < 0) flake.x = 320;
+                if (flake.y > 180) flake.y = 0;
+            });
+            
+            // Update clouds
+            gameState.clouds.forEach(cloud => {
+                cloud.x -= cloud.speed;
+                if (cloud.x < -cloud.size) {
+                    cloud.x = 320 + cloud.size;
+                    cloud.y = Math.random() * 60 + 10;
+                }
+            });
+            
+            // Update particles
+            gameState.particles = gameState.particles.filter(particle => {
+                particle.update();
+                return particle.life > 0;
+            });
+            
+            // Increase difficulty over time
+            if (frame % 600 === 0) {
+                gameState.gameSpeed += 0.2;
+            }
+            
+            // Update distance and score
+            gameState.distance += gameState.gameSpeed;
+            if (frame % 30 === 0) {
+                gameState.score += Math.floor(gameState.gameSpeed);
+            }
+        }
+        
+        function drawBackground() {
+            // Sky gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, 180);
+            gradient.addColorStop(0, '#87CEEB');
+            gradient.addColorStop(1, '#B0E0E6');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 320, 180);
+            
+            // Mountains in background
+            ctx.fillStyle = '#696969';
+            ctx.beginPath();
+            ctx.moveTo(0, 80);
+            ctx.lineTo(100, 40);
+            ctx.lineTo(180, 60);
+            ctx.lineTo(250, 30);
+            ctx.lineTo(320, 50);
+            ctx.lineTo(320, 180);
+            ctx.lineTo(0, 180);
+            ctx.fill();
+            
+            // Clouds
+            gameState.clouds.forEach(cloud => {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.beginPath();
+                ctx.arc(cloud.x, cloud.y, cloud.size, 0, Math.PI * 2);
+                ctx.arc(cloud.x + cloud.size * 0.6, cloud.y, cloud.size * 0.8, 0, Math.PI * 2);
+                ctx.arc(cloud.x - cloud.size * 0.6, cloud.y, cloud.size * 0.7, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            
+            // Ground
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 130, 320, 50);
+            
+            // Snow texture on ground
+            ctx.fillStyle = 'rgba(240, 248, 255, 0.8)';
+            for (let i = 0; i < 10; i++) {
+                const x = (frame * 2 + i * 32) % 320;
+                ctx.fillRect(x, 130, 20, 50);
+            }
+        }
+        
+        function drawSnow() {
+            ctx.fillStyle = '#ffffff';
+            gameState.snowflakes.forEach(flake => {
+                ctx.globalAlpha = 0.8;
+                ctx.fillRect(flake.x, flake.y, flake.size, flake.size);
+            });
+            ctx.globalAlpha = 1;
+        }
+        
+        function drawPlayer() {
+            const player = gameState.player;
+            
+            ctx.save();
+            ctx.translate(player.x, player.y);
+            ctx.rotate(player.rotation);
+            
+            // Player body (skier)
+            if (gameState.powerUpTime > 0 && gameState.powerUpTime % 10 < 5) {
+                ctx.fillStyle = '#ffaa00'; // Flashing when invincible
+            } else {
+                ctx.fillStyle = '#ff6b6b'; // Red jacket
+            }
+            ctx.fillRect(-4, -8, 8, 12);
+            
+            // Head
+            ctx.fillStyle = '#ffdbac';
+            ctx.fillRect(-3, -12, 6, 6);
+            
+            // Skis
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(-6, 2, 12, 3);
+            ctx.fillRect(-1, -5, 2, 15);
+            
+            // Ski poles
+            ctx.strokeStyle = '#666666';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(-8, -2);
+            ctx.lineTo(-10, 8);
+            ctx.moveTo(8, -2);
+            ctx.lineTo(10, 8);
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+        
+        function drawObstacles() {
+            gameState.obstacles.forEach(obstacle => {
+                if (obstacle.type === 'tree') {
+                    // Tree trunk
+                    ctx.fillStyle = '#8B4513';
+                    ctx.fillRect(obstacle.x - 2, obstacle.y, 4, obstacle.height);
+                    // Tree foliage
+                    ctx.fillStyle = '#228B22';
+                    ctx.beginPath();
+                    ctx.moveTo(obstacle.x, obstacle.y - 5);
+                    ctx.lineTo(obstacle.x - 8, obstacle.y + 15);
+                    ctx.lineTo(obstacle.x + 8, obstacle.y + 15);
+                    ctx.fill();
+                } else {
+                    // Rock
+                    ctx.fillStyle = '#696969';
+                    ctx.fillRect(obstacle.x - obstacle.width/2, obstacle.y - obstacle.height/2, 
+                                obstacle.width, obstacle.height);
+                    // Rock highlight
+                    ctx.fillStyle = '#A9A9A9';
+                    ctx.fillRect(obstacle.x - obstacle.width/2 + 2, obstacle.y - obstacle.height/2 + 2, 
+                                obstacle.width - 4, 4);
+                }
+            });
+        }
+        
+        function drawCoins() {
+            gameState.coins.forEach(coin => {
+                ctx.save();
+                ctx.translate(coin.x, coin.y);
+                ctx.rotate(coin.rotation);
+                
+                ctx.fillStyle = '#FFD700';
+                ctx.beginPath();
+                ctx.arc(0, 0, 6, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = '#FFA500';
+                ctx.beginPath();
+                ctx.arc(0, 0, 4, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.restore();
+            });
+        }
+        
+        function drawUI() {
+            // Semi-transparent background for UI
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillRect(0, 0, 320, 30);
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '12px monospace';
+            
+            // Score
+            ctx.fillText(`Score: ${gameState.score}`, 10, 15);
+            
+            // Lives
+            ctx.fillText('Lives: ', 10, 25);
+            for (let i = 0; i < gameState.lives; i++) {
+                ctx.fillStyle = '#ff0000';
+                ctx.fillRect(55 + i * 15, 18, 10, 8);
+            }
+            
+            // Distance
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText(`Distance: ${Math.floor(gameState.distance/10)}m`, 150, 15);
+            
+            // Combo
+            if (gameState.combo > 0) {
+                ctx.fillStyle = '#ffff00';
+                ctx.fillText(`Combo: x${gameState.combo}`, 150, 25);
+            }
+            
+            // Speed
+            ctx.fillStyle = '#00aaff';
+            ctx.fillText(`Speed: ${gameState.gameSpeed.toFixed(1)}`, 250, 15);
+        }
+        
+        function drawGameOver() {
+            if (!gameState.gameOver) return;
+            
+            // Dark overlay
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+            ctx.fillRect(0, 0, 320, 180);
+            
+            // Game Over text
+            ctx.fillStyle = '#ff0000';
+            ctx.font = '24px monospace';
+            ctx.fillText('GAME OVER', 90, 70);
+            
+            // Final stats
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '14px monospace';
+            ctx.fillText(`Final Score: ${gameState.score}`, 100, 95);
+            ctx.fillText(`Distance: ${Math.floor(gameState.distance/10)}m`, 100, 110);
+            ctx.fillText(`Max Speed: ${gameState.gameSpeed.toFixed(1)}`, 100, 125);
+            
+            // Restart instruction
+            ctx.fillStyle = '#ffff00';
+            ctx.font = '12px monospace';
+            ctx.fillText('Press R to restart', 110, 150);
+        }
+        
+        function gameLoop(currentTime) {
+            frame++;
+            
+            if (!gameState.gameOver) {
+                updatePlayer();
+                updateObstacles();
+                updateCoins();
+                updateEnvironment();
+                
+                // Spawn new objects
+                spawnObstacle();
+                spawnCoin();
+            }
+            
+            // Drawing
+            drawBackground();
+            drawSnow();
+            drawObstacles();
+            drawCoins();
+            drawPlayer();
+            
+            // Draw particles
+            gameState.particles.forEach(particle => particle.draw());
+            
+            drawUI();
+            drawGameOver();
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Initialize and start game
+        initGame();
+        requestAnimationFrame(gameLoop);
+    </script>
+</body>
+</html>

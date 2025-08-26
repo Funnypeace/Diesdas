@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="utf-8" />
@@ -9,6 +9,9 @@
     .prose p { margin: 0.4rem 0; }
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
   </style>
+  <!-- GoatCounter -->
+  <script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
+  <!-- End GoatCounter -->
 </head>
 <body class="bg-slate-50 text-slate-900">
   <main class="max-w-3xl mx-auto p-6">
@@ -16,41 +19,32 @@
       <h1 class="text-2xl font-bold">News‑Zusammenfassung: Firecrawl → Groq</h1>
       <p class="text-sm text-slate-600">Dieses Frontend nutzt <span class="font-semibold">/api/groq</span> (serverseitig) – keine Client‑Keys, kein Demo‑Modus.</p>
     </header>
-
     <section class="bg-white rounded-2xl shadow p-4 mb-4">
       <label class="block text-sm font-medium mb-2">Quellen (eine Domain oder URL pro Zeile)</label>
-      <textarea id="sources" class="w-full h-32 rounded-xl border border-slate-200 p-3 text-sm mono" placeholder="https://www.tagesschau.de
-https://www.zeit.de/index
-spiegel.de/politik"></textarea>
-
+      <textarea id="sources" class="w-full h-32 rounded-xl border border-slate-200 p-3 text-sm mono" placeholder="https://www.tagesschau.de\nhttps://www.zeit.de/index\nspiegel.de/politik"></textarea>
       <label class="block text-sm font-medium mt-4 mb-2">Themen/Keywords (optional)</label>
       <input id="keywords" class="w-full rounded-xl border border-slate-200 p-3 text-sm" placeholder="wirtschaft, politik, energie …" />
-
       <div class="flex items-center gap-3 mt-4">
         <button id="btnSummarize" class="px-4 py-2 rounded-xl bg-indigo-600 text-white">Zusammenfassen (3 Sätze)</button>
         <button id="btnClear" class="px-4 py-2 rounded-xl border">Zurücksetzen</button>
       </div>
       <p class="text-xs text-slate-500 mt-2">Server‑Route: <span class="mono">/api/groq</span>. Die Route übernimmt Firecrawl‑Suche/Scrapes serverseitig (wenn ein Query übergeben wird) und lässt Groq zusammenfassen.</p>
     </section>
-
     <section class="bg-white rounded-2xl shadow p-4 mb-4">
       <h2 class="font-semibold mb-2">Zusammenfassung</h2>
       <div id="summary" class="prose text-sm text-slate-800 bg-slate-50 rounded-xl p-3 min-h-[6rem]"></div>
     </section>
-
     <section class="bg-white rounded-2xl shadow p-4">
       <h3 class="font-semibold mb-2">Protokoll</h3>
       <div id="log" class="mono text-xs whitespace-pre-wrap bg-slate-50 rounded-xl p-3 h-40 overflow-auto"></div>
     </section>
   </main>
-
   <script>
     // ----------------------
     // Helpers
     // ----------------------
     const $ = (id) => document.getElementById(id);
     const log = (msg) => { const el = $("log"); el.textContent += `[${new Date().toLocaleTimeString()}] ${msg}\n`; el.scrollTop = el.scrollHeight; };
-
     function toSiteParts(lines) {
       const parts = [];
       for (let raw of lines) {
@@ -59,108 +53,85 @@ spiegel.de/politik"></textarea>
         try {
           // Sicher per URL-Parser, füge Protokoll hinzu wenn nötig
           const u = new URL(raw.startsWith('http') ? raw : ('https://' + raw));
-          const host = u.hostname.replace(/^www\./, '');
-          if (host) parts.push(`site:${host}`);
-        } catch {
-          // Fallback ohne URL-Parser – Regex korrekt escapen
-          const host = raw
-            .replace(/^https?:\/\/+/, '')
-            .replace(/^www\./, '')
-            .split('/')[0];
-          if (host) parts.push(`site:${host}`);
+          const host = u.hostname.replace(/^www./, '');
+          parts.push({ hostname: host, fullUrl: u.href });
+        } catch (e) {
+          log(`Ungültige URL übersprungen: ${raw}`);
         }
       }
-      return [...new Set(parts)];
+      return parts;
     }
 
-    function buildQuery(){
-      const srcLines = ($("sources").value || '').split(/\n+/).map(s => s.trim()).filter(Boolean);
-      const sites = toSiteParts(srcLines);
-      const kw = ($("keywords").value || '').trim();
-      if (!sites.length && !kw) return '';
-      if (!kw) return sites.join(' OR ');
-      // (site:X kw) OR (site:Y kw)
-      const grouped = sites.length ? sites.map(s => `(${s} ${kw})`).join(' OR ') : kw;
-      return grouped;
-    }
+    // ----------------------
+    // Main Logic
+    // ----------------------
+    $("btnSummarize").addEventListener("click", async () => {
+      const sourcesText = $("sources").value.trim();
+      const keywords = $("keywords").value.trim();
+      
+      if (!sourcesText) {
+        alert("Bitte geben Sie mindestens eine Quelle ein.");
+        return;
+      }
 
-    function enforceThreeSentences(text) {
-      const sentences = (text || '').match(/[^.!?\n]+[.!?]/g) || [text];
-      return sentences.slice(0,3).join(' ').trim();
-    }
+      const lines = sourcesText.split("\n").filter(l => l.trim());
+      const siteParts = toSiteParts(lines);
+      
+      if (siteParts.length === 0) {
+        alert("Keine gültigen URLs gefunden.");
+        return;
+      }
 
-    async function postGroq(payload) {
-      async function tryPost(url) {
-        const r = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+      log(`Starte Zusammenfassung für ${siteParts.length} Quelle(n)...`);
+      $("summary").innerHTML = "<em>Lädt...</em>";
+      $("btnSummarize").disabled = true;
+      
+      try {
+        const payload = {
+          sites: siteParts.map(p => p.hostname),
+          keywords: keywords || ""
+        };
+        
+        log(`Sende Anfrage an /api/groq...`);
+        const response = await fetch("/api/groq", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
-        if (!r.ok) throw new Error(`HTTP ${r.status}: ` + (await r.text()).slice(0,400));
-        return r.json();
-      }
-      try { return await tryPost('/api/groq'); }
-      catch (e1) { console.warn('Primary failed:', e1.message); return await tryPost('/api/groq.js'); }
-    }
-
-    // ----------------------
-    // Events
-    // ----------------------
-    $("btnClear").addEventListener('click', () => {
-      $("summary").textContent = '';
-      $("log").textContent = '';
-      $("keywords").value = '';
-      $("sources").value = '';
-    });
-
-    $("btnSummarize").addEventListener('click', async () => {
-      const query = buildQuery();
-      const srcLines = ($("sources").value || '').split(/\n+/).map(s => s.trim()).filter(Boolean);
-      if (!query && !srcLines.length) { alert('Bitte mindestens eine Quelle oder ein Keyword angeben.'); return; }
-
-      $("summary").textContent = 'Erstelle Zusammenfassung …';
-      log('Sende Anfrage an /api/groq …');
-
-      try {
-        const body = {
-          action: 'news_summary',
-          model: 'llama-3.3-70b-versatile',
-          temperature: 0.2,
-          top_p: 1,
-          max_tokens: 300,
-          stream: false,
-          query,
-          sources: srcLines,
-          messages: [
-            {
-              role: 'user',
-              content: 'Fasse die wichtigsten Nachrichten aus den Eingangsdaten präzise und neutral in höchstens drei Sätzen zusammen. Wenn keine relevanten Treffer vorhanden sind, schreibe: "Keine relevanten Nachrichten gefunden."'
-            }
-          ]
-        };
-
-        const data = await postGroq(body);
-        const content = data?.content || '';
-        $("summary").textContent = enforceThreeSentences(content);
-
-        if (data?.debug) {
-          const info = [];
-          if (typeof data.debug.firecrawlUsed !== 'undefined') info.push(`Firecrawl: ${data.debug.firecrawlUsed ? 'aktiv' : 'inaktiv'}`);
-          if (Array.isArray(data.debug.targets)) info.push(`Treffer: ${data.debug.targets.length}`);
-          if (typeof data.debug.scrapedCount === 'number') info.push(`Scrapes: ${data.debug.scrapedCount}`);
-          if (info.length) log(info.join(' | '));
-          if (Array.isArray(data.debug.targets) && data.debug.targets.length) {
-            log('URLs:');
-            data.debug.targets.forEach(u => log(' - ' + u));
-          }
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        log(`Fertig. Modell: ${data?.model || 'n/a'} | Tokens: ${data?.usage?.total_tokens || 'n/a'}`);
-      } catch (e) {
-        $("summary").textContent = '';
-        log('Fehler: ' + (e?.message || e));
-        alert('Fehler bei der Zusammenfassung. Details siehe Protokoll.');
+        
+        const data = await response.json();
+        log(`Antwort erhalten: ${JSON.stringify(data, null, 2)}`);
+        
+        if (data.summary) {
+          $("summary").innerHTML = `<p>${data.summary}</p>`;
+          log("Zusammenfassung erfolgreich erstellt.");
+        } else {
+          $("summary").innerHTML = "<em>Keine Zusammenfassung erhalten.</em>";
+          log("Warnung: Keine Zusammenfassung in der Antwort.");
+        }
+        
+      } catch (error) {
+        log(`Fehler: ${error.message}`);
+        $("summary").innerHTML = `<em>Fehler: ${error.message}</em>`;
+      } finally {
+        $("btnSummarize").disabled = false;
       }
     });
+
+    $("btnClear").addEventListener("click", () => {
+      $("sources").value = "";
+      $("keywords").value = "";
+      $("summary").innerHTML = "";
+      $("log").textContent = "";
+      log("Felder zurückgesetzt.");
+    });
+
+    // Initial log
+    log("News-Zusammenfassung bereit.");
   </script>
 </body>
 </html>

@@ -35,433 +35,46 @@
             border-radius: 8px;
         }
     </style>
+    <!-- GoatCounter -->
+    <script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
+    <!-- End GoatCounter -->
 </head>
 <body>
-<div id="controls">
-    <div>🖱️ Maus: Kamera bewegen</div>
-    <div>🖼️ Klick: Region info</div>
-    <div>⚡ Ohne externe Texturen</div>
-</div>
-<div id="info-popup"></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>
-console.log('Starte 3D Earth Demo...');
-
-// Prozedurale Texturen erstellen
-function createEarthTexture() {
-    const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 256;
-    const ctx = canvas.getContext('2d');
-    
-    // Kontinente (sehr vereinfacht)
-    ctx.fillStyle = '#1565c0'; // Ozean
-    ctx.fillRect(0, 0, 512, 256);
-    
-    // Kontinente in Grün
-    ctx.fillStyle = '#2e7d32';
-    
-    // Nordamerika
-    ctx.fillRect(80, 60, 60, 40);
-    ctx.fillRect(70, 100, 80, 60);
-    
-    // Südamerika
-    ctx.fillRect(120, 150, 40, 80);
-    
-    // Europa
-    ctx.fillRect(220, 70, 30, 25);
-    
-    // Afrika
-    ctx.fillRect(240, 95, 35, 80);
-    
-    // Asien
-    ctx.fillRect(280, 50, 120, 70);
-    
-    // Australien
-    ctx.fillRect(350, 160, 40, 25);
-    
-    // Grönland
-    ctx.fillRect(160, 30, 25, 30);
-    
-    // Noise für Realismus
-    const imageData = ctx.getImageData(0, 0, 512, 256);
-    const data = imageData.data;
-    
-    for (let i = 0; i < data.length; i += 4) {
-        const noise = (Math.random() - 0.5) * 30;
-        data[i] = Math.max(0, Math.min(255, data[i] + noise));
-        data[i + 1] = Math.max(0, Math.min(255, data[i + 1] + noise));
-        data[i + 2] = Math.max(0, Math.min(255, data[i + 2] + noise));
-    }
-    
-    ctx.putImageData(imageData, 0, 0);
-    return new THREE.CanvasTexture(canvas);
-}
-
-function createNightTexture() {
-    const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 256;
-    const ctx = canvas.getContext('2d');
-    
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, 512, 256);
-    
-    // Stadtlichter
-    ctx.fillStyle = '#ffeb3b';
-    const cities = [
-        [100, 80], [120, 100], [140, 85], // Nordamerika
-        [240, 85], [260, 90], [280, 95], // Europa
-        [320, 80], [340, 85], [360, 90], // Asien
-        [130, 170], [140, 180], // Südamerika
-        [250, 120], [270, 130], // Afrika
-        [380, 170] // Australien
-    ];
-    
-    cities.forEach(([x, y]) => {
-        ctx.beginPath();
-        ctx.arc(x, y, 2, 0, Math.PI * 2);
-        ctx.fill();
+    <div id="controls">
+        <div>🖱️ Maus: Kamera bewegen</div>
+        <div>🖼️ Klick: Region info</div>
+        <div>⚡ Ohne externe Texturen</div>
+    </div>
+    <div id="info-popup"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        console.log('Starte 3D Earth Demo...');
         
-        // Kleinere Lichter drumherum
-        for (let i = 0; i < 5; i++) {
-            ctx.beginPath();
-            ctx.arc(x + (Math.random() - 0.5) * 20, y + (Math.random() - 0.5) * 20, 1, 0, Math.PI * 2);
-            ctx.fill();
-        }
-    });
-    
-    return new THREE.CanvasTexture(canvas);
-}
-
-function createCloudTexture() {
-    const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 256;
-    const ctx = canvas.getContext('2d');
-    
-    ctx.fillStyle = 'rgba(255, 255, 255, 0)';
-    ctx.fillRect(0, 0, 512, 256);
-    
-    // Wolken
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-    for (let i = 0; i < 50; i++) {
-        const x = Math.random() * 512;
-        const y = Math.random() * 256;
-        const size = 10 + Math.random() * 30;
-        
-        ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI * 2);
-        ctx.fill();
-    }
-    
-    return new THREE.CanvasTexture(canvas);
-}
-
-function createStarTexture() {
-    const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 512;
-    const ctx = canvas.getContext('2d');
-    
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, 512, 512);
-    
-    // Sterne
-    ctx.fillStyle = '#fff';
-    for (let i = 0; i < 300; i++) {
-        const x = Math.random() * 512;
-        const y = Math.random() * 512;
-        const size = Math.random() * 2;
-        
-        ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI * 2);
-        ctx.fill();
-    }
-    
-    return new THREE.CanvasTexture(canvas);
-}
-
-function createMoonTexture() {
-    const canvas = document.createElement('canvas');
-    canvas.width = 256;
-    canvas.height = 256;
-    const ctx = canvas.getContext('2d');
-    
-    ctx.fillStyle = '#888';
-    ctx.fillRect(0, 0, 256, 256);
-    
-    // Krater
-    ctx.fillStyle = '#666';
-    for (let i = 0; i < 30; i++) {
-        const x = Math.random() * 256;
-        const y = Math.random() * 256;
-        const size = 5 + Math.random() * 15;
-        
-        ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI * 2);
-        ctx.fill();
-    }
-    
-    return new THREE.CanvasTexture(canvas);
-}
-
-function initScene() {
-    console.log('Initialisiere Scene...');
-    
-    // Texturen erstellen
-    const earthTexture = createEarthTexture();
-    const nightTexture = createNightTexture();
-    const cloudTexture = createCloudTexture();
-    const starTexture = createStarTexture();
-    const moonTexture = createMoonTexture();
-    
-    // --- Grundlegendes Setup ---
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    document.body.appendChild(renderer.domElement);
-    
-    console.log('Renderer erstellt');
-    
-    // --- Starfield ---
-    const starGeometry = new THREE.SphereGeometry(50, 32, 32);
-    const starMaterial = new THREE.MeshBasicMaterial({ 
-        map: starTexture, 
-        side: THREE.BackSide 
-    });
-    const stars = new THREE.Mesh(starGeometry, starMaterial);
-    scene.add(stars);
-    
-    // --- Lichter ---
-    const sunLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    sunLight.castShadow = true;
-    sunLight.shadow.mapSize.width = 1024;
-    sunLight.shadow.mapSize.height = 1024;
-    sunLight.position.set(5, 2, 5);
-    scene.add(sunLight);
-    
-    const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
-    scene.add(ambientLight);
-    
-    // --- Erde ---
-    const earthRadius = 1;
-    const earthGeometry = new THREE.SphereGeometry(earthRadius, 64, 64);
-    
-    // Custom Earth Material mit Tag/Nacht-Effekt
-    const earthMaterial = new THREE.ShaderMaterial({
-        uniforms: {
-            dayTexture: { value: earthTexture },
-            nightTexture: { value: nightTexture },
-            sunDirection: { value: new THREE.Vector3(1, 0, 0) }
-        },
-        vertexShader: `
-            varying vec2 vUv;
-            varying vec3 vNormal;
-            varying vec3 vWorldPosition;
+        // Prozedurale Texturen erstellen
+        function createEarthTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 256;
+            const ctx = canvas.getContext('2d');
             
-            void main() {
-                vUv = uv;
-                vNormal = normalize(normalMatrix * normal);
-                vWorldPosition = (modelMatrix * vec4(position, 1.0)).xyz;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-            }
-        `,
-        fragmentShader: `
-            uniform sampler2D dayTexture;
-            uniform sampler2D nightTexture;
-            uniform vec3 sunDirection;
+            // Kontinente (sehr vereinfacht)
+            ctx.fillStyle = '#1565c0'; // Ozean
+            ctx.fillRect(0, 0, 512, 256);
             
-            varying vec2 vUv;
-            varying vec3 vNormal;
-            varying vec3 vWorldPosition;
+            // Kontinente in Grün
+            ctx.fillStyle = '#2e7d32';
             
-            void main() {
-                vec3 dayColor = texture2D(dayTexture, vUv).rgb;
-                vec3 nightColor = texture2D(nightTexture, vUv).rgb;
-                
-                float cosineAngle = dot(normalize(vNormal), normalize(sunDirection));
-                float mixFactor = smoothstep(-0.2, 0.2, cosineAngle);
-                
-                vec3 color = mix(nightColor * 0.5, dayColor, mixFactor);
-                
-                gl_FragColor = vec4(color, 1.0);
-            }
-        `
-    });
-    
-    const earth = new THREE.Mesh(earthGeometry, earthMaterial);
-    earth.castShadow = true;
-    earth.receiveShadow = true;
-    scene.add(earth);
-    
-    // --- Atmosphärischer Glow ---
-    const atmosphereGeometry = new THREE.SphereGeometry(earthRadius * 1.05, 32, 32);
-    const atmosphereMaterial = new THREE.ShaderMaterial({
-        uniforms: {
-            "c": { value: 0.8 },
-            "p": { value: 3.0 },
-            glowColor: { value: new THREE.Color(0x55ccff) }
-        },
-        vertexShader: `
-            varying vec3 vNormal;
-            void main() {
-                vNormal = normalize(normalMatrix * normal);
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-            }
-        `,
-        fragmentShader: `
-            uniform float c;
-            uniform float p;
-            uniform vec3 glowColor;
-            varying vec3 vNormal;
-            void main() {
-                float intensity = pow(c - dot(vNormal, vec3(0.0, 0.0, 1.0)), p);
-                gl_FragColor = vec4(glowColor, intensity * 0.5);
-            }
-        `,
-        side: THREE.BackSide,
-        blending: THREE.AdditiveBlending,
-        transparent: true
-    });
-    const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
-    scene.add(atmosphere);
-    
-    // --- Clouds ---
-    const cloudGeometry = new THREE.SphereGeometry(earthRadius + 0.01, 32, 32);
-    const cloudMaterial = new THREE.MeshPhongMaterial({
-        map: cloudTexture,
-        transparent: true,
-        opacity: 0.6,
-        depthWrite: false
-    });
-    const clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
-    scene.add(clouds);
-    
-    // --- Mond ---
-    const moonRadius = 0.2;
-    const moonGeometry = new THREE.SphereGeometry(moonRadius, 32, 32);
-    const moonMaterial = new THREE.MeshPhongMaterial({
-        map: moonTexture,
-        shininess: 5
-    });
-    const moon = new THREE.Mesh(moonGeometry, moonMaterial);
-    scene.add(moon);
-    
-    // --- Mouse Controls ---
-    let mouseX = 0, mouseY = 0;
-    let targetRotationX = 0, targetRotationY = 0;
-    
-    document.addEventListener('mousemove', (event) => {
-        mouseX = (event.clientX - window.innerWidth / 2) * 0.001;
-        mouseY = (event.clientY - window.innerHeight / 2) * 0.001;
-    });
-    
-    // --- Info-Popup ---
-    const infoPopup = document.getElementById('info-popup');
-    function showInfo(txt) {
-        infoPopup.innerHTML = txt;
-        infoPopup.style.display = 'block';
-        setTimeout(() => infoPopup.style.display = 'none', 3000);
-    }
-    
-    // --- Click-Handler ---
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-    
-    function onClick(event) {
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        raycaster.setFromCamera(mouse, camera);
-        
-        const intersects = raycaster.intersectObject(earth);
-        if (intersects.length > 0) {
-            const p = intersects[0].point.clone().normalize();
-            const lat = 90 - Math.acos(p.y) * 180 / Math.PI;
-            const lon = ((Math.atan2(p.z, p.x)) * 180 / Math.PI + 360) % 360 - 180;
+            // Nordamerika
+            ctx.fillRect(80, 60, 60, 40);
+            ctx.fillRect(70, 100, 80, 60);
             
-            let region = "Ozean";
-            if (lat > 60) region = "Arktis";
-            else if (lat < -60) region = "Antarktis";
-            else if (lat > 30 && lon > -30 && lon < 70) region = "Europa/Afrika";
-            else if (lat > 20 && lat < 70 && lon > -150 && lon < -50) region = "Nordamerika";
-            else if (lat < -10 && lon > -90 && lon < -30) region = "Südamerika";
-            else if (lat > 10 && lat < 70 && lon > 70 && lon < 180) region = "Asien";
-            else if (lat < -10 && lon > 110 && lon < 180) region = "Australien";
+            // Südamerika
+            ctx.fillRect(120, 150, 40, 80);
             
-            showInfo(`<b>🌍 Koordinaten:</b><br>Breitengrad: ${lat.toFixed(1)}°<br>Längengrad: ${lon.toFixed(1)}°<br><b>Region:</b> ${region}`);
-        }
-    }
-    
-    window.addEventListener('click', onClick);
-    
-    // --- Kamera Position ---
-    camera.position.set(0, 0, 3);
-    
-    // --- Animation Loop ---
-    let startTime = Date.now();
-    
-    function animate() {
-        requestAnimationFrame(animate);
-        
-        const elapsed = (Date.now() - startTime) / 1000;
-        
-        // Erde rotieren
-        earth.rotation.y += 0.003;
-        clouds.rotation.y += 0.004;
-        
-        // Sonne bewegen
-        const sunAngle = elapsed * 0.1;
-        const sunPos = new THREE.Vector3(
-            Math.cos(sunAngle) * 5,
-            Math.sin(sunAngle) * 2,
-            Math.sin(sunAngle) * 5
-        );
-        sunLight.position.copy(sunPos);
-        
-        // Sonne-Richtung für Shader aktualisieren
-        earthMaterial.uniforms.sunDirection.value.copy(sunPos.normalize());
-        
-        // Mond bewegen
-        const moonAngle = elapsed * 0.05;
-        moon.position.set(
-            Math.cos(moonAngle) * 3,
-            0.5 * Math.sin(elapsed * 0.2),
-            Math.sin(moonAngle) * 3
-        );
-        moon.rotation.y += 0.005;
-        
-        // Kamera mit Maus bewegen
-        targetRotationX += (mouseY - targetRotationX) * 0.05;
-        targetRotationY += (mouseX - targetRotationY) * 0.05;
-        
-        camera.position.x = Math.sin(targetRotationY) * 3;
-        camera.position.z = Math.cos(targetRotationY) * 3;
-        camera.position.y = targetRotationX;
-        camera.lookAt(0, 0, 0);
-        
-        renderer.render(scene, camera);
-    }
-    
-    console.log('Starte Animation...');
-    animate();
-    
-    // --- Resize Handler ---
-    window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-    
-    console.log('3D Earth Demo gestartet!');
-}
-
-// Sofort starten - keine externen Abhängigkeiten
-initScene();
-</script>
-</body>
-</html>
+            // Europa
+            ctx.fillRect(220, 70, 30, 25);
+            
+            // Afrika
+            ctx.fillRect(240, 95, 35, 80);
+            
+            // Asien

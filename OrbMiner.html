@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orb Miner - Deep Earth Adventure</title>
     <style>
         body {
@@ -37,6 +39,9 @@
             font-weight: bold;
         }
     </style>
+    <!-- GoatCounter -->
+    <script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
+    <!-- End GoatCounter -->
 </head>
 <body>
     <div id="game-container">
@@ -47,7 +52,6 @@
             Grabe tiefer, sammle Edelsteine und Erze! Verbessere deine Ausrüstung!
         </div>
     </div>
-
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -59,480 +63,153 @@
         // Game state
         let gameState = {
             camera: { x: 0, y: 0 },
-            player: { 
-                x: 160, 
-                y: 20, 
-                health: 100,
-                maxHealth: 100,
-                oxygen: 100,
-                maxOxygen: 100,
-                pickaxePower: 1,
-                light: 50
-            },
-            inventory: {
-                gems: 0,
-                coal: 0,
-                iron: 0,
-                gold: 0,
-                diamond: 0,
-                healthPotions: 3,
-                oxygenTanks: 2
-            },
-            world: {
-                dirt: [],
-                ores: [],
-                hazards: [],
-                depth: 0
-            },
-            particles: [],
-            frame: 0,
-            gameTime: 0,
-            lastPickaxe: 0,
-            shopOpen: false,
-            messages: []
+            player: { x: 20, y: 5, health: 100, energy: 100, inventory: {} },
+            world: [],
+            pickaxe: { power: 1, durability: 100 },
+            depth: 0
         };
         
-        const keys = {};
-        const MATERIALS = {
-            DIRT: { color: '#8B4513', hardness: 1, value: 0 },
-            STONE: { color: '#696969', hardness: 2, value: 0 },
-            COAL: { color: '#2F2F2F', hardness: 2, value: 5 },
-            IRON: { color: '#B87333', hardness: 3, value: 15 },
-            GOLD: { color: '#FFD700', hardness: 4, value: 50 },
-            DIAMOND: { color: '#87CEEB', hardness: 5, value: 200 },
-            BEDROCK: { color: '#1C1C1C', hardness: 999, value: 0 }
-        };
+        // Initialize world
+        function initWorld() {
+            gameState.world = [];
+            for (let y = 0; y < MAP_HEIGHT; y++) {
+                gameState.world[y] = [];
+                for (let x = 0; x < MAP_WIDTH; x++) {
+                    if (y < 5) {
+                        gameState.world[y][x] = { type: 'air', durability: 0 };
+                    } else if (y < 10) {
+                        gameState.world[y][x] = Math.random() < 0.3 ? 
+                            { type: 'dirt', durability: 1 } : 
+                            { type: 'air', durability: 0 };
+                    } else {
+                        let type = 'stone';
+                        let durability = 3;
+                        
+                        if (Math.random() < 0.05) {
+                            type = 'diamond';
+                            durability = 10;
+                        } else if (Math.random() < 0.1) {
+                            type = 'gold';
+                            durability = 7;
+                        } else if (Math.random() < 0.15) {
+                            type = 'iron';
+                            durability = 5;
+                        }
+                        
+                        gameState.world[y][x] = { type, durability };
+                    }
+                }
+            }
+        }
+        
+        // Rendering
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const startX = Math.floor(gameState.camera.x / TILE_SIZE);
+            const startY = Math.floor(gameState.camera.y / TILE_SIZE);
+            const endX = startX + Math.ceil(canvas.width / TILE_SIZE) + 1;
+            const endY = startY + Math.ceil(canvas.height / TILE_SIZE) + 1;
+            
+            for (let y = Math.max(0, startY); y < Math.min(MAP_HEIGHT, endY); y++) {
+                for (let x = Math.max(0, startX); x < Math.min(MAP_WIDTH, endX); x++) {
+                    const tile = gameState.world[y][x];
+                    if (tile.type !== 'air') {
+                        const screenX = x * TILE_SIZE - gameState.camera.x;
+                        const screenY = y * TILE_SIZE - gameState.camera.y;
+                        
+                        ctx.fillStyle = getTileColor(tile.type);
+                        ctx.fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
+                    }
+                }
+            }
+            
+            // Draw player
+            const playerScreenX = gameState.player.x * TILE_SIZE - gameState.camera.x;
+            const playerScreenY = gameState.player.y * TILE_SIZE - gameState.camera.y;
+            ctx.fillStyle = '#ffff00';
+            ctx.fillRect(playerScreenX, playerScreenY, TILE_SIZE, TILE_SIZE);
+            
+            // UI
+            ctx.fillStyle = 'rgba(0,0,0,0.7)';
+            ctx.fillRect(0, 0, canvas.width, 30);
+            ctx.fillStyle = '#ffcc00';
+            ctx.font = '12px monospace';
+            ctx.fillText(`Tiefe: ${gameState.depth}m | HP: ${gameState.player.health} | Energie: ${gameState.player.energy}`, 5, 20);
+        }
+        
+        function getTileColor(type) {
+            switch(type) {
+                case 'dirt': return '#8B4513';
+                case 'stone': return '#666666';
+                case 'iron': return '#CD853F';
+                case 'gold': return '#FFD700';
+                case 'diamond': return '#B9F2FF';
+                default: return '#000000';
+            }
+        }
         
         // Input handling
+        const keys = {};
+        
         document.addEventListener('keydown', (e) => {
             keys[e.code] = true;
-            
-            // Use pickaxe
-            if (e.code === 'Space') {
-                usePickaxe();
-            }
-            
-            // Use health potion
-            if (e.code === 'KeyE') {
-                useHealthPotion();
-            }
         });
         
         document.addEventListener('keyup', (e) => {
             keys[e.code] = false;
         });
         
-        // Particle system
-        class Particle {
-            constructor(x, y, color, vx = 0, vy = 0, life = 60, size = 2) {
-                this.x = x;
-                this.y = y;
-                this.color = color;
-                this.vx = vx;
-                this.vy = vy;
-                this.life = life;
-                this.maxLife = life;
-                this.size = size;
-            }
-            
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                this.life--;
-                this.vy += 0.1; // gravity
-                this.vx *= 0.98; // friction
-            }
-            
-            draw() {
-                const alpha = this.life / this.maxLife;
-                ctx.globalAlpha = alpha;
-                ctx.fillStyle = this.color;
-                ctx.fillRect(this.x - gameState.camera.x, this.y - gameState.camera.y, this.size, this.size);
-                ctx.globalAlpha = 1;
-            }
-        }
-        
-        function addParticles(x, y, color, count = 5) {
-            for (let i = 0; i < count; i++) {
-                const vx = (Math.random() - 0.5) * 4;
-                const vy = (Math.random() - 0.5) * 4 - 1;
-                const size = Math.random() * 3 + 1;
-                gameState.particles.push(new Particle(x, y, color, vx, vy, 30 + Math.random() * 30, size));
-            }
-        }
-        
-        function addMessage(text, color = '#ffffff', duration = 180) {
-            gameState.messages.push({
-                text: text,
-                color: color,
-                life: duration,
-                y: 50 + gameState.messages.length * 15
-            });
-        }
-        
-        function generateWorld() {
-            gameState.world.dirt = [];
-            gameState.world.ores = [];
-            
-            for (let y = 0; y < MAP_HEIGHT; y++) {
-                for (let x = 0; x < MAP_WIDTH; x++) {
-                    const worldX = x * TILE_SIZE;
-                    const worldY = y * TILE_SIZE;
-                    const depth = y;
-                    
-                    // Surface area - no dirt for first few rows
-                    if (y < 3) continue;
-                    
-                    // Bedrock at bottom
-                    if (y >= MAP_HEIGHT - 2) {
-                        gameState.world.dirt.push({
-                            x: worldX,
-                            y: worldY,
-                            material: 'BEDROCK',
-                            hardness: 999
-                        });
-                        continue;
-                    }
-                    
-                    let material = 'DIRT';
-                    let oreChance = Math.random();
-                    
-                    // Determine material based on depth
-                    if (depth > 5 && Math.random() < 0.3) {
-                        material = 'STONE';
-                    }
-                    
-                    // Ore generation based on depth
-                    if (depth > 8 && oreChance < 0.02) {
-                        material = 'COAL';
-                    } else if (depth > 15 && oreChance < 0.015) {
-                        material = 'IRON';
-                    } else if (depth > 25 && oreChance < 0.008) {
-                        material = 'GOLD';
-                    } else if (depth > 40 && oreChance < 0.003) {
-                        material = 'DIAMOND';
-                    }
-                    
-                    gameState.world.dirt.push({
-                        x: worldX,
-                        y: worldY,
-                        material: material,
-                        hardness: MATERIALS[material].hardness
-                    });
-                }
-            }
-            
-            // Add some surface structures
-            for (let i = 0; i < 5; i++) {
-                const x = Math.random() * (MAP_WIDTH * TILE_SIZE - 50) + 25;
-                addParticles(x, 20, '#00ff00', 3);
-            }
-        }
-        
-        function updatePlayer() {
-            const player = gameState.player;
-            const speed = 2;
-            
-            // Movement
-            let moved = false;
-            if (keys['KeyA'] || keys['ArrowLeft']) {
-                player.x -= speed;
-                moved = true;
-            }
-            if (keys['KeyD'] || keys['ArrowRight']) {
-                player.x += speed;
-                moved = true;
-            }
-            if (keys['KeyW'] || keys['ArrowUp']) {
-                player.y -= speed;
-                moved = true;
-            }
-            if (keys['KeyS'] || keys['ArrowDown']) {
-                player.y += speed;
-                moved = true;
-            }
-            
-            // Boundary checking
-            player.x = Math.max(10, Math.min(MAP_WIDTH * TILE_SIZE - 10, player.x));
-            player.y = Math.max(10, Math.min(MAP_HEIGHT * TILE_SIZE - 10, player.y));
-            
-            // Update depth
-            gameState.world.depth = Math.floor(Math.max(0, player.y - 50) / TILE_SIZE);
-            
-            // Oxygen consumption underground
-            if (gameState.world.depth > 5) {
-                if (gameState.frame % 120 === 0) { // Every 2 seconds
-                    player.oxygen = Math.max(0, player.oxygen - 1);
-                    if (player.oxygen === 0 && gameState.frame % 60 === 0) {
-                        player.health = Math.max(0, player.health - 5);
-                        addMessage("Sauerstoff wird knapp!", '#ff4444');
-                    }
-                }
-            } else {
-                // Regenerate oxygen at surface
-                player.oxygen = Math.min(player.maxOxygen, player.oxygen + 0.5);
-            }
-            
-            // Health regeneration at surface
-            if (gameState.world.depth === 0 && gameState.frame % 300 === 0) {
-                player.health = Math.min(player.maxHealth, player.health + 1);
-            }
-            
-            // Update camera to follow player
-            gameState.camera.x = player.x - 160;
-            gameState.camera.y = player.y - 120;
-            
-            // Camera bounds
-            gameState.camera.x = Math.max(0, Math.min(MAP_WIDTH * TILE_SIZE - 320, gameState.camera.x));
-            gameState.camera.y = Math.max(0, Math.min(MAP_HEIGHT * TILE_SIZE - 240, gameState.camera.y));
-        }
-        
-        function usePickaxe() {
-            if (Date.now() - gameState.lastPickaxe < 300) return; // Cooldown
-            gameState.lastPickaxe = Date.now();
-            
-            const player = gameState.player;
-            const range = 15;
-            
-            // Find nearby dirt blocks
-            const nearbyBlocks = gameState.world.dirt.filter(block => {
-                const dx = Math.abs(block.x + TILE_SIZE/2 - player.x);
-                const dy = Math.abs(block.y + TILE_SIZE/2 - player.y);
-                return dx < range && dy < range;
-            });
-            
-            if (nearbyBlocks.length > 0) {
-                const block = nearbyBlocks[0];
-                const material = MATERIALS[block.material];
-                
-                if (material.hardness <= player.pickaxePower) {
-                    // Successfully mined!
-                    addParticles(block.x + TILE_SIZE/2, block.y + TILE_SIZE/2, material.color, 6);
-                    
-                    // Add to inventory
-                    if (block.material === 'COAL') {
-                        gameState.inventory.coal++;
-                        addMessage("Kohle gefunden! (+5 Münzen)", '#666666');
-                    } else if (block.material === 'IRON') {
-                        gameState.inventory.iron++;
-                        addMessage("Eisen gefunden! (+15 Münzen)", '#B87333');
-                    } else if (block.material === 'GOLD') {
-                        gameState.inventory.gold++;
-                        addMessage("Gold gefunden! (+50 Münzen)", '#FFD700');
-                    } else if (block.material === 'DIAMOND') {
-                        gameState.inventory.diamond++;
-                        addMessage("Diamant gefunden! (+200 Münzen)", '#87CEEB');
-                    }
-                    
-                    // Remove block
-                    gameState.world.dirt = gameState.world.dirt.filter(b => b !== block);
-                } else {
-                    // Block too hard
-                    addParticles(block.x + TILE_SIZE/2, block.y + TILE_SIZE/2, '#ff0000', 3);
-                    addMessage("Spitzhacke zu schwach!", '#ff4444');
-                }
-            } else {
-                // Swing in air
-                addParticles(player.x, player.y, '#ffffff', 3);
-            }
-        }
-        
-        function useHealthPotion() {
-            if (gameState.inventory.healthPotions > 0 && gameState.player.health < gameState.player.maxHealth) {
-                gameState.inventory.healthPotions--;
-                gameState.player.health = Math.min(gameState.player.maxHealth, gameState.player.health + 50);
-                addMessage("Heiltrank verwendet! (+50 Gesundheit)", '#00ff00');
-                addParticles(gameState.player.x, gameState.player.y, '#00ff00', 8);
-            }
-        }
-        
-        function drawWorld() {
-            const camX = gameState.camera.x;
-            const camY = gameState.camera.y;
-            
-            // Sky/underground background
-            if (gameState.world.depth === 0) {
-                // Sky gradient
-                const gradient = ctx.createLinearGradient(0, 0, 0, 240);
-                gradient.addColorStop(0, '#87CEEB');
-                gradient.addColorStop(1, '#8B4513');
-                ctx.fillStyle = gradient;
-            } else {
-                // Underground
-                const darkness = Math.min(0.8, gameState.world.depth * 0.02);
-                ctx.fillStyle = `rgb(${Math.floor(68*(1-darkness))}, ${Math.floor(34*(1-darkness))}, ${Math.floor(17*(1-darkness))})`;
-            }
-            ctx.fillRect(0, 0, 320, 240);
-            
-            // Draw dirt blocks
-            gameState.world.dirt.forEach(block => {
-                const screenX = block.x - camX;
-                const screenY = block.y - camY;
-                
-                // Only draw visible blocks
-                if (screenX > -TILE_SIZE && screenX < 320 && screenY > -TILE_SIZE && screenY < 240) {
-                    const material = MATERIALS[block.material];
-                    ctx.fillStyle = material.color;
-                    ctx.fillRect(screenX, screenY, TILE_SIZE - 1, TILE_SIZE - 1);
-                    
-                    // Add some texture
-                    if (block.material !== 'BEDROCK') {
-                        ctx.fillStyle = 'rgba(255,255,255,0.1)';
-                        ctx.fillRect(screenX + 1, screenY + 1, 2, 2);
-                    }
-                }
-            });
-            
-            // Draw surface grass
-            if (camY < 50) {
-                ctx.fillStyle = '#228B22';
-                for (let x = 0; x < 320; x += 20) {
-                    const grassX = x + (camX % 20);
-                    if (20 - camY > 0) {
-                        ctx.fillRect(grassX, 20 - camY, 15, 4);
-                    }
-                }
-            }
-        }
-        
-        function drawPlayer() {
-            const player = gameState.player;
-            const screenX = player.x - gameState.camera.x;
-            const screenY = player.y - gameState.camera.y;
-            
-            // Player body
-            ctx.fillStyle = '#ff6b6b';
-            ctx.fillRect(screenX - 4, screenY - 4, 8, 8);
-            
-            // Player helmet/light
-            ctx.fillStyle = '#ffff00';
-            ctx.fillRect(screenX - 5, screenY - 6, 10, 4);
-            
-            // Light circle underground
-            if (gameState.world.depth > 3) {
-                ctx.globalAlpha = 0.3;
-                const gradient = ctx.createRadialGradient(screenX, screenY, 0, screenX, screenY, player.light);
-                gradient.addColorStop(0, 'rgba(255,255,0,0.5)');
-                gradient.addColorStop(1, 'rgba(255,255,0,0)');
-                ctx.fillStyle = gradient;
-                ctx.beginPath();
-                ctx.arc(screenX, screenY, player.light, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.globalAlpha = 1;
-            }
-            
-            // Pickaxe swing animation
-            if (Date.now() - gameState.lastPickaxe < 150) {
-                ctx.strokeStyle = '#8B4513';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(screenX + 6, screenY);
-                ctx.lineTo(screenX + 12, screenY - 8);
-                ctx.stroke();
-            }
-        }
-        
-        function drawUI() {
-            // UI Background
-            ctx.fillStyle = 'rgba(0,0,0,0.8)';
-            ctx.fillRect(0, 0, 320, 40);
-            ctx.fillRect(0, 200, 320, 40);
-            
-            // Health bar
-            ctx.fillStyle = '#ff0000';
-            ctx.fillRect(10, 10, 100, 8);
-            ctx.fillStyle = '#00ff00';
-            ctx.fillRect(10, 10, gameState.player.health, 8);
-            
-            // Oxygen bar
-            ctx.fillStyle = '#0000ff';
-            ctx.fillRect(10, 22, 100, 8);
-            ctx.fillStyle = '#00ffff';
-            ctx.fillRect(10, 22, gameState.player.oxygen, 8);
-            
-            // Depth
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '10px monospace';
-            ctx.fillText(`Tiefe: ${gameState.world.depth}m`, 130, 15);
-            ctx.fillText(`HP: ${gameState.player.health}`, 130, 25);
-            ctx.fillText(`O2: ${gameState.player.oxygen}`, 130, 35);
-            
-            // Inventory
-            ctx.fillText('Inventar:', 10, 215);
-            ctx.fillText(`Kohle: ${gameState.inventory.coal}`, 10, 225);
-            ctx.fillText(`Eisen: ${gameState.inventory.iron}`, 80, 225);
-            ctx.fillText(`Gold: ${gameState.inventory.gold}`, 150, 225);
-            ctx.fillText(`Diamant: ${gameState.inventory.diamond}`, 200, 225);
-            ctx.fillText(`Tränke: ${gameState.inventory.healthPotions}`, 280, 225);
-            
-            // Total value
-            const totalValue = gameState.inventory.coal * 5 + 
-                              gameState.inventory.iron * 15 + 
-                              gameState.inventory.gold * 50 + 
-                              gameState.inventory.diamond * 200;
-            ctx.fillText(`Wert: ${totalValue} Münzen`, 10, 235);
-        }
-        
-        function drawMessages() {
-            gameState.messages = gameState.messages.filter(msg => {
-                msg.life--;
-                msg.y -= 0.2;
-                
-                ctx.fillStyle = msg.color;
-                ctx.globalAlpha = Math.min(1, msg.life / 60);
-                ctx.font = '8px monospace';
-                ctx.fillText(msg.text, 10, msg.y);
-                ctx.globalAlpha = 1;
-                
-                return msg.life > 0;
-            });
-        }
-        
+        // Game loop
         function update() {
-            gameState.frame++;
-            gameState.gameTime++;
+            // Movement
+            let newX = gameState.player.x;
+            let newY = gameState.player.y;
             
-            updatePlayer();
+            if (keys['KeyW'] || keys['ArrowUp']) newY--;
+            if (keys['KeyS'] || keys['ArrowDown']) newY++;
+            if (keys['KeyA'] || keys['ArrowLeft']) newX--;
+            if (keys['KeyD'] || keys['ArrowRight']) newX++;
             
-            // Update particles
-            gameState.particles = gameState.particles.filter(particle => {
-                particle.update();
-                return particle.life > 0;
-            });
-            
-            // Check game over
-            if (gameState.player.health <= 0) {
-                addMessage("Du bist gestorben! Die Mine hat dich besiegt...", '#ff0000', 300);
+            // Check bounds and collision
+            if (newX >= 0 && newX < MAP_WIDTH && newY >= 0 && newY < MAP_HEIGHT) {
+                if (gameState.world[newY][newX].type === 'air') {
+                    gameState.player.x = newX;
+                    gameState.player.y = newY;
+                    gameState.depth = Math.max(0, (newY - 5) * 2);
+                }
             }
-        }
-        
-        function draw() {
-            drawWorld();
             
-            // Draw particles
-            gameState.particles.forEach(particle => particle.draw());
+            // Mining
+            if (keys['Space']) {
+                const mineX = gameState.player.x;
+                const mineY = gameState.player.y + 1; // Mine below
+                
+                if (mineY < MAP_HEIGHT && gameState.world[mineY][mineX].type !== 'air') {
+                    gameState.world[mineY][mineX].durability--;
+                    if (gameState.world[mineY][mineX].durability <= 0) {
+                        const type = gameState.world[mineY][mineX].type;
+                        gameState.world[mineY][mineX] = { type: 'air', durability: 0 };
+                        
+                        // Add to inventory
+                        if (!gameState.player.inventory[type]) {
+                            gameState.player.inventory[type] = 0;
+                        }
+                        gameState.player.inventory[type]++;
+                    }
+                }
+            }
             
-            drawPlayer();
-            drawUI();
-            drawMessages();
+            // Update camera
+            gameState.camera.x = gameState.player.x * TILE_SIZE - canvas.width / 2;
+            gameState.camera.y = gameState.player.y * TILE_SIZE - canvas.height / 2;
+            
+            render();
         }
         
-        function gameLoop() {
-            update();
-            draw();
-            requestAnimationFrame(gameLoop);
-        }
-        
-        function initGame() {
-            generateWorld();
-            gameState.player.x = 160;
-            gameState.player.y = 20;
-            addMessage("Willkommen in der Mine! Grabe tief und sammle Schätze!", '#ffff00');
-        }
-        
-        // Initialize and start game
-        initGame();
-        gameLoop();
+        // Initialize and start
+        initWorld();
+        setInterval(update, 100);
     </script>
 </body>
 </html>

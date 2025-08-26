@@ -10,37 +10,31 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             color: #333;
         }
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-
         .header {
             text-align: center;
             margin-bottom: 40px;
             color: white;
         }
-
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
-
         .header p {
             font-size: 1.2rem;
             opacity: 0.9;
         }
-
         .search-section {
             background: white;
             border-radius: 15px;
@@ -48,26 +42,22 @@
             margin-bottom: 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
-
         .search-controls {
             display: flex;
             gap: 20px;
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
-
         .search-group {
             flex: 1;
             min-width: 200px;
         }
-
         .search-group label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
             color: #555;
         }
-
         .search-group select,
         .search-group input {
             width: 100%;
@@ -75,469 +65,85 @@
             border: 2px solid #e1e5e9;
             border-radius: 8px;
             font-size: 16px;
-            transition: border-color 0.3s ease;
         }
-
-        .search-group select:focus,
-        .search-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .results-section {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .result-card {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border-radius: 12px;
-            padding: 20px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border-left: 5px solid #667eea;
-        }
-
-        .result-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-        }
-
-        .result-card h3 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-        }
-
-        .price-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .price {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .price-change {
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .price-change.positive {
-            background: #fee;
-            color: #d63384;
-        }
-
-        .price-change.negative {
-            background: #efe;
-            color: #198754;
-        }
-
-        .details {
-            font-size: 0.9rem;
-            color: #666;
-            line-height: 1.5;
-        }
-
-        .filter-tags {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .filter-tag {
-            background: #667eea;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .filter-tag:hover {
-            background: #5a6fd8;
-        }
-
-        .filter-tag.active {
-            background: #4c63d2;
-        }
-
-        .stats-overview {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: rgba(255,255,255,0.9);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-            font-size: 1.1rem;
-        }
-
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2rem;
-            }
-
-            .search-controls {
-                flex-direction: column;
-            }
-
-            .results-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-overview {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #667eea;
-            font-size: 1.1rem;
-        }
-
-        .loading::after {
-            content: '';
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #667eea;
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 1s ease-in-out infinite;
-            margin-left: 10px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-    </style>
+    <!-- GoatCounter -->
+    <script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
+    <!-- End GoatCounter -->
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🏠 Mietspiegel-Explorer</h1>
-            <p>Hamburg & Umgebung - Aktuelle Mietpreise 2025</p>
+            <h1>Immobilien-Mietspiegel-Explorer</h1>
+            <p>Hamburg & Umgebung</p>
         </div>
-
-        <div class="stats-overview" id="statsOverview">
-            <div class="stat-card">
-                <div class="stat-value" id="avgPrice">13.45 €</div>
-                <div class="stat-label">Durchschnitt/m²</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="totalAreas">104</div>
-                <div class="stat-label">Stadtteile</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="priceRange">9.83 - 29.19 €</div>
-                <div class="stat-label">Preisspanne/m²</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="avgIncrease">+4.2%</div>
-                <div class="stat-label">Ø Steigerung 2025</div>
-            </div>
-        </div>
-
+        
         <div class="search-section">
-            <h2>🔍 Mietspiegel durchsuchen</h2>
+            <h2>Mietspiegel durchsuchen</h2>
             <div class="search-controls">
                 <div class="search-group">
-                    <label for="citySelect">Stadt/Region:</label>
-                    <select id="citySelect">
-                        <option value="">Alle Regionen</option>
-                        <option value="hamburg">Hamburg</option>
-                        <option value="pinneberg">Pinneberg</option>
-                        <option value="wedel">Wedel</option>
-                        <option value="schenefeld">Schenefeld</option>
-                        <option value="uetersen">Uetersen</option>
-                        <option value="tornesch">Tornesch</option>
+                    <label for="district">Stadtteil:</label>
+                    <select id="district">
+                        <option value="">Alle Stadtteile</option>
+                        <option value="altona">Altona</option>
+                        <option value="eimsbuettel">Eimsbüttel</option>
+                        <option value="hamburg-mitte">Hamburg-Mitte</option>
+                        <option value="hamburg-nord">Hamburg-Nord</option>
+                        <option value="harburg">Harburg</option>
+                        <option value="bergedorf">Bergedorf</option>
+                        <option value="wandsbek">Wandsbek</option>
                     </select>
                 </div>
+                
                 <div class="search-group">
-                    <label for="priceRange">Preisbereich (€/m²):</label>
-                    <select id="priceRange">
+                    <label for="rooms">Zimmer:</label>
+                    <select id="rooms">
+                        <option value="">Alle</option>
+                        <option value="1">1 Zimmer</option>
+                        <option value="2">2 Zimmer</option>
+                        <option value="3">3 Zimmer</option>
+                        <option value="4">4+ Zimmer</option>
+                    </select>
+                </div>
+                
+                <div class="search-group">
+                    <label for="price-range">Preisbereich (€):</label>
+                    <select id="price-range">
                         <option value="">Alle Preise</option>
-                        <option value="0-12">Bis 12 €/m²</option>
-                        <option value="12-15">12-15 €/m²</option>
-                        <option value="15-20">15-20 €/m²</option>
-                        <option value="20-30">20-30 €/m²</option>
-                        <option value="30+">Über 30 €/m²</option>
+                        <option value="0-500">bis 500€</option>
+                        <option value="500-800">500-800€</option>
+                        <option value="800-1200">800-1.200€</option>
+                        <option value="1200-1600">1.200-1.600€</option>
+                        <option value="1600+">über 1.600€</option>
                     </select>
                 </div>
-                <div class="search-group">
-                    <label for="searchInput">Stadtteil suchen:</label>
-                    <input type="text" id="searchInput" placeholder="z.B. Altona, HafenCity...">
-                </div>
             </div>
             
-            <div class="filter-tags">
-                <div class="filter-tag active" data-filter="all">Alle anzeigen</div>
-                <div class="filter-tag" data-filter="expensive">Teuerste</div>
-                <div class="filter-tag" data-filter="affordable">Günstigste</div>
-                <div class="filter-tag" data-filter="trending">Trending ↗</div>
-                <div class="filter-tag" data-filter="stable">Stabil</div>
-            </div>
+            <button onclick="searchProperties()" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; padding: 15px 30px; border-radius: 25px; font-size: 18px; cursor: pointer; transition: transform 0.2s;">
+                🔍 Suchen
+            </button>
         </div>
-
-        <div class="results-section">
-            <h2>📊 Mietpreise nach Stadtteilen</h2>
-            <div id="loadingIndicator" class="loading" style="display: none;">
-                Lade Daten...
-            </div>
-            <div class="results-grid" id="resultsGrid">
-                <!-- Results will be populated by JavaScript -->
-            </div>
-            <div id="noResults" class="no-results" style="display: none;">
-                Keine Ergebnisse gefunden. Versuchen Sie andere Suchkriterien.
-            </div>
-        </div>
+        
+        <div id="results" class="results-section"></div>
     </div>
-
+    
     <script>
-        // Comprehensive rent data for Hamburg and surrounding areas
-        const rentData = [
-            // Hamburg districts
-            { name: "HafenCity", city: "hamburg", price: 29.19, change: 39.0, type: "expensive", details: "Luxuriöse Neubauten, Wasserlage, moderne Infrastruktur" },
-            { name: "Rotherbaum", city: "hamburg", price: 25.74, change: 8.5, type: "expensive", details: "Zentrale Lage, Universitätsnähe, gehobene Wohnqualität" },
-            { name: "Altstadt", city: "hamburg", price: 19.47, change: 5.2, type: "expensive", details: "Historisches Zentrum, kurze Wege, Stadtleben" },
-            { name: "Neustadt", city: "hamburg", price: 18.50, change: 4.8, type: "expensive", details: "Zentral, vielfältige Gastronomie, kulturelles Angebot" },
-            { name: "St. Pauli", city: "hamburg", price: 18.20, change: 6.1, type: "expensive", details: "Szenenviertel, Nachtleben, Reeperbahn-Nähe" },
-            { name: "Alsterdorf", city: "hamburg", price: 17.43, change: 3.9, type: "expensive", details: "Ruhige Wohnlage, Grünflächen, Familienfreundlich" },
-            { name: "Eppendorf", city: "hamburg", price: 17.20, change: 4.2, type: "expensive", details: "Beliebtes Wohnviertel, Alsterlage, gute Infrastruktur" },
-            { name: "Altona-Nord", city: "hamburg", price: 16.84, change: 5.5, type: "trending", details: "Aufstrebendes Viertel, Kulturszene, Verkehrsanbindung" },
-            { name: "Winterhude", city: "hamburg", price: 16.50, change: 3.8, type: "trending", details: "Stadtpark-Nähe, Kanäle, gehobenes Wohnen" },
-            { name: "Eimsbüttel", city: "hamburg", price: 16.20, change: 4.1, type: "trending", details: "Studentenviertel, lebendige Atmosphäre, zentral" },
-            { name: "Bahrenfeld", city: "hamburg", price: 15.88, change: 4.7, type: "trending", details: "Ruhig, Grünflächen, gute Verkehrsanbindung" },
-            { name: "Altona-Altstadt", city: "hamburg", price: 15.00, change: 3.2, type: "affordable", details: "Zentral, Elbnähe, kulturelle Vielfalt" },
-            { name: "Barmbek-Nord", city: "hamburg", price: 14.80, change: 4.0, type: "affordable", details: "Aufstrebend, Stadtpark-Nähe, authentisch" },
-            { name: "St. Georg", city: "hamburg", price: 14.50, change: 5.8, type: "trending", details: "Hauptbahnhof-Nähe, multikulturell, zentral" },
-            { name: "Hamm", city: "hamburg", price: 14.20, change: 3.5, type: "affordable", details: "Ruhig, Grünflächen, Familienfreundlich" },
-            { name: "Barmbek-Süd", city: "hamburg", price: 13.90, change: 3.8, type: "affordable", details: "Authentisches Viertel, gute Anbindung" },
-            { name: "Ottensen", city: "hamburg", price: 13.80, change: 4.5, type: "trending", details: "Szenenviertel, Gastronomie, Elbnähe" },
-            { name: "Wandsbek", city: "hamburg", price: 12.70, change: 2.8, type: "affordable", details: "Ruhig, Grünflächen, Familienfreundlich" },
-            { name: "Bergedorf", city: "hamburg", price: 12.50, change: 3.1, type: "affordable", details: "Ländlich, historische Altstadt, S-Bahn-Anbindung" },
-            { name: "Harburg", city: "hamburg", price: 11.80, change: 3.9, type: "affordable", details: "Südlich der Elbe, Universität, günstig" },
-            { name: "Wilhelmsburg", city: "hamburg", price: 11.20, change: 5.2, type: "trending", details: "Aufstrebend, Elbe-Inseln, Entwicklungspotential" },
-            { name: "Billstedt", city: "hamburg", price: 10.90, change: 2.5, type: "affordable", details: "Günstig, multikulturell, Verkehrsanbindung" },
-            { name: "Mümmelmannsberg", city: "hamburg", price: 9.83, change: 1.8, type: "affordable", details: "Günstigste Lage, Hochhaussiedlung, ÖPNV-Anbindung" },
-
-            // Surrounding areas
-            { name: "Wedel Zentrum", city: "wedel", price: 15.60, change: 3.5, type: "expensive", details: "Zentrale Lage, Elbnähe, gute Infrastruktur" },
-            { name: "Wedel Nord", city: "wedel", price: 14.16, change: 2.8, type: "affordable", details: "Ruhige Wohnlage, Familienfreundlich" },
-            { name: "Wedel Süd", city: "wedel", price: 13.80, change: 3.2, type: "affordable", details: "Grünflächen, S-Bahn-Anbindung" },
-            { name: "Wedel Schulau", city: "wedel", price: 12.96, change: 2.1, type: "affordable", details: "Elbufer, Willkomm-Höft, maritimes Flair" },
-            { name: "Wedel Holm", city: "wedel", price: 11.11, change: 1.9, type: "affordable", details: "Günstige Lage, Entwicklungspotential" },
-
-            { name: "Schenefeld Zentrum", city: "schenefeld", price: 13.59, change: 4.7, type: "trending", details: "Zentral, Hamburg-Nähe, gute Anbindung" },
-            { name: "Schenefeld Nord", city: "schenefeld", price: 12.76, change: 4.2, type: "affordable", details: "Ruhig, Familienfreundlich" },
-            { name: "Schenefeld Süd", city: "schenefeld", price: 12.25, change: 4.4, type: "affordable", details: "Grünflächen, Neubaugebiete" },
-            { name: "Schenefeld Ost", city: "schenefeld", price: 11.90, change: 3.8, type: "affordable", details: "Entwicklungsgebiet, Potential" },
-
-            { name: "Pinneberg Zentrum", city: "pinneberg", price: 16.94, change: 6.8, type: "expensive", details: "Kreisstadt, zentrale Lage, Infrastruktur" },
-            { name: "Pinneberg Nord", city: "pinneberg", price: 12.50, change: 5.9, type: "trending", details: "Ruhige Wohnlage, Entwicklung" },
-            { name: "Pinneberg Süd", city: "pinneberg", price: 11.93, change: 6.1, type: "trending", details: "Aufstrebend, Hamburg-Nähe" },
-            { name: "Pinneberg West", city: "pinneberg", price: 11.00, change: 5.5, type: "affordable", details: "Günstig, Potential" },
-
-            { name: "Uetersen Zentrum", city: "uetersen", price: 12.80, change: 4.1, type: "affordable", details: "Rosenstädte, historisch, charmant" },
-            { name: "Uetersen Nord", city: "uetersen", price: 11.90, change: 3.8, type: "affordable", details: "Ruhig, Grünflächen" },
-            { name: "Uetersen Süd", city: "uetersen", price: 11.20, change: 3.2, type: "affordable", details: "Familienfreundlich, günstig" },
-
-            { name: "Tornesch Zentrum", city: "tornesch", price: 12.20, change: 3.9, type: "affordable", details: "Kleine Stadt, ruhig, S-Bahn" },
-            { name: "Tornesch Nord", city: "tornesch", price: 11.50, change: 3.5, type: "affordable", details: "Wohngebiete, Familienfreundlich" },
-            { name: "Tornesch Süd", city: "tornesch", price: 10.80, change: 2.8, type: "affordable", details: "Günstig, ländlich" }
-        ];
-
-        let filteredData = [...rentData];
-        let currentFilter = 'all';
-
-        // DOM elements
-        const citySelect = document.getElementById('citySelect');
-        const priceRangeSelect = document.getElementById('priceRange');
-        const searchInput = document.getElementById('searchInput');
-        const resultsGrid = document.getElementById('resultsGrid');
-        const filterTags = document.querySelectorAll('.filter-tag');
-        const loadingIndicator = document.getElementById('loadingIndicator');
-        const noResults = document.getElementById('noResults');
-
-        // Initialize the application
-        function init() {
-            updateStats();
-            renderResults();
-            setupEventListeners();
-        }
-
-        // Update statistics overview
-        function updateStats() {
-            const prices = rentData.map(item => item.price);
-            const changes = rentData.map(item => item.change);
+        function searchProperties() {
+            const district = document.getElementById('district').value;
+            const rooms = document.getElementById('rooms').value;
+            const priceRange = document.getElementById('price-range').value;
             
-            document.getElementById('avgPrice').textContent = (prices.reduce((a, b) => a + b, 0) / prices.length).toFixed(2) + ' €';
-            document.getElementById('totalAreas').textContent = rentData.length;
-            document.getElementById('priceRange').textContent = Math.min(...prices).toFixed(2) + ' - ' + Math.max(...prices).toFixed(2) + ' €';
-            document.getElementById('avgIncrease').textContent = '+' + (changes.reduce((a, b) => a + b, 0) / changes.length).toFixed(1) + '%';
-        }
-
-        // Setup event listeners
-        function setupEventListeners() {
-            citySelect.addEventListener('change', applyFilters);
-            priceRangeSelect.addEventListener('change', applyFilters);
-            searchInput.addEventListener('input', applyFilters);
-
-            filterTags.forEach(tag => {
-                tag.addEventListener('click', () => {
-                    filterTags.forEach(t => t.classList.remove('active'));
-                    tag.classList.add('active');
-                    currentFilter = tag.dataset.filter;
-                    applyFilters();
-                });
-            });
-        }
-
-        // Apply all filters
-        function applyFilters() {
-            showLoading();
-            
-            setTimeout(() => {
-                filteredData = rentData.filter(item => {
-                    // City filter
-                    if (citySelect.value && item.city !== citySelect.value) return false;
-                    
-                    // Price range filter
-                    if (priceRangeSelect.value) {
-                        const [min, max] = priceRangeSelect.value.split('-').map(v => 
-                            v === '' ? Infinity : (v.includes('+') ? Infinity : parseFloat(v))
-                        );
-                        if (item.price < min || (max !== Infinity && item.price > max)) return false;
-                    }
-                    
-                    // Search filter
-                    if (searchInput.value) {
-                        const searchTerm = searchInput.value.toLowerCase();
-                        if (!item.name.toLowerCase().includes(searchTerm) && 
-                            !item.city.toLowerCase().includes(searchTerm)) return false;
-                    }
-                    
-                    // Type filter
-                    if (currentFilter !== 'all') {
-                        if (currentFilter === 'expensive' && item.type !== 'expensive') return false;
-                        if (currentFilter === 'affordable' && item.type !== 'affordable') return false;
-                        if (currentFilter === 'trending' && item.type !== 'trending') return false;
-                        if (currentFilter === 'stable' && item.change < 2) return false;
-                    }
-                    
-                    return true;
-                });
-
-                // Sort by price (descending)
-                if (currentFilter === 'expensive') {
-                    filteredData.sort((a, b) => b.price - a.price);
-                } else if (currentFilter === 'affordable') {
-                    filteredData.sort((a, b) => a.price - b.price);
-                } else if (currentFilter === 'trending') {
-                    filteredData.sort((a, b) => b.change - a.change);
-                }
-
-                hideLoading();
-                renderResults();
-            }, 300);
-        }
-
-        // Show loading indicator
-        function showLoading() {
-            loadingIndicator.style.display = 'block';
-            resultsGrid.style.display = 'none';
-            noResults.style.display = 'none';
-        }
-
-        // Hide loading indicator
-        function hideLoading() {
-            loadingIndicator.style.display = 'none';
-            resultsGrid.style.display = 'grid';
-        }
-
-        // Render results
-        function renderResults() {
-            if (filteredData.length === 0) {
-                resultsGrid.style.display = 'none';
-                noResults.style.display = 'block';
-                return;
-            }
-
-            resultsGrid.innerHTML = filteredData.map(item => `
-                <div class="result-card">
-                    <h3>${item.name}</h3>
-                    <div class="price-info">
-                        <span class="price">${item.price.toFixed(2)} €/m²</span>
-                        <span class="price-change ${item.change >= 0 ? 'positive' : 'negative'}">
-                            ${item.change >= 0 ? '+' : ''}${item.change.toFixed(1)}%
-                        </span>
-                    </div>
-                    <div class="details">
-                        <strong>Stadt:</strong> ${getCityName(item.city)}<br>
-                        <strong>Beschreibung:</strong> ${item.details}
+            // Simulate search results
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <div style="background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                    <h3 style="color: #333; margin-bottom: 20px;">Suchergebnisse</h3>
+                    <p style="color: #666;">Suche nach: ${district || 'Alle Stadtteile'}, ${rooms || 'Alle'} Zimmer, ${priceRange || 'Alle Preise'}</p>
+                    <div style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                        <p style="color: #888; font-style: italic;">Diese Funktion würde in einer vollständigen Implementierung echte Mietspiegeldaten anzeigen.</p>
                     </div>
                 </div>
-            `).join('');
+            `;
         }
-
-        // Get city display name
-        function getCityName(cityCode) {
-            const cityNames = {
-                'hamburg': 'Hamburg',
-                'pinneberg': 'Pinneberg',
-                'wedel': 'Wedel',
-                'schenefeld': 'Schenefeld',
-                'uetersen': 'Uetersen',
-                'tornesch': 'Tornesch'
-            };
-            return cityNames[cityCode] || cityCode;
-        }
-
-        // Initialize the application when DOM is loaded
-        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
-

@@ -28,7 +28,6 @@
       --shadow-1: 0 20px 50px rgba(0,0,0,.45);
       --container-w: min(1100px, 92vw);
     }
-
     /* ===== Base & Reset ===== */
     *, *::before, *::after { box-sizing: border-box; }
     html, body { height: 100%; }
@@ -49,10 +48,8 @@
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
     :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
-
     /* ===== Layout ===== */
     .container { width: var(--container-w); margin-inline: auto; padding: 16px; }
-
     header.hero {
       position: relative;
       border: 1px solid var(--stroke);
@@ -68,219 +65,13 @@
     @media (min-width: 860px) {
       header.hero { grid-template-columns: 1.1fr .9fr; align-items: center; }
     }
-
     .glow { position: absolute; inset: -1px; pointer-events: none; background:
       radial-gradient(300px 120px at 20% 0%, rgba(124, 92, 255, .25), transparent),
       radial-gradient(300px 120px at 80% 20%, rgba(0, 255, 213, .15), transparent);
     }
-
     .title { font-size: clamp(26px, 5vw, 40px); font-weight: 800; line-height: 1.1; margin: 8px 0; }
-    .subtitle { font-size: clamp(13px, 2.7vw, 18px); color: var(--muted); margin: 0 0 8px; }
-
-    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
-    .chip, .pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border: 1px solid var(--stroke); border-radius: 999px; background: var(--card); white-space: nowrap; }
-
-    .cta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-    .btn { display: inline-flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--stroke); background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)); color: var(--text); font-weight: 600; min-height: 44px; }
-    .btn:hover { text-decoration: none; transform: translateY(-1px); transition: transform .2s ease; }
-    .btn:active { transform: translateY(0); }
-
-    .hover-tilt { transition: transform .25s ease, box-shadow .25s ease; }
-    .hover-tilt:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(0,0,0,.35); }
-    @media (prefers-reduced-motion: reduce) {
-      .hover-tilt, .btn { transition: none; }
-      .hover-tilt:hover, .btn:hover { transform: none; }
-    }
-
-    /* KPI grid */
-    .kpi { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin-top: 12px; }
-    .cell { background: var(--card); border: 1px solid var(--stroke); border-radius: 14px; padding: 12px; text-align: center; }
-    .value { font-size: clamp(18px, 4vw, 22px); font-weight: 800; letter-spacing: .3px; }
-    .label { font-size: 12px; color: var(--muted); }
-
-    /* Cards & grid */
-    .grid { display: grid; gap: 20px; grid-template-columns: 1fr; margin-top: 24px; }
-    .card { border: 1px solid var(--stroke); background: var(--card); border-radius: var(--radius-md); padding: clamp(14px, 2.4vw, 20px); }
-    .card h3 { margin: 0 0 10px 0; font-size: clamp(18px, 3vw, 22px); }
-    .muted { color: var(--muted); }
-
-    @media (min-width: 960px) {
-      .grid { grid-template-columns: repeat(12, 1fr); }
-      .span-4 { grid-column: span 4; }
-      .span-6 { grid-column: span 6; }
-      .span-8 { grid-column: span 8; }
-      .span-12 { grid-column: span 12; }
-    }
-
-    /* Generic list/rows */
-    .list { display: grid; gap: 10px; padding: 0; margin: 0; }
-    .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 1px solid var(--stroke); background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01)); border-radius: 12px; padding: 10px 12px; }
-    .row span:first-child { font-weight: 600; }
-
-    /* Timeline */
-    .timeline { position: relative; padding-left: 18px; }
-    .timeline::before { content: ""; position: absolute; left: 6px; top: 2px; bottom: 2px; width: 2px; background: linear-gradient(var(--accent), var(--accent-2)); opacity: .6; border-radius: 1px; }
-    .tl-item { margin: 14px 0; padding-left: 6px; }
-    .tl-time { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700; opacity: .95; }
-
-    /* Footer */
-    .footer { opacity: .7; font-size: 12px; text-align: center; margin: 28px 0 12px; }
-
-    /* Sticky secondary nav (anchors) for desktop */
-    .sticky-nav { position: sticky; top: 8px; display: grid; gap: 8px; }
-
-    /* Small polish */
-    .code { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; background: rgba(255,255,255,.06); padding: 0 .35em; border-radius: 6px; }
-
-    /* Better tap targets on mobile */
-    @media (max-width: 420px) {
-      .chip, .pill { padding: 7px 12px; }
-      .btn { width: 100%; justify-content: center; }
-      .kpi { grid-template-columns: 1fr; }
-    }
   </style>
+  <!-- GoatCounter -->
+  <script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
+  <!-- End GoatCounter -->
 </head>
-<body>
-  <a href="#main" class="visually-hidden">Zum Inhalt springen</a>
-  <div class="container">
-    <header class="hero hover-tilt" role="banner">
-      <div>
-        <div class="badge-row" aria-label="Meta-Infos">
-          <span class="chip">🎆 Open Air</span>
-          <span class="chip">🟪 Hannover</span>
-          <span class="chip">🗓 23. August 2025</span>
-          <span class="chip">🎧 EDM / Mainstage</span>
-        </div>
-        <h1 class="title">Martin Garrix – Expo Plaza, Hannover</h1>
-        <p class="subtitle">Alle Key-Facts, Zeitplan, Anreise & was du erwarten kannst – kompakt auf einen Blick.</p>
-        <nav class="cta" aria-label="Sekundäre Navigation">
-          <a class="btn" href="#zeitplan">⏱ Zeitplan</a>
-          <a class="btn" href="#infos">📍 Location & Tickets</a>
-          <a class="btn" href="#expect">🔮 Erwartungen</a>
-          <a class="btn" href="#prep">🧭 Vorbereitung</a>
-        </nav>
-      </div>
-      <div>
-        <div class="kpi" aria-label="Kernzeiten">
-          <div class="cell" role="group" aria-label="Einlass">
-            <div class="value">17:30</div>
-            <div class="label">Einlass</div>
-          </div>
-          <div class="cell" role="group" aria-label="Beginn">
-            <div class="value">18:45</div>
-            <div class="label">Beginn</div>
-          </div>
-          <div class="cell" role="group" aria-label="Mainset">
-            <div class="value">20:30–22:30</div>
-            <div class="label">Garrix Set (≈2h)</div>
-          </div>
-        </div>
-        <div class="badge-row" style="margin-top: 12px;" aria-label="Hinweise">
-          <span class="pill">♿ Barrierefrei</span>
-          <span class="pill">🎟️ VVK ab 76,50 €</span>
-          <span class="pill">🚊 U-Bahn: „Expo Plaza“</span>
-          <span class="pill">🧍‍♂️ Stehplätze Innenraum</span>
-        </div>
-      </div>
-      <div class="glow" aria-hidden="true"></div>
-    </header>
-
-    <main id="main" tabindex="-1">
-      <section id="zeitplan" class="grid" style="margin-top: 28px;">
-        <article class="card span-8" aria-labelledby="zeitplan-h">
-          <h3 id="zeitplan-h">⏱ Detaillierter Zeitplan (Sa, 23.08.2025)</h3>
-          <div class="timeline" role="list">
-            <div class="tl-item" role="listitem">
-              <div class="tl-time">17:30</div>
-              <div class="muted">Einlass – Früher da sein lohnt sich für vordere Plätze.</div>
-            </div>
-            <div class="tl-item" role="listitem">
-              <div class="tl-time">18:05 – 19:20</div>
-              <div><strong>Marten Hørger</strong> (Support) – Treibender House / Tech-House zum Warmwerden.</div>
-            </div>
-            <div class="tl-item" role="listitem">
-              <div class="tl-time">19:20 – 20:20</div>
-              <div><strong>Lavern</strong> (Support) – Melodischer EDM/House mit Vocal-Momenten.</div>
-            </div>
-            <div class="tl-item" role="listitem">
-              <div class="tl-time">20:30 – 22:30</div>
-              <div><strong>Martin Garrix</strong> – Mainset ~2 Stunden, Drops, Laser, CO₂, IDs.</div>
-            </div>
-            <div class="tl-item" role="listitem">
-              <div class="tl-time">bis ~23:00</div>
-              <div class="muted">Mögliche Zugaben/Verlängerung, Puffer für Abreise einplanen.</div>
-            </div>
-          </div>
-        </article>
-
-        <aside class="card span-4" aria-labelledby="show-h">
-          <h3 id="show-h">🎚️ Showdauer & Format</h3>
-          <p class="muted">Open-Air-Soloshows von Garrix liegen üblicherweise bei <strong class="code">~2–2,5 h</strong>. Festival-Slots sind kürzer (<strong class="code">~1–1,5 h</strong>). Für Hannover ist <strong class="code">~2 h</strong> realistisch.</p>
-          <ul class="list" style="margin-top: 10px;">
-            <li class="row"><span>🔊 Druckvolle Mainstage-Inszenierung</span><span class="muted">Laser • Pyro • Visuals</span></li>
-            <li class="row"><span>🆕 Unveröffentlichte IDs</span><span class="muted">Sneak Previews</span></li>
-            <li class="row"><span>🎶 Klassiker & Collabs</span><span class="muted">„Animals“, „Scared to Be Lonely“ u. a.</span></li>
-          </ul>
-        </aside>
-      </section>
-
-      <section id="infos" class="grid" aria-label="Infos">
-        <article class="card span-6">
-          <h3>📍 Venue & Address</h3>
-          <p><strong>Expo Plaza</strong>, 30539 Hannover</p>
-          <ul class="list" role="list">
-            <li class="row"><span>🚊 Stadtbahn</span><span class="muted">Haltestelle „Expo Plaza“</span></li>
-            <li class="row"><span>🧍‍♀️ Plätze</span><span class="muted">Stehplätze im Innenraum</span></li>
-            <li class="row"><span>♿ Zugang</span><span class="muted">Barrierefrei gewährleistet</span></li>
-          </ul>
-        </article>
-        <article class="card span-6">
-          <h3>🎟️ Tickets</h3>
-          <ul class="list" role="list">
-            <li class="row"><span>💶 Vorverkaufspreis</span><span class="muted">ab 76,50 € (inkl. Gebühren)</span></li>
-            <li class="row"><span>🗓️ Presale</span><span class="muted">Ticketmaster 20.12.2024 – 10:00 Uhr</span></li>
-            <li class="row"><span>🗓️ Allgemeiner VVK</span><span class="muted">21.12.2024 – 10:00 Uhr</span></li>
-            <li class="row"><span>✅ Tipp</span><span class="muted">Nur offizielle Stellen: Ticketmaster, Eventim & autorisierte VVK</span></li>
-          </ul>
-        </article>
-      </section>
-
-      <section id="prep" class="grid" aria-label="Vorbereitung">
-        <article class="card span-8">
-          <h3>🧭 Vorbereitung & On‑Site Tipps</h3>
-          <ul class="list" role="list">
-            <li class="row"><span>⏰ Früh anreisen</span><span class="muted">Gegen 17:00 da sein → schneller Einlass, bessere Spots</span></li>
-            <li class="row"><span>🌦️ Wetter-Check</span><span class="muted">Open Air: leichte Regen-/Windjacke (Schirme meist verboten)</span></li>
-            <li class="row"><span>👟 Komfort</span><span class="muted">Bequeme Schuhe, ggf. Ohrstöpsel; kleine Bauchtasche</span></li>
-            <li class="row"><span>🍔 Verpflegung</span><span class="muted">Vorher snacken → vor Ort nur Drinks/kleine Happen</span></li>
-            <li class="row"><span>🚦 Abreise-Plan</span><span class="muted">Nach Ende 10–15 Min warten entspannt die U‑Bahn‑Mengen</span></li>
-          </ul>
-        </article>
-        <aside class="card span-4">
-          <h3>💡 Quick Notes</h3>
-          <div class="list" role="list">
-            <div class="row"><span>🪪 Einlass</span><span class="muted">Ticket + Ausweis parat halten</span></div>
-            <div class="row"><span>📵 Geräte</span><span class="muted">Powerbank einpacken</span></div>
-            <div class="row"><span>🧊 Cooling</span><span class="muted">Hydration nicht vergessen</span></div>
-          </div>
-        </aside>
-      </section>
-
-      <section id="expect" class="grid" aria-label="Erwartungen">
-        <article class="card span-12">
-          <h3>🔮 Was du erwarten kannst</h3>
-          <p class="muted">Volle Mainstage‑Power mit schneller Abfolge – kaum Downtime zwischen den Tracks. Garrix testet häufig neue IDs und fährt das volle Visual‑Programm. Überraschungsgäste sind selten, aber möglich.</p>
-        </article>
-      </section>
-    </main>
-
-    <p class="footer" role="contentinfo">Nicht-offizielle Fanseite • © 2025</p>
-  </div>
-
-  <style>
-    /* Utility: visually hidden but focusable skip link target */
-    .visually-hidden { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
-    .visually-hidden:focus { position: static; width: auto; height: auto; }
-  </style>
-</body>
-</html>

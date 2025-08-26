@@ -1,5 +1,312 @@
-<!-- GoatCounter snippet -->
-<script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
-<!-- End of GoatCounter snippet -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pocket Dungeon</title>
+    <style>
+        body {
+            margin: 0;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: monospace;
+            color: white;
+        }
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        canvas {
+            border: 2px solid #555;
+            box-shadow: 0 0 20px rgba(0,255,0,0.3);
+        }
+        #controls {
+            text-align: center;
+            color: #888;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas" width="240" height="180" style="width: 480px; height: 360px; image-rendering: pixelated;"></canvas>
+        <div id="controls">
+            WASD: Bewegen | R: Restart | Ziel: Alle roten Feinde besiegen!
+        </div>
+    </div>
 
-<!-- Existing content of PocketDungeon.html -->
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Game state
+        let gameState = {
+            player: { x: 1, y: 1 },
+            hp: 5,
+            maxHp: 5,
+            level: 1,
+            score: 0,
+            gameOver: false,
+            victory: false,
+            invulnerable: 0,
+            particles: []
+        };
+        
+        let map = [];
+        const keys = {};
+        let lastMoveTime = 0;
+        const moveDelay = 150; // Millisekunden zwischen Bewegungen
+        
+        // Input handling
+        document.addEventListener('keydown', (e) => {
+            keys[e.code] = true;
+            
+            // Restart game
+            if (e.code === 'KeyR' && gameState.gameOver) {
+                initGame();
+            }
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            keys[e.code] = false;
+        });
+        
+        // Particle system for effects
+        class Particle {
+            constructor(x, y, color, vx = 0, vy = 0, life = 30) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.vx = vx;
+                this.vy = vy;
+                this.life = life;
+                this.maxLife = life;
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life--;
+                this.vy += 0.1; // gravity
+            }
+            
+            draw() {
+                const alpha = this.life / this.maxLife;
+                ctx.globalAlpha = alpha;
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, 2, 2);
+                ctx.globalAlpha = 1;
+            }
+        }
+        
+        function addParticles(x, y, color, count = 5) {
+            for (let i = 0; i < count; i++) {
+                const vx = (Math.random() - 0.5) * 4;
+                const vy = (Math.random() - 0.5) * 4 - 2;
+                gameState.particles.push(new Particle(x + 25, y + 15, color, vx, vy));
+            }
+        }
+        
+        function generateMap() {
+            map = [];
+            // 3x3 grid - stelle sicher, dass nicht alle Felder Feinde sind
+            let enemyCount = 0;
+            const maxEnemies = Math.min(6, 2 + gameState.level);
+            
+            for (let i = 0; i < 9; i++) {
+                const x = i % 3;
+                const y = Math.floor(i / 3);
+                
+                // Spieler Startposition freihalten
+                if (x === gameState.player.x && y === gameState.player.y) {
+                    map[i] = 0;
+                } else if (enemyCount < maxEnemies && Math.random() < 0.4) {
+                    map[i] = 1; // Feind
+                    enemyCount++;
+                } else {
+                    map[i] = 0; // Leer
+                }
+            }
+            
+            // Stelle sicher, dass mindestens ein Feind existiert
+            if (enemyCount === 0) {
+                let randomPos;
+                do {
+                    randomPos = Math.floor(Math.random() * 9);
+                } while (randomPos === gameState.player.x + gameState.player.y * 3);
+                map[randomPos] = 1;
+            }
+        }
+        
+        function initGame() {
+            gameState = {
+                player: { x: 1, y: 1 },
+                hp: 5,
+                maxHp: 5,
+                level: 1,
+                score: 0,
+                gameOver: false,
+                victory: false,
+                invulnerable: 0,
+                particles: []
+            };
+            generateMap();
+        }
+        
+        function handleInput() {
+            const currentTime = Date.now();
+            if (currentTime - lastMoveTime < moveDelay) return;
+            
+            if (gameState.gameOver) return;
+            
+            let moved = false;
+            let newX = gameState.player.x;
+            let newY = gameState.player.y;
+            
+            if (keys['KeyW'] && newY > 0) { newY--; moved = true; }
+            if (keys['KeyS'] && newY < 2) { newY++; moved = true; }
+            if (keys['KeyA'] && newX > 0) { newX--; moved = true; }
+            if (keys['KeyD'] && newX < 2) { newX++; moved = true; }
+            
+            if (moved) {
+                gameState.player.x = newX;
+                gameState.player.y = newY;
+                lastMoveTime = currentTime;
+                
+                // Check for enemy collision
+                const mapIndex = newX + newY * 3;
+                if (map[mapIndex] === 1) {
+                    map[mapIndex] = 0; // Remove enemy
+                    
+                    if (gameState.invulnerable <= 0) {
+                        gameState.hp--;
+                        gameState.invulnerable = 60; // 1 second at 60fps
+                        addParticles(25 + newX * 60, 25 + newY * 40, '#ff0000', 8);
+                    }
+                    
+                    gameState.score += 10;
+                    addParticles(25 + newX * 60, 25 + newY * 40, '#ffff00', 5);
+                }
+                
+                // Check victory condition
+                if (map.every(tile => tile === 0)) {
+                    gameState.level++;
+                    gameState.score += gameState.level * 50;
+                    // Heal player a bit
+                    gameState.hp = Math.min(gameState.maxHp, gameState.hp + 1);
+                    generateMap();
+                    addParticles(120, 90, '#00ff00', 15);
+                }
+                
+                // Check game over
+                if (gameState.hp <= 0) {
+                    gameState.gameOver = true;
+                }
+            }
+        }
+        
+        function update() {
+            if (gameState.invulnerable > 0) {
+                gameState.invulnerable--;
+            }
+            
+            // Update particles
+            gameState.particles = gameState.particles.filter(particle => {
+                particle.update();
+                return particle.life > 0;
+            });
+        }
+        
+        function draw() {
+            // Clear screen
+            ctx.fillStyle = "#111111";
+            ctx.fillRect(0, 0, 240, 180);
+            
+            // Draw map tiles
+            for (let i = 0; i < 9; i++) {
+                const x = i % 3;
+                const y = Math.floor(i / 3);
+                
+                // Tile background
+                ctx.fillStyle = "#333333";
+                ctx.fillRect(20 + x * 60, 40 + y * 40, 50, 30);
+                
+                // Enemy
+                if (map[i] === 1) {
+                    ctx.fillStyle = "#cc0000";
+                    ctx.fillRect(22 + x * 60, 42 + y * 40, 46, 26);
+                    // Enemy eyes
+                    ctx.fillStyle = "#ffffff";
+                    ctx.fillRect(30 + x * 60, 48 + y * 40, 4, 4);
+                    ctx.fillRect(56 + x * 60, 48 + y * 40, 4, 4);
+                }
+            }
+            
+            // Draw player
+            const playerFlash = gameState.invulnerable > 0 && Math.floor(gameState.invulnerable / 5) % 2;
+            if (!playerFlash) {
+                ctx.fillStyle = "#00ff00";
+                ctx.fillRect(25 + gameState.player.x * 60, 45 + gameState.player.y * 40, 40, 20);
+                
+                // Player face
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(32 + gameState.player.x * 60, 50 + gameState.player.y * 40, 3, 3);
+                ctx.fillRect(55 + gameState.player.x * 60, 50 + gameState.player.y * 40, 3, 3);
+            }
+            
+            // Draw particles
+            gameState.particles.forEach(particle => particle.draw());
+            
+            // Draw UI
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "10px monospace";
+            
+            // Health bar
+            ctx.fillText("HP:", 10, 15);
+            for (let i = 0; i < gameState.maxHp; i++) {
+                ctx.fillStyle = i < gameState.hp ? "#ff0000" : "#444444";
+                ctx.fillRect(35 + i * 12, 8, 10, 8);
+            }
+            
+            // Stats
+            ctx.fillStyle = "#ffffff";
+            ctx.fillText(`Level: ${gameState.level}`, 10, 30);
+            ctx.fillText(`Score: ${gameState.score}`, 120, 15);
+            
+            // Enemy counter
+            const enemiesLeft = map.filter(tile => tile === 1).length;
+            ctx.fillText(`Enemies: ${enemiesLeft}`, 120, 30);
+            
+            // Game over screen
+            if (gameState.gameOver) {
+                ctx.fillStyle = "rgba(0,0,0,0.8)";
+                ctx.fillRect(0, 0, 240, 180);
+                
+                ctx.fillStyle = "#ff0000";
+                ctx.font = "16px monospace";
+                ctx.fillText("GAME OVER", 80, 80);
+                
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "10px monospace";
+                ctx.fillText(`Final Score: ${gameState.score}`, 85, 100);
+                ctx.fillText(`Level Reached: ${gameState.level}`, 80, 115);
+                ctx.fillText("Press R to restart", 80, 135);
+            }
+        }
+        
+        function gameLoop() {
+            handleInput();
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Initialize and start game
+        initGame();
+        gameLoop();
+    </script>
+</body>
+</html>

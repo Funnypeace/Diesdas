@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Prompt Verbesserer</title>
+    <!-- GoatCounter -->
+    <script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
+    <!-- End GoatCounter -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -128,7 +131,7 @@
         <p>Optimiere deine Prompts für bessere KI-Ergebnisse. Gib deinen Original-Prompt ein, wähle einen Stil und lass die KI ihn verbessern.</p>
         
         <div class="examples">
-            <h3>Beispiel-Prompts zum Ausprobieren:</h3>
+            <strong>Beispiel-Prompts zum Ausprobieren:</strong>
             <button onclick="loadExample('Erkläre Quantencomputing einfach.')">Beispiel 1</button>
             <button onclick="loadExample('Schreibe eine Geschichte über einen Zeitreisenden.')">Beispiel 2</button>
             <button onclick="loadExample('Generiere Code für eine Todo-List App.')">Beispiel 3</button>
@@ -161,45 +164,46 @@
                 </div>
                 <div id="improved-section">
                     <h4>Verbessert:</h4>
-                    <div id="improved-prompt" class="improved-prompt"></div>
-                    <div id="explanation" class="explanation"></div>
+                    <div class="improved-prompt" id="improved-prompt"></div>
+                    <div class="explanation" id="explanation"></div>
                 </div>
             </div>
             <button onclick="editImproved()" style="margin-top: 10px;">Weiter bearbeiten</button>
         </div>
         
         <div class="tips">
-            <h3>Tipps für gute Prompts:</h3>
+            <strong>Tipps für gute Prompts:</strong>
             <ul>
                 <li>Sei spezifisch: Beschreibe genau, was du willst.</li>
                 <li>Füge Kontext hinzu: Erkläre den Zweck oder das Ziel.</li>
                 <li>Verwende Struktur: Nutze Aufzählungen oder Schritte.</li>
                 <li>Experimentiere mit Stilen: Passe Tonalität an deine Bedürfnisse an.</li>
             </ul>
-            <p>Hinweis: Deine Eingaben werden an die Groq-API gesendet. Wir speichern keine Daten, aber beachte die Datenschutzrichtlinien von Groq.</p>
+            <p><strong>Hinweis:</strong> Deine Eingaben werden an die Groq-API gesendet. Wir speichern keine Daten, aber beachte die Datenschutzrichtlinien von Groq.</p>
         </div>
     </div>
-
+    
     <script>
         function loadExample(text) {
             document.getElementById('prompt').value = text;
         }
-
+        
         async function improvePrompt() {
             const prompt = document.getElementById('prompt').value.trim();
             const style = document.getElementById('style').value;
+            
             if (!prompt) {
                 alert('Bitte gib einen Prompt ein!');
                 return;
             }
-
+            
             const loading = document.getElementById('loading');
             const output = document.getElementById('output');
+            
             loading.style.display = 'block';
             output.style.display = 'none';
-
+            
             let userContent;
-
             if (style === 'bild') {
                 // Spezieller Prompt für Bild-Verbesserung
                 userContent = `Verbessere den folgenden Prompt speziell für KI-Bildgeneratoren wie DALL-E, Midjourney oder Stable Diffusion: "${prompt}".
@@ -215,7 +219,7 @@ Gib die Ausgabe strukturiert aus:
 - Dann die Erklärung in einer neuen Zeile, beginnend mit "Erklärung der Änderungen: ".
 Verwende keine zusätzlichen Formatierungen wie Sternchen oder Anführungszeichen um die Abschnitte.`;
             }
-
+            
             try {
                 const response = await fetch('/api/groq.js', {
                     method: 'POST',
@@ -225,22 +229,23 @@ Verwende keine zusätzlichen Formatierungen wie Sternchen oder Anführungszeiche
                         action: 'prompt_improve'
                     })
                 });
-
+                
                 if (!response.ok) {
                     throw new Error('API-Fehler: ' + response.status);
                 }
-
+                
                 const data = await response.json();
                 let improved = data.content || 'Keine Verbesserung erhalten.';
-
+                
                 // Parse die Ausgabe für bessere Übersichtlichkeit
                 const parts = improved.split('Erklärung der Änderungen:');
                 const improvedPrompt = (parts[0] || '').replace('Verbesserter Prompt:', '').trim();
                 const explanation = (parts[1] || '').trim();
-
+                
                 document.getElementById('original-display').textContent = prompt;
                 document.getElementById('improved-prompt').textContent = improvedPrompt;
                 document.getElementById('explanation').textContent = explanation ? `Erklärung: ${explanation}` : '';
+                
                 output.style.display = 'block';
             } catch (error) {
                 alert('Fehler: ' + error.message);
@@ -248,7 +253,7 @@ Verwende keine zusätzlichen Formatierungen wie Sternchen oder Anführungszeiche
                 loading.style.display = 'none';
             }
         }
-
+        
         function editImproved() {
             const improved = document.getElementById('improved-prompt').textContent;
             document.getElementById('prompt').value = improved;

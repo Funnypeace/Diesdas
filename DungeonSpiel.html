@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mini-Rogue</title>
 <style>
   body{margin:0;background:#111;color:#eee;font-family:monospace;overflow:hidden}
@@ -20,27 +21,29 @@
   .log{margin-top:10px;height:120px;overflow-y:auto;border-top:1px solid #555;padding-top:5px;font-size:11px}
   .stat{margin-bottom:4px}
 </style>
+<!-- GoatCounter -->
+<script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
+<!-- End GoatCounter -->
 </head>
 <body>
 <div id="game">
   <div id="map"></div>
   <div id="sidebar">
-    <div class="stat"><b>HP:</b> <span id="hp">100</span>/100</div>
-    <div class="stat"><b>ATK:</b> <span id="atk">10</span></div>
-    <div class="stat"><b>DEF:</b> <span id="def">5</span></div>
-    <div class="stat"><b>Gold:</b> <span id="gold">0</span></div>
-    <div class="stat"><b>Floor:</b> <span id="floor">1</span></div>
-    <div class="stat"><b>Biom:</b> <span id="biom">Wald</span></div>
-    <div class="stat"><b>Inventar:</b></div>
+    <div class="stat">HP: <span id="hp">100</span>/100</div>
+    <div class="stat">ATK: <span id="atk">10</span></div>
+    <div class="stat">DEF: <span id="def">5</span></div>
+    <div class="stat">Gold: <span id="gold">0</span></div>
+    <div class="stat">Floor: <span id="floor">1</span></div>
+    <div class="stat">Biom: <span id="biom">Wald</span></div>
+    <div class="stat">Inventar:</div>
     <div id="inv" style="margin-left:10px"></div>
-    <div class="stat"><b>Crafting:</b></div>
+    <div class="stat">Crafting:</div>
     <button onclick="craft('sword')">Schwert (5 Holz, 3 Eisen)</button>
     <button onclick="craft('armor')">Rüstung (5 Eisen, 2 Leder)</button>
     <button onclick="craft('potion')">Trank (2 Kräuter, 1 Fläschchen)</button>
     <div class="log" id="log">Willkommen im Mini-Rogue!</div>
   </div>
 </div>
-
 <script>
 /* ---------- CONFIG ---------- */
 const W = 40, H = 25, TILE = 20;
@@ -53,10 +56,8 @@ const enemyTypes = [
   {name:'Eisgolem',hp:70,atk:14,def:6},
   {name:'Lavawurm',hp:100,atk:20,def:8}
 ];
-
 /* ---------- STATE ---------- */
 let map, fov, player, entities, stairs, floor = 1, gameOver = false;
-
 /* ---------- INIT ---------- */
 function init() {
   player = {x:1,y:1,hp:100,atk:10,def:5,gold:0,inv:{}};

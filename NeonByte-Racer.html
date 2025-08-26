@@ -1,5 +1,214 @@
-<!-- GoatCounter snippet -->
-<script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
-<!-- End of GoatCounter snippet -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Neon Byte‑Racer</title>
+  <style>
+    :root { --bg:#000010; --cyan:#00ffff; --blue:#0088ff; --mag:#ff00ff; --white:#eaf6ff; --hud:#b0d9ff; }
+    html,body{height:100%;}
+    body{margin:0;background:linear-gradient(180deg,#000010 0%,#000000 100%);display:grid;place-items:center;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--white)}
+    .frame{position:relative;}
+    canvas{border:2px solid var(--cyan);image-rendering: pixelated;width: min(90vw, 900px); height:auto; aspect-ratio: 240/136; background:#000022; box-shadow:0 0 24px #00ffff40, inset 0 0 24px #00ffff30;}
+    .hud{position:absolute;left:8px;top:8px;font: 10px/1.1 monospace;color:var(--hud);text-shadow:0 0 6px #00f8, 0 0 2px #0ff8}
+    .overlay{pointer-events:none;position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:12px}
+    .title{font-weight:700;letter-spacing:0.08em;text-transform:uppercase}
+    .btns{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr 1fr}
+    .btns > div{opacity:.0}
+    .hint{font: 12px/1.3 monospace;color:#c8f6ff}
+    .kbd{display:inline-block;padding:.12em .5em;border:1px solid #9ff;border-radius:6px;margin:0 .15em;}
+    a{color:#9ff}
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <canvas id="tic" width="240" height="136"></canvas>
+    <div class="hud" id="hud"></div>
+    <div class="overlay" id="overlay"></div>
+    <!-- touch zones for mobile (left / restart / right) -->
+    <div class="btns" id="touch">
+      <div data-act="left"></div>
+      <div data-act="restart"></div>
+      <div data-act="right"></div>
+    </div>
+  </div>
 
-<!-- Existing content of NeonByte-Racer.html -->
+  <script>
+  // --- helpers --------------------------------------------------------------
+  const rnd = (a,b)=>a+Math.random()*(b-a)|0;
+
+  // --- setup ----------------------------------------------------------------
+  const c = document.getElementById('tic');
+  const ctx = c.getContext('2d');
+  const hud = document.getElementById('hud');
+  const overlay = document.getElementById('overlay');
+
+  // crisp pixely look
+  ctx.imageSmoothingEnabled = false;
+
+  // lanes (x positions)
+  const lanesX = [50, 110, 170];
+  const LANE_W = 28; // for collision
+
+  // player
+  const player = { lane:1, x: lanesX[1]-10, y:110, w:20, h:10, alive:true };
+
+  // road stripes
+  const strips = Array.from({length:40}, (_,i)=>({ y: i*8, toggle: !!(i&1) }));
+
+  // game state
+  let state = 'menu'; // 'menu' | 'play' | 'over'
+  let baseSpeed = 40; // pixels/sec
+  let speed = baseSpeed; // will scale with distance
+  let distance = 0; // meters
+  let best = +(localStorage.getItem('nbr-best')||0);
+  let obstacles = [];
+  let spawnTimer = 0;
+
+  // input (edge-triggered lane change)
+  const keys = new Map();
+  const justPressed = new Set();
+  const press = code => { if(!keys.get(code)) justPressed.add(code); keys.set(code,true); };
+  const release = code => { keys.set(code,false); };
+  addEventListener('keydown', e=>{ if(['KeyA','ArrowLeft','KeyD','ArrowRight','Space','Enter'].includes(e.code)) e.preventDefault(); press(e.code); });
+  addEventListener('keyup',   e=>{ release(e.code); });
+
+  // touch controls
+  document.getElementById('touch').addEventListener('pointerdown', e=>{
+    const act = e.target.dataset.act;
+    if(!act) return;
+    if(act==='left') press('ArrowLeft');
+    if(act==='right') press('ArrowRight');
+    if(act==='restart') press('Enter');
+  });
+
+  function reset(){
+    player.lane = 1; player.x = lanesX[1]-10; player.y = 110; player.alive = true;
+    distance = 0; speed = baseSpeed; obstacles.length = 0; spawnTimer = 0;
+    state = 'play';
+    overlay.innerHTML = '';
+  }
+
+  function gameOver(){
+    player.alive = false; state = 'over';
+    if(distance > best){ best = distance|0; localStorage.setItem('nbr-best', best); }
+    overlay.innerHTML = `
+      <div>
+        <div class="title" style="font-size:20px">Game Over</div>
+        <div class="hint" style="margin:6px 0 10px">Distanz: <b>${distance|0} m</b> · Best: <b>${best} m</b></div>
+        <div class="hint">Drücke <span class="kbd">Enter</span> oder tippe in die Mitte zum Neustart</div>
+      </div>`;
+  }
+
+  function showMenu(){
+    overlay.innerHTML = `
+      <div>
+        <div class="title" style="font-size:22px">Neon Byte‑Racer</div>
+        <div class="hint" style="margin:8px 0">Weiche Hindernissen aus und fahre so weit wie möglich.</div>
+        <div class="hint">Steuerung: <span class="kbd">A</span>/<span class="kbd">◄</span> links · <span class="kbd">D</span>/<span class="kbd">►</span> rechts · <span class="kbd">Enter</span> starten</div>
+        <div class="hint" style="margin-top:8px;opacity:.8">Best: <b>${best} m</b></div>
+      </div>`;
+  }
+
+  // spawn obstacles at top
+  function spawnObstacle(){
+    const lane = rnd(0,3);
+    const x = lanesX[lane]-10;
+    const h = rnd(10,16);
+    obstacles.push({ lane, x, y:-h, w:20, h });
+  }
+
+  // collision check (AABB)
+  function hit(a,b){ return a.x < b.x+b.w && a.x+a.w > b.x && a.y < b.y+b.h && a.y+a.h > b.y; }
+
+  // drawing helpers
+  function rect(x,y,w,h,fill){ ctx.fillStyle=fill; ctx.fillRect(x|0,y|0,w|0,h|0); }
+  function car(x,y){
+    // simple neon car sprite
+    rect(x, y, 20, 10, '#ff00ff');
+    rect(x+2, y-2, 16, 2, '#ff66ff'); // spoiler glow
+    rect(x+3, y+2, 14, 6, '#000015'); // windshield
+    rect(x+2, y+9, 16, 1, '#f0f'); // rear light
+  }
+  function block(o){ rect(o.x, o.y, o.w, o.h, '#00ffaa'); rect(o.x+2,o.y+2,o.w-4,o.h-4,'#005544'); }
+
+  // main loop
+  let last = performance.now();
+  function loop(now){
+    const dt = Math.min(0.033, (now - last) / 1000); // clamp to avoid big jumps
+    last = now;
+
+    // --- update ------------------------------------------------------------
+    if(state === 'menu'){
+      if(justPressed.has('Enter') || justPressed.has('Space')) reset();
+    }
+    else if(state === 'play'){
+      // lane change on edge press
+      if(justPressed.has('KeyA') || justPressed.has('ArrowLeft')) player.lane = Math.max(0, player.lane-1);
+      if(justPressed.has('KeyD') || justPressed.has('ArrowRight')) player.lane = Math.min(2, player.lane+1);
+      player.x = lanesX[player.lane]-10;
+
+      // speed ramps with distance
+      speed = baseSpeed + Math.min(120, distance*0.12);
+
+      // move road stripes
+      for(let s of strips){ s.y += speed*dt; if(s.y>136){ s.y -= 136; s.toggle = !s.toggle; } }
+
+      // spawn obstacles
+      spawnTimer -= dt;
+      if(spawnTimer <= 0){
+        spawnObstacle();
+        // shorter interval as we go faster
+        spawnTimer = Math.max(0.25, 0.9 - distance*0.0015);
+      }
+
+      // move obstacles & cull
+      for(let i=obstacles.length-1;i>=0;i--){
+        const o = obstacles[i];
+        o.y += speed*dt * 0.9; // slightly slower than road
+        if(o.y > 150) obstacles.splice(i,1);
+      }
+
+      // collisions
+      for(const o of obstacles){ if(hit(player,o)) { gameOver(); break; } }
+
+      // distance (meters – tuned)
+      distance += speed*dt*0.6;
+    }
+    else if(state === 'over'){
+      if(justPressed.has('Enter') || justPressed.has('Space')) reset();
+      // move stripes in background for nice motion
+      for(let s of strips){ s.y += speed*dt*0.5; if(s.y>136){ s.y -= 136; s.toggle = !s.toggle; } }
+    }
+
+    // clear edge presses
+    justPressed.clear();
+
+    // --- render ------------------------------------------------------------
+    // background
+    rect(0,0,240,136,'#000022');
+
+    // side glow lanes
+    rect(0,0,8,136,'#001133'); rect(232,0,8,136,'#001133');
+
+    // road stripes
+    for(const s of strips){ rect(20, s.y, 200, 3, s.toggle ? '#00ffff' : '#0088ff'); }
+
+    // obstacles
+    for(const o of obstacles) block(o);
+
+    // player
+    if(player.alive) car(player.x, player.y);
+
+    // HUD
+    hud.textContent = `m ${distance|0}   spd ${Math.round(speed)}   best ${best}`;
+
+    requestAnimationFrame(loop);
+  }
+
+  // start
+  showMenu();
+  requestAnimationFrame(t=>{ last=t; loop(t); });
+  </script>
+</body>
+</html>

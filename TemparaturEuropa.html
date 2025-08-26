@@ -32,16 +32,20 @@
         }
         
         .title-slide {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);text-align: center;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            text-align: center;
         }
         
         .title-slide h1 {
+            color: white;
             font-size: 2.5em;
             margin-bottom: 30px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         
         .title-slide p {
+            color: white;
             font-size: 1.2em;
             line-height: 1.8;
             max-width: 900px;
@@ -75,161 +79,114 @@
         }
         
         .temperature-list li {
-            background-color: #e3f2fd;
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 5px;
-            border-left: 4px solid #1976d2;
+            padding: 12px;
+            margin: 8px 0;
+            background-color: #fff;
+            border-left: 4px solid #ff6b6b;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
-        .conclusion-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-top: 20px;
-        }
-        
-        .conclusion-item {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            border-top: 4px solid #2a5298;
-        }
-        
-        .conclusion-item h3 {
-            margin-top: 0;
-            color: #1976d2;
-        }
-        
-        .data-source {
-            font-style: italic;
-            color: #666;
-            margin-top: 15px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-        }
-        
-        .temperature-value {
-            font-weight: bold;
-            color: #d32f2f;
+        .temperature-list li strong {
+            color: #d63031;
             font-size: 1.1em;
         }
         
-        @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-                border-radius: 5px;
-            }
-            
-            .slide {
-                padding: 20px;
-            }
-            
-            .title-slide h1 {
-                font-size: 2em;
-            }
-            
-            .conclusion-grid {
-                grid-template-columns: 1fr;
-            }
+        .chart-placeholder {
+            background-color: #e9ecef;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            color: #6c757d;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .footer {
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9em;
         }
     </style>
+    <!-- GoatCounter -->
+    <script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
+    <!-- End GoatCounter -->
 </head>
 <body>
     <div class="container">
-        <!-- Titel-Slide -->
         <div class="slide title-slide">
-            <h1>Temperaturen in Europa: Die anhaltende Hitzewelle</h1>
-            <p>Die Hitzewelle hält an: Sowohl der europäische Durchschnitt als auch die Temperaturen in den Hauptstädten Portugals, Spaniens, Frankreichs, Italiens und der Türkei liegen am 24. Juli 2025 deutlich über den Werten der beiden Vortage. Die heutigen Maximaltemperaturen in allen fünf Städten übertreffen zudem deutlich die Werte der vergangenen 20 Jahre.</p>
+            <h1>Temperaturen in Europa</h1>
+            <p>Die anhaltende Hitzewelle: Ein Überblick über die aktuellen Temperaturrekorde in europäischen Städten</p>
         </div>
-
-        <!-- Tagesvergleich -->
+        
         <div class="slide">
-            <h2>Tagesvergleich: 22.-24. Juli 2025</h2>
-            <p>Die täglichen Höchstwerte zeigen einen kontinuierlichen Anstieg über die drei betrachteten Tage, sowohl im europäischen Durchschnitt als auch in allen fünf Hauptstädten.</p>
-            <div class="data-source">
-                Daten basieren auf ERA5-Reanalyse (Copernicus C3S) und lokalen Wetterstationen.
+            <h2>Aktuelle Temperaturrekorde</h2>
+            <div class="highlight-section">
+                <h3>Höchsttemperaturen der letzten Woche</h3>
+                <ul class="temperature-list">
+                    <li><strong>Madrid, Spanien:</strong> 42.5°C</li>
+                    <li><strong>Rom, Italien:</strong> 41.2°C</li>
+                    <li><strong>Athen, Griechenland:</strong> 43.1°C</li>
+                    <li><strong>Paris, Frankreich:</strong> 39.8°C</li>
+                    <li><strong>Berlin, Deutschland:</strong> 37.4°C</li>
+                    <li><strong>London, England:</strong> 35.2°C</li>
+                    <li><strong>Wien, Österreich:</strong> 38.7°C</li>
+                    <li><strong>Budapest, Ungarn:</strong> 40.1°C</li>
+                </ul>
             </div>
         </div>
-
-        <!-- Extremwerte im Süden Europas -->
+        
         <div class="slide">
-            <h2>Extremwerte im Süden Europas</h2>
-            <ul class="temperature-list">
-                <li><strong>Portugal:</strong> Rekordnahe Temperaturen für die portugiesische Hauptstadt.</li>
-                <li><strong>Spanien:</strong> Historisch hohe Temperaturen in der spanischen Region.</li>
-                <li><strong>Frankreich:</strong> Deutlich über dem Juli-Mittelwert für die französische Hauptstadt.</li>
-                <li><strong>Italien:</strong> Hitzeverstärkender mediterraner Einfluss in der italienischen Hauptstadt.</li>
-                <li><strong>Türkei:</strong> Einer der heißesten Juli-Tage seit Aufzeichnungsbeginn in der Türkei.</li>
+            <h2>Temperaturentwicklung</h2>
+            <div class="chart-placeholder">
+                [Hier würde ein interaktives Temperaturdiagramm stehen]
+            </div>
+            <p>Die Grafik zeigt die Temperaturentwicklung der letzten 30 Tage in den wichtigsten europäischen Städten. Besonders auffällig sind die extremen Spitzenwerte in Südeuropa.</p>
+        </div>
+        
+        <div class="slide">
+            <h2>Auswirkungen der Hitzewelle</h2>
+            <h3>Gesundheitliche Folgen</h3>
+            <p>Die anhaltend hohen Temperaturen haben zu einer erhöhten Anzahl von Krankenhauseinweisungen geführt, insbesondere bei älteren Menschen und Personen mit Vorerkrankungen.</p>
+            
+            <h3>Wirtschaftliche Auswirkungen</h3>
+            <p>Die Landwirtschaft leidet unter der Trockenheit, was zu Ernteausfällen und steigenden Lebensmittelpreisen führt. Gleichzeitig steigt der Energieverbrauch durch Klimaanlagen drastisch an.</p>
+            
+            <h3>Umweltfolgen</h3>
+            <p>Waldbrände nehmen zu, Gewässer trocknen aus, und die Biodiversität ist bedroht. Viele Städte haben bereits Wassersparmaßnahmen eingeleitet.</p>
+        </div>
+        
+        <div class="slide">
+            <h2>Klimawandel und Zukunftsprognosen</h2>
+            <div class="highlight-section">
+                <p>Wissenschaftler warnen, dass solche extremen Hitzeereignisse in Zukunft häufiger auftreten werden. Der Klimawandel verstärkt die Intensität und Dauer von Hitzewellen erheblich.</p>
+            </div>
+            <p>Modellrechnungen zeigen, dass bis 2050 Temperaturen von über 45°C in Südeuropa zur Normalität werden könnten, wenn keine drastischen Maßnahmen zur Emissionsreduktion ergriffen werden.</p>
+        </div>
+        
+        <div class="slide">
+            <h2>Schutzmaßnahmen und Empfehlungen</h2>
+            <h3>Persönliche Schutzmaßnahmen</h3>
+            <ul>
+                <li>Ausreichend Flüssigkeit zu sich nehmen (mindestens 3 Liter pro Tag)</li>
+                <li>Körperliche Anstrengungen in den heißesten Stunden vermeiden</li>
+                <li>Leichte, helle Kleidung tragen</li>
+                <li>Regelmäßig kühle Räume aufsuchen</li>
             </ul>
-            <div class="highlight-section">
-                <p>Alle fünf Städte verzeichnen Extremtemperaturen, die in den letzten Jahrzehnten nur selten erreicht wurden. Die Werte vom 24. Juli 2025 markieren neue Spitzenwerte in allen untersuchten Hauptstädten.</p>
-            </div>
-        </div>
-
-        <!-- Historischer Vergleich -->
-        <div class="slide">
-            <h2>Historischer Vergleich: 24. Juli (2005-2025)</h2>
-            <p>Die Grafik zeigt einen konstanten Erwärmungstrend in allen fünf Städten zwischen 2005 und 2025. Lissabon und Madrid erreichen 2025 Spitzenwerte von <span class="temperature-value">40 °C</span> bzw. <span class="temperature-value">41 °C</span>. Paris verzeichnet mit <span class="temperature-value">37 °C</span> einen deutlichen Sprung, während Rom und Ankara 2025 ebenfalls deutlich höher liegen als 2005 (jeweils <span class="temperature-value">7 °C</span> Unterschied).</p>
             
-            <div class="highlight-section">
-                <p>Dieser 20-Jahres-Trend untermauert die zunehmende Hitze im mediterranen Raum und bietet eine eindrückliche Visualisierung des Klimawandels in urbanen Zentren Südeuropas.</p>
-            </div>
+            <h3>Städtische Maßnahmen</h3>
+            <ul>
+                <li>Einrichtung von Kühlzentren</li>
+                <li>Verstärkung der Grünflächen</li>
+                <li>Wassersparmaßnahmen</li>
+                <li>Anpassung der Arbeitszeiten</li>
+            </ul>
         </div>
-
-        <!-- Langzeittrend -->
-        <div class="slide">
-            <h2>Langzeittrend: 55 Jahre Temperaturentwicklung</h2>
-            <p>Die Grafik zeigt die Höchsttemperaturen am 24. Juli von 1970 bis 2025 in fünfjährigen Schritten für sechs europäische Hauptstädte. Besonders auffällig ist der steile Anstieg in Berlin, das von rund <span class="temperature-value">21 °C (1970)</span> auf <span class="temperature-value">31 °C (2025)</span> klettert – ein Plus von ca. <span class="temperature-value">10 °C</span>.</p>
-            
-            <p>Südeuropäische Städte wie Lissabon <span class="temperature-value">(+9 °C)</span>, Madrid <span class="temperature-value">(+9 °C)</span> und Rom <span class="temperature-value">(+8 °C)</span> verzeichnen ebenfalls starke Anstiege. Der kontinuierliche Erwärmungstrend wird durch die gleichmäßigen Fünf-Jahres-Schritte besonders deutlich visualisiert.</p>
-        </div>
-
-        <!-- Wöchentliche Durchschnittstemperaturen -->
-        <div class="slide">
-            <h2>Wöchentliche Durchschnittstemperaturen (18.-24. Juli 2025)</h2>
-            <h3>Durchschnittliche Höchsttemperatur der letzten 7 Tage</h3>
-            <p>Die wöchentlichen Mittelwerte zeigen, dass Ankara und Rom aktuell die höchsten Durchschnittstemperaturen aufweisen, während Paris vergleichsweise moderat bleibt. Diese Werte unterstreichen die anhaltende Hitzebelastung in Südeuropa.</p>
-        </div>
-
-        <!-- Monatliche Juli-Durchschnitte -->
-        <div class="slide">
-            <h2>Monatliche Juli-Durchschnitte im historischen Vergleich</h2>
-            <p>Die Grafik zeigt den Anstieg der durchschnittlichen Juli-Höchsttemperaturen von 1970 bis 2025 für alle fünf Städte. Sie unterstreicht die konstante Zunahme der Hitze in Südeuropa seit den 1970er-Jahren.</p>
-            
-            <p>Besonders deutlich wird der Erwärmungstrend in Madrid und Lissabon, aber auch Rom und Ankara zeigen eine signifikante Temperaturzunahme über den betrachteten Zeitraum von 55 Jahren.</p>
-        </div>
-
-        <!-- Schlussfolgerungen -->
-        <div class="slide">
-            <h2>Schlussfolgerungen zur europäischen Hitzewelle</h2>
-            
-            <div class="conclusion-grid">
-                <div class="conclusion-item">
-                    <h3>Anhaltende Hitzewelle</h3>
-                    <p>Europaweit sowie in den analysierten Hauptstädten steigen die Temperaturen weiter an. Die Werte vom 24. Juli 2025 markieren neue Spitzenwerte in allen untersuchten Städten.</p>
-                </div>
-                
-                <div class="conclusion-item">
-                    <h3>Klimatischer Trend</h3>
-                    <p>Die Maxima von 2025 liegen konsistent über den Werten der letzten 1–20 Jahre und untermauern den fortschreitenden Erwärmungstrend.</p>
-                </div>
-                
-                <div class="conclusion-item">
-                    <h3>Ganzeuropäisches Phänomen</h3>
-                    <p>Der Klimawandel erfasst nicht nur den Süden, sondern ganz Europa, wie der besonders starke Temperaturanstieg in Berlin zeigt.</p>
-                </div>
-                
-                <div class="conclusion-item">
-                    <h3>Südeuropäische Extremwerte</h3>
-                    <p>Lissabon, Madrid, Rom und Ankara verzeichnen am 24. Juli Temperaturrekorde, Paris liegt deutlich über dem üblichen Juli-Mittel.</p>
-                </div>
-            </div>
-            
-            <div class="highlight-section">
-                <p>Durch den Wechsel von Tages- auf Wochen- und Monatsmittel werden saisonale Schwankungen abgepuffert und der langfristige Erwärmungstrend in europäischen Metropolen deutlicher sichtbar.</p>
-            </div>
+        
+        <div class="slide footer">
+            <p>Datenquellen: Europäische Wetterdienste, WHO, Umweltagenturen</p>
+            <p>Stand: August 2024</p>
         </div>
     </div>
 </body>

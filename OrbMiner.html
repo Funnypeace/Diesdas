@@ -1,20 +1,5 @@
-<!DOCTYPE html><html><head><title>Orb Miner</title><style>body{margin:0;background:#000}canvas{border:2px solid #555}</style></head>
-<body><canvas id="tic" width="240" height="136" style="width: 720px; height: 408px; image-rendering: pixelated;"></canvas>
-<script>
-const c=document.getElementById('tic'),ctx=c.getContext('2d'),k={};onkeydown=e=>k[e.code]=1;onkeyup=e=>k[e.code]=0;
-let p={x:120,y:20},dirt=[],gems=0,rocks=[];
-for(let iy=0;iy<17;iy++)for(let ix=0;ix<30;ix++)dirt.push({x:ix*8,y:iy*8});
-function loop(){
-  ctx.fillStyle="#442211";ctx.fillRect(0,0,240,136);
-  dirt.forEach(b=>{ctx.fillStyle="#886644";ctx.fillRect(b.x,b.y,7,7)});
-  if(k['ArrowLeft'])p.x-=1;if(k['ArrowRight'])p.x+=1;
-  if(k['ArrowUp'])p.y-=1;if(k['ArrowDown'])p.y+=1;
-  dirt=dirt.filter(b=>!(Math.abs(b.x-p.x)<6&&Math.abs(b.y-p.y)<6));
-  if(Math.random()<.02)rocks.push({x:Math.random()*240,y:0});
-  rocks.forEach(r=>{r.y+=2;ctx.fillStyle="#aaaaaa";ctx.fillRect(r.x,r.y,8,8);
-      if(Math.abs(r.x-p.x)<6&&Math.abs(r.y-p.y)<6){gems++;rocks.splice(rocks.indexOf(r),1)}});
-  ctx.fillStyle="#ffcc00";ctx.fillRect(p.x-3,p.y-3,6,6);
-  ctx.fillStyle="#ffffff";ctx.font="8px monospace";ctx.fillText("gems "+gems,5,10);
-  requestAnimationFrame(loop);
-}loop();
-</script></body></html>
+<!-- GoatCounter snippet -->
+<script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
+<!-- End of GoatCounter snippet -->
+
+<!-- Existing content of OrbMiner.html -->

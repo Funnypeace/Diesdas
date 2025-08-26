@@ -68,6 +68,9 @@
             background-color: #9ca3af;
         }
     </style>
+    <!-- GoatCounter -->
+    <script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
+    <!-- End GoatCounter -->
 </head>
 <body>
     <h1>AI-Chat-Content-Generator mit Groq</h1>
@@ -76,7 +79,6 @@
         <input type="text" id="promptInput" placeholder="Thema oder Nachfrage eingeben..." required>
         <button type="submit">Senden</button>
     </form>
-
     <script>
         const form = document.getElementById('chatForm');
         const promptInput = document.getElementById('promptInput');
@@ -130,8 +132,10 @@
 
                 const data = await response.json();
                 const generatedText = data.content;
+
                 addMessage('assistant', generatedText);
                 messages.push({ role: 'assistant', content: generatedText });
+
             } catch (error) {
                 addMessage('assistant', `Fehler: ${error.message}. Überprüfe die Vercel-Logs.`);
             } finally {

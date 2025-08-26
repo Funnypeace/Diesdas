@@ -13,14 +13,12 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -30,12 +28,10 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(10px);
         }
-
         .header {
             text-align: center;
             margin-bottom: 30px;
         }
-
         .header h1 {
             color: #333;
             font-size: 2.5rem;
@@ -45,26 +41,22 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
         .header p {
             color: #666;
             font-size: 1.1rem;
         }
-
         .main-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
             margin-bottom: 30px;
         }
-
         .input-section, .output-section {
             background: #f8f9fa;
             border-radius: 15px;
             padding: 25px;
             border: 2px solid #e9ecef;
         }
-
         .section-title {
             font-size: 1.3rem;
             color: #333;
@@ -73,7 +65,6 @@
             align-items: center;
             gap: 10px;
         }
-
         .section-title:before {
             content: '';
             width: 4px;
@@ -81,7 +72,6 @@
             background: linear-gradient(45deg, #667eea, #764ba2);
             border-radius: 2px;
         }
-
         .code-input {
             width: 100%;
             height: 300px;
@@ -95,13 +85,11 @@
             color: #e2e8f0;
             transition: border-color 0.3s ease;
         }
-
         .code-input:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
-
         .language-select {
             width: 100%;
             padding: 12px;
@@ -113,19 +101,16 @@
             cursor: pointer;
             transition: border-color 0.3s ease;
         }
-
         .language-select:focus {
             outline: none;
             border-color: #667eea;
         }
-
         .action-buttons {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
             margin-bottom: 20px;
         }
-
         .btn {
             padding: 12px 20px;
             border: none;
@@ -137,7 +122,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .btn:before {
             content: '';
             position: absolute;
@@ -148,37 +132,30 @@
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
             transition: left 0.5s;
         }
-
         .btn:hover:before {
             left: 100%;
         }
-
         .btn-primary {
             background: linear-gradient(45deg, #667eea, #764ba2);
             color: white;
         }
-
         .btn-secondary {
             background: linear-gradient(45deg, #11998e, #38ef7d);
             color: white;
         }
-
         .btn-tertiary {
             background: linear-gradient(45deg, #ff6b6b, #ee5a24);
             color: white;
         }
-
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         }
-
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
-
         .output-content {
             min-height: 300px;
             max-height: 500px;
@@ -190,7 +167,6 @@
             font-family: 'Courier New', monospace;
             line-height: 1.6;
         }
-
         .loading {
             display: flex;
             align-items: center;
@@ -199,7 +175,6 @@
             color: #667eea;
             font-size: 1.1rem;
         }
-
         .spinner {
             width: 20px;
             height: 20px;
@@ -208,12 +183,10 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
         .error {
             color: #e53e3e;
             background: #fed7d7;
@@ -221,7 +194,6 @@
             border-radius: 8px;
             border-left: 4px solid #e53e3e;
         }
-
         .success {
             color: #38a169;
             background: #c6f6d5;
@@ -229,14 +201,12 @@
             border-radius: 8px;
             border-left: 4px solid #38a169;
         }
-
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-top: 20px;
         }
-
         .stat-card {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
@@ -245,18 +215,15 @@
             text-align: center;
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
         }
-
         .stat-value {
             font-size: 2rem;
             font-weight: bold;
             margin-bottom: 5px;
         }
-
         .stat-label {
             font-size: 0.9rem;
             opacity: 0.9;
         }
-
         @media (max-width: 768px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -270,352 +237,12 @@
                 padding: 20px;
             }
         }
-
         pre[class*="language-"] {
             margin: 0 !important;
             border-radius: 8px !important;
         }
     </style>
+    <!-- GoatCounter -->
+    <script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
+    <!-- End GoatCounter -->
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🚀 GroqCloud Code Assistant</h1>
-            <p>Nutzen Sie die Kraft von GroqCloud für intelligente Code-Analyse und -Optimierung</p>
-        </div>
-
-        <div class="main-content">
-            <div class="input-section">
-                <h2 class="section-title">Code Eingabe</h2>
-                
-                <select class="language-select" id="languageSelect">
-                    <option value="javascript">JavaScript</option>
-                    <option value="python">Python</option>
-                    <option value="java">Java</option>
-                    <option value="cpp">C++</option>
-                    <option value="html">HTML</option>
-                    <option value="css">CSS</option>
-                    <option value="sql">SQL</option>
-                    <option value="go">Go</option>
-                    <option value="rust">Rust</option>
-                </select>
-
-                <textarea 
-                    class="code-input" 
-                    id="codeInput" 
-                    placeholder="Fügen Sie hier Ihren Code ein...">function fibonacci(n) {
-    if (n <= 1) return n;
-    return fibonacci(n - 1) + fibonacci(n - 2);
-}
-
-console.log(fibonacci(10));</textarea>
-
-                <div class="action-buttons">
-                    <button class="btn btn-primary" onclick="explainCode()">💡 Code Erklären</button>
-                    <button class="btn btn-secondary" onclick="optimizeCode()">⚡ Optimieren</button>
-                    <button class="btn btn-tertiary" onclick="findBugs()">🐛 Bugs Finden</button>
-                </div>
-            </div>
-
-            <div class="output-section">
-                <h2 class="section-title">KI Analyse</h2>
-                <div class="output-content" id="outputContent">
-                    <div style="text-align: center; color: #a0aec0; margin-top: 100px;">
-                        Wählen Sie eine Aktion aus, um die KI-Analyse zu starten...
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-value" id="requestCount">0</div>
-                <div class="stat-label">Anfragen</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="avgResponseTime">0ms</div>
-                <div class="stat-label">∅ Antwortzeit</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="totalTokens">0</div>
-                <div class="stat-label">Tokens verwendet</div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let requestCount = 0;
-        let responseTimes = [];
-        let totalTokens = 0;
-
-        async function callGroqAPI(prompt, action) {
-            const startTime = Date.now();
-            const outputElement = document.getElementById('outputContent');
-            
-            // Disable buttons during request
-            const buttons = document.querySelectorAll('.btn');
-            buttons.forEach(btn => btn.disabled = true);
-            
-            outputElement.innerHTML = `
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <span>${action} wird ausgeführt...</span>
-                </div>
-            `;
-
-            console.log('=== Frontend Debug ===');
-            console.log('Prompt length:', prompt.length);
-            console.log('Action:', action);
-            console.log('Making request to:', '/api/groq');
-
-            // Korrigierte Anfrage-Struktur - Messages-Array statt einzelner Prompt
-            const requestData = {
-                messages: [
-                    {
-                        role: "user",
-                        content: prompt
-                    }
-                ],
-                action: action
-            };
-            console.log('Request data:', requestData);
-
-            try {
-                const response = await fetch('/api/groq', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(requestData)
-                });
-
-                console.log('Response status:', response.status);
-                console.log('Response headers:', [...response.headers.entries()]);
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('HTTP Error Response:', errorText);
-                    throw new Error(`HTTP ${response.status}: ${errorText}`);
-                }
-
-                const data = await response.json();
-                console.log('Parsed response data:', data);
-                
-                const endTime = Date.now();
-                const responseTime = endTime - startTime;
-                
-                // Update statistics
-                requestCount++;
-                responseTimes.push(responseTime);
-                totalTokens += data.usage?.total_tokens || 0;
-                
-                updateStats();
-                displayResult(data.content, action, responseTime);
-
-            } catch (error) {
-                console.error('=== Error Details ===');
-                console.error('Error message:', error.message);
-                console.error('Error stack:', error.stack);
-                
-                outputElement.innerHTML = `
-                    <div class="error">
-                        <strong>Fehler beim Verarbeiten der Anfrage:</strong><br>
-                        ${error.message}<br><br>
-                        <small>Überprüfen Sie die Browser-Konsole (F12) für Details</small>
-                    </div>
-                `;
-            } finally {
-                // Re-enable buttons
-                buttons.forEach(btn => btn.disabled = false);
-            }
-        }
-
-        function displayResult(content, action, responseTime) {
-            const outputElement = document.getElementById('outputContent');
-            const language = document.getElementById('languageSelect').value;
-            
-            // Check if content contains code blocks
-            if (content.includes('```')) {
-                // Replace code blocks with proper syntax highlighting
-                content = content.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
-                    const codeLanguage = lang || language;
-                    return `<pre><code class="language-${codeLanguage}">${code.trim()}</code></pre>`;
-                });
-            }
-            
-            outputElement.innerHTML = `
-                <div class="success">
-                    <strong>✅ ${action} abgeschlossen</strong> (${responseTime}ms)
-                </div>
-                <div style="margin-top: 20px; white-space: pre-wrap;">${content}</div>
-            `;
-            
-            // Apply syntax highlighting
-            Prism.highlightAllUnder(outputElement);
-        }
-
-        function updateStats() {
-            document.getElementById('requestCount').textContent = requestCount;
-            
-            const avgTime = responseTimes.length > 0 
-                ? Math.round(responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length)
-                : 0;
-            document.getElementById('avgResponseTime').textContent = avgTime + 'ms';
-            
-            document.getElementById('totalTokens').textContent = totalTokens.toLocaleString();
-        }
-
-        async function explainCode() {
-            const code = document.getElementById('codeInput').value;
-            const language = document.getElementById('languageSelect').value;
-            
-            if (!code.trim()) {
-                alert('Bitte geben Sie Code ein, der erklärt werden soll.');
-                return;
-            }
-
-            const prompt = `Bitte erkläre den folgenden ${language} Code Schritt für Schritt auf Deutsch. 
-Gehe auf die Funktionsweise, verwendete Konzepte und mögliche Verbesserungen ein:
-
-\`\`\`${language}
-${code}
-\`\`\``;
-
-            await callGroqAPI(prompt, 'Code-Erklärung');
-        }
-
-        async function optimizeCode() {
-            const code = document.getElementById('codeInput').value;
-            const language = document.getElementById('languageSelect').value;
-            
-            if (!code.trim()) {
-                alert('Bitte geben Sie Code ein, der optimiert werden soll.');
-                return;
-            }
-
-            const prompt = `Optimiere den folgenden ${language} Code für bessere Performance, Lesbarkeit und Best Practices. 
-Zeige sowohl den optimierten Code als auch eine Erklärung der Verbesserungen auf Deutsch:
-
-\`\`\`${language}
-${code}
-\`\`\``;
-
-            await callGroqAPI(prompt, 'Code-Optimierung');
-        }
-
-        async function findBugs() {
-            const code = document.getElementById('codeInput').value;
-            const language = document.getElementById('languageSelect').value;
-            
-            if (!code.trim()) {
-                alert('Bitte geben Sie Code ein, der auf Bugs überprüft werden soll.');
-                return;
-            }
-
-            const prompt = `Analysiere den folgenden ${language} Code auf mögliche Bugs, Sicherheitslücken und Probleme. 
-Liste alle gefundenen Issues mit Erklärungen und Lösungsvorschlägen auf Deutsch auf:
-
-\`\`\`${language}
-${code}
-\`\`\``;
-
-            await callGroqAPI(prompt, 'Bug-Analyse');
-        }
-
-        // Sample code examples for different languages
-        const codeExamples = {
-            javascript: `function fibonacci(n) {
-    if (n <= 1) return n;
-    return fibonacci(n - 1) + fibonacci(n - 2);
-}
-
-console.log(fibonacci(10));`,
-            python: `def fibonacci(n):
-    if n <= 1:
-        return n
-    return fibonacci(n - 1) + fibonacci(n - 2)
-
-print(fibonacci(10))`,
-            java: `public class Fibonacci {
-    public static int fibonacci(int n) {
-        if (n <= 1) return n;
-        return fibonacci(n - 1) + fibonacci(n - 2);
-    }
-    
-    public static void main(String[] args) {
-        System.out.println(fibonacci(10));
-    }
-}`,
-            cpp: `#include <iostream>
-using namespace std;
-
-int fibonacci(int n) {
-    if (n <= 1) return n;
-    return fibonacci(n - 1) + fibonacci(n - 2);
-}
-
-int main() {
-    cout << fibonacci(10) << endl;
-    return 0;
-}`,
-            html: `<!DOCTYPE html>
-<html>
-<head>
-    <title>Beispiel</title>
-</head>
-<body>
-    <h1>Hallo Welt</h1>
-    <p>Das ist ein Beispiel.</p>
-</body>
-</html>`,
-            css: `.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-}`,
-            sql: `SELECT users.name, COUNT(orders.id) as order_count
-FROM users
-LEFT JOIN orders ON users.id = orders.user_id
-WHERE users.created_at > '2024-01-01'
-GROUP BY users.id
-ORDER BY order_count DESC;`,
-            go: `package main
-
-import "fmt"
-
-func fibonacci(n int) int {
-    if n <= 1 {
-        return n
-    }
-    return fibonacci(n-1) + fibonacci(n-2)
-}
-
-func main() {
-    fmt.Println(fibonacci(10))
-}`,
-            rust: `fn fibonacci(n: u32) -> u32 {
-    if n <= 1 {
-        return n;
-    }
-    fibonacci(n - 1) + fibonacci(n - 2)
-}
-
-fn main() {
-    println!("{}", fibonacci(10));
-}`
-        };
-
-        // Update code example when language changes
-        document.getElementById('languageSelect').addEventListener('change', function() {
-            const selectedLanguage = this.value;
-            const codeInput = document.getElementById('codeInput');
-            
-            if (codeExamples[selectedLanguage]) {
-                codeInput.value = codeExamples[selectedLanguage];
-            }
-        });
-    </script>
-</body>
-</html>

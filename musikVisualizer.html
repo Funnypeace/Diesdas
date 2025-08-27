@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Visualizer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .upload-area {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px dashed #4CAF50;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+        }
+        input[type="file"] {
+            margin: 10px;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        canvas {
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            background: rgba(0,0,0,0.3);
+            margin: 20px 0;
+            width: 100%;
+            display: block;
+        }
+        .controls {
+            margin: 20px 0;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        .info {
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        audio {
+            width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Audio Visualizer</h1>
+        <div class="upload-area">
+            <p>MP3-Datei auswählen:</p>
+            <input type="file" id="audioFile" accept=".mp3,.wav,.ogg" />
+        </div>
+        <canvas id="visualizer" width="800" height="400"></canvas>
+        <div class="controls">
+            <button id="playBtn" disabled>▶ Play</button>
+            <button id="pauseBtn" disabled>⏸ Pause</button>
+            <button id="stopBtn" disabled>⏹ Stop</button>
+        </div>
+        <div class="info" id="info">Datei auswählen um zu starten</div>
+        <audio id="audioElement" controls></audio>
+    </div>
+    <script>
+        class AudioVisualizer {
+            constructor() {
+                this.canvas = document.getElementById('visualizer');
+                this.ctx = this.canvas.getContext('2d');
+                this.audioElement = document.getElementById('audioElement');
+                this.fileInput = document.getElementById('audioFile');
+                this.playBtn = document.getElementById('playBtn');
+                this.pauseBtn = document.getElementById('pauseBtn');
+                this.stopBtn = document.getElementById('stopBtn');
+                this.info = document.getElementById('info');
+                this.audioContext = null;
+                this.analyser = null;
+                this.dataArray = null;
+                this.source = null;
+                this.animationId = null;
+                this.setupEventListeners();
+            }
+            setupEventListeners() {
+                this.fileInput.addEventListener('change', (e) => this.handleFileLoad(e));
+                this.playBtn.addEventListener('click', () => this.play());
+                this.pauseBtn.addEventListener('click', () => this.pause());
+                this.stopBtn.addEventListener('click', () => this.stop());
+                this.audioElement.addEventListener('ended', () => {
+                    this.stop();
+                });
+            }
+            async handleFileLoad(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                try {
+                    const url = URL.createObjectURL(file);
+                    this.audioElement.src = url;
+                    await this.initAudioContext();
+                    this.info.textContent = `Geladen: ${file.name}`;
+                    this.enableControls();
+                } catch (error) {
+                    console.error('Fehler beim Laden der Datei:', error);
+                    this.info.textContent = 'Fehler beim Laden der Datei';
+                }
+            }
+            async initAudioContext() {
+                if (this.audioContext) {
+                    this.audioContext.close();
+                }
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                this.analyser = this.audioContext.createAnalyser();
+                this.analyser.fftSize = 512;
+                this.source = this.audioContext.createMediaElementSource(this.audioElement);
+                this.source.connect(this.analyser);
+                this.analyser.connect(this.audioContext.destination);
+                const bufferLength = this.analyser.frequencyBinCount;
+                this.dataArray = new Uint8Array(bufferLength);
+            }
+            play() {
+                if (this.audioContext.state === 'suspended') {
+                    this.audioContext.resume();
+                }
+                this.audioElement.play();
+                this.startVisualization();
+                this.updateButtonStates(true);
+            }
+            pause() {
+                this.audioElement.pause();
+                this.stopVisualization();
+                this.updateButtonStates(false);
+            }
+            stop() {
+                this.audioElement.pause();
+                this.audioElement.currentTime = 0;
+                this.stopVisualization();
+                this.updateButtonStates(false);
+                this.clearCanvas();
+            }
+            startVisualization() {
+                this.animate();
+            }
+            stopVisualization() {
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                    this.animationId = null;
+                }
+            }
+            animate() {
+                this.animationId = requestAnimationFrame(() => this.animate());
+                this.analyser.getByteFrequencyData(this.dataArray);
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                this.drawBars();
+                this.drawWaveform();
+            }
+            drawBars() {
+                const barWidth = this.canvas.width / this.dataArray.length * 2;
+                let x = 0;
+                for (let i = 0; i < this.dataArray.length; i++) {
+                    const barHeight = (this.dataArray[i] / 255) * this.canvas.height * 0.8;
+                    const gradient = this.ctx.createLinearGradient(0, this.canvas.height, 0, this.canvas.height - barHeight);
+                    gradient.addColorStop(0, '#4CAF50');
+                    gradient.addColorStop(0.5, '#8BC34A');
+                    gradient.addColorStop(1, '#CDDC39');
+                    this.ctx.fillStyle = gradient;
+                    this.ctx.fillRect(x, this.canvas.height - barHeight, barWidth - 1, barHeight);
+                    x += barWidth;
+                }
+            }
+            drawWaveform() {
+                this.ctx.strokeStyle = '#00BCD4';
+                this.ctx.lineWidth = 2;
+                this.ctx.beginPath();
+                const sliceWidth = this.canvas.width / this.dataArray.length;
+                let x = 0;
+                for (let i = 0; i < this.dataArray.length; i++) {
+                    const y = (this.dataArray[i] / 255) * this.canvas.height / 2;
+                    if (i === 0) {
+                        this.ctx.moveTo(x, y);
+                    } else {
+                        this.ctx.lineTo(x, y);
+                    }
+                    x += sliceWidth;
+                }
+                this.ctx.stroke();
+            }
+            clearCanvas() {
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            }
+            enableControls() {
+                this.playBtn.disabled = false;
+                this.pauseBtn.disabled = false;
+                this.stopBtn.disabled = false;
+            }
+            updateButtonStates(isPlaying) {
+                this.playBtn.disabled = isPlaying;
+                this.pauseBtn.disabled = !isPlaying;
+            }
+        }
+        // Visualizer initialisieren
+        const visualizer = new AudioVisualizer();
+    </script>
+</body>
+</html>

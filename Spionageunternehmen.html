@@ -1,359 +1,423 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-color-scheme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Die 10 größten Spionageunternehmen der Welt</title>
-    <!-- GoatCounter -->
-    <script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Die 10 größten Spionage-/Intelligence-Unternehmen der Welt (Daten 2024)</title>
+  <meta name="description" content="Top 10 Konzerne mit Intelligence/ISR/Cyber-Fokus. Stand: 28.08.2025. Quellen verlinkt.">
+  <meta name="color-scheme" content="dark light">
+
+  <!-- GoatCounter (optional; kann von Adblockern geblockt werden) -->
+  <script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
+
+  <style>
+    /* ===== Design System (kompakt) ===== */
+    :root {
+      --color-bg-primary:#0b0f14; --color-text:#eaeef3; --color-text-secondary:#bac1cc; --color-text-tertiary:#8a93a2;
+      --color-border:rgba(255,255,255,.08); --color-accent:#60a5fa; --color-accent-2:#38bdf8; --color-accent-3:#22d3ee;
+      --radius-lg:14px; --radius-xl:18px; --space-2:8px; --space-4:16px; --space-6:24px;
+      --font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Arial,sans-serif;
+      --fs-sm:12px; --fs-base:14px; --fs-lg:16px; --fs-2xl:20px; --fs-3xl:24px; --fs-4xl:30px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:radial-gradient(1200px 800px at 75% -10%,#172036,#0b0f14 60%);color:var(--color-text);font-family:var(--font-family);-webkit-font-smoothing:antialiased}
+    a{color:#93c5fd;text-decoration:none} a:hover{text-decoration:underline}
+
+    .presentation-container{max-width:1080px;margin:24px auto 80px;padding:0 16px}
+    .nav-bar{position:sticky;top:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding:8px 8px 12px;backdrop-filter:blur(4px);z-index:20}
+    .nav-left,.nav-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .slide-counter{justify-self:center;color:var(--color-text-secondary);font-size:var(--fs-sm);display:flex;align-items:center;gap:10px}
+    .progress{height:6px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;width:160px}
+    .progress__bar{height:100%;width:0%;background:linear-gradient(90deg,var(--color-accent),var(--color-accent-2),var(--color-accent-3));transition:width .2s ease}
+
+    .btn{cursor:pointer;border:1px solid var(--color-border);background:rgba(255,255,255,.02);border-radius:12px;padding:10px 14px;font-size:var(--fs-base);font-weight:500;color:var(--color-text);transition:transform .15s ease,background .15s ease}
+    .btn:hover{background:rgba(255,255,255,.05);transform:translateY(-1px)} .btn--primary{border-color:transparent;background:linear-gradient(180deg,rgba(59,130,246,.85),rgba(33,114,229,.85));color:#fff}
+    .btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+    .select{border:1px solid var(--color-border);background:rgba(255,255,255,.02);color:var(--color-text);border-radius:12px;padding:8px 12px;font-size:var(--fs-base)}
+
+    .card{background:linear-gradient(185deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid var(--color-border);border-radius:var(--radius-xl);overflow:hidden}
+    .card__header{padding:16px 16px 0} .card__title{margin:0 0 6px;font-size:var(--fs-3xl);line-height:1.2} .card__subtitle{color:var(--color-text-secondary);margin:0 0 4px}
+    .card__body{padding:16px} .card__footer{padding:10px 16px 16px;color:var(--color-text-tertiary);font-size:var(--fs-sm)}
+    .grid{display:grid;gap:16px} .grid--2{grid-template-columns:1fr 1fr} .grid--3{grid-template-columns:repeat(3,1fr)} .grid--responsive{grid-template-columns:1.2fr .8fr}
+    @media (max-width:860px){.grid--2,.grid--3,.grid--responsive{grid-template-columns:1fr}}
+
+    .list{display:grid;gap:10px;padding-left:18px} .list li{line-height:1.6}
+    .table{width:100%;border-collapse:collapse;border:1px solid var(--color-border);border-radius:14px;overflow:hidden}
+    .table th,.table td{border-bottom:1px solid var(--color-border);padding:10px 12px;text-align:left;vertical-align:top}
+    .table th{background:rgba(255,255,255,.03);color:var(--color-text-secondary);font-weight:600}
+    .table tr:hover td{background:rgba(255,255,255,.02)}
+
+    .badges{display:flex;flex-wrap:wrap;gap:10px}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;border:1px solid var(--color-border);background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))}
+    .badge__dot{width:10px;height:10px;border-radius:999px;display:inline-block}
+    .bg-1{background:#60a5fa}.bg-2{background:#38bdf8}.bg-3{background:#22d3ee}.bg-4{background:#34d399}.bg-5{background:#fbbf24}.bg-6{background:#f87171}
+
+    .slide{display:none}.slide.active{display:block}
+    .header{text-align:center;padding:30px 16px 8px}.header h1{margin:0;font-size:34px}.header p{margin:8px 0 0;color:var(--color-text-secondary);font-size:18px}
+
+    .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-6)} @media (max-width:860px){.kpi-grid{grid-template-columns:1fr}}
+    .toc{display:grid;gap:12px;padding:8px 0 0;color:var(--color-text-tertiary)}
+    @media print{.nav-bar{display:none!important}.slide{display:block!important;page-break-inside:avoid;margin-bottom:16px}body{background:#fff;color:#111}.card{border-color:#ddd;background:#fff}}
+    [data-color-scheme="light"] body{background:#f3f5f8;color:#0c0f14}
+  </style>
 </head>
 <body>
-<style>
-/* START PERPLEXITY DESIGN SYSTEM (inline, no external fonts) */
-:root {
-  --color-bg-primary: #0b0f14;
-  --color-bg-secondary: #0e131a;
-  --color-surface: #0e131a;
-  --color-surface-hover: #111823;
-  --color-surface-2: #121926;
-  --color-elevated: #111723;
-  --color-elevated-2: #0b1220;
-  --color-elevated-3: #121a29;
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-secondary: rgba(255, 255, 255, 0.14);
-  --color-text: #eaeef3;
-  --color-text-secondary: #bac1cc;
-  --color-text-tertiary: #8a93a2;
-  --color-muted: #9099a8;
-  --color-link: #93c5fd;
-  --color-link-hover: #bfdbfe;
-  --color-accent: #60a5fa;
-  --color-accent-2: #38bdf8;
-  --color-accent-3: #22d3ee;
-  --color-success: rgb(33, 128, 141);
-  --color-error: rgb(192, 21, 47);
-  --color-warning: rgb(168, 75, 47);
-  --color-info: rgb(98, 108, 113);
-  --color-success-bg: rgba(33, 128, 141, var(--status-bg-opacity));
-  --color-error-bg: rgba(192, 21, 47, var(--status-bg-opacity));
-  --color-warning-bg: rgba(168, 75, 47, var(--status-bg-opacity));
-  --color-info-bg: rgba(98, 108, 113, var(--status-bg-opacity));
-  --status-bg-opacity: 0.15;
-  --status-border-opacity: 0.25;
-  --select-caret-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%231A1D23' stroke-width='1' stroke-linecap='round' stroke-linejoin='round' class='lucide lucide-chevron-down'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  --select-caret-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23C6CBD6' stroke-width='1' stroke-linecap='round' stroke-linejoin='round' class='lucide lucide-chevron-down'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  /* RGB versions for opacity control */
-  --color-success-rgb: 33, 128, 141;
-  --color-error-rgb: 192, 21, 47;
-  --color-warning-rgb: 168, 75, 47;
-  --color-info-rgb: 98, 108, 113;
-  /* Typography */
-  --font-family-base: "Inter", -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-family-mono: "Berkeley Mono", ui-monospace, SFMono-Regular, Menlo,
-    Monaco, Consolas, monospace;
-  --font-size-xs: 11px;
-  --font-size-sm: 12px;
-  --font-size-base: 14px;
-  --font-size-md: 14px;
-  --font-size-lg: 16px;
-  --font-size-xl: 18px;
-  --font-size-2xl: 20px;
-  --font-size-3xl: 24px;
-  --font-size-4xl: 30px;
-  --font-weight-normal: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 550;
-  --font-weight-bold: 600;
-  --line-height-tight: 1.2;
-  --line-height-snug: 1.3;
-  --line-height-normal: 1.5;
-  --line-height-relaxed: 1.7;
-  /* Radius / Shadows */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 18px;
-  --radius-2xl: 22px;
-  --radius-3xl: 28px;
-  --shadow-soft: 0 2px 10px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.25);
-  --shadow-lg: 0 18px 60px rgba(0, 0, 0, 0.25);
-  /* Spacing */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-7: 28px;
-  --space-8: 32px;
-  --space-9: 36px;
-  --space-10: 40px;
-}
+  <div class="presentation-container">
+    <!-- Navigation -->
+    <nav class="nav-bar" aria-label="Präsentationsnavigation">
+      <div class="nav-left">
+        <button id="prev" class="btn" aria-label="Vorherige Folie">← Zurück</button>
+        <button id="next" class="btn btn--primary" aria-label="Nächste Folie">Weiter →</button>
+        <select id="jump" class="select" aria-label="Gehe zu Folie"></select>
+      </div>
 
-* {
-  box-sizing: border-box;
-}
+      <div class="slide-counter" aria-live="polite">
+        <span>Folie</span><strong id="counter">1</strong><span>von</span><span id="total">1</span>
+        <div class="progress" aria-hidden="true"><div id="progressBar" class="progress__bar"></div></div>
+      </div>
 
-html,
-body {
-  background: radial-gradient(1200px 800px at 75% -10%, #172036, #0b0f14 60%);
-  background-attachment: fixed;
-  color: var(--color-text);
-  font-family: var(--font-family-base);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+      <div class="nav-right">
+        <button id="themeToggle" class="btn" aria-pressed="true" title="Dark/Light umschalten">Dark/Light</button>
+        <button id="printBtn" class="btn" title="Alle Folien drucken/als PDF speichern">Drucken/PDF</button>
+      </div>
+    </nav>
 
-/* Layout */
-.presentation-container {
-  max-width: 1050px;
-  margin: 24px auto 80px;
-  padding: 0 16px;
-}
+    <!-- Slide 1: Titel -->
+    <section class="slide active" id="s1" data-title="Titel" aria-label="Titel">
+      <header class="header">
+        <h1>Die 10 größten „Spionage“-/Intelligence-Unternehmen (2024)</h1>
+        <p>Defence, ISR, Cyber &amp; Intelligence Contractors – <em>Stand: 28.08.2025</em></p>
+      </header>
 
-.nav-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  padding: 8px;
-  backdrop-filter: blur(4px);
-}
+      <div class="grid grid--responsive">
+        <div class="card">
+          <div class="card__header">
+            <h2 class="card__title">Worum geht’s?</h2>
+            <p class="card__subtitle">Definition & Kontext</p>
+          </div>
+          <div class="card__body">
+            <p>Umgangssprachlich werden Firmen mit erheblichem Anteil an <strong>Intelligence</strong>,
+               <strong>ISR</strong> (Intelligence, Surveillance, Reconnaissance), <strong>Cyber</strong>, 
+               Sensorik, EW/Comms, Datenanalyse etc. oft als „Spionageunternehmen“ bezeichnet. 
+               Gelistet sind die größten Konzerne nach <strong>Umsatz 2024</strong> (bzw. FY2024) 
+               und prominente Gov/Intel-Dienstleister.</p>
+            <div class="badges" aria-label="Schlagworte">
+              <span class="badge"><span class="badge__dot bg-1"></span>ISR</span>
+              <span class="badge"><span class="badge__dot bg-2"></span>EW/Comms</span>
+              <span class="badge"><span class="badge__dot bg-3"></span>Cyber</span>
+              <span class="badge"><span class="badge__dot bg-4"></span>Analytics</span>
+              <span class="badge"><span class="badge__dot bg-5"></span>Gov Services</span>
+              <span class="badge"><span class="badge__dot bg-6"></span>OSINT/Platform</span>
+            </div>
+          </div>
+          <div class="card__footer">Hinweis: Währungsangaben in Originalwährung; Quellen auf „Quellen“-Slide.</div>
+        </div>
 
-.slide-counter {
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
-}
+        <div class="card">
+          <div class="card__header">
+            <h2 class="card__title">Inhalt</h2>
+            <p class="card__subtitle">Schnelle Navigation</p>
+          </div>
+          <div class="card__body">
+            <ol class="toc">
+              <li><a href="#s1">Titel & Überblick</a></li>
+              <li><a href="#s2">Top-10 (nach Umsatz 2024)</a></li>
+              <li><a href="#s3">Kurzprofile (10 Firmen)</a></li>
+              <li><a href="#s4">KPIs & Einordnung</a></li>
+              <li><a href="#s5">Methodik & Grenzen</a></li>
+              <li><a href="#s6">Quellen (Original-Links)</a></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
 
-.grid {
-  display: grid;
-  gap: 16px;
-}
+    <!-- Slide 2: Top-10 Tabelle -->
+    <section class="slide" id="s2" data-title="Top-10 Liste" aria-label="Top-10">
+      <div class="card">
+        <div class="card__header">
+          <h2 class="card__title">Top-10 nach berichteten Umsätzen (2024)</h2>
+          <p class="card__subtitle">Originalwährung; Reihenfolge nach Gesamtumsatz des Konzerns</p>
+        </div>
+        <div class="card__body" style="overflow:auto">
+          <table class="table" role="table" aria-label="Top 10 Tabelle">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Unternehmen</th>
+                <th>Land</th>
+                <th>Segment-Fokus (verkürzt)</th>
+                <th>Umsatz 2024</th>
+                <th>Quelle</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>RTX (Raytheon)</td>
+                <td>USA</td>
+                <td>Sensorik, Radar, Missiles, Comms, Space</td>
+                <td><strong>$80.7&nbsp;Mrd</strong> (Sales 2024)</td>
+                <td><a href="https://www.rtx.com/news/news-center/2025/01/28/rtx-reports-2024-results-and-announces-2025-outlook" target="_blank" rel="noopener">RTX 2024 Results</a></td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Lockheed Martin</td>
+                <td>USA</td>
+                <td>Aeronautics, Space, Missiles, ISR</td>
+                <td><strong>$71.0&nbsp;Mrd</strong> (Net Sales 2024)</td>
+                <td><a href="https://news.lockheedmartin.com/2025-01-28-Lockheed-Martin-Reports-Fourth-Quarter-and-Full-Year-2024-Financial-Results" target="_blank" rel="noopener">LMT 2024</a></td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>General Dynamics</td>
+                <td>USA</td>
+                <td>Mission Systems, IT (GDIT), Marine, ISR</td>
+                <td><strong>$47.7&nbsp;Mrd</strong> (Revenue 2024)</td>
+                <td><a href="https://investorrelations.gd.com/news/press-release-details/2025/General-Dynamics-Reports-Fourth-Quarter-and-Full-Year-2024-Financial-Results/default.aspx" target="_blank" rel="noopener">GD 2024</a></td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Northrop Grumman</td>
+                <td>USA</td>
+                <td>ISR, Mission/Space Systems, Defense</td>
+                <td><strong>$41.0&nbsp;Mrd</strong> (Sales 2024)</td>
+                <td><a href="https://www.govconwire.com/articles/northrop-grumman-financial-results-2024" target="_blank" rel="noopener">Zusammenfassung</a> · <a href="https://www.sec.gov/Archives/edgar/data/1133421/000113342125000006/noc-20241231.htm" target="_blank" rel="noopener">10-K</a></td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>BAE Systems</td>
+                <td>UK</td>
+                <td>Elektronik/ISR, Plattformen, Munitionssysteme</td>
+                <td><strong>£26.312&nbsp;Mrd</strong> (~$33.0&nbsp;Mrd)</td>
+                <td><a href="https://www.baesystems.com/en-us/article/2024-full-year-results" target="_blank" rel="noopener">BAE FY2024</a></td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>Thales</td>
+                <td>FR</td>
+                <td>Sensorik, C4ISR, Cyber, Space</td>
+                <td><strong>€20.577&nbsp;Mrd</strong> (~$22–23&nbsp;Mrd)</td>
+                <td><a href="https://www.thalesgroup.com/en/group/investors/press_release/thales-reports-its-2024-full-year-results" target="_blank" rel="noopener">Thales 2024</a></td>
+              </tr>
+              <tr>
+                <td>7</td>
+                <td>L3Harris</td>
+                <td>USA</td>
+                <td>ISR, EW, Tactical Comms, Space</td>
+                <td><strong>$21.3&nbsp;Mrd</strong> (Revenue 2024)</td>
+                <td><a href="https://investors.l3harris.com/news/news-details/2025/L3Harris-Technologies-Reports-Fourth-Quarter-and-Full-Year-2024-Results-Initiates-2025-Guidance/default.aspx" target="_blank" rel="noopener">L3H 2024</a></td>
+              </tr>
+              <tr>
+                <td>8</td>
+                <td>Leidos</td>
+                <td>USA</td>
+                <td>Gov/Intel IT & Services, Mission, Cyber</td>
+                <td><strong>$16.7&nbsp;Mrd</strong> (Revenue 2024)</td>
+                <td><a href="https://investors.leidos.com/news-releases/news-release-details/leidos-posts-strong-fourth-quarter-and-fiscal-year-2024-results" target="_blank" rel="noopener">Leidos 2024</a></td>
+              </tr>
+              <tr>
+                <td>9</td>
+                <td>Booz Allen Hamilton</td>
+                <td>USA</td>
+                <td>Gov/Intel Consulting, AI Services</td>
+                <td><strong>$10.7&nbsp;Mrd</strong> (FY2024)</td>
+                <td><a href="https://www.boozallen.com/menu/media-center/q1-2025/fourth-quarter-and-full-fiscal-year-2024-results.html" target="_blank" rel="noopener">BAH FY2024</a></td>
+              </tr>
+              <tr>
+                <td>10</td>
+                <td>CACI International</td>
+                <td>USA</td>
+                <td>Intel Services, EW, C4ISR, Cyber</td>
+                <td><strong>$7.66&nbsp;Mrd</strong> (FY2024)</td>
+                <td><a href="https://investor.caci.com/news/news-details/2024/CACI-Reports-Results-for-Its-Fiscal-2024-Fourth-Quarter-and-Full-Year-and-Issues-Fiscal-Year-2025-Guidance/default.aspx" target="_blank" rel="noopener">CACI FY2024</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card__footer">Hinweis: Reihenfolge nach Konzernumsatz; Anteil „Intelligence/ISR/Cyber“ variiert je Segmentmix.</div>
+      </div>
+    </section>
 
-.grid--2 {
-  grid-template-columns: 1fr 1fr;
-}
+    <!-- Slide 3: Kurzprofile -->
+    <section class="slide" id="s3" data-title="Kurzprofile" aria-label="Kurzprofile">
+      <div class="grid grid--2">
+        <!-- 10 Karten, kompakt -->
+        <div class="card"><div class="card__header"><h2 class="card__title">RTX (Raytheon)</h2><p class="card__subtitle">USA · Sensorik/Radar/EW/Space</p></div><div class="card__body"><ul class="list"><li>Stark in Sensorik, Radaren, Luftraumverteidigung (Patriot, NASAMS).</li><li>Kommunikations- & Aufklärungssysteme, Space Payloads.</li><li>2024 Sales: $80.7&nbsp;Mrd.</li></ul></div></div>
 
-.grid--3 {
-  grid-template-columns: repeat(3, 1fr);
-}
+        <div class="card"><div class="card__header"><h2 class="card__title">Lockheed Martin</h2><p class="card__subtitle">USA · Aero/Space/ISR</p></div><div class="card__body"><ul class="list"><li>Große ISR-/Satellitenprogramme, Sensorintegration.</li><li>Missiles & Fire Control; weltraumgestützte Aufklärung.</li><li>2024 Net Sales: $71.0&nbsp;Mrd.</li></ul></div></div>
 
-.grid--responsive {
-  grid-template-columns: 1.2fr 0.8fr;
-}
+        <div class="card"><div class="card__header"><h2 class="card__title">General Dynamics</h2><p class="card__subtitle">USA · Mission Systems, GDIT</p></div><div class="card__body"><ul class="list"><li>Mission Systems (C4ISR, Cyber, Secure Comms).</li><li>GDIT: große Gov-IT-Services inkl. Intel.</li><li>2024 Revenue: $47.7&nbsp;Mrd.</li></ul></div></div>
 
-@media (max-width: 860px) {
-  .grid--2,
-  .grid--3,
-  .grid--responsive {
-    grid-template-columns: 1fr;
-  }
-}
+        <div class="card"><div class="card__header"><h2 class="card__title">Northrop Grumman</h2><p class="card__subtitle">USA · ISR/Mission/Space</p></div><div class="card__body"><ul class="list"><li>ISR-Sensoren, Mission Systems, takt. Netzwerke.</li><li>Bemerkenswert in Space/Strategic Systems.</li><li>2024 Sales: ~$41.0&nbsp;Mrd.</li></ul></div></div>
 
-/* Cards */
-.card {
-  background: linear-gradient(185deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-soft);
-  overflow: hidden;
-}
+        <div class="card"><div class="card__header"><h2 class="card__title">BAE Systems</h2><p class="card__subtitle">UK · Elektronik/ISR</p></div><div class="card__body"><ul class="list"><li>Elektronische Systeme (EW, Avionik, Sensoren).</li><li>Breites Portfolio; starker UK/EU/US Footprint.</li><li>2024 Revenue: £26.3&nbsp;Mrd.</li></ul></div></div>
 
-.card__header {
-  padding: 16px 16px 0 16px;
-}
+        <div class="card"><div class="card__header"><h2 class="card__title">Thales</h2><p class="card__subtitle">FR · C4ISR/Cyber/Space</p></div><div class="card__body"><ul class="list"><li>C4ISR, Kryptographie, sichere Kommunikation.</li><li>Satcom, Optronik, Cyber (inkl. Imperva).</li><li>2024 Sales: €20.6&nbsp;Mrd.</li></ul></div></div>
 
-.card__title {
-  margin: 0 0 6px;
-  font-size: var(--font-size-3xl);
-  line-height: var(--line-height-tight);
-}
+        <div class="card"><div class="card__header"><h2 class="card__title">L3Harris</h2><p class="card__subtitle">USA · ISR/EW/Comms</p></div><div class="card__body"><ul class="list"><li>Taktische Funk/Comms, ISR-Pods, EW.</li><li>Wichtig für vernetzte Gefechtsfelder.</li><li>2024 Revenue: $21.3&nbsp;Mrd.</li></ul></div></div>
 
-.card__subtitle {
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-lg);
-  margin: 0 0 4px;
-}
+        <div class="card"><div class="card__header"><h2 class="card__title">Leidos</h2><p class="card__subtitle">USA · Gov/Intel IT & Services</p></div><div class="card__body"><ul class="list"><li>Großer US-Gov/Intel-Dienstleister (IT, Cyber, Mission).</li><li>Systemintegration, Analytics.</li><li>2024 Revenue: $16.7&nbsp;Mrd.</li></ul></div></div>
 
-.card__body {
-  padding: 16px;
-}
+        <div class="card"><div class="card__header"><h2 class="card__title">Booz Allen Hamilton</h2><p class="card__subtitle">USA · Consulting/AI-Services</p></div><div class="card__body"><ul class="list"><li>Führend bei AI-/Analytics-Services für US-Behörden.</li><li>Strategie, Engineering, Mission Services.</li><li>FY2024 Revenue: $10.7&nbsp;Mrd.</li></ul></div></div>
 
-.card__footer {
-  padding: 10px 16px 16px;
-  color: var(--color-text-tertiary);
-  font-size: var(--font-size-sm);
-}
+        <div class="card"><div class="card__header"><h2 class="card__title">CACI International</h2><p class="card__subtitle">USA · Intel/C4ISR/Cyber</p></div><div class="card__body"><ul class="list"><li>Signals/COMINT, EW, ISR-Nischenlösungen.</li><li>Starker Gov-Auftragsbestand.</li><li>FY2024 Revenue: $7.66&nbsp;Mrd.</li></ul></div></div>
+      </div>
+    </section>
 
-/* Buttons */
-.btn {
-  appearance: none;
-  cursor: pointer;
-  border: none;
-  border-radius: var(--radius-lg);
-  font-size: var(--font-size-base);
-  padding: 10px 14px;
-  transition: all 0.2s ease;
-  font-weight: var(--font-weight-medium);
-}
+    <!-- Slide 4: KPIs & Einordnung -->
+    <section class="slide" id="s4" data-title="KPIs & Einordnung" aria-label="KPIs">
+      <div class="kpi-grid">
+        <div class="card"><div class="card__header"><h3 class="card__title">Region</h3></div><div class="card__body"><strong style="font-size:24px;">NA/EU</strong><br><span class="card__subtitle">8 USA · 2 Europa (UK, FR)</span></div></div>
+        <div class="card"><div class="card__header"><h3 class="card__title">Ausrichtung</h3></div><div class="card__body"><strong style="font-size:24px;">Mix</strong><br><span class="card__subtitle">Plattformen + Elektronik/ISR + IT/Services</span></div></div>
+        <div class="card"><div class="card__header"><h3 class="card__title">Datenbasis</h3></div><div class="card__body"><strong style="font-size:24px;">FY/Calendar 2024</strong><br><span class="card__subtitle">Originalberichte; keine FX-Normierung</span></div></div>
+      </div>
 
-.btn--primary {
-  background: linear-gradient(180deg, rgba(59, 130, 246, 0.8), rgba(33, 114, 229, 0.8));
-  color: white;
-}
+      <div class="card" style="margin-top:16px;">
+        <div class="card__header">
+          <h3 class="card__title">Einordnung</h3>
+          <p class="card__subtitle">Warum diese Liste?</p>
+        </div>
+        <div class="card__body">
+          <ul class="list">
+            <li><strong>Transparente Größenordnung:</strong> Umsätze aus offiziellen Pressemitteilungen/Jahresberichten.</li>
+            <li><strong>Intelligence-Relevanz:</strong> Starker Anteil an ISR/EW/Comms/Cyber/Mission-IT.</li>
+            <li><strong>Einschränkung:</strong> Konzernumsatz ≠ reiner „Spionage“-Umsatz; Segmentmix variiert.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
-.btn--primary:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.05);
-}
+    <!-- Slide 5: Methodik & Grenzen -->
+    <section class="slide" id="s5" data-title="Methodik & Grenzen" aria-label="Methodik & Grenzen">
+      <div class="card">
+        <div class="card__header"><h2 class="card__title">Methodik</h2><p class="card__subtitle">Wie wurde sortiert?</p></div>
+        <div class="card__body">
+          <ul class="list">
+            <li><strong>Quelle:</strong> Offizielle IR-Seiten, Pressemitteilungen, 10-K/Annual Reports (2014/2024-FY, Kalenderjahr 2024).</li>
+            <li><strong>Reihenfolge:</strong> Nach berichteten <em>Gesamtumsätzen</em> 2024/FY2024.</li>
+            <li><strong>Währung:</strong> Originalwährung (USD/GBP/EUR); keine harte USD-Konvertierung für Ranking.</li>
+          </ul>
+        </div>
+      </div>
 
-.btn--outline {
-  background: transparent;
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
-}
+      <div class="card" style="margin-top:16px;">
+        <div class="card__header"><h3 class="card__title">Grenzen & Hinweise</h3><p class="card__subtitle">Warum keine „reine Spionage-Umsatz“-Spalte?</p></div>
+        <div class="card__body">
+          <ul class="list">
+            <li>„Intelligence/ISR“ ist ein <em>Segment</em> innerhalb großer Mischkonzerne; getrennte Zahlen selten publiziert.</li>
+            <li>Umsatzdefinitionen unterscheiden sich (Sales/Net Sales/Revenue).</li>
+            <li>Zeitpunkte (FY vs. Kalenderjahr) und Wechselkurse erschweren 1:1-Vergleiche.</li>
+          </ul>
+        </div>
+        <div class="card__footer">Stand der Daten: 28.08.2025.</div>
+      </div>
+    </section>
 
-.btn--outline:hover {
-  background: rgba(255, 255, 255, 0.03);
-}
+    <!-- Slide 6: Quellen -->
+    <section class="slide" id="s6" data-title="Quellen" aria-label="Quellen">
+      <div class="card">
+        <div class="card__header"><h2 class="card__title">Quellen (Original-Links)</h2><p class="card__subtitle">Direkt aus IR/Jahresberichten</p></div>
+        <div class="card__body">
+          <ul class="list">
+            <li>RTX (Raytheon): <a href="https://www.rtx.com/news/news-center/2025/01/28/rtx-reports-2024-results-and-announces-2025-outlook" target="_blank" rel="noopener">rtx.com – 2024 Results</a></li>
+            <li>Lockheed Martin: <a href="https://news.lockheedmartin.com/2025-01-28-Lockheed-Martin-Reports-Fourth-Quarter-and-Full-Year-2024-Financial-Results" target="_blank" rel="noopener">lockheedmartin.com – 2024 Results</a></li>
+            <li>General Dynamics: <a href="https://investorrelations.gd.com/news/press-release-details/2025/General-Dynamics-Reports-Fourth-Quarter-and-Full-Year-2024-Financial-Results/default.aspx" target="_blank" rel="noopener">gd.com – FY2024</a></li>
+            <li>Northrop Grumman: <a href="https://www.sec.gov/Archives/edgar/data/1133421/000113342125000006/noc-20241231.htm" target="_blank" rel="noopener">SEC 10-K 2024</a> · <a href="https://www.northropgrumman.com/who-we-are/annual-reports" target="_blank" rel="noopener">Annual Reports</a></li>
+            <li>BAE Systems: <a href="https://www.baesystems.com/en-us/article/2024-full-year-results" target="_blank" rel="noopener">baesystems.com – FY2024</a></li>
+            <li>Thales: <a href="https://www.thalesgroup.com/en/group/investors/press_release/thales-reports-its-2024-full-year-results" target="_blank" rel="noopener">thalesgroup.com – 2024</a></li>
+            <li>L3Harris: <a href="https://investors.l3harris.com/news/news-details/2025/L3Harris-Technologies-Reports-Fourth-Quarter-and-Full-Year-2024-Results-Initiates-2025-Guidance/default.aspx" target="_blank" rel="noopener">investors.l3harris.com – 2024</a></li>
+            <li>Leidos: <a href="https://investors.leidos.com/news-releases/news-release-details/leidos-posts-strong-fourth-quarter-and-fiscal-year-2024-results" target="_blank" rel="noopener">investors.leidos.com – 2024</a></li>
+            <li>Booz Allen Hamilton: <a href="https://www.boozallen.com/menu/media-center/q1-2025/fourth-quarter-and-full-fiscal-year-2024-results.html" target="_blank" rel="noopener">boozallen.com – FY2024</a></li>
+            <li>CACI International: <a href="https://investor.caci.com/news/news-details/2024/CACI-Reports-Results-for-Its-Fiscal-2024-Fourth-Quarter-and-Full-Year-and-Issues-Fiscal-Year-2025-Guidance/default.aspx" target="_blank" rel="noopener">investor.caci.com – FY2024</a></li>
+          </ul>
+        </div>
+        <div class="card__footer">Für UK£/€ wurden ggf. grobe USD-Äquivalente in Klammern ergänzt (nur Orientierung).</div>
+      </div>
+    </section>
+  </div>
 
-.nav-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+  <script>
+    // ===== Slide Controller =====
+    (function(){
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const prevBtn = document.getElementById('prev');
+      const nextBtn = document.getElementById('next');
+      const counter = document.getElementById('counter');
+      const total = document.getElementById('total');
+      const progressBar = document.getElementById('progressBar');
+      const jump = document.getElementById('jump');
+      const printBtn = document.getElementById('printBtn');
+      const themeToggle = document.getElementById('themeToggle');
+      const rootHtml = document.documentElement;
 
-/* Badges */
-.badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
+      slides.forEach((s, i) => {
+        const opt = document.createElement('option');
+        const title = s.getAttribute('data-title') || `Folie ${i+1}`;
+        opt.value = String(i);
+        opt.textContent = `${i+1}. ${title}`;
+        jump.appendChild(opt);
+      });
 
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border-secondary);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
-}
+      total.textContent = String(slides.length);
+      let idx = 0;
 
-.badge__dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  display: inline-block;
-}
+      function clamp(n, min, max){ return Math.max(min, Math.min(n, max)); }
+      function setActive(i, {updateHash=true} = {}){
+        slides[idx].classList.remove('active');
+        slides[idx].setAttribute('aria-hidden','true');
+        idx = clamp(i, 0, slides.length - 1);
+        slides[idx].classList.add('active');
+        slides[idx].removeAttribute('aria-hidden');
+        counter.textContent = String(idx + 1);
+        prevBtn.disabled = (idx === 0);
+        nextBtn.disabled = (idx === slides.length - 1);
+        const pct = (idx) / (slides.length - 1 || 1) * 100;
+        progressBar.style.width = pct + '%';
+        jump.value = String(idx);
+        if(updateHash){ const id = slides[idx].id || `s${idx+1}`; history.replaceState(null,'','#'+id); }
+      }
 
-.bg-1 { background: #60a5fa; }
-.bg-2 { background: #38bdf8; }
-.bg-3 { background: #22d3ee; }
-.bg-4 { background: #34d399; }
-.bg-5 { background: #fbbf24; }
-.bg-6 { background: #f87171; }
+      function initFromHash(){
+        const h = location.hash.replace('#','');
+        const initialIndex = h ? Math.max(0, slides.findIndex(s => s.id === h)) : 0;
+        setActive(initialIndex >= 0 ? initialIndex : 0, {updateHash:false});
+      }
 
-/* Lists */
-.list {
-  display: grid;
-  gap: 10px;
-  padding-left: 18px;
-}
+      prevBtn.addEventListener('click', () => setActive(idx - 1));
+      nextBtn.addEventListener('click', () => setActive(idx + 1));
+      jump.addEventListener('change', (e) => setActive(parseInt(e.target.value,10)));
 
-.list li {
-  line-height: var(--line-height-relaxed);
-}
+      document.addEventListener('keydown', (e) => {
+        if(e.key === 'ArrowRight' || e.key === 'PageDown') setActive(idx + 1);
+        if(e.key === 'ArrowLeft'  || e.key === 'PageUp')   setActive(idx - 1);
+        if(e.key === 'Home') setActive(0);
+        if(e.key === 'End')  setActive(slides.length - 1);
+      });
 
-.list--compact li {
-  line-height: var(--line-height-normal);
-}
+      let touchStartX = null;
+      document.addEventListener('touchstart',(e)=>{touchStartX = e.changedTouches[0].clientX},{passive:true});
+      document.addEventListener('touchend',(e)=>{
+        if(touchStartX==null) return;
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        if(dx < -50) setActive(idx + 1);
+        if(dx >  50) setActive(idx - 1);
+        touchStartX = null;
+      },{passive:true});
 
-.list--check li::marker {
-  content: "✔ ";
-}
+      window.addEventListener('hashchange', initFromHash);
+      printBtn.addEventListener('click', () => window.print());
 
-/* Status cards */
-.status-card {
-  border-left: 6px solid var(--color-accent);
-}
+      function getScheme(){ return rootHtml.getAttribute('data-color-scheme') || 'dark'; }
+      function setScheme(s){ rootHtml.setAttribute('data-color-scheme', s); }
+      themeToggle.addEventListener('click', () => {
+        const next = getScheme() === 'dark' ? 'light' : 'dark';
+        setScheme(next);
+        themeToggle.setAttribute('aria-pressed', String(next === 'dark'));
+      });
 
-.status-card--success { border-left-color: var(--color-success); }
-.status-card--warning { border-left-color: var(--color-warning); }
-.status-card--error { border-left-color: var(--color-error); }
-.status-card--info { border-left-color: var(--color-info); }
-.status-card__title { margin: 0 0 6px; }
-.status-card__desc  { margin: 0; color: var(--color-text-secondary); }
-
-/* Tables */
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  border: 1px solid var(--color-border-secondary);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-}
-
-.table th, .table td {
-  border-bottom: 1px solid var(--color-border);
-  padding: 10px 12px;
-  text-align: left;
-}
-
-.table th {
-  background: rgba(255, 255, 255, 0.02);
-  color: var(--color-text-secondary);
-  font-weight: var(--font-weight-medium);
-}
-
-.table tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
-}
-
-/* Charts */
-.chart-image {
-  width: 100%;
-  height: auto;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
-}
-
-/* Slide logic */
-.slide { display: none; }
-.slide.active { display: block; }
-
-/* Dark mode specifics */
-[data-color-scheme="dark"] .btn--outline {
-  border: 1px solid var(--color-border-secondary);
-}
-
-/* END PERPLEXITY DESIGN SYSTEM */
-
-/* Presentation-specific styles */
-body {
-  margin: 0;
-  padding: 0;
-}
-
-.header {
-  text-align: center;
-  padding: 30px 16px 8px;
-}
-
-.header h1 {
-  margin: 0;
-  font-size: 38px;
-}
-
-.header p {
-  margin: 8px 0 0;
-  color: var(--color-text-secondary);
-  font-size: 18px;
-}
-
-.kpi-grid {
-  display:
+      initFromHash();
+    })();
+  </script>
+</body>
+</html>

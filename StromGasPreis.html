@@ -20,7 +20,7 @@
   <style>
     :root { color-scheme: light dark; }
     body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; }
-    /* Little helper classes for the toggle buttons */
+    /* Helpers for toggle buttons */
     .btn-base { @apply px-3 py-1.5 rounded-full text-sm font-medium transition-colors; }
     .btn-inactive { @apply bg-gray-100 text-gray-600 hover:bg-gray-200; }
     .btn-active { @apply bg-blue-600 text-white; }
@@ -32,7 +32,7 @@
     <!-- Header -->
     <header class="mb-8">
       <h1 class="text-4xl font-bold text-gray-900">Energiepreis-Tracker</h1>
-      <p class="text-lg text-gray-600 mt-2">Tages- und Wochenverlauf für Strom- und Gaspreise in Deutschland.</p>
+      <p class="text-lg text-gray-600 mt-2">Tages-, 7‑Tage‑, 30‑Tage‑ und Jahresverlauf für Strom & Gas.</p>
     </header>
 
     <main class="space-y-8">
@@ -43,47 +43,50 @@
             <h2 class="text-2xl font-bold text-blue-800">Strom (EPEX Spot DE-LU)</h2>
             <p id="strom-current-price" class="text-sm text-gray-500 mt-1">Lade aktuelle Daten…</p>
           </div>
-          <div id="strom-toggle" class="flex gap-2">
+          <div id="strom-toggle" class="flex gap-2 flex-wrap">
             <button type="button" class="btn-base btn-inactive" data-view="day">Heute</button>
             <button type="button" class="btn-base btn-inactive" data-view="week">7 Tage</button>
+            <button type="button" class="btn-base btn-inactive" data-view="month">30 Tage</button>
+            <button type="button" class="btn-base btn-inactive" data-view="year">1 Jahr</button>
           </div>
         </div>
         <div class="relative">
           <canvas id="stromChart" height="120"></canvas>
         </div>
-        <p class="mt-3 text-xs text-gray-500">Hinweis: Preise inkl. USt? <span class="font-medium">Nein</span>. Es sind Day-Ahead Großhandelspreise (aWATTar / EPEX) in ct/kWh.</p>
+        <p class="mt-3 text-xs text-gray-500">Hinweis: Day‑Ahead Großhandelspreise (aWATTar / EPEX) in ct/kWh.</p>
       </section>
 
       <!-- Gas Section -->
       <section class="bg-white p-6 rounded-2xl shadow-lg">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
           <div>
-            <h2 class="text-2xl font-bold text-green-800">Gas (TTF-Großhandel)</h2>
+            <h2 class="text-2xl font-bold text-green-800">Gas (TTF‑Großhandel)</h2>
             <p id="gas-current-price" class="text-sm text-gray-500 mt-1">Lade Daten…</p>
           </div>
-          <div id="gas-toggle" class="flex gap-2">
+          <div id="gas-toggle" class="flex gap-2 flex-wrap">
             <button type="button" class="btn-base btn-inactive" data-view="week">7 Tage</button>
             <button type="button" class="btn-base btn-inactive" data-view="month">30 Tage</button>
+            <button type="button" class="btn-base btn-inactive" data-view="year">1 Jahr</button>
           </div>
         </div>
         <div class="relative">
           <canvas id="gasChart" height="120"></canvas>
         </div>
         <div class="mt-3 p-3 bg-green-50 border border-green-100 rounded-xl text-sm text-green-900">
-          <strong>Hinweis:</strong> Für Gas werden tägliche Großhandelspreise der europäischen Benchmark TTF (Niederlande) simuliert. Es handelt sich um realistische, synthetische Tagesendpreise (ct/kWh) zur Illustration – keine Echtzeitdaten.
+          <strong>Hinweis:</strong> Gaspreise sind realistisch simuliert (ct/kWh) – keine Echtzeitdaten.
         </div>
       </section>
     </main>
 
     <!-- Footer -->
     <footer class="text-center mt-12 text-gray-500 text-sm">
-      <p>Strompreisdaten-Quelle: <a href="https://www.awattar.de/services#/api" target="_blank" class="text-blue-600 hover:underline">aWATTar API</a> (EPEX Spot DE-LU).</p>
+      <p>Strompreisdaten‑Quelle: <a href="https://www.awattar.de/services#/api" target="_blank" class="text-blue-600 hover:underline">aWATTar API</a> (EPEX Spot DE‑LU).</p>
       <p>Erstellt mit ❤️ und Code.</p>
     </footer>
   </div>
 
   <script>
-    // --- CONFIGURATION ---
+    // --- CONFIG ---
     const STROM_API_URL = 'https://api.awattar.de/v1/marketdata';
 
     // --- STATE ---
@@ -92,57 +95,72 @@
 
     // --- HELPERS ---
     const toCtPerKWh = (eurPerMWh) => eurPerMWh * 0.1; // €/MWh -> ct/kWh
+    const fmt = new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-    function fmtCt(value) {
-      return new Intl.NumberFormat('de-DE', { maximumFractionDigits: 2, minimumFractionDigits: 2 }).format(value);
+    function startOfDay(d){ const x = new Date(d); x.setHours(0,0,0,0); return x; }
+    function addDays(d, n){ const x = new Date(d); x.setDate(x.getDate()+n); return x; }
+
+    // Group hourly points to daily average
+    function aggregateDaily(points){
+      const map = new Map();
+      for(const p of points){
+        const k = new Date(p.time.getFullYear(), p.time.getMonth(), p.time.getDate()).getTime();
+        const m = map.get(k) || { sum:0, cnt:0 };
+        m.sum += p.price; m.cnt += 1; map.set(k, m);
+      }
+      return Array.from(map.entries()).sort((a,b)=>a[0]-b[0]).map(([t,v])=>({ time:new Date(+t), price: v.sum/v.cnt }));
     }
 
-    // --- DATA FETCHING ---
-    /**
-     * Fetch electricity (EPEX DE-LU) prices from aWATTar.
-     * aWATTar returns quarter-/hourly slots with start/end timestamps and marketprice (€/MWh).
-     * We convert to ct/kWh and return an array of { time: Date, price: number }.
-     */
-    async function getStromData(start, end) {
+    // Group daily points to weekly average (ISO-ish, Mon-Sun)
+    function aggregateWeekly(dailies){
+      const map = new Map();
+      for(const p of dailies){
+        const d = new Date(p.time);
+        const day = (d.getDay()+6)%7; // Mon=0
+        const monday = new Date(d); monday.setDate(d.getDate()-day); monday.setHours(0,0,0,0);
+        const k = monday.getTime();
+        const m = map.get(k) || { sum:0, cnt:0 };
+        m.sum += p.price; m.cnt += 1; map.set(k, m);
+      }
+      return Array.from(map.entries()).sort((a,b)=>a[0]-b[0]).map(([t,v])=>({ time:new Date(+t), price: v.sum/v.cnt }));
+    }
+
+    // --- DATA FETCHING (Strom) ---
+    // Fetch aWATTar in one request for the given window
+    async function fetchAwattarWindow(start, end){
       const url = `${STROM_API_URL}?start=${start.getTime()}&end=${end.getTime()}`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`aWATTar API Fehler: ${res.status}`);
-      const json = await res.json();
-      const data = Array.isArray(json.data) ? json.data : [];
-      return data.map((d) => ({
-        time: new Date(d.start_timestamp),
-        price: toCtPerKWh(d.marketprice),
-      }));
+      const res = await fetch(url, { cache: 'no-store' });
+      if(!res.ok) throw new Error(`aWATTar HTTP ${res.status}`);
+      return res.json();
     }
 
-    /**
-     * Generate realistic daily TTF gas prices for the last 30 days (synthetic).
-     * Base ~3.5 ct/kWh with mild random walk.
-     */
-    async function getGasData() {
-      const data = [];
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+    async function getStromData(start, end){
+      const json = await fetchAwattarWindow(start, end);
+      const arr = Array.isArray(json.data) ? json.data : [];
+      return arr.map(d=>({ time:new Date(d.start_timestamp), price: toCtPerKWh(d.marketprice) }));
+    }
 
-      let price = 3.5 + (Math.random() - 0.5) * 0.3; // start near 3.5
-      for (let i = 29; i >= 0; i--) {
-        const t = new Date(today);
-        t.setDate(today.getDate() - i);
-        // random walk step
-        price += (Math.random() - 0.5) * 0.2;
-        price = Math.max(2.4, Math.min(6.0, price));
-        data.push({ time: t, price });
+    // --- DATA (Gas, synthetic) ---
+    async function getGasData(days = 365){
+      const data = [];
+      const today = startOfDay(new Date());
+      let price = 3.5 + (Math.random()-0.5)*0.3;
+      for(let i=days-1;i>=0;i--){
+        const t = addDays(today, -i);
+        price += (Math.random()-0.5)*0.15; // gentle random walk
+        price = Math.max(2.2, Math.min(7.0, price));
+        data.push({ time:t, price });
       }
       return data;
     }
 
     // --- CHART RENDERING ---
-    function renderChart(chartInstance, canvasId, points, label, colorHex, timeUnit) {
+    function renderChart(chartInstance, canvasId, points, label, colorHex, timeUnit){
       const ctx = document.getElementById(canvasId).getContext('2d');
-      const labels = points.map((d) => d.time);
-      const values = points.map((d) => d.price);
+      const labels = points.map(p=>p.time);
+      const values = points.map(p=>p.price);
 
-      if (chartInstance) {
+      if(chartInstance){
         chartInstance.data.labels = labels;
         chartInstance.data.datasets[0].data = values;
         chartInstance.options.scales.x.time.unit = timeUnit;
@@ -150,178 +168,109 @@
         return chartInstance;
       }
 
-      const gradient = ctx.createLinearGradient(0, 0, 0, 240);
-      gradient.addColorStop(0, colorHex + '40'); // ~25% opacity
-      gradient.addColorStop(1, colorHex + '00'); // 0% opacity
+      const gradient = ctx.createLinearGradient(0,0,0,240);
+      gradient.addColorStop(0, colorHex+'40');
+      gradient.addColorStop(1, colorHex+'00');
 
       return new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [
-            {
-              label,
-              data: values,
-              fill: true,
-              backgroundColor: gradient,
-              borderColor: colorHex,
-              borderWidth: 2,
-              pointRadius: 0,
-              tension: 0.25,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: { mode: 'index', intersect: false },
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: (ctx) => `${fmtCt(ctx.raw)} ct/kWh`,
-              },
-            },
-          },
-          scales: {
-            x: {
-              type: 'time',
-              time: { unit: timeUnit },
-              grid: { display: false },
-              ticks: { maxRotation: 0, autoSkipPadding: 16 },
-            },
-            y: {
-              beginAtZero: false,
-              ticks: {
-                callback: (v) => `${fmtCt(v)} ct`,
-              },
-              grid: { color: 'rgba(0,0,0,0.06)' },
-            },
-          },
-        },
+        type:'line',
+        data:{ labels, datasets:[{ label, data: values, fill:true, backgroundColor: gradient, borderColor: colorHex, borderWidth:2, pointRadius:0, tension:0.25 }] },
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          interaction:{ mode:'index', intersect:false },
+          plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:(c)=> `${fmt.format(c.raw)} ct/kWh` } } },
+          scales:{
+            x:{ type:'time', time:{ unit: timeUnit }, grid:{ display:false }, ticks:{ maxRotation:0, autoSkipPadding:16 } },
+            y:{ beginAtZero:false, ticks:{ callback:(v)=> `${fmt.format(v)} ct` }, grid:{ color:'rgba(0,0,0,0.06)' } }
+          }
+        }
       });
     }
 
     // --- VIEW UPDATERS ---
-    async function updateStromView(view = 'day') {
-      try {
+    async function updateStromView(view='day'){
+      try{
         const now = new Date();
-        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const endOfToday = new Date(startOfToday.getTime() + 24 * 60 * 60 * 1000);
+        const startToday = startOfDay(now);
+        const endToday = addDays(startToday, 1);
 
-        let start = startOfToday;
-        let end = endOfToday;
-        let timeUnit = 'hour';
+        let start = startToday, end = endToday, timeUnit = 'hour';
+        let aggregator = null; // function or null
 
-        if (view === 'week') {
-          end = endOfToday;
-          start = new Date(end.getTime() - 7 * 24 * 60 * 60 * 1000);
-          timeUnit = 'day';
+        if(view==='week'){
+          start = addDays(endToday, -7); timeUnit = 'day'; aggregator = aggregateDaily;
+        } else if(view==='month'){
+          start = addDays(endToday, -30); timeUnit = 'day'; aggregator = aggregateDaily;
+        } else if(view==='year'){
+          start = addDays(endToday, -365); timeUnit = 'week'; aggregator = (pts)=> aggregateWeekly(aggregateDaily(pts));
         }
 
         const raw = await getStromData(start, end);
-        if (!raw.length) throw new Error('Keine Stromdaten erhalten.');
+        if(!raw.length) throw new Error('Keine Stromdaten erhalten.');
 
-        let processed = raw;
-        if (view === 'week') {
-          // aggregate daily average
-          const daily = new Map();
-          for (const p of raw) {
-            const k = new Date(p.time.getFullYear(), p.time.getMonth(), p.time.getDate()).getTime();
-            if (!daily.has(k)) daily.set(k, { sum: 0, cnt: 0 });
-            const obj = daily.get(k);
-            obj.sum += p.price;
-            obj.cnt += 1;
-          }
-          processed = Array.from(daily.entries())
-            .sort((a, b) => a[0] - b[0])
-            .map(([k, v]) => ({ time: new Date(Number(k)), price: v.sum / v.cnt }));
-        }
+        const processed = aggregator ? aggregator(raw) : raw;
 
         stromChartInstance = renderChart(
-          stromChartInstance,
-          'stromChart',
-          processed,
-          'Strompreis',
-          '#2563eb',
-          timeUnit
+          stromChartInstance, 'stromChart', processed, 'Strompreis', '#2563eb', timeUnit
         );
 
-        // Show the current hour price if inside today
-        const current = raw.find((d) => {
-          const slotStart = d.time.getTime();
-          const slotEnd = slotStart + 60 * 60 * 1000; // 1h slots at EPEX
-          const t = Date.now();
-          return t >= slotStart && t < slotEnd;
-        });
+        // Current slot / last point info
         const el = document.getElementById('strom-current-price');
-        if (current) {
-          el.textContent = `Aktueller Slot: ${fmtCt(current.price)} ct/kWh`;
+        const last = raw[raw.length-1];
+        if(view==='day'){
+          const nowTs = Date.now();
+          const cur = raw.find(d=>{ const s=d.time.getTime(); const e=s+60*60*1000; return nowTs>=s && nowTs<e; });
+          el.textContent = cur ? `Aktueller Slot: ${fmt.format(cur.price)} ct/kWh` : `Letzter Slot: ${fmt.format(last.price)} ct/kWh`;
         } else {
-          // fallback: last available point
-          const last = raw[raw.length - 1];
-          el.textContent = `Letzter Slot: ${fmtCt(last.price)} ct/kWh`;
+          el.textContent = `Letzter Wert: ${fmt.format(last.price)} ct/kWh`;
         }
-      } catch (err) {
+      }catch(err){
         console.error(err);
         document.getElementById('strom-current-price').textContent = 'Fehler beim Laden der Stromdaten.';
       }
     }
 
-    async function updateGasView(view = 'week') {
-      try {
-        const all = await getGasData();
-        const days = view === 'week' ? 7 : 30;
-        const subset = all.slice(-days);
+    async function updateGasView(view='week'){
+      try{
+        const all = await getGasData(365);
+        let subset = all.slice(-7);
+        let timeUnit = 'day';
+
+        if(view==='month'){ subset = all.slice(-30); }
+        if(view==='year'){ subset = all; timeUnit='week'; subset = aggregateWeekly(subset); }
 
         gasChartInstance = renderChart(
-          gasChartInstance,
-          'gasChart',
-          subset,
-          'Gaspreis (TTF)',
-          '#16a34a',
-          'day'
+          gasChartInstance, 'gasChart', subset, 'Gaspreis (TTF)', '#16a34a', timeUnit
         );
 
-        const latest = subset[subset.length - 1]?.price;
-        document.getElementById('gas-current-price').textContent = `Letzter Tagespreis: ${fmtCt(latest)} ct/kWh`;
-      } catch (err) {
+        const latest = view==='year' ? subset[subset.length-1].price : all[all.length-1].price;
+        document.getElementById('gas-current-price').textContent = `Letzter Tages-/Wochenwert: ${fmt.format(latest)} ct/kWh`;
+      }catch(err){
         console.error(err);
         document.getElementById('gas-current-price').textContent = 'Fehler beim Laden der Gasdaten.';
       }
     }
 
     // --- UI WIRING ---
-    function setupToggle(toggleId, updateFn, initialView, activeClass) {
-      const wrap = document.getElementById(toggleId);
+    function setupToggle(id, updateFn, initialView, activeClass){
+      const wrap = document.getElementById(id);
       const buttons = Array.from(wrap.querySelectorAll('button'));
 
-      function setActive(view) {
-        buttons.forEach((b) => {
-          b.classList.remove('btn-active', 'btn-active-gas', 'btn-inactive');
-          b.classList.add('btn-inactive');
-        });
-        const activeBtn = buttons.find((b) => b.dataset.view === view);
-        if (activeBtn) {
-          activeBtn.classList.remove('btn-inactive');
-          activeBtn.classList.add(activeClass);
-        }
+      function setActive(view){
+        buttons.forEach(b=>{ b.classList.remove('btn-active','btn-active-gas','btn-inactive'); b.classList.add('btn-inactive'); });
+        const btn = buttons.find(b=>b.dataset.view===view);
+        if(btn){ btn.classList.remove('btn-inactive'); btn.classList.add(activeClass); }
       }
 
-      wrap.addEventListener('click', (e) => {
-        const btn = e.target.closest('button');
-        if (!btn) return;
-        const view = btn.dataset.view;
-        setActive(view);
-        updateFn(view);
+      wrap.addEventListener('click', e=>{
+        const btn = e.target.closest('button'); if(!btn) return;
+        const view = btn.dataset.view; setActive(view); updateFn(view);
       });
 
-      // initialize
-      setActive(initialView);
-      updateFn(initialView);
+      setActive(initialView); updateFn(initialView);
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', ()=>{
       setupToggle('strom-toggle', updateStromView, 'day', 'btn-active');
       setupToggle('gas-toggle', updateGasView, 'week', 'btn-active-gas');
     });

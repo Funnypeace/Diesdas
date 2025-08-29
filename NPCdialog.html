@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NPC‑Dialog — Simple • Seed‑Lore → endlose Gespräche</title>
+  <title>NPC-Dialog — Simple • Seed-Lore → endlose Gespräche</title>
   <style>
     :root {
       --bg: #0b0f14;
@@ -110,22 +110,23 @@
     .hint { font-size: 12px; color: var(--muted); }
     .foot { margin-top: 8px; color: var(--muted); font-size: 12px; }
   </style>
-  <!-- GoatCounter -->
+  <!-- GoatCounter (optional, kann bleiben) -->
   <script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
-  <!-- End GoatCounter -->
 </head>
 <body>
   <header>
     <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px">
-      <h1>NPC‑Dialog — Simple</h1>
+      <h1>NPC-Dialog — Simple</h1>
       <div class="hint">Einzelne HTML • spricht mit <code>/api/groq</code></div>
     </div>
   </header>
+
   <div class="wrap grid">
-    <!-- Left: Seed & Persona -->
+    <!-- Linke Spalte: Seed & Persona -->
     <section class="card" aria-label="Seed & Persona">
-      <label for="lore">Seed‑Lore</label>
+      <label for="lore">Seed-Lore</label>
       <textarea id="lore" placeholder="Kurzbeschreibung, Rolle, Ort, Ziele, Stimmung …">Garruk Eisenbart ist der grimmige Nachtwächter von Dämmerhafen. Er liebt Ordnung, hasst Lärm und kennt jede Gasse. Im Schatten der alten Mauern rumort eine Schmugglerbande.</textarea>
+
       <div class="row">
         <div>
           <label for="name">Name (optional)</label>
@@ -136,6 +137,7 @@
           <input id="role" placeholder="z. B. Nachtwächter" />
         </div>
       </div>
+
       <label for="style">Stil/Ton</label>
       <select id="style">
         <option value="neutral" selected>Neutral</option>
@@ -144,14 +146,16 @@
         <option value="mage">Magisch (mysteriös)</option>
         <option value="merchant">Händler:in (schlitzohrig)</option>
       </select>
+
       <div class="row" style="margin-top:10px">
         <button id="start" class="primary">Starten / Reset</button>
         <button id="copy" title="Persona in Zwischenablage kopieren">Persona kopieren</button>
       </div>
+
       <p class="foot">Tipp: <kbd>Enter</kbd> senden · <kbd>Shift+Enter</kbd> Zeilenumbruch</p>
     </section>
 
-    <!-- Right: Chat -->
+    <!-- Rechte Spalte: Chat -->
     <section class="card" aria-label="Chat">
       <div id="log" aria-live="polite"></div>
       <div class="row" style="margin-top:10px">
@@ -166,11 +170,12 @@ const $ = id => document.getElementById(id);
 const log = $('log');
 const input = $('input');
 const lore = $('lore');
-const name = $('name');
-const role = $('role');
-const style = $('style');
+const nameEl = $('name');
+const roleEl = $('role');
+const styleEl = $('style');
 
 let messages = [];
+let busy = false;
 
 const styles = {
   neutral: 'Du antwortest höflich und sachlich.',
@@ -193,62 +198,82 @@ function addMessage(text, isUser) {
 
 function buildPrompt() {
   const persona = lore.value.trim();
-  const charName = name.value.trim();
-  const charRole = role.value.trim();
-  const styleDesc = styles[style.value] || styles.neutral;
-  
+  const charName = nameEl.value.trim();
+  const charRole = roleEl.value.trim();
+  const styleDesc = styles[styleEl.value] || styles.neutral;
+
   let prompt = 'Du bist ein Charakter in einem Rollenspiel. ';
-  
   if (persona) prompt += persona + ' ';
   if (charName) prompt += `Du heißt ${charName}. `;
   if (charRole) prompt += `Du bist ${charRole}. `;
-  
   prompt += styleDesc + ' Antworte kurz und bleibe im Charakter. Stelle gelegentlich Gegenfragen.';
-  
+
   return prompt;
 }
 
+function setBusy(v) {
+  busy = v;
+  $('send').disabled = v;
+  input.disabled = v;
+}
+
 async function sendMessage() {
+  if (busy) return;
   const userText = input.value.trim();
   if (!userText) return;
-  
+
   input.value = '';
   addMessage(userText, true);
-  
+
   const systemPrompt = buildPrompt();
   messages.push({ role: 'user', content: userText });
-  
+
+  setBusy(true);
   try {
     const response = await fetch('/api/groq', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        messages: [{ role: 'system', content: systemPrompt }, ...messages],
-        model: 'llama-3.1-8b-instant',
+        action: 'chat',
+        model: 'llama-3.3-70b-versatile',
+        temperature: 0.8,
         max_tokens: 200,
-        temperature: 0.8
+        // Dein Server erwartet direkt die Messages (kein OpenAI-choices-Objekt)
+        messages: [{ role: 'system', content: systemPrompt }, ...messages]
       })
     });
-    
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    
-    const data = await response.json();
-    const npcText = data.choices?.[0]?.message?.content || 'Fehler beim Laden der Antwort.';
-    
-    messages.push({ role: 'assistant', content: npcText });
-    addMessage(npcText, false);
-    
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      console.error('Groq API error:', response.status, data);
+      addMessage(`Fehler beim Laden der Antwort. (${response.status})`, false);
+      return;
+    }
+
+    if (data && data.error) {
+      console.error('API logical error:', data);
+      addMessage(`Fehler: ${data.error}${data.details ? ' – ' + data.details : ''}`, false);
+      return;
+    }
+
+    const npcText = (data && data.content) ? String(data.content).trim() : '';
+    messages.push({ role: 'assistant', content: npcText || '' });
+    addMessage(npcText || 'Keine Antwort erhalten.', false);
+
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Fetch failed:', error);
     addMessage('Fehler: Verbindung zum Server fehlgeschlagen.', false);
+  } finally {
+    setBusy(false);
+    input.focus();
   }
 }
 
 function startConversation() {
   messages = [];
   log.innerHTML = '';
-  const greeting = 'Gespräch gestartet. Spreche den NPC an!';
-  addMessage(greeting, false);
+  addMessage('Gespräch gestartet. Spreche den NPC an!', false);
 }
 
 function copyPersona() {
@@ -261,11 +286,10 @@ function copyPersona() {
   });
 }
 
-// Event Listeners
+// Events
 $('start').addEventListener('click', startConversation);
 $('send').addEventListener('click', sendMessage);
 $('copy').addEventListener('click', copyPersona);
-
 input.addEventListener('keydown', e => {
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault();
@@ -273,7 +297,7 @@ input.addEventListener('keydown', e => {
   }
 });
 
-// Initialize
+// Init
 startConversation();
 </script>
 </body>

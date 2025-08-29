@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Das Rätsel der unbesiegbaren Schnecke</title>
+<meta name="color-scheme" content="light dark" />
+<style>
+  :root{
+    --bg: #f7f9fb;
+    --card: rgba(255,255,255,0.75);
+    --txt: #1b1f24;
+    --accent: #0a9396;
+    --accent-2:#005f73;
+    --border: rgba(10,147,150,.25);
+    --muted:#5b6776;
+    --shadow: 0 10px 30px rgba(16,24,40,.08);
+    --blur: blur(8px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0b1216;
+      --card: rgba(17,25,30,.6);
+      --txt:#e9eef5;
+      --accent:#4dd6d9;
+      --accent-2:#72f3f6;
+      --border: rgba(114,243,246,.25);
+      --muted:#a7b3c2;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  [data-theme="light"]{
+    --bg:#f7f9fb; --card: rgba(255,255,255,0.75); --txt:#1b1f24; --accent:#0a9396; --accent-2:#005f73; --border: rgba(10,147,150,.25); --muted:#5b6776; --shadow: 0 10px 30px rgba(16,24,40,.08);
+  }
+  [data-theme="dark"]{
+    --bg:#0b1216; --card: rgba(17,25,30,.6); --txt:#e9eef5; --accent:#4dd6d9; --accent-2:#72f3f6; --border: rgba(114,243,246,.25); --muted:#a7b3c2; --shadow: 0 10px 30px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+    color:var(--txt);
+    background:
+      radial-gradient(1100px 400px at 10% -10%, rgba(10,147,150,.12), transparent 60%),
+      radial-gradient(800px 400px at 110% 10%, rgba(0,95,115,.12), transparent 60%),
+      var(--bg);
+  }
+  main{
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: clamp(18px, 3vw, 28px);
+  }
+
+  header.hero{
+    padding: clamp(18px, 4vw, 28px);
+    margin: 24px auto;
+    border:1px solid var(--border);
+    border-radius: 16px;
+    background: var(--card);
+    box-shadow: var(--shadow);
+    backdrop-filter: var(--blur);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero h1{
+    margin:0 0 6px;
+    line-height:1.15;
+    letter-spacing:.2px;
+    font-weight:800;
+    font-size: clamp(28px, 5vw, 44px);
+    color: var(--accent-2);
+  }
+  .hero p{margin:.25rem 0 0;color:var(--muted);max-width:65ch}
+
+  /* Sticky TOC */
+  nav#toc-wrap{
+    position: sticky; top: 8px;
+    z-index:10;
+    margin: 22px 0;
+    border:1px solid var(--border);
+    background: var(--card);
+    backdrop-filter: var(--blur);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+  }
+  nav#toc-wrap .bar{
+    display:flex; gap:8px; align-items:center; justify-content:space-between;
+    padding: 10px 12px; border-bottom:1px solid var(--border);
+  }
+  .controls{display:flex; gap:8px; flex-wrap:wrap}
+  button.icon, .theme-toggle{
+    appearance:none; border:1px solid var(--border);
+    background: transparent; color: var(--txt);
+    padding: 8px 10px; border-radius:10px; cursor:pointer; font-weight:600;
+  }
+  button.icon:hover{background:rgba(0,0,0,.04)}
+  [data-theme="dark"] button.icon:hover{background:rgba(255,255,255,.06)}
+
+  #toc{
+    margin:0; padding:10px 12px;
+    display:flex; gap:10px; flex-wrap: wrap; list-style:none;
+  }
+  #toc a{
+    text-decoration:none; font-weight:600; font-size:.95rem;
+    color: var(--accent-2); padding:6px 10px; border-radius:999px;
+    border:1px solid transparent;
+  }
+  #toc a[aria-current="true"]{
+    border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent);
+  }
+  #toc a:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  /* Sections */
+  section{
+    margin: 18px 0;
+    border:1px solid var(--border);
+    background: var(--card);
+    backdrop-filter: var(--blur);
+    border-radius:14px;
+    padding: 16px 16px 12px;
+    box-shadow: var(--shadow);
+    scroll-margin-top: 110px;
+    transition: transform .2s ease;
+  }
+  section:hover{transform: translateY(-1px)}
+  section h2{
+    margin:.25rem 0 .35rem;
+    color: var(--accent-2);
+    font-size: clamp(20px, 3.1vw, 28px);
+    line-height:1.25
+  }
+  .muted{color:var(--muted); font-size:.95rem}
+
+  /* Collapsible */
+  .content{
+    overflow:hidden; max-height:0;
+    transition: max-height .45s ease;
+    border-top: 1px dashed var(--border);
+    margin-top:.5rem; padding-top:0;
+  }
+  .content.open{
+    padding-top:.75rem; /* adds space when open */
+  }
+  .toggle-btn{
+    margin-top:.25rem;
+    appearance:none; border:1px solid var(--border);
+    background: linear-gradient(180deg, rgba(10,147,150,.09), transparent);
+    color: var(--txt);
+    padding: .45rem .75rem; border-radius:10px; cursor:pointer; font-weight:700;
+  }
+  .toggle-btn:hover{filter: brightness(1.05)}
+  .toggle-btn[aria-expanded="true"]{box-shadow: inset 0 0 0 1px var(--accent)}
+
+  footer{
+    text-align:center; color:var(--muted);
+    margin: 36px 0 18px; font-size:.95rem;
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    .content{transition:none}
+    section{transition:none}
+  }
+</style>
+</head>
+<body>
+<main>
+  <header class="hero" aria-labelledby="title">
+    <h1 id="title">Das Rätsel der unbesiegbaren Schnecke</h1>
+    <p class="muted">Zwischen Humor und existenzieller Philosophie – ein modernes Gedankenexperiment, das Internet-Kultur, Kreativität und tiefe Fragen des Lebens verbindet.</p>
+  </header>
+
+  <!-- Sticky, dynamisches TOC -->
+  <nav id="toc-wrap" aria-label="Inhaltsverzeichnis">
+    <div class="bar">
+      <strong>Inhalt</strong>
+      <div class="controls" role="group" aria-label="Ansicht">
+        <button class="icon" id="open-all" type="button">Alles öffnen</button>
+        <button class="icon" id="close-all" type="button">Alles schließen</button>
+        <button class="icon theme-toggle" id="theme-toggle" type="button" aria-pressed="false" title="Dark/Light umschalten">Dark Mode</button>
+      </div>
+    </div>
+    <ul id="toc"><!-- wird per JS befüllt --></ul>
+  </nav>
+
+  <!-- Sektionen -->
+  <section id="intro" tabindex="0" aria-labelledby="h-intro">
+    <h2 id="h-intro">Das Gedankenexperiment als viraler Stoff</h2>
+    <p class="muted">Ursprung, Prämisse & kulturelle Wellen</p>
+    <button class="toggle-btn" aria-expanded="false" aria-controls="c-intro">Mehr lesen</button>
+    <div id="c-intro" class="content" aria-hidden="true">
+      <p>Jules Video „Das Rätsel der unbesiegbaren Schnecke" behandelt ein faszinierendes Gedankenexperiment, das ursprünglich 2014 im Rooster Teeth Podcast entstand und seitdem Millionen von Menschen beschäftigt. Das Szenario ist simpel, aber verstörend: Du und eine superintelligente Schnecke erhalten jeweils 100&nbsp;Milliarden Euro und werdet unsterblich – doch die Schnecke wird dich für alle Ewigkeit verfolgen und bei jeder Berührung sofort töten.</p>
+      <p>Dieses scheinbar absurde Gedankenexperiment hat sich zu einem Internet-Phänomen entwickelt. Es wanderte von Reddit-Diskussionen über TikTok-Videos bis hin zu Jules ausführlicher Analyse – und zeigt, wie Humor und tiefgreifende Fragen ineinandergreifen.</p>
+    </div>
+  </section>
+
+  <section id="strategien" tabindex="0" aria-labelledby="h-strategien">
+    <h2 id="h-strategien">Kreative Fluchtstrategien – und ihre Grenzen</h2>
+    <p class="muted">Community-Ideen zwischen brillant und brüchig</p>
+    <button class="toggle-btn" aria-expanded="false" aria-controls="c-strategien">Mehr lesen</button>
+    <div id="c-strategien" class="content" aria-hidden="true">
+      <p><strong>Einfrieren &amp; Versperren:</strong> Die Schnecke als superintelligentes Wesen könnte sich befreien – oder Verbündete finden.</p>
+      <p><strong>Weltraum-Mission:</strong> Ins All schießen klingt clever, aber unendliche Zeit begünstigt Rückwege und kosmische Zufälle.</p>
+      <p><strong>Mariannengraben-Versenkung:</strong> Beton, Tiefsee, Ruhe? Was ist bei Erdbeben, Kontinentaldrift oder geologischen Veränderungen über Millionen Jahre?</p>
+      <p><strong>Als Haustier halten:</strong> Kontrolle durch ständige Aufsicht – aber Sicherheitsrisiken bleiben permanent.</p>
+    </div>
+  </section>
+
+  <section id="philosophie" tabindex="0" aria-labelledby="h-philosophie">
+    <h2 id="h-philosophie">Die Philosophie der Unvermeidlichkeit</h2>
+    <p class="muted">Unsterblichkeit, Sinn & stoische Gelassenheit</p>
+    <button class="toggle-btn" aria-expanded="false" aria-controls="c-philosophie">Mehr lesen</button>
+    <div id="c-philosophie" class="content" aria-hidden="true">
+      <p><strong>Unsterblichkeit als Fluch:</strong> In Anlehnung an Bernard Williams: Unendliches Leben droht zur Langeweile – die Schnecke verschärft das Dilemma.</p>
+      <p><strong>Einsamkeit &amp; Isolation:</strong> Alle Beziehungen enden, die Schnecke bleibt als makabre Konstante – vielleicht der einzige „Begleiter“.</p>
+      <p><strong>Sinn des Daseins:</strong> Viktor Frankl betont Sinn durch Endlichkeit und Entscheidung. Was geschieht, wenn Grenzen wegfallen?</p>
+    </div>
+  </section>
+
+  <section id="metaphern" tabindex="0" aria-labelledby="h-metaphern">
+    <h2 id="h-metaphern">Die Schnecke als Metapher für existenzielle Ängste</h2>
+    <p class="muted">Sterblichkeit, Ungewissheit, Kontrollgrenzen</p>
+    <button class="toggle-btn" aria-expanded="false" aria-controls="c-metaphern">Mehr lesen</button>
+    <div id="c-metaphern" class="content" aria-hidden="true">
+      <p><strong>Angst vor dem Unausweichlichen:</strong> Die Schnecke macht Sterblichkeit greifbar.</p>
+      <p><strong>Qual der Ungewissheit:</strong> Nicht zu wissen, wo sie ist, belastet stärker als bekannte Gefahr.</p>
+      <p><strong>Grenzen der Kontrolle:</strong> Manche Dinge entziehen sich trotz Ressourcen und Intelligenz unserer Macht.</p>
+    </div>
+  </section>
+
+  <section id="humor" tabindex="0" aria-labelledby="h-humor">
+    <h2 id="h-humor">Humor als Bewältigungsstrategie</h2>
+    <p class="muted">Memes, Perspektivwechsel & kreative Verarbeitung</p>
+    <button class="toggle-btn" aria-expanded="false" aria-controls="c-humor">Mehr lesen</button>
+    <div id="c-humor" class="content" aria-hidden="true">
+      <p>Jules Video zeigt, wie Humor hilft, mit existenziellen Ängsten umzugehen. Die absurde tödliche Schnecke öffnet einen spielerischen Zugang zu ernsten Fragen. TikTok-Clips aus Sicht der Schnecke verdeutlichen die Kreativität der Community.</p>
+    </div>
+  </section>
+
+  <section id="fazit" tabindex="0" aria-labelledby="h-fazit">
+    <h2 id="h-fazit">Fazit: Akzeptanz des Unvermeidlichen</h2>
+    <p class="muted">Anfreunden statt Ausweichen</p>
+    <button class="toggle-btn" aria-expanded="false" aria-controls="c-fazit">Mehr lesen</button>
+    <div id="c-fazit" class="content" aria-hidden="true">
+      <p>Es gibt kein perfektes Entkommen. Die Schnecke steht für das, dem man nicht dauerhaft entfliehen kann. Stoische Ansätze legen nahe: Akzeptanz führt zu innerer Ruhe. Wenn Besiegen unmöglich ist, kann Freundschaft paradoxerweise befreiend wirken.</p>
+    </div>
+  </section>
+
+  <section id="relevanz" tabindex="0" aria-labelledby="h-relevanz">
+    <h2 id="h-relevanz">Relevanz für junge Menschen</h2>
+    <p class="muted">Unterrichtsimpulse & Lebenskompetenzen</p>
+    <button class="toggle-btn" aria-expanded="false" aria-controls="c-relevanz">Mehr lesen</button>
+    <div id="c-relevanz" class="content" aria-hidden="true">
+      <ul>
+        <li><strong>Umgang mit Ungewissheit:</strong> Wie gehen wir mit Ängsten und Unvorhersehbarem um?</li>
+        <li><strong>Prioritäten setzen:</strong> Was bleibt wirklich wichtig, selbst bei „unendlicher“ Zeit?</li>
+        <li><strong>Akzeptanz von Grenzen:</strong> Wann ist Aufgeben Weisheit statt Schwäche?</li>
+      </ul>
+      <p>So wird das vermeintliche Meme zum modernen philosophischen Text, der komplexe Themen durch Humor und Kreativität zugänglich macht. Die Schnecke ist langsam – ihre Botschaft zeitlos.</p>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 – Interaktive Ein-Seiten-Vorlage · „Unbesiegbare Schnecke“
+  </footer>
+</main>
+
+<script>
+  // --- Helpers ---
+  const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
+
+  // --- TOC dynamisch erzeugen ---
+  const toc = document.getElementById('toc');
+  const sections = $$('section');
+  sections.forEach(sec => {
+    const h2 = sec.querySelector('h2');
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = '#' + sec.id;
+    a.textContent = h2.textContent;
+    li.appendChild(a);
+    toc.appendChild(li);
+  });
+
+  // --- Collapsible mit sanfter Animation ---
+  function setOpen(contentEl, open){
+    const btn = contentEl.parentElement.querySelector('.toggle-btn');
+    if(open){
+      contentEl.classList.add('open');
+      contentEl.style.maxHeight = contentEl.scrollHeight + 'px';
+      btn.setAttribute('aria-expanded','true');
+      contentEl.setAttribute('aria-hidden','false');
+      btn.textContent = 'Weniger lesen';
+    } else {
+      contentEl.style.maxHeight = contentEl.scrollHeight + 'px'; // set current for transition
+      requestAnimationFrame(()=>{
+        contentEl.classList.remove('open');
+        contentEl.style.maxHeight = '0px';
+      });
+      btn.setAttribute('aria-expanded','false');
+      contentEl.setAttribute('aria-hidden','true');
+      btn.textContent = 'Mehr lesen';
+    }
+  }
+
+  $$('.toggle-btn').forEach(btn=>{
+    const id = btn.getAttribute('aria-controls');
+    const content = document.getElementById(id);
+    btn.addEventListener('click', ()=>{
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      setOpen(content, !expanded);
+    });
+    // Tastaturzugänglichkeit: Enter auf Section-Titel öffnet/schließt
+    btn.closest('section').addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter' && e.target.tagName.toLowerCase() === 'section'){
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        setOpen(content, !expanded);
+      }
+    });
+  });
+
+  // --- Alles öffnen/schließen ---
+  const allContents = $$('.content');
+  document.getElementById('open-all').addEventListener('click', ()=> {
+    allContents.forEach(c => setOpen(c, true));
+  });
+  document.getElementById('close-all').addEventListener('click', ()=> {
+    allContents.forEach(c => setOpen(c, false));
+  });
+
+  // --- Scrollspy für TOC ---
+  const tocLinks = $$('#toc a');
+  const byId = id => document.getElementById(id);
+  const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const id = entry.target.id;
+        tocLinks.forEach(a => {
+          a.setAttribute('aria-current', a.getAttribute('href') === '#' + id ? 'true' : 'false');
+        });
+      }
+    });
+  }, {rootMargin: '-40% 0px -50% 0px', threshold: 0.01});
+  sections.forEach(sec => observer.observe(sec));
+
+  // --- Theme-Toggle (Light/Dark) mit persistenter Einstellung ---
+  const root = document.documentElement;
+  const themeBtn = document.getElementById('theme-toggle');
+  const storedTheme = localStorage.getItem('theme');
+  if(storedTheme){ root.setAttribute('data-theme', storedTheme); if(storedTheme==='dark'){themeBtn.setAttribute('aria-pressed','true'); themeBtn.textContent='Light Mode';}}
+  themeBtn.addEventListener('click', ()=>{
+    const current = root.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    themeBtn.setAttribute('aria-pressed', next === 'dark');
+    themeBtn.textContent = next === 'dark' ? 'Light Mode' : 'Dark Mode';
+  });
+
+  // --- Sanfte Höhe nach Resize korrigieren (wenn Panels offen sind) ---
+  window.addEventListener('resize', ()=>{
+    $$('.content.open').forEach(c => c.style.maxHeight = c.scrollHeight + 'px');
+  });
+</script>
+</body>
+</html>

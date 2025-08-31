@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EUV-Lithografie & ZEISS: Technologie, Markt, Strategie – 2025</title>
+    <style>
+        :root {
+            --primary-color: #0066cc;
+            --secondary-color: #00bcd4;
+            --accent-color: #ff6b6b;
+            --text-dark: #1a1a1a;
+            --text-light: #666;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            color: var(--text-dark);
+            background: var(--bg-gradient);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            animation: shimmer 2s infinite;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transition: var(--transition);
+        }
+
+        .stat-card:hover::before {
+            left: 0;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .content-section {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .content-section:nth-child(even) {
+            animation-delay: 0.1s;
+        }
+
+        .content-section:nth-child(odd) {
+            animation-delay: 0.2s;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 2rem;
+            background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
+            border-radius: 2px;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            color: var(--text-dark);
+            margin: 1.5rem 0 1rem 0;
+            font-weight: 600;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            margin: 1rem 0 0.5rem 0;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, rgba(255,107,107,0.1) 0%, rgba(0,188,212,0.1) 100%);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent-color);
+            margin: 1rem 0;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .tech-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 1.5rem;
+            border-radius: 15px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tech-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(0,102,204,0.1) 0%, transparent 70%);
+            transition: var(--transition);
+        }
+
+        .tech-card:hover::after {
+            top: -25%;
+            right: -25%;
+        }
+
+        .tech-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 1.5rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -0.5rem;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px white, 0 0 0 6px var(--accent-color);
+        }
+
+        .timeline-year {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .market-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+
+        .market-table th {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .market-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            transition: var(--transition);
+        }
+
+        .market-table tr:hover td {
+            background: rgba(0,102,204,0.05);
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 10px;
+            transition: width 1s ease-out;
+        }
+
+        .company-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .company-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .company-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .company-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .risk-alert {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border: 1px solid #ffeaa7;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .risk-alert::before {
+            content: '⚠️';
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+        .future-trend {
+            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .future-trend::before {
+            content: '🚀';
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+        .quote-section {
+            background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            position: relative;
+            font-style: italic;
+        }
+
+        .quote-section::before {
+            content: '"';
+            font-size: 4rem;
+            color: var(--primary-color);
+            position: absolute;
+            top: 0.5rem;
+            left: 1rem;
+            opacity: 0.3;
+        }
+
+        .data-viz {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: var(--card-shadow);
+        }
+
+        .growth-chart {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            height: 200px;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: linear-gradient(180deg, #f8f9fa, white);
+            border-radius: 10px;
+        }
+
+        .chart-bar {
+            width: 40px;
+            background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+            border-radius: 5px 5px 0 0;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: end;
+            align-items: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        .chart-bar:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        .chart-label {
+            margin-top: 0.5rem;
+            color: var(--text-dark);
+            font-size: 0.8rem;
+            transform: rotate(-45deg);
+            white-space: nowrap;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px;
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .nav-tab {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .nav-tab:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .innovation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .innovation-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--secondary-color);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .innovation-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .footer {
+            background: rgba(0,0,0,0.8);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-top: 3rem;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .hero { padding: 2rem; }
+            .hero h1 { font-size: 2rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .nav-tabs { flex-direction: column; }
+        }
+
+        .breakthrough-section {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .breakthrough-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .impact-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .metric-item {
+            background: rgba(255,255,255,0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .competitive-analysis {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: var(--card-shadow);
+        }
+
+        .competitor-bar {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .competitor-bar:hover {
+            background: rgba(0,102,204,0.05);
+        }
+
+        .competitor-name {
+            width: 120px;
+            font-weight: 600;
+        }
+
+        .market-share-bar {
+            flex: 1;
+            height: 25px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            margin: 0 1rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .share-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 12px;
+            transition: width 2s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>EUV-Lithografie Revolution</h1>
+            <p class="hero-subtitle">Wie deutsche Präzision die Chipindustrie transformiert</p>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number">13.5</span>
+                    <span class="stat-label">nm Wellenlänge</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">95%</span>
+                    <span class="stat-label">ASML Marktanteil</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">ZEISS EUV-Spiegel</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">11.3</span>
+                    <span class="stat-label">Mrd. USD Marktvolumen</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-tabs">
+            <div class="nav-tab">Technologie</div>
+            <div class="nav-tab">Marktanalyse</div>
+            <div class="nav-tab">Zukunftstrends</div>
+            <div class="nav-tab">Geopolitik</div>
+        </div>
+
+        <div class="content-section">
+            <h2>💡 Technologische Revolution im Detail</h2>
+            
+            <div class="highlight">
+                <strong>Kernaussage bestätigt:</strong> Ohne ZEISS wäre moderne Halbleitertechnik unmöglich. Das Unternehmen ist der einzige weltweite Anbieter von EUV-Spiegeln für die Chipproduktion der neuesten Generation.
+            </div>
+
+            <h3>Grundprinzip der EUV-Lithografie</h3>
+            <p>EUV-Lithografie nutzt extrem ultraviolettes Licht mit einer Wellenlänge von nur 13,5 Nanometern – etwa 14-mal kürzer als sichtbares Licht. Diese winzige Wellenlänge ermöglicht es, Strukturen auf Silizium-Wafern zu belichten, die kleiner als 7 Nanometer sind. Zum Vergleich: Ein menschliches Haar ist etwa 10.000-mal dicker als diese Strukturen.</p>
+
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <h4>🔬 Spiegelpräzision</h4>
+                    <p>Jeder ZEISS EUV-Spiegel muss auf weniger als 0,2 Nanometer genau poliert werden – das entspricht etwa einem Tausendstel der Breite eines Atoms. Diese Präzision wird durch jahrzehntelange Erfahrung in der Optikfertigung erreicht.</p>
+                </div>
+                <div class="tech-card">
+                    <h4>⚡ Lichtgeneration</h4>
+                    <p>Das EUV-Licht entsteht durch Beschuss von Zinntröpfchen mit einem 20-Kilowatt-CO₂-Laser. Diese Plasmaquelle erzeugt über 50.000 Pulse pro Sekunde bei Temperaturen von über 200.000°C.</p>
+                </div>
+                <div class="tech-card">
+                    <h4>🎯 Bildprojektion</h4>
+                    <p>Ein komplexes System aus bis zu 11 Spiegeln projiziert die Chipstrukturen mit 4-facher Verkleinerung auf den Wafer. Jede Belichtung dauert nur Millisekunden, kann aber Milliarden von Transistoren gleichzeitig erzeugen.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>📈 Erweiterte Marktanalyse 2025</h2>
+            
+            <div class="data-viz">
+                <h3>Marktwachstum EUV-Lithografie</h3>
+                <div class="growth-chart">
+                    <div class="chart-bar" style="height: 40%;">
+                        <span>8.0</span>
+                        <div class="chart-label">2022</div>
+                    </div>
+                    <div class="chart-bar" style="height: 60%;">
+                        <span>11.3</span>
+                        <div class="chart-label">2025</div>
+                    </div>
+                    <div class="chart-bar" style="height: 80%;">
+                        <span>18.2</span>
+                        <div class="chart-label">2028</div>
+                    </div>
+                    <div class="chart-bar" style="height: 100%;">
+                        <span>22.7</span>
+                        <div class="chart-label">2029</div>
+                    </div>
+                </div>
+                <p style="text-align: center; color: var(--text-light); font-size: 0.9rem;">Marktvolumen in Milliarden USD</p>
+            </div>
+
+            <h3>Aktualisierte Marktverteilung 2025</h3>
+            <div class="competitive-analysis">
+                <div class="competitor-bar">
+                    <div class="competitor-name">ASML</div>
+                    <div class="market-share-bar">
+                        <div class="share-fill" style="width: 95%;">95%</div>
+                    </div>
+                </div>
+                <div class="competitor-bar">
+                    <div class="competitor-name">Canon</div>
+                    <div class="market-share-bar">
+                        <div class="share-fill" style="width: 3%;">3%</div>
+                    </div>
+                </div>
+                <div class="competitor-bar">
+                    <div class="competitor-name">Nikon</div>
+                    <div class="market-share-bar">
+                        <div class="share-fill" style="width: 2%;">2%</div>
+                    </div>
+                </div>
+            </div>
+
+            <p><strong>Marktdynamik:</strong> Der globale EUV-Lithografie-Markt wurde 2025 auf 11,26 Milliarden USD geschätzt und soll mit einer CAGR von 20,1% von 2025 bis 2032 wachsen. Andere Prognosen sehen einen Anstieg von 12,18 Milliarden USD in 2024 auf 22,69 Milliarden USD bis 2029 bei einer CAGR von 13,2%.</p>
+        </div>
+
+        <div class="content-section">
+            <h2>🏢 Unternehmensprofile & Strategien</h2>
+            
+            <div class="company-cards">
+                <div class="company-card">
+                    <div class="company-logo">Z</div>
+                    <h3>ZEISS SMT</h3>
+                    <p><strong>Position:</strong> Monopolist für EUV-Optiken</p>
+                    <p><strong>Umsatz 2024:</strong> 2,8 Mrd. € (geschätzt)</p>
+                    <p><strong>Mitarbeiter:</strong> 4.200 (Wetzlar & Oberkochen)</p>
+                    <p><strong>Kernkompetenz:</strong> Ultrapräzise Spiegeloptiken, High-NA Technologie</p>
+                    <p><strong>F&E-Quote:</strong> 18% des Umsatzes</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 100%;"></div>
+                    </div>
+                </div>
+
+                <div class="company-card">
+                    <div class="company-logo">A</div>
+                    <h3>ASML Holding</h3>
+                    <p><strong>Position:</strong> Einziger EUV-Maschinenhersteller</p>
+                    <p><strong>Umsatz 2024:</strong> 28,1 Mrd. €</p>
+                    <p><strong>Mitarbeiter:</strong> 42.000 weltweit</p>
+                    <p><strong>Kernkompetenz:</strong> Lithografiesysteme, Systemintegration</p>
+                    <p><strong>F&E-Quote:</strong> 15% des Umsatzes</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 95%;"></div>
+                    </div>
+                </div>
+
+                <div class="company-card">
+                    <div class="company-logo">T</div>
+                    <h3>TSMC</h3>
+                    <p><strong>Position:</strong> Größter EUV-Nutzer</p>
+                    <p><strong>Umsatz 2024:</strong> 80 Mrd. USD</p>
+                    <p><strong>EUV-Systeme:</strong> 120+ Maschinen</p>
+                    <p><strong>Technologie:</strong> 3nm, 5nm Massenproduktion</p>
+                    <p><strong>Marktanteil Foundry:</strong> 54%</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 70%;"></div>
+                    </div>
+                </div>
+
+                <div class="company-card">
+                    <div class="company-logo">S</div>
+                    <h3>Samsung</h3>
+                    <p><strong>Position:</strong> Zweitgrößter EUV-Nutzer</p>
+                    <p><strong>Umsatz Semiconductors 2024:</strong> 63 Mrd. USD</p>
+                    <p><strong>EUV-Systeme:</strong> 75+ Maschinen</p>
+                    <p><strong>Technologie:</strong> 3nm GAA, 2nm in Entwicklung</p>
+                    <p><strong>Investitionen 2025:</strong> 44 Mrd. USD</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 18%;"></div>
+                    </div>
+                </div>
+
+                <div class="company-card">
+                    <div class="company-logo">I</div>
+                    <h3>Intel</h3>
+                    <p><strong>Position:</strong> Aufholender EUV-Nutzer</p>
+                    <p><strong>Umsatz 2024:</strong> 63 Mrd. USD</p>
+                    <p><strong>EUV-Systeme:</strong> 40+ Maschinen</p>
+                    <p><strong>Technologie:</strong> Intel 4, Intel 3, Intel 20A</p>
+                    <p><strong>CapEx 2025:</strong> 25 Mrd.

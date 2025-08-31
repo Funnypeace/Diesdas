@@ -39,8 +39,6 @@
     .stat-number{font-size:2rem;font-weight:700;color:var(--primary);display:block;margin-bottom:.25rem}
     .stat-label{color:var(--text-secondary);font-size:.875rem;font-weight:500}
     .section{margin-bottom:2rem}
-    .section-title{font-size:1.5rem;font-weight:600;color:var(--text-primary);margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem}
-    .section-title::before{content:'';width:4px;height:2rem;background:var(--gradient-primary);border-radius:2px}
     .timeline{position:relative;padding-left:2rem}
     .timeline::before{content:'';position:absolute;left:.75rem;top:0;bottom:0;width:2px;background:var(--gradient-primary)}
     .timeline-item{position:relative;margin-bottom:2rem;padding:1rem;background:var(--bg-primary);border-radius:8px;box-shadow:var(--shadow-sm);margin-left:1rem}
@@ -63,7 +61,6 @@
     .metric-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
     .metric-value{font-size:2rem;font-weight:700;color:var(--primary);margin-bottom:.5rem}
     .metric-label{color:var(--text-secondary);font-size:.875rem;font-weight:500}
-    .metric-change{font-size:.75rem;margin-top:.25rem}
     .positive{color:var(--success)}
     .negative{color:var(--accent)}
     .footer{background:var(--text-primary);color:#fff;text-align:center;padding:2rem;border-radius:16px;margin-top:3rem;font-size:.875rem}
@@ -86,13 +83,18 @@
     }
     .animated{animation:fadeInUp .6s ease-out}
     @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+    /* Charts */
     .chart-container{background:var(--bg-primary);border-radius:12px;padding:2rem;box-shadow:var(--shadow-sm);border:1px solid var(--border)}
     .chart-bar{display:flex;align-items:center;margin:.75rem 0}
-    .chart-label{min-width:120px;font-weight:500;font-size:.875rem}
+    .chart-label{min-width:160px;font-weight:500;font-size:.9rem}
     .chart-track{flex:1;height:24px;background:var(--bg-tertiary);border-radius:12px;margin:0 1rem;overflow:hidden;position:relative}
     .chart-fill{height:100%;background:var(--gradient-primary);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:.75rem;transition:width 2s ease-out}
+    /* Wert rechts neben dem Balken (vermeidet abgeschnittene Texte bei kleinen Prozentsätzen) */
+    .chart-value{min-width:180px;text-align:right;font-weight:600;font-size:.8rem;color:var(--text-secondary)}
+    @media (max-width:768px){ .chart-label{min-width:120px} .chart-value{min-width:120px;font-size:.75rem} }
 
-    /* WICHTIG für flackerfreie Animation – Startbreite 0; Zielbreite kommt aus data-width */
+    /* Startbreite 0; Ziel kommt aus data-width */
     .chart-fill, .progress-fill { width: 0; }
   </style>
 </head>
@@ -120,30 +122,12 @@
         </div>
         <div class="card-content">
           <div class="stats-grid">
-            <div class="stat-card">
-              <span class="stat-number">1,00</span>
-              <span class="stat-label">Mrd. € Beiträge</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-number">682.400</span>
-              <span class="stat-label">Versicherte</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-number">61,8</span>
-              <span class="stat-label">Mio. € Überschuss</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-number">2,40%</span>
-              <span class="stat-label">Nettoverzinsung</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-number">85,5%</span>
-              <span class="stat-label">Schadenquote</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-number">8,36</span>
-              <span class="stat-label">Mrd. € Kapitalanlagen</span>
-            </div>
+            <div class="stat-card"><span class="stat-number">1,00</span><span class="stat-label">Mrd. € Beiträge</span></div>
+            <div class="stat-card"><span class="stat-number">682.400</span><span class="stat-label">Versicherte</span></div>
+            <div class="stat-card"><span class="stat-number">61,8</span><span class="stat-label">Mio. € Überschuss</span></div>
+            <div class="stat-card"><span class="stat-number">2,40%</span><span class="stat-label">Nettoverzinsung</span></div>
+            <div class="stat-card"><span class="stat-number">85,5%</span><span class="stat-label">Schadenquote</span></div>
+            <div class="stat-card"><span class="stat-number">8,36</span><span class="stat-label">Mrd. € Kapitalanlagen</span></div>
           </div>
         </div>
       </div>
@@ -152,9 +136,7 @@
     <!-- Executive Summary -->
     <section class="section animated">
       <div class="card">
-        <div class="card-header">
-          <h2 class="card-title">🎯 Executive Summary</h2>
-        </div>
+        <div class="card-header"><h2 class="card-title">🎯 Executive Summary</h2></div>
         <div class="card-content">
           <div class="highlight-box">
             <strong>Strategische Neuausrichtung:</strong> Die SDK durchläuft 2025 eine historische Transformation durch die Fusion mit der Stuttgarter Lebensversicherung, die Ende 2026 rechtlich vollzogen wird.
@@ -188,44 +170,34 @@
     <!-- Financial Data -->
     <section class="section animated">
       <div class="card">
-        <div class="card-header">
-          <h2 class="card-title">💰 Detaillierte Finanzkennzahlen 2024</h2>
-        </div>
+        <div class="card-header"><h2 class="card-title">💰 Detaillierte Finanzkennzahlen 2024</h2></div>
         <div class="card-content">
 
           <div class="chart-container">
             <h3 style="margin-bottom:1.5rem;font-weight:600;">Aufwandsstruktur 2024 (Anteil an Gesamtaufwendungen)</h3>
 
-            <!-- Leistungen -->
             <div class="chart-bar">
               <div class="chart-label">Versicherungsleistungen</div>
-              <div class="chart-track">
-                <div class="chart-fill" data-width="63.7">750,7 Mio. € (63,7%)</div>
-              </div>
+              <div class="chart-track"><div class="chart-fill" data-width="63.7" aria-hidden="true"></div></div>
+              <div class="chart-value">750,7 Mio. € (63,7%)</div>
             </div>
 
-            <!-- Zuführung Alterungsrückstellung -->
             <div class="chart-bar">
               <div class="chart-label">Alterungsrückstellung (Zuführung)</div>
-              <div class="chart-track">
-                <div class="chart-fill" data-width="29.0">342,0 Mio. € (29,0%)</div>
-              </div>
+              <div class="chart-track"><div class="chart-fill" data-width="29.0" aria-hidden="true"></div></div>
+              <div class="chart-value">342,0 Mio. € (29,0%)</div>
             </div>
 
-            <!-- Abschlusskosten -->
             <div class="chart-bar">
               <div class="chart-label">Abschlusskosten</div>
-              <div class="chart-track">
-                <div class="chart-fill" data-width="5.1">59,7 Mio. € (5,1%)</div>
-              </div>
+              <div class="chart-track"><div class="chart-fill" data-width="5.1" aria-hidden="true"></div></div>
+              <div class="chart-value">59,7 Mio. € (5,1%)</div>
             </div>
 
-            <!-- Verwaltung -->
             <div class="chart-bar">
               <div class="chart-label">Verwaltung</div>
-              <div class="chart-track">
-                <div class="chart-fill" data-width="2.3">26,9 Mio. € (2,3%)</div>
-              </div>
+              <div class="chart-track"><div class="chart-fill" data-width="2.3" aria-hidden="true"></div></div>
+              <div class="chart-value">26,9 Mio. € (2,3%)</div>
             </div>
 
             <p style="margin-top:1rem;font-size:.825rem;color:var(--text-secondary);">
@@ -235,54 +207,16 @@
 
           <div style="overflow-x:auto;margin-top:2rem;">
             <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Kennzahl</th>
-                  <th>Wert 2024</th>
-                  <th>Bewertung</th>
-                </tr>
-              </thead>
+              <thead><tr><th>Kennzahl</th><th>Wert 2024</th><th>Bewertung</th></tr></thead>
               <tbody>
-                <tr>
-                  <td><strong>Beitragseinnahmen</strong></td>
-                  <td>1.000,4 Mio. €</td>
-                  <td><span class="badge badge-success">Stabil</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Versicherungsleistungen</strong></td>
-                  <td>750,7 Mio. €</td>
-                  <td><span class="badge badge-info">Kontrolliert</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Eigenkapital</strong></td>
-                  <td>213,5 Mio. €</td>
-                  <td><span class="badge badge-success">Solide</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Kapitalanlagen</strong></td>
-                  <td>8.363,8 Mio. €</td>
-                  <td><span class="badge badge-success">Sehr stark</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Kapitalerträge</strong></td>
-                  <td>238,2 Mio. €</td>
-                  <td><span class="badge badge-success">Robust</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Nettoverzinsung</strong></td>
-                  <td>2,40%</td>
-                  <td><span class="badge badge-info">Marktkonform</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Schadenquote</strong></td>
-                  <td>85,5%</td>
-                  <td><span class="badge badge-warning">Beobachten</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Abschlusskostenquote</strong></td>
-                  <td>6,0%</td>
-                  <td><span class="badge badge-success">Effizient</span></td>
-                </tr>
+                <tr><td><strong>Beitragseinnahmen</strong></td><td>1.000,4 Mio. €</td><td><span class="badge badge-success">Stabil</span></td></tr>
+                <tr><td><strong>Versicherungsleistungen</strong></td><td>750,7 Mio. €</td><td><span class="badge badge-info">Kontrolliert</span></td></tr>
+                <tr><td><strong>Eigenkapital</strong></td><td>213,5 Mio. €</td><td><span class="badge badge-success">Solide</span></td></tr>
+                <tr><td><strong>Kapitalanlagen</strong></td><td>8.363,8 Mio. €</td><td><span class="badge badge-success">Sehr stark</span></td></tr>
+                <tr><td><strong>Kapitalerträge</strong></td><td>238,2 Mio. €</td><td><span class="badge badge-success">Robust</span></td></tr>
+                <tr><td><strong>Nettoverzinsung</strong></td><td>2,40%</td><td><span class="badge badge-info">Marktkonform</span></td></tr>
+                <tr><td><strong>Schadenquote</strong></td><td>85,5%</td><td><span class="badge badge-warning">Beobachten</span></td></tr>
+                <tr><td><strong>Abschlusskostenquote</strong></td><td>6,0%</td><td><span class="badge badge-success">Effizient</span></td></tr>
               </tbody>
             </table>
           </div>
@@ -294,9 +228,7 @@
     <!-- Fusion Timeline -->
     <section class="section animated">
       <div class="card">
-        <div class="card-header">
-          <h2 class="card-title">🤝 Fusion mit der Stuttgarter</h2>
-        </div>
+        <div class="card-header"><h2 class="card-title">🤝 Fusion mit der Stuttgarter</h2></div>
         <div class="card-content">
           <div class="timeline">
             <div class="timeline-item">
@@ -325,42 +257,15 @@
     <!-- Digital Strategy -->
     <section class="section animated">
       <div class="card">
-        <div class="card-header">
-          <h2 class="card-title">📱 Digitale Transformation</h2>
-        </div>
+        <div class="card-header"><h2 class="card-title">📱 Digitale Transformation</h2></div>
         <div class="card-content">
           <div class="grid-3">
-            <div class="metric-card">
-              <div style="font-size:2rem;margin-bottom:.5rem;">📋</div>
-              <h4 style="font-weight:600;margin-bottom:.5rem;">ePA &amp; E-Rezept</h4>
-              <p style="font-size:.875rem;color:var(--text-secondary);">Elektronische Patientenakte und digitale Rezepte</p>
-            </div>
-            <div class="metric-card">
-              <div style="font-size:2rem;margin-bottom:.5rem;">📲</div>
-              <h4 style="font-weight:600;margin-bottom:.5rem;">DiGA</h4>
-              <p style="font-size:.875rem;color:var(--text-secondary);">Digitale Gesundheitsanwendungen mit Kostenübernahme</p>
-            </div>
-            <div class="metric-card">
-              <div style="font-size:2rem;margin-bottom:.5rem;">🔒</div>
-              <h4 style="font-weight:600;margin-bottom:.5rem;">Datenschutz</h4>
-              <p style="font-size:.875rem;color:var(--text-secondary);">DSGVO-konforme digitale Services</p>
-            </div>
-            <!-- Ergänzungen -->
-            <div class="metric-card">
-              <div style="font-size:2rem;margin-bottom:.5rem;">📱</div>
-              <h4 style="font-weight:600;margin-bottom:.5rem;">SDK App</h4>
-              <p style="font-size:.875rem;color:var(--text-secondary);">Dokumentenübermittlung, Bearbeitungsstatus, Service-Zugang</p>
-            </div>
-            <div class="metric-card">
-              <div style="font-size:2rem;margin-bottom:.5rem;">🖥️</div>
-              <h4 style="font-weight:600;margin-bottom:.5rem;">Kundenportal</h4>
-              <p style="font-size:.875rem;color:var(--text-secondary);">Online-Services für Voll- und Ergänzungsversicherte</p>
-            </div>
-            <div class="metric-card">
-              <div style="font-size:2rem;margin-bottom:.5rem;">👨‍⚕️</div>
-              <h4 style="font-weight:600;margin-bottom:.5rem;">Medgate App</h4>
-              <p style="font-size:.875rem;color:var(--text-secondary);">Digitale Arztbesuche für alle Versicherten</p>
-            </div>
+            <div class="metric-card"><div style="font-size:2rem;margin-bottom:.5rem;">📋</div><h4 style="font-weight:600;margin-bottom:.5rem;">ePA &amp; E-Rezept</h4><p style="font-size:.875rem;color:var(--text-secondary);">Elektronische Patientenakte und digitale Rezepte</p></div>
+            <div class="metric-card"><div style="font-size:2rem;margin-bottom:.5rem;">📲</div><h4 style="font-weight:600;margin-bottom:.5rem;">DiGA</h4><p style="font-size:.875rem;color:var(--text-secondary);">Digitale Gesundheitsanwendungen mit Kostenübernahme</p></div>
+            <div class="metric-card"><div style="font-size:2rem;margin-bottom:.5rem;">🔒</div><h4 style="font-weight:600;margin-bottom:.5rem;">Datenschutz</h4><p style="font-size:.875rem;color:var(--text-secondary);">DSGVO-konforme digitale Services</p></div>
+            <div class="metric-card"><div style="font-size:2rem;margin-bottom:.5rem;">📱</div><h4 style="font-weight:600;margin-bottom:.5rem;">SDK App</h4><p style="font-size:.875rem;color:var(--text-secondary);">Dokumentenübermittlung, Bearbeitungsstatus, Service-Zugang</p></div>
+            <div class="metric-card"><div style="font-size:2rem;margin-bottom:.5rem;">🖥️</div><h4 style="font-weight:600;margin-bottom:.5rem;">Kundenportal</h4><p style="font-size:.875rem;color:var(--text-secondary);">Online-Services für Voll- und Ergänzungsversicherte</p></div>
+            <div class="metric-card"><div style="font-size:2rem;margin-bottom:.5rem;">👨‍⚕️</div><h4 style="font-weight:600;margin-bottom:.5rem;">Medgate App</h4><p style="font-size:.875rem;color:var(--text-secondary);">Digitale Arztbesuche für alle Versicherten</p></div>
           </div>
         </div>
       </div>
@@ -370,25 +275,14 @@
     <section class="section animated">
       <div class="two-column">
         <div class="card">
-          <div class="card-header">
-            <h2 class="card-title">🏆 Marktposition &amp; Ratings</h2>
-          </div>
+          <div class="card-header"><h2 class="card-title">🏆 Marktposition &amp; Ratings</h2></div>
           <div class="card-content">
             <div style="margin-bottom:1.5rem;">
               <h4 style="font-weight:600;margin-bottom:.75rem;">Aktuelle Bewertungen</h4>
               <div style="space-y:.75rem;">
-                <div style="margin-bottom:.75rem;">
-                  <span class="badge badge-warning">Assekurata</span>
-                  <span style="margin-left:.5rem;font-size:.875rem;">Rating eingestellt (Nov 2024)</span>
-                </div>
-                <div style="margin-bottom:.75rem;">
-                  <span class="badge badge-success">M&amp;M Rating</span>
-                  <span style="margin-left:.5rem;font-size:.875rem;">Historisch top bewertet</span>
-                </div>
-                <div style="margin-bottom:.75rem;">
-                  <span class="badge badge-info">Marktstellung</span>
-                  <span style="margin-left:.5rem;font-size:.875rem;">Top 10 PKV Deutschland</span>
-                </div>
+                <div style="margin-bottom:.75rem;"><span class="badge badge-warning">Assekurata</span><span style="margin-left:.5rem;font-size:.875rem;">Rating eingestellt (Nov 2024)</span></div>
+                <div style="margin-bottom:.75rem;"><span class="badge badge-success">M&amp;M Rating</span><span style="margin-left:.5rem;font-size:.875rem;">Historisch top bewertet</span></div>
+                <div style="margin-bottom:.75rem;"><span class="badge badge-info">Marktstellung</span><span style="margin-left:.5rem;font-size:.875rem;">Top 10 PKV Deutschland</span></div>
               </div>
             </div>
             <div class="warning-box">
@@ -398,9 +292,7 @@
         </div>
 
         <div class="card">
-          <div class="card-header">
-            <h2 class="card-title">📊 Versichertenentwicklung</h2>
-          </div>
+          <div class="card-header"><h2 class="card-title">📊 Versichertenentwicklung</h2></div>
           <div class="card-content">
             <div class="metric-card" style="margin-bottom:1rem;">
               <div class="metric-value">682.400</div>
@@ -411,18 +303,14 @@
                 <span style="font-weight:500;">Vollversicherung</span>
                 <span class="negative">-1,3%</span>
               </div>
-              <div class="progress-bar">
-                <div class="progress-fill" data-width="60"></div>
-              </div>
+              <div class="progress-bar"><div class="progress-fill" data-width="60"></div></div>
             </div>
             <div style="margin-bottom:1.5rem;">
               <div style="display:flex;justify-content:space-between;margin-bottom:.5rem;">
                 <span style="font-weight:500;">Ergänzungsversicherung</span>
                 <span class="positive">+2,6%</span>
               </div>
-              <div class="progress-bar">
-                <div class="progress-fill" data-width="40"></div>
-              </div>
+              <div class="progress-bar"><div class="progress-fill" data-width="40"></div></div>
             </div>
             <p style="font-size:.875rem;color:var(--text-secondary);">Während die Vollversicherung leicht rückläufig ist, zeigt die Ergänzungsversicherung deutliches Wachstum.</p>
           </div>
@@ -433,30 +321,16 @@
     <!-- Products & Distribution -->
     <section class="section animated">
       <div class="card">
-        <div class="card-header">
-          <h2 class="card-title">🎯 Produkte &amp; Vertriebsstrategie</h2>
-        </div>
+        <div class="card-header"><h2 class="card-title">🎯 Produkte &amp; Vertriebsstrategie</h2></div>
         <div class="card-content">
           <div class="grid-2">
             <div>
               <h3 style="color:var(--primary);margin-bottom:1rem;font-weight:600;">Tariffamilien</h3>
               <div class="grid-3">
-                <div style="background:var(--bg-secondary);padding:1rem;border-radius:8px;text-align:center;">
-                  <div style="font-size:1.5rem;margin-bottom:.5rem;">🏥</div>
-                  <div style="font-weight:600;font-size:.875rem;">GesundheitsFAIR</div>
-                </div>
-                <div style="background:var(--bg-secondary);padding:1rem;border-radius:8px;text-align:center;">
-                  <div style="font-size:1.5rem;margin-bottom:.5rem;">⭐</div>
-                  <div style="font-weight:600;font-size:.875rem;">PrivatEXTRA</div>
-                </div>
-                <div style="background:var(--bg-secondary);padding:1rem;border-radius:8px;text-align:center;">
-                  <div style="font-size:1.5rem;margin-bottom:.5rem;">🛡️</div>
-                  <div style="font-weight:600;font-size:.875rem;">PflegeSTARK</div>
-                </div>
-                <div style="background:var(--bg-secondary);padding:1rem;border-radius:8px;text-align:center;">
-                  <div style="font-size:1.5rem;margin-bottom:.5rem;">👨‍⚕️</div>
-                  <div style="font-weight:600;font-size:.875rem;">ALLERÄRZTE</div>
-                </div>
+                <div style="background:var(--bg-secondary);padding:1rem;border-radius:8px;text-align:center;"><div style="font-size:1.5rem;margin-bottom:.5rem;">🏥</div><div style="font-weight:600;font-size:.875rem;">GesundheitsFAIR</div></div>
+                <div style="background:var(--bg-secondary);padding:1rem;border-radius:8px;text-align:center;"><div style="font-size:1.5rem;margin-bottom:.5rem;">⭐</div><div style="font-weight:600;font-size:.875rem;">PrivatEXTRA</div></div>
+                <div style="background:var(--bg-secondary);padding:1rem;border-radius:8px;text-align:center;"><div style="font-size:1.5rem;margin-bottom:.5rem;">🛡️</div><div style="font-weight:600;font-size:.875rem;">PflegeSTARK</div></div>
+                <div style="background:var(--bg-secondary);padding:1rem;border-radius:8px;text-align:center;"><div style="font-size:1.5rem;margin-bottom:.5rem;">👨‍⚕️</div><div style="font-weight:600;font-size:.875rem;">ALLERÄRZTE</div></div>
               </div>
             </div>
             <div>
@@ -481,43 +355,23 @@
     <!-- Opportunities & Risks -->
     <section class="section animated">
       <div class="card">
-        <div class="card-header">
-          <h2 class="card-title">🔮 Chancen &amp; Risiken 2025/26</h2>
-        </div>
+        <div class="card-header"><h2 class="card-title">🔮 Chancen &amp; Risiken 2025/26</h2></div>
         <div class="card-content">
           <div class="two-column">
             <div>
               <h3 style="color:var(--success);margin-bottom:1rem;font-weight:600;">🚀 Chancen</h3>
               <div style="space-y:1rem;">
-                <div style="margin-bottom:1rem;">
-                  <h4 style="font-weight:600;margin-bottom:.5rem;">Fusionssynergien</h4>
-                  <p style="font-size:.875rem;color:var(--text-secondary);">Kosteneinsparungen durch gemeinsame IT-Infrastruktur und Verwaltung. Erweiterte Produktpalette durch Kombination der Kompetenzen.</p>
-                </div>
-                <div style="margin-bottom:1rem;">
-                  <h4 style="font-weight:600;margin-bottom:.5rem;">Digitalisierung</h4>
-                  <p style="font-size:.875rem;color:var(--text-secondary);">Führende Position bei E-Health-Services, DiGA-Integration und digitalen Kundenschnittstellen.</p>
-                </div>
-                <div style="margin-bottom:1rem;">
-                  <h4 style="font-weight:600;margin-bottom:.5rem;">Marktposition</h4>
-                  <p style="font-size:.875rem;color:var(--text-secondary);">Stärkung der Wettbewerbsposition durch größere Kapitalausstattung und erweiterte Risikoverteilung.</p>
-                </div>
+                <div style="margin-bottom:1rem;"><h4 style="font-weight:600;margin-bottom:.5rem;">Fusionssynergien</h4><p style="font-size:.875rem;color:var(--text-secondary);">Kosteneinsparungen durch gemeinsame IT-Infrastruktur und Verwaltung. Erweiterte Produktpalette durch Kombination der Kompetenzen.</p></div>
+                <div style="margin-bottom:1rem;"><h4 style="font-weight:600;margin-bottom:.5rem;">Digitalisierung</h4><p style="font-size:.875rem;color:var(--text-secondary);">Führende Position bei E-Health-Services, DiGA-Integration und digitalen Kundenschnittstellen.</p></div>
+                <div style="margin-bottom:1rem;"><h4 style="font-weight:600;margin-bottom:.5rem;">Marktposition</h4><p style="font-size:.875rem;color:var(--text-secondary);">Stärkung der Wettbewerbsposition durch größere Kapitalausstattung und erweiterte Risikoverteilung.</p></div>
               </div>
             </div>
             <div>
               <h3 style="color:var(--accent);margin-bottom:1rem;font-weight:600;">⚠️ Risiken</h3>
               <div style="space-y:1rem;">
-                <div style="margin-bottom:1rem;">
-                  <h4 style="font-weight:600;margin-bottom:.5rem;">Beitragssteigerungen</h4>
-                  <p style="font-size:.875rem;color:var(--text-secondary);">Erwartete Erhöhungen von 9-11% ab 2026 aufgrund steigender Gesundheitskosten.</p>
-                </div>
-                <div style="margin-bottom:1rem;">
-                  <h4 style="font-weight:600;margin-bottom:.5rem;">Integrationsrisiken</h4>
-                  <p style="font-size:.875rem;color:var(--text-secondary);">Komplexität der IT-Integration und mögliche Kundenverluste während der Fusion.</p>
-                </div>
-                <div style="margin-bottom:1rem;">
-                  <h4 style="font-weight:600;margin-bottom:.5rem;">Marktdruck</h4>
-                  <p style="font-size:.875rem;color:var(--text-secondary);">Rückgang bei Vollversicherten (-1,3%) und allgemeiner Kostendruck im Gesundheitswesen.</p>
-                </div>
+                <div style="margin-bottom:1rem;"><h4 style="font-weight:600;margin-bottom:.5rem;">Beitragssteigerungen</h4><p style="font-size:.875rem;color:var(--text-secondary);">Erwartete Erhöhungen von 9-11% ab 2026 aufgrund steigender Gesundheitskosten.</p></div>
+                <div style="margin-bottom:1rem;"><h4 style="font-weight:600;margin-bottom:.5rem;">Integrationsrisiken</h4><p style="font-size:.875rem;color:var(--text-secondary);">Komplexität der IT-Integration und mögliche Kundenverluste während der Fusion.</p></div>
+                <div style="margin-bottom:1rem;"><h4 style="font-weight:600;margin-bottom:.5rem;">Marktdruck</h4><p style="font-size:.875rem;color:var(--text-secondary);">Rückgang bei Vollversicherten (-1,3%) und allgemeiner Kostendruck im Gesundheitswesen.</p></div>
               </div>
             </div>
           </div>
@@ -531,9 +385,7 @@
     <!-- BRE Regulation -->
     <section class="section animated">
       <div class="card">
-        <div class="card-header">
-          <h2 class="card-title">💰 Beitragsrückerstattung (BRE) 2025</h2>
-        </div>
+        <div class="card-header"><h2 class="card-title">💰 Beitragsrückerstattung (BRE) 2025</h2></div>
         <div class="card-content">
           <div class="highlight-box">
             <strong>Neue BRE-Regelung:</strong> Ab dem Versicherungsjahr 2025 erhalten nur gesunde Kunden ohne Rechnungseinreichung eine erfolgsabhängige Beitragsrückerstattung.
@@ -564,51 +416,18 @@
     <!-- Future Outlook -->
     <section class="section animated">
       <div class="card">
-        <div class="card-header">
-          <h2 class="card-title">🔭 Strategischer Ausblick 2025-2027</h2>
-        </div>
+        <div class="card-header"><h2 class="card-title">🔭 Strategischer Ausblick 2025-2027</h2></div>
         <div class="card-content">
           <div class="grid-3">
-            <div class="metric-card">
-              <div style="font-size:2rem;margin-bottom:.5rem;">🎯</div>
-              <h4 style="font-weight:600;margin-bottom:.5rem;">Fusionsziele</h4>
-              <ul style="list-style:none;padding:0;font-size:.875rem;color:var(--text-secondary);">
-                <li>• IT-Synergien realisieren</li>
-                <li>• Verwaltungskosten senken</li>
-                <li>• Produktinnovationen beschleunigen</li>
-                <li>• Marktposition stärken</li>
-              </ul>
-            </div>
-            <div class="metric-card">
-              <div style="font-size:2rem;margin-bottom:.5rem;">💻</div>
-              <h4 style="font-weight:600;margin-bottom:.5rem;">Digital-Roadmap</h4>
-              <ul style="list-style:none;padding:0;font-size:.875rem;color:var(--text-secondary);">
-                <li>• KI-basierte Schadenbearbeitung</li>
-                <li>• Erweiterte Telemedizin</li>
-                <li>• Blockchain für Abrechnungen</li>
-                <li>• Predictive Health Analytics</li>
-              </ul>
-            </div>
-            <div class="metric-card">
-              <div style="font-size:2rem;margin-bottom:.5rem;">📈</div>
-              <h4 style="font-weight:600;margin-bottom:.5rem;">Wachstumsstrategie</h4>
-              <ul style="list-style:none;padding:0;font-size:.875rem;color:var(--text-secondary);">
-                <li>• Ergänzungsversicherung ausbauen</li>
-                <li>• Employer Branding stärken</li>
-                <li>• Nachhaltigkeit integrieren</li>
-                <li>• Internationale Expansion prüfen</li>
-              </ul>
-            </div>
+            <div class="metric-card"><div style="font-size:2rem;margin-bottom:.5rem;">🎯</div><h4 style="font-weight:600;margin-bottom:.5rem;">Fusionsziele</h4><ul style="list-style:none;padding:0;font-size:.875rem;color:var(--text-secondary);"><li>• IT-Synergien realisieren</li><li>• Verwaltungskosten senken</li><li>• Produktinnovationen beschleunigen</li><li>• Marktposition stärken</li></ul></div>
+            <div class="metric-card"><div style="font-size:2rem;margin-bottom:.5rem;">💻</div><h4 style="font-weight:600;margin-bottom:.5rem;">Digital-Roadmap</h4><ul style="list-style:none;padding:0;font-size:.875rem;color:var(--text-secondary);"><li>• KI-basierte Schadenbearbeitung</li><li>• Erweiterte Telemedizin</li><li>• Blockchain für Abrechnungen</li><li>• Predictive Health Analytics</li></ul></div>
+            <div class="metric-card"><div style="font-size:2rem;margin-bottom:.5rem;">📈</div><h4 style="font-weight:600;margin-bottom:.5rem;">Wachstumsstrategie</h4><ul style="list-style:none;padding:0;font-size:.875rem;color:var(--text-secondary);"><li>• Ergänzungsversicherung ausbauen</li><li>• Employer Branding stärken</li><li>• Nachhaltigkeit integrieren</li><li>• Internationale Expansion prüfen</li></ul></div>
           </div>
           <div style="margin-top:2rem;">
             <h3 style="color:var(--primary);margin-bottom:1rem;font-weight:600;">Kritische Erfolgsfaktoren</h3>
             <div class="grid-2">
-              <div class="success-box">
-                <strong>Operative Exzellenz:</strong> Erfolgreiche Integration der Stuttgarter-Systeme ohne Service-Unterbrechungen für bestehende Kunden.
-              </div>
-              <div class="highlight-box">
-                <strong>Innovation Leadership:</strong> Führungsposition bei digitalen Gesundheitsdiensten und präventiven Versicherungsmodellen ausbauen.
-              </div>
+              <div class="success-box"><strong>Operative Exzellenz:</strong> Erfolgreiche Integration der Stuttgarter-Systeme ohne Service-Unterbrechungen für bestehende Kunden.</div>
+              <div class="highlight-box"><strong>Innovation Leadership:</strong> Führungsposition bei digitalen Gesundheitsdiensten und präventiven Versicherungsmodellen ausbauen.</div>
             </div>
           </div>
         </div>
@@ -618,9 +437,7 @@
     <!-- Action Items -->
     <section class="section animated">
       <div class="card">
-        <div class="card-header">
-          <h2 class="card-title">📋 Offene Punkte &amp; Empfehlungen</h2>
-        </div>
+        <div class="card-header"><h2 class="card-title">📋 Offene Punkte &amp; Empfehlungen</h2></div>
         <div class="card-content">
           <div class="two-column">
             <div>
@@ -665,9 +482,7 @@
       const animateFill = (fill) => {
         if (fill.dataset.animated === 'true') return;
         const target = fill.dataset.width ? parseFloat(fill.dataset.width) : 0;
-        // Sicherheitsnetz, falls jemand % mitsendet
         const clamped = Math.max(0, Math.min(100, target));
-        // Start bei 0, dann in die Zielbreite animieren
         fill.style.width = '0%';
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
@@ -685,7 +500,6 @@
         });
       }, { threshold: 0.2, rootMargin: '0px 0px -50px 0px' });
 
-      // Nur Container beobachten, die auch Füllbalken enthalten
       document.querySelectorAll('.chart-container, .card').forEach(el => {
         if (el.querySelector('.progress-fill, .chart-fill')) observer.observe(el);
       });

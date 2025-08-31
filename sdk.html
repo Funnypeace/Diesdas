@@ -1,772 +1,707 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SDK — Kompakte Übersicht 2024/25</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #0066FF;
-            --primary-dark: #0052CC;
-            --secondary: #00C896;
-            --accent: #FF6B6B;
-            --warning: #FFB020;
-            --success: #00D084;
-            --text-primary: #1F2937;
-            --text-secondary: #6B7280;
-            --text-light: #9CA3AF;
-            --bg-primary: #FFFFFF;
-            --bg-secondary: #F9FAFB;
-            --bg-tertiary: #F3F4F6;
-            --border: #E5E7EB;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-success: linear-gradient(135deg, #4ade80 0%, #22d3ee 100%);
-            --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SDK — Kompakte Übersicht 2024/25</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --primary:#0066FF;--primary-dark:#0052CC;--secondary:#00C896;--accent:#FF6B6B;
+      --warning:#FFB020;--success:#00D084;--text-primary:#1F2937;--text-secondary:#6B7280;--text-light:#9CA3AF;
+      --bg-primary:#FFFFFF;--bg-secondary:#F9FAFB;--bg-tertiary:#F3F4F6;--border:#E5E7EB;
+      --shadow-sm:0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow:0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --shadow-lg:0 10px 15px -3px rgb(0 0 0 / 0.1);
+      --shadow-xl:0 20px 25px -5px rgb(0 0 0 / 0.1);
+      --gradient-primary:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      --gradient-success:linear-gradient(135deg,#4ade80 0%,#22d3ee 100%);
+      --gradient-warning:linear-gradient(135deg,#f59e0b 0%,#ef4444 100%)
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.6;color:var(--text-primary);background:var(--bg-secondary);min-height:100vh}
+    .container{max-width:1200px;margin:0 auto;padding:1rem}
+    .header{background:var(--gradient-primary);color:#fff;padding:3rem 2rem;margin:-1rem -1rem 2rem -1rem;text-align:center;position:relative;overflow:hidden}
+    .header::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="white" opacity="0.1"><polygon points="0,100 1000,0 1000,100"/></svg>');background-size:cover}
+    .header-content{position:relative;z-index:1}
+    .header h1{font-size:2.5rem;font-weight:700;margin-bottom:.5rem;letter-spacing:-0.025em}
+    .header-subtitle{font-size:1.1rem;opacity:.9;font-weight:300}
+    .card{background:var(--bg-primary);border-radius:16px;box-shadow:var(--shadow);border:1px solid var(--border);transition:all .3s cubic-bezier(.4,0,.2,1);overflow:hidden}
+    .card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+    .card-header{padding:1.5rem 2rem 1rem 2rem;border-bottom:1px solid var(--border);background:var(--bg-secondary)}
+    .card-title{font-size:1.25rem;font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:.5rem}
+    .card-content{padding:2rem}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem}
+    .stat-card{background:var(--bg-primary);padding:1.5rem;border-radius:12px;text-align:center;box-shadow:var(--shadow-sm);border:1px solid var(--border);transition:all .3s ease;position:relative;overflow:hidden}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gradient-primary)}
+    .stat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+    .stat-number{font-size:2rem;font-weight:700;color:var(--primary);display:block;margin-bottom:.25rem}
+    .stat-label{color:var(--text-secondary);font-size:.875rem;font-weight:500}
+    .section{margin-bottom:2rem}
+    .section-title{font-size:1.5rem;font-weight:600;color:var(--text-primary);margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem}
+    .section-title::before{content:'';width:4px;height:2rem;background:var(--gradient-primary);border-radius:2px}
+    .timeline{position:relative;padding-left:2rem}
+    .timeline::before{content:'';position:absolute;left:.75rem;top:0;bottom:0;width:2px;background:var(--gradient-primary)}
+    .timeline-item{position:relative;margin-bottom:2rem;padding:1rem;background:var(--bg-primary);border-radius:8px;box-shadow:var(--shadow-sm);margin-left:1rem}
+    .timeline-item::before{content:'';position:absolute;left:-1.75rem;top:1.25rem;width:12px;height:12px;background:var(--primary);border-radius:50%;border:3px solid var(--bg-primary);box-shadow:0 0 0 2px var(--primary)}
+    .timeline-date{font-weight:600;color:var(--primary);font-size:.875rem;margin-bottom:.5rem}
+    .data-table{width:100%;border-collapse:collapse;background:var(--bg-primary);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-sm)}
+    .data-table th{background:var(--bg-tertiary);color:var(--text-primary);padding:1rem;text-align:left;font-weight:600;font-size:.875rem;border-bottom:1px solid var(--border)}
+    .data-table td{padding:1rem;border-bottom:1px solid var(--border);font-size:.875rem}
+    .data-table tr:hover{background:var(--bg-secondary)}
+    .data-table tr:last-child td{border-bottom:none}
+    .highlight-box{background:linear-gradient(135deg,#dbeafe 0%,#e0f2fe 100%);border:1px solid #3b82f6;border-radius:12px;padding:1.5rem;margin:1.5rem 0;position:relative}
+    .highlight-box::before{content:'💡';font-size:1.5rem;margin-right:.5rem}
+    .warning-box{background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border:1px solid var(--warning);border-radius:12px;padding:1.5rem;margin:1.5rem 0;position:relative}
+    .warning-box::before{content:'⚠️';font-size:1.5rem;margin-right:.5rem}
+    .success-box{background:linear-gradient(135deg,#d1fae5 0%,#a7f3d0 100%);border:1px solid var(--success);border-radius:12px;padding:1.5rem;margin:1.5rem 0;position:relative}
+    .success-box::before{content:'✅';font-size:1.5rem;margin-right:.5rem}
+    .grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem}
+    .grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem}
+    .metric-card{background:var(--bg-primary);border-radius:12px;padding:1.5rem;text-align:center;box-shadow:var(--shadow-sm);border:1px solid var(--border);transition:all .3s ease}
+    .metric-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+    .metric-value{font-size:2rem;font-weight:700;color:var(--primary);margin-bottom:.5rem}
+    .metric-label{color:var(--text-secondary);font-size:.875rem;font-weight:500}
+    .metric-change{font-size:.75rem;margin-top:.25rem}
+    .positive{color:var(--success)}
+    .negative{color:var(--accent)}
+    .footer{background:var(--text-primary);color:#fff;text-align:center;padding:2rem;border-radius:16px;margin-top:3rem;font-size:.875rem}
+    .tabs{display:flex;background:var(--bg-primary);border-radius:12px;padding:.25rem;margin-bottom:2rem;box-shadow:var(--shadow-sm);border:1px solid var(--border)}
+    .tab{flex:1;text-align:center;padding:.75rem 1rem;border-radius:8px;cursor:pointer;transition:all .3s ease;font-weight:500;font-size:.875rem}
+    .tab:hover{background:var(--primary);color:#fff}
+    .progress-bar{background:var(--bg-tertiary);border-radius:6px;height:8px;overflow:hidden;margin:.5rem 0}
+    .progress-fill{height:100%;background:var(--gradient-primary);border-radius:6px;transition:width 1s ease-out}
+    .icon-text{display:flex;align-items:center;gap:.5rem;margin-bottom:1rem}
+    .badge{display:inline-flex;align-items:center;padding:.25rem .75rem;border-radius:9999px;font-size:.75rem;font-weight:500}
+    .badge-success{background:#dcfce7;color:#166534}
+    .badge-warning{background:#fef3c7;color:#92400e}
+    .badge-info{background:#dbeafe;color:#1e40af}
+    @media (max-width:768px){
+      .container{padding:.5rem}
+      .header{margin:-.5rem -.5rem 2rem -.5rem;padding:2rem 1rem}
+      .header h1{font-size:2rem}
+      .tabs{flex-direction:column}
+      .card-content{padding:1.5rem}
+    }
+    .animated{animation:fadeInUp .6s ease-out}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .chart-container{background:var(--bg-primary);border-radius:12px;padding:2rem;box-shadow:var(--shadow-sm);border:1px solid var(--border)}
+    .chart-bar{display:flex;align-items:center;margin:.75rem 0}
+    .chart-label{min-width:120px;font-weight:500;font-size:.875rem}
+    .chart-track{flex:1;height:24px;background:var(--bg-tertiary);border-radius:12px;margin:0 1rem;overflow:hidden;position:relative}
+    .chart-fill{height:100%;background:var(--gradient-primary);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:.75rem;transition:width 2s ease-out}
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background: var(--bg-secondary);
-            min-height: 100vh;
-        }
-
-        .container { max-width: 1200px; margin: 0 auto; padding: 1rem; }
-
-        .header {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 3rem 2rem;
-            margin: -1rem -1rem 2rem -1rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="white" opacity="0.1"><polygon points="0,100 1000,0 1000,100"/></svg>');
-            background-size: cover;
-        }
-        .header-content { position: relative; z-index: 1; }
-        .header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.025em; }
-        .header-subtitle { font-size: 1.1rem; opacity: 0.9; font-weight: 300; }
-
-        .card {
-            background: var(--bg-primary);
-            border-radius: 16px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden;
-        }
-        .card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
-        .card-header { padding: 1.5rem 2rem 1rem 2rem; border-bottom: 1px solid var(--border); background: var(--bg-secondary); }
-        .card-title { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem; }
-        .card-content { padding: 2rem; }
-
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-        .stat-card {
-            background: var(--bg-primary);
-            padding: 1.5rem; border-radius: 12px; text-align: center; box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border); transition: all 0.3s ease; position: relative; overflow: hidden;
-        }
-        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gradient-primary); }
-        .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
-        .stat-number { font-size: 2rem; font-weight: 700; color: var(--primary); display: block; margin-bottom: 0.25rem; }
-        .stat-label { color: var(--text-secondary); font-size: 0.875rem; font-weight: 500; }
-
-        .section { margin-bottom: 2rem; }
-        .section-title { font-size: 1.5rem; font-weight: 600; color: var(--text-primary); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
-        .section-title::before { content: ''; width: 4px; height: 2rem; background: var(--gradient-primary); border-radius: 2px; }
-
-        .timeline { position: relative; padding-left: 2rem; }
-        .timeline::before { content: ''; position: absolute; left: 0.75rem; top: 0; bottom: 0; width: 2px; background: var(--gradient-primary); }
-        .timeline-item { position: relative; margin-bottom: 2rem; padding: 1rem; background: var(--bg-primary); border-radius: 8px; box-shadow: var(--shadow-sm); margin-left: 1rem; }
-        .timeline-item::before {
-            content: ''; position: absolute; left: -1.75rem; top: 1.25rem; width: 12px; height: 12px; background: var(--primary);
-            border-radius: 50%; border: 3px solid var(--bg-primary); box-shadow: 0 0 0 2px var(--primary);
-        }
-        .timeline-date { font-weight: 600; color: var(--primary); font-size: 0.875rem; margin-bottom: 0.5rem; }
-
-        .data-table { width: 100%; border-collapse: collapse; background: var(--bg-primary); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm); }
-        .data-table th { background: var(--bg-tertiary); color: var(--text-primary); padding: 1rem; text-align: left; font-weight: 600; font-size: 0.875rem; border-bottom: 1px solid var(--border); }
-        .data-table td { padding: 1rem; border-bottom: 1px solid var(--border); font-size: 0.875rem; }
-        .data-table tr:hover { background: var(--bg-secondary); }
-        .data-table tr:last-child td { border-bottom: none; }
-
-        .highlight-box { background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%); border: 1px solid #3b82f6; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; position: relative; }
-        .highlight-box::before { content: '💡'; font-size: 1.5rem; margin-right: 0.5rem; }
-        .warning-box { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 1px solid var(--warning); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; position: relative; }
-        .warning-box::before { content: '⚠️'; font-size: 1.5rem; margin-right: 0.5rem; }
-        .success-box { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border: 1px solid var(--success); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; position: relative; }
-        .success-box::before { content: '✅'; font-size: 1.5rem; margin-right: 0.5rem; }
-
-        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
-
-        .metric-card { background: var(--bg-primary); border-radius: 12px; padding: 1.5rem; text-align: center; box-shadow: var(--shadow-sm); border: 1px solid var(--border); transition: all 0.3s ease; }
-        .metric-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
-        .metric-value { font-size: 2rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; }
-        .metric-label { color: var(--text-secondary); font-size: 0.875rem; font-weight: 500; }
-        .metric-change { font-size: 0.75rem; margin-top: 0.25rem; }
-        .positive { color: var(--success); }
-        .negative { color: var(--accent); }
-
-        .footer { background: var(--text-primary); color: white; text-align: center; padding: 2rem; border-radius: 16px; margin-top: 3rem; font-size: 0.875rem; }
-
-        .tabs { display: flex; background: var(--bg-primary); border-radius: 12px; padding: 0.25rem; margin-bottom: 2rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border); }
-        .tab { flex: 1; text-align: center; padding: 0.75rem 1rem; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; font-weight: 500; font-size: 0.875rem; }
-        .tab:hover { background: var(--primary); color: white; }
-
-        .progress-bar { background: var(--bg-tertiary); border-radius: 6px; height: 8px; overflow: hidden; margin: 0.5rem 0; }
-        .progress-fill { height: 100%; background: var(--gradient-primary); border-radius: 6px; transition: width 1s ease-out; }
-
-        .icon-text { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
-        .badge { display: inline-flex; align-items: center; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
-        .badge-success { background: #dcfce7; color: #166534; }
-        .badge-warning { background: #fef3c7; color: #92400e; }
-        .badge-info { background: #dbeafe; color: #1e40af; }
-
-        @media (max-width: 768px) {
-            .container { padding: 0.5rem; }
-            .header { margin: -0.5rem -0.5rem 2rem -0.5rem; padding: 2rem 1rem; }
-            .header h1 { font-size: 2rem; }
-            .tabs { flex-direction: column; }
-            .card-content { padding: 1.5rem; }
-        }
-
-        .animated { animation: fadeInUp 0.6s ease-out; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        .chart-container { background: var(--bg-primary); border-radius: 12px; padding: 2rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border); }
-        .chart-bar { display: flex; align-items: center; margin: 0.75rem 0; }
-        .chart-label { min-width: 120px; font-weight: 500; font-size: 0.875rem; }
-        .chart-track { flex: 1; height: 24px; background: var(--bg-tertiary); border-radius: 12px; margin: 0 1rem; overflow: hidden; position: relative; }
-        .chart-fill { height: 100%; background: var(--gradient-primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.75rem; transition: width 2s ease-out; }
-
-        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-        @media (max-width: 768px) { .two-column { grid-template-columns: 1fr; } }
-    </style>
+    /* WICHTIG für flackerfreie Animation – Startbreite 0; Zielbreite kommt aus data-width */
+    .chart-fill, .progress-fill { width: 0; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="header-content">
-                <h1>Süddeutsche Krankenversicherung</h1>
-                <p class="header-subtitle">Kompakte Übersicht 2024/25 • Executive Summary • Finanzdaten • Trends</p>
+  <div class="container">
+    <div class="header">
+      <div class="header-content">
+        <h1>Süddeutsche Krankenversicherung</h1>
+        <p class="header-subtitle">Kompakte Übersicht 2024/25 • Executive Summary • Finanzdaten • Trends</p>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Ansichten">
+      <div class="tab" role="tab" tabindex="0">📊 Übersicht</div>
+      <div class="tab" role="tab" tabindex="0">💰 Finanzen</div>
+      <div class="tab" role="tab" tabindex="0">🤝 Fusion</div>
+      <div class="tab" role="tab" tabindex="0">🔮 Zukunft</div>
+    </div>
+
+    <!-- Key Metrics -->
+    <section class="section animated">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">📈 Kerndaten 2024</h2>
+        </div>
+        <div class="card-content">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-number">1,00</span>
+              <span class="stat-label">Mrd. € Beiträge</span>
             </div>
+            <div class="stat-card">
+              <span class="stat-number">682.400</span>
+              <span class="stat-label">Versicherte</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number">61,8</span>
+              <span class="stat-label">Mio. € Überschuss</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number">2,40%</span>
+              <span class="stat-label">Nettoverzinsung</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number">85,5%</span>
+              <span class="stat-label">Schadenquote</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number">8,36</span>
+              <span class="stat-label">Mrd. € Kapitalanlagen</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Executive Summary -->
+    <section class="section animated">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">🎯 Executive Summary</h2>
+        </div>
+        <div class="card-content">
+          <div class="highlight-box">
+            <strong>Strategische Neuausrichtung:</strong> Die SDK durchläuft 2025 eine historische Transformation durch die Fusion mit der Stuttgarter Lebensversicherung, die Ende 2026 rechtlich vollzogen wird.
+          </div>
+          <p>Die Süddeutsche Krankenversicherung a.G. (SDK) zeigt 2024 eine solide finanzielle Performance mit Beitragseinnahmen von über 1 Milliard Euro und einem Bruttoüberschuss von 61,8 Millionen Euro. Als eine der führenden privaten Krankenversicherungen in Deutschland betreut das Unternehmen 682.400 Versicherte.</p>
+          <p>Die Gründung eines Gleichordnungskonzerns mit der Stuttgarter am 1. Juli 2025 markiert einen strategischen Meilenstein. Bis Ende 2026 ist der vollständige rechtliche Zusammenschluss geplant, der Synergien in Verwaltung, Digitalisierung und Produktentwicklung verspricht.</p>
+          <div class="grid-2" style="margin-top:2rem;">
+            <div>
+              <h3 style="color:var(--primary);margin-bottom:1rem;font-weight:600;">Stärken</h3>
+              <ul style="list-style:none;padding:0;">
+                <li class="icon-text">✅ Stabile Finanzkennzahlen</li>
+                <li class="icon-text">✅ Breite Digitalisierungsoffensive</li>
+                <li class="icon-text">✅ Strategische Fusion mit Stuttgarter</li>
+                <li class="icon-text">✅ Starke Kapitalanlage (8,36 Mrd. €)</li>
+              </ul>
+            </div>
+            <div>
+              <h3 style="color:var(--accent);margin-bottom:1rem;font-weight:600;">Herausforderungen</h3>
+              <ul style="list-style:none;padding:0;">
+                <li class="icon-text">⚠️ Rückgang Vollversicherte (-1,3%)</li>
+                <li class="icon-text">⚠️ Erwartete Beitragssteigerungen 2026</li>
+                <li class="icon-text">⚠️ Steigende Gesundheitskosten</li>
+                <li class="icon-text">⚠️ Integrationskomplexität der Fusion</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Financial Data -->
+    <section class="section animated">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">💰 Detaillierte Finanzkennzahlen 2024</h2>
+        </div>
+        <div class="card-content">
+
+          <div class="chart-container">
+            <h3 style="margin-bottom:1.5rem;font-weight:600;">Aufwandsstruktur 2024 (Anteil an Gesamtaufwendungen)</h3>
+
+            <!-- Leistungen -->
+            <div class="chart-bar">
+              <div class="chart-label">Versicherungsleistungen</div>
+              <div class="chart-track">
+                <div class="chart-fill" data-width="63.7">750,7 Mio. € (63,7%)</div>
+              </div>
+            </div>
+
+            <!-- Zuführung Alterungsrückstellung -->
+            <div class="chart-bar">
+              <div class="chart-label">Alterungsrückstellung (Zuführung)</div>
+              <div class="chart-track">
+                <div class="chart-fill" data-width="29.0">342,0 Mio. € (29,0%)</div>
+              </div>
+            </div>
+
+            <!-- Abschlusskosten -->
+            <div class="chart-bar">
+              <div class="chart-label">Abschlusskosten</div>
+              <div class="chart-track">
+                <div class="chart-fill" data-width="5.1">59,7 Mio. € (5,1%)</div>
+              </div>
+            </div>
+
+            <!-- Verwaltung -->
+            <div class="chart-bar">
+              <div class="chart-label">Verwaltung</div>
+              <div class="chart-track">
+                <div class="chart-fill" data-width="2.3">26,9 Mio. € (2,3%)</div>
+              </div>
+            </div>
+
+            <p style="margin-top:1rem;font-size:.825rem;color:var(--text-secondary);">
+              Hinweis: Prozente bezogen auf die Summe aller Aufwendungen (Leistungen + Zuführung AR + Abschluss + Verwaltung = 1.179,3 Mio. €).
+            </p>
+          </div>
+
+          <div style="overflow-x:auto;margin-top:2rem;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Kennzahl</th>
+                  <th>Wert 2024</th>
+                  <th>Bewertung</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Beitragseinnahmen</strong></td>
+                  <td>1.000,4 Mio. €</td>
+                  <td><span class="badge badge-success">Stabil</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Versicherungsleistungen</strong></td>
+                  <td>750,7 Mio. €</td>
+                  <td><span class="badge badge-info">Kontrolliert</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Eigenkapital</strong></td>
+                  <td>213,5 Mio. €</td>
+                  <td><span class="badge badge-success">Solide</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Kapitalanlagen</strong></td>
+                  <td>8.363,8 Mio. €</td>
+                  <td><span class="badge badge-success">Sehr stark</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Kapitalerträge</strong></td>
+                  <td>238,2 Mio. €</td>
+                  <td><span class="badge badge-success">Robust</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Nettoverzinsung</strong></td>
+                  <td>2,40%</td>
+                  <td><span class="badge badge-info">Marktkonform</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Schadenquote</strong></td>
+                  <td>85,5%</td>
+                  <td><span class="badge badge-warning">Beobachten</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Abschlusskostenquote</strong></td>
+                  <td>6,0%</td>
+                  <td><span class="badge badge-success">Effizient</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Fusion Timeline -->
+    <section class="section animated">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">🤝 Fusion mit der Stuttgarter</h2>
+        </div>
+        <div class="card-content">
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-date">22. Oktober 2024</div>
+              <h4 style="font-weight:600;margin-bottom:.5rem;">Ankündigung der Fusion</h4>
+              <p>Prüfung eines Zusammenschlusses zwischen SDK und Die Stuttgarter wird offiziell bekannt gegeben.</p>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-date">1. Juli 2025</div>
+              <h4 style="font-weight:600;margin-bottom:.5rem;">Gleichordnungskonzern</h4>
+              <p>Einstimmiger Beschluss der Mitgliedervertreterversammlungen beider Unternehmen zur Gründung eines Gleichordnungskonzerns.</p>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-date">Ende 2026 (geplant)</div>
+              <h4 style="font-weight:600;margin-bottom:.5rem;">Rechtlicher Zusammenschluss</h4>
+              <p>Vollständige rechtliche Fusion der beiden Versicherungsunternehmen zu einer Einheit.</p>
+            </div>
+          </div>
+          <div class="success-box">
+            <strong>Strategische Vorteile:</strong> Die Fusion schafft einen der größten PKV-Anbieter Deutschlands mit erheblichen Synergien in IT, Verwaltung und Produktentwicklung.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Digital Strategy -->
+    <section class="section animated">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">📱 Digitale Transformation</h2>
+        </div>
+        <div class="card-content">
+          <div class="grid-3">
+            <div class="metric-card">
+              <div style="font-size:2rem;margin-bottom:.5rem;">📋</div>
+              <h4 style="font-weight:600;margin-bottom:.5rem;">ePA &amp; E-Rezept</h4>
+              <p style="font-size:.875rem;color:var(--text-secondary);">Elektronische Patientenakte und digitale Rezepte</p>
+            </div>
+            <div class="metric-card">
+              <div style="font-size:2rem;margin-bottom:.5rem;">📲</div>
+              <h4 style="font-weight:600;margin-bottom:.5rem;">DiGA</h4>
+              <p style="font-size:.875rem;color:var(--text-secondary);">Digitale Gesundheitsanwendungen mit Kostenübernahme</p>
+            </div>
+            <div class="metric-card">
+              <div style="font-size:2rem;margin-bottom:.5rem;">🔒</div>
+              <h4 style="font-weight:600;margin-bottom:.5rem;">Datenschutz</h4>
+              <p style="font-size:.875rem;color:var(--text-secondary);">DSGVO-konforme digitale Services</p>
+            </div>
+            <!-- Ergänzungen -->
+            <div class="metric-card">
+              <div style="font-size:2rem;margin-bottom:.5rem;">📱</div>
+              <h4 style="font-weight:600;margin-bottom:.5rem;">SDK App</h4>
+              <p style="font-size:.875rem;color:var(--text-secondary);">Dokumentenübermittlung, Bearbeitungsstatus, Service-Zugang</p>
+            </div>
+            <div class="metric-card">
+              <div style="font-size:2rem;margin-bottom:.5rem;">🖥️</div>
+              <h4 style="font-weight:600;margin-bottom:.5rem;">Kundenportal</h4>
+              <p style="font-size:.875rem;color:var(--text-secondary);">Online-Services für Voll- und Ergänzungsversicherte</p>
+            </div>
+            <div class="metric-card">
+              <div style="font-size:2rem;margin-bottom:.5rem;">👨‍⚕️</div>
+              <h4 style="font-weight:600;margin-bottom:.5rem;">Medgate App</h4>
+              <p style="font-size:.875rem;color:var(--text-secondary);">Digitale Arztbesuche für alle Versicherten</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Market Position -->
+    <section class="section animated">
+      <div class="two-column">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">🏆 Marktposition &amp; Ratings</h2>
+          </div>
+          <div class="card-content">
+            <div style="margin-bottom:1.5rem;">
+              <h4 style="font-weight:600;margin-bottom:.75rem;">Aktuelle Bewertungen</h4>
+              <div style="space-y:.75rem;">
+                <div style="margin-bottom:.75rem;">
+                  <span class="badge badge-warning">Assekurata</span>
+                  <span style="margin-left:.5rem;font-size:.875rem;">Rating eingestellt (Nov 2024)</span>
+                </div>
+                <div style="margin-bottom:.75rem;">
+                  <span class="badge badge-success">M&amp;M Rating</span>
+                  <span style="margin-left:.5rem;font-size:.875rem;">Historisch top bewertet</span>
+                </div>
+                <div style="margin-bottom:.75rem;">
+                  <span class="badge badge-info">Marktstellung</span>
+                  <span style="margin-left:.5rem;font-size:.875rem;">Top 10 PKV Deutschland</span>
+                </div>
+              </div>
+            </div>
+            <div class="warning-box">
+              <strong>Hinweis:</strong> Das Assekurata-Rating wurde nach der Fusionsankündigung ausgesetzt. Neue Bewertungen sind nach Abschluss der Fusion zu erwarten.
+            </div>
+          </div>
         </div>
 
-        <div class="tabs" role="tablist" aria-label="Ansichten">
-            <div class="tab" role="tab" tabindex="0">📊 Übersicht</div>
-            <div class="tab" role="tab" tabindex="0">💰 Finanzen</div>
-            <div class="tab" role="tab" tabindex="0">🤝 Fusion</div>
-            <div class="tab" role="tab" tabindex="0">🔮 Zukunft</div>
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">📊 Versichertenentwicklung</h2>
+          </div>
+          <div class="card-content">
+            <div class="metric-card" style="margin-bottom:1rem;">
+              <div class="metric-value">682.400</div>
+              <div class="metric-label">Versicherte gesamt</div>
+            </div>
+            <div style="margin-bottom:1.5rem;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:.5rem;">
+                <span style="font-weight:500;">Vollversicherung</span>
+                <span class="negative">-1,3%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" data-width="60"></div>
+              </div>
+            </div>
+            <div style="margin-bottom:1.5rem;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:.5rem;">
+                <span style="font-weight:500;">Ergänzungsversicherung</span>
+                <span class="positive">+2,6%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" data-width="40"></div>
+              </div>
+            </div>
+            <p style="font-size:.875rem;color:var(--text-secondary);">Während die Vollversicherung leicht rückläufig ist, zeigt die Ergänzungsversicherung deutliches Wachstum.</p>
+          </div>
         </div>
+      </div>
+    </section>
 
-        <!-- Key Metrics -->
-        <section class="section animated">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">📈 Kerndaten 2024</h2>
-                </div>
-                <div class="card-content">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <span class="stat-number">1,00</span>
-                            <span class="stat-label">Mrd. € Beiträge</span>
-                        </div>
-                        <div class="stat-card">
-                            <span class="stat-number">682.400</span>
-                            <span class="stat-label">Versicherte</span>
-                        </div>
-                        <div class="stat-card">
-                            <span class="stat-number">61,8</span>
-                            <span class="stat-label">Mio. € Überschuss</span>
-                        </div>
-                        <div class="stat-card">
-                            <span class="stat-number">2,40%</span>
-                            <span class="stat-label">Nettoverzinsung</span>
-                        </div>
-                        <div class="stat-card">
-                            <span class="stat-number">85,5%</span>
-                            <span class="stat-label">Schadenquote</span>
-                        </div>
-                        <div class="stat-card">
-                            <span class="stat-number">8,36</span>
-                            <span class="stat-label">Mrd. € Kapitalanlagen</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Executive Summary -->
-        <section class="section animated">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">🎯 Executive Summary</h2>
-                </div>
-                <div class="card-content">
-                    <div class="highlight-box">
-                        <strong>Strategische Neuausrichtung:</strong> Die SDK durchläuft 2025 eine historische Transformation durch die Fusion mit der Stuttgarter Lebensversicherung, die Ende 2026 rechtlich vollzogen wird.
-                    </div>
-                    <p>Die Süddeutsche Krankenversicherung a.G. (SDK) zeigt 2024 eine solide finanzielle Performance mit Beitragseinnahmen von über 1 Milliard Euro und einem Bruttoüberschuss von 61,8 Millionen Euro. Als eine der führenden privaten Krankenversicherungen in Deutschland betreut das Unternehmen 682.400 Versicherte.</p>
-                    <p>Die Gründung eines Gleichordnungskonzerns mit der Stuttgarter am 1. Juli 2025 markiert einen strategischen Meilenstein. Bis Ende 2026 ist der vollständige rechtliche Zusammenschluss geplant, der Synergien in Verwaltung, Digitalisierung und Produktentwicklung verspricht.</p>
-                    <div class="grid-2" style="margin-top: 2rem;">
-                        <div>
-                            <h3 style="color: var(--primary); margin-bottom: 1rem; font-weight: 600;">Stärken</h3>
-                            <ul style="list-style: none; padding: 0;">
-                                <li class="icon-text">✅ Stabile Finanzkennzahlen</li>
-                                <li class="icon-text">✅ Breite Digitalisierungsoffensive</li>
-                                <li class="icon-text">✅ Strategische Fusion mit Stuttgarter</li>
-                                <li class="icon-text">✅ Starke Kapitalanlage (8,36 Mrd. €)</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h3 style="color: var(--accent); margin-bottom: 1rem; font-weight: 600;">Herausforderungen</h3>
-                            <ul style="list-style: none; padding: 0;">
-                                <li class="icon-text">⚠️ Rückgang Vollversicherte (-1,3%)</li>
-                                <li class="icon-text">⚠️ Erwartete Beitragssteigerungen 2026</li>
-                                <li class="icon-text">⚠️ Steigende Gesundheitskosten</li>
-                                <li class="icon-text">⚠️ Integrationskomplexität der Fusion</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Financial Data -->
-        <section class="section animated">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">💰 Detaillierte Finanzkennzahlen 2024</h2>
-                </div>
-                <div class="card-content">
-             <div class="chart-container">
-  <h3 style="margin-bottom: 1.5rem; font-weight: 600;">
-    Aufwandsstruktur 2024 (Anteil an Gesamtaufwendungen)
-  </h3>
-  <!-- Leistungen -->
-  <div class="chart-bar">
-    <div class="chart-label">Versicherungsleistungen</div>
-    <div class="chart-track">
-      <div class="chart-fill" style="width: 63.7%;">750,7 Mio. € (63,7%)</div>
-    </div>
-  </div>
-  <!-- Zuführung Alterungsrückstellung -->
-  <div class="chart-bar">
-    <div class="chart-label">Alterungsrückstellung (Zuführung)</div>
-    <div class="chart-track">
-      <div class="chart-fill" style="width: 29.0%;">342,0 Mio. € (29,0%)</div>
-    </div>
-  </div>
-  <!-- Abschlusskosten -->
-  <div class="chart-bar">
-    <div class="chart-label">Abschlusskosten</div>
-    <div class="chart-track">
-      <div class="chart-fill" style="width: 5.1%;">59,7 Mio. € (5,1%)</div>
-    </div>
-  </div>
-  <!-- Verwaltung -->
-  <div class="chart-bar">
-    <div class="chart-label">Verwaltung</div>
-    <div class="chart-track">
-      <div class="chart-fill" style="width: 2.2%;">26,9 Mio. € (2,2%)</div>
-    </div>
-  </div>
-  <p style="margin-top:1rem; font-size:0.825rem; color:var(--text-secondary);">
-    Hinweis: Prozente bezogen auf die Summe aller Aufwendungen (Leistungen + Zuführung AR + Abschluss + Verwaltung = 1.179,3 Mio. €).
-  </p>
-</div>
-
-                    <div style="overflow-x: auto; margin-top: 2rem;">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Kennzahl</th>
-                                    <th>Wert 2024</th>
-                                    <th>Bewertung</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>Beitragseinnahmen</strong></td>
-                                    <td>1.000,4 Mio. €</td>
-                                    <td><span class="badge badge-success">Stabil</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Versicherungsleistungen</strong></td>
-                                    <td>750,7 Mio. €</td>
-                                    <td><span class="badge badge-info">Kontrolliert</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Eigenkapital</strong></td>
-                                    <td>213,5 Mio. €</td>
-                                    <td><span class="badge badge-success">Solide</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Kapitalanlagen</strong></td>
-                                    <td>8.363,8 Mio. €</td>
-                                    <td><span class="badge badge-success">Sehr stark</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Kapitalerträge</strong></td>
-                                    <td>238,2 Mio. €</td>
-                                    <td><span class="badge badge-success">Robust</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Nettoverzinsung</strong></td>
-                                    <td>2,40%</td>
-                                    <td><span class="badge badge-info">Marktkonform</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Schadenquote</strong></td>
-                                    <td>85,5%</td>
-                                    <td><span class="badge badge-warning">Beobachten</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Abschlusskostenquote</strong></td>
-                                    <td>6,0%</td>
-                                    <td><span class="badge badge-success">Effizient</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Fusion Timeline -->
-        <section class="section animated">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">🤝 Fusion mit der Stuttgarter</h2>
-                </div>
-                <div class="card-content">
-                    <div class="timeline">
-                        <div class="timeline-item">
-                            <div class="timeline-date">22. Oktober 2024</div>
-                            <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Ankündigung der Fusion</h4>
-                            <p>Prüfung eines Zusammenschlusses zwischen SDK und Die Stuttgarter wird offiziell bekannt gegeben.</p>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-date">1. Juli 2025</div>
-                            <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Gleichordnungskonzern</h4>
-                            <p>Einstimmiger Beschluss der Mitgliedervertreterversammlungen beider Unternehmen zur Gründung eines Gleichordnungskonzerns.</p>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-date">Ende 2026 (geplant)</div>
-                            <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Rechtlicher Zusammenschluss</h4>
-                            <p>Vollständige rechtliche Fusion der beiden Versicherungsunternehmen zu einer Einheit.</p>
-                        </div>
-                    </div>
-                    <div class="success-box">
-                        <strong>Strategische Vorteile:</strong> Die Fusion schafft einen der größten PKV-Anbieter Deutschlands mit erheblichen Synergien in IT, Verwaltung und Produktentwicklung.
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Digital Strategy -->
-        <section class="section animated">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">📱 Digitale Transformation</h2>
-                </div>
-                <div class="card-content">
-                    <div class="grid-3">
-                        <div class="metric-card">
-                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📋</div>
-                            <h4 style="font-weight: 600; margin-bottom: 0.5rem;">ePA &amp; E-Rezept</h4>
-                            <p style="font-size: 0.875rem; color: var(--text-secondary);">Elektronische Patientenakte und digitale Rezepte</p>
-                        </div>
-                        <div class="metric-card">
-                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📲</div>
-                            <h4 style="font-weight: 600; margin-bottom: 0.5rem;">DiGA</h4>
-                            <p style="font-size: 0.875rem; color: var(--text-secondary);">Digitale Gesundheitsanwendungen mit Kostenübernahme</p>
-                        </div>
-                        <div class="metric-card">
-                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔒</div>
-                            <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Datenschutz</h4>
-                            <p style="font-size: 0.875rem; color: var(--text-secondary);">DSGVO-konforme digitale Services</p>
-                        </div>
-                        <!-- Ergänzungen aus dem abgeschnittenen Ende -->
-                        <div class="metric-card">
-                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📱</div>
-                            <h4 style="font-weight: 600; margin-bottom: 0.5rem;">SDK App</h4>
-                            <p style="font-size: 0.875rem; color: var(--text-secondary);">Dokumentenübermittlung, Bearbeitungsstatus, Service-Zugang</p>
-                        </div>
-                        <div class="metric-card">
-                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🖥️</div>
-                            <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Kundenportal</h4>
-                            <p style="font-size: 0.875rem; color: var(--text-secondary);">Online-Services für Voll- und Ergänzungsversicherte</p>
-                        </div>
-                        <div class="metric-card">
-                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">👨‍⚕️</div>
-                            <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Medgate App</h4>
-                            <p style="font-size: 0.875rem; color: var(--text-secondary);">Digitale Arztbesuche für alle Versicherten</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Market Position -->
-        <section class="section animated">
-            <div class="two-column">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">🏆 Marktposition &amp; Ratings</h2>
-                    </div>
-                    <div class="card-content">
-                        <div style="margin-bottom: 1.5rem;">
-                            <h4 style="font-weight: 600; margin-bottom: 0.75rem;">Aktuelle Bewertungen</h4>
-                            <div style="space-y: 0.75rem;">
-                                <div style="margin-bottom: 0.75rem;">
-                                    <span class="badge badge-warning">Assekurata</span>
-                                    <span style="margin-left: 0.5rem; font-size: 0.875rem;">Rating eingestellt (Nov 2024)</span>
-                                </div>
-                                <div style="margin-bottom: 0.75rem;">
-                                    <span class="badge badge-success">M&amp;M Rating</span>
-                                    <span style="margin-left: 0.5rem; font-size: 0.875rem;">Historisch top bewertet</span>
-                                </div>
-                                <div style="margin-bottom: 0.75rem;">
-                                    <span class="badge badge-info">Marktstellung</span>
-                                    <span style="margin-left: 0.5rem; font-size: 0.875rem;">Top 10 PKV Deutschland</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="warning-box">
-                            <strong>Hinweis:</strong> Das Assekurata-Rating wurde nach der Fusionsankündigung ausgesetzt. Neue Bewertungen sind nach Abschluss der Fusion zu erwarten.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">📊 Versichertenentwicklung</h2>
-                    </div>
-                    <div class="card-content">
-                        <div class="metric-card" style="margin-bottom: 1rem;">
-                            <div class="metric-value">682.400</div>
-                            <div class="metric-label">Versicherte gesamt</div>
-                        </div>
-                        <div style="margin-bottom: 1.5rem;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                                <span style="font-weight: 500;">Vollversicherung</span>
-                                <span class="negative">-1,3%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 60%;"></div>
-                            </div>
-                        </div>
-                        <div style="margin-bottom: 1.5rem;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                                <span style="font-weight: 500;">Ergänzungsversicherung</span>
-                                <span class="positive">+2,6%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 40%;"></div>
-                            </div>
-                        </div>
-                        <p style="font-size: 0.875rem; color: var(--text-secondary);">Während die Vollversicherung leicht rückläufig ist, zeigt die Ergänzungsversicherung deutliches Wachstum.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Products & Distribution -->
-        <section class="section animated">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">🎯 Produkte &amp; Vertriebsstrategie</h2>
-                </div>
-                <div class="card-content">
-                    <div class="grid-2">
-                        <div>
-                            <h3 style="color: var(--primary); margin-bottom: 1rem; font-weight: 600;">Tariffamilien</h3>
-                            <div class="grid-3">
-                                <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; text-align: center;">
-                                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🏥</div>
-                                    <div style="font-weight: 600; font-size: 0.875rem;">GesundheitsFAIR</div>
-                                </div>
-                                <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; text-align: center;">
-                                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">⭐</div>
-                                    <div style="font-weight: 600; font-size: 0.875rem;">PrivatEXTRA</div>
-                                </div>
-                                <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; text-align: center;">
-                                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🛡️</div>
-                                    <div style="font-weight: 600; font-size: 0.875rem;">PflegeSTARK</div>
-                                </div>
-                                <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; text-align: center;">
-                                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">👨‍⚕️</div>
-                                    <div style="font-weight: 600; font-size: 0.875rem;">ALLERÄRZTE</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <h3 style="color: var(--primary); margin-bottom: 1rem; font-weight: 600;">Vertriebskanäle</h3>
-                            <ul style="list-style: none; padding: 0;">
-                                <li class="icon-text">🏢 Eigener Außendienst</li>
-                                <li class="icon-text">🤝 Maklerkooperationen</li>
-                                <li class="icon-text">🏦 Bankenvertrieb (VR-Partner)</li>
-                                <li class="icon-text">🌐 Online-Vertrieb</li>
-                                <li class="icon-text">📞 Telefonvertrieb</li>
-                            </ul>
-                            <div style="margin-top: 1.5rem; padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
-                                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Zielgruppen</h4>
-                                <p style="font-size: 0.875rem; color: var(--text-secondary);">Flexible Tarife für Arbeitnehmer, Selbstständige und Beamte mit individueller Zusammenstellung des Versicherungsschutzes.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Opportunities & Risks -->
-        <section class="section animated">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">🔮 Chancen &amp; Risiken 2025/26</h2>
-                </div>
-                <div class="card-content">
-                    <div class="two-column">
-                        <div>
-                            <h3 style="color: var(--success); margin-bottom: 1rem; font-weight: 600;">🚀 Chancen</h3>
-                            <div style="space-y: 1rem;">
-                                <div style="margin-bottom: 1rem;">
-                                    <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Fusionssynergien</h4>
-                                    <p style="font-size: 0.875rem; color: var(--text-secondary);">Kosteneinsparungen durch gemeinsame IT-Infrastruktur und Verwaltung. Erweiterte Produktpalette durch Kombination der Kompetenzen.</p>
-                                </div>
-                                <div style="margin-bottom: 1rem;">
-                                    <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Digitalisierung</h4>
-                                    <p style="font-size: 0.875rem; color: var(--text-secondary);">Führende Position bei E-Health-Services, DiGA-Integration und digitalen Kundenschnittstellen.</p>
-                                </div>
-                                <div style="margin-bottom: 1rem;">
-                                    <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Marktposition</h4>
-                                    <p style="font-size: 0.875rem; color: var(--text-secondary);">Stärkung der Wettbewerbsposition durch größere Kapitalausstattung und erweiterte Risikoverteilung.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <h3 style="color: var(--accent); margin-bottom: 1rem; font-weight: 600;">⚠️ Risiken</h3>
-                            <div style="space-y: 1rem;">
-                                <div style="margin-bottom: 1rem;">
-                                    <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Beitragssteigerungen</h4>
-                                    <p style="font-size: 0.875rem; color: var(--text-secondary);">Erwartete Erhöhungen von 9-11% ab 2026 aufgrund steigender Gesundheitskosten.</p>
-                                </div>
-                                <div style="margin-bottom: 1rem;">
-                                    <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Integrationsrisiken</h4>
-                                    <p style="font-size: 0.875rem; color: var(--text-secondary);">Komplexität der IT-Integration und mögliche Kundenverluste während der Fusion.</p>
-                                </div>
-                                <div style="margin-bottom: 1rem;">
-                                    <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Marktdruck</h4>
-                                    <p style="font-size: 0.875rem; color: var(--text-secondary);">Rückgang bei Vollversicherten (-1,3%) und allgemeiner Kostendruck im Gesundheitswesen.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="warning-box" style="margin-top: 2rem;">
-                        <strong>Kritische Entwicklung 2026:</strong> Der Gesundheitsetat steigt auf 20 Milliarden Euro. Milliardendefizite bei gesetzlichen Krankenkassen verstärken den Druck auf die PKV-Branche.
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- BRE Regulation -->
-        <section class="section animated">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">💰 Beitragsrückerstattung (BRE) 2025</h2>
-                </div>
-                <div class="card-content">
-                    <div class="highlight-box">
-                        <strong>Neue BRE-Regelung:</strong> Ab dem Versicherungsjahr 2025 erhalten nur gesunde Kunden ohne Rechnungseinreichung eine erfolgsabhängige Beitragsrückerstattung.
-                    </div>
-                    <div class="grid-2" style="margin-top: 1.5rem;">
-                        <div>
-                            <h4 style="font-weight: 600; margin-bottom: 0.75rem; color: var(--success);">Voraussetzungen für BRE</h4>
-                            <ul style="list-style: none; padding: 0;">
-                                <li class="icon-text">✅ Keine Rechnungseinreichung im Kalenderjahr</li>
-                                <li class="icon-text">✅ Gesunder Zustand des Versicherten</li>
-                                <li class="icon-text">✅ Fristgerechte Beitragszahlung</li>
-                                <li class="icon-text">✅ Erfüllung der Mindestversicherungsdauer</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 style="font-weight: 600; margin-bottom: 0.75rem; color: var(--primary);">Auswirkungen</h4>
-                            <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem;">Die Anpassung der BRE-Regelung zielt darauf ab, präventive Gesundheitsmaßnahmen zu fördern und die Kostenentwicklung zu stabilisieren.</p>
-                            <div class="metric-card">
-                                <div class="metric-value" style="color: var(--success);">~15%</div>
-                                <div class="metric-label">Geschätzte BRE-Berechtigung</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Future Outlook -->
-        <section class="section animated">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">🔭 Strategischer Ausblick 2025-2027</h2>
-                </div>
-                <div class="card-content">
-                    <div class="grid-3">
-                        <div class="metric-card">
-                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎯</div>
-                            <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Fusionsziele</h4>
-                            <ul style="list-style: none; padding: 0; font-size: 0.875rem; color: var(--text-secondary);">
-                                <li>• IT-Synergien realisieren</li>
-                                <li>• Verwaltungskosten senken</li>
-                                <li>• Produktinnovationen beschleunigen</li>
-                                <li>• Marktposition stärken</li>
-                            </ul>
-                        </div>
-                        <div class="metric-card">
-                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">💻</div>
-                            <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Digital-Roadmap</h4>
-                            <ul style="list-style: none; padding: 0; font-size: 0.875rem; color: var(--text-secondary);">
-                                <li>• KI-basierte Schadenbearbeitung</li>
-                                <li>• Erweiterte Telemedizin</li>
-                                <li>• Blockchain für Abrechnungen</li>
-                                <li>• Predictive Health Analytics</li>
-                            </ul>
-                        </div>
-                        <div class="metric-card">
-                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📈</div>
-                            <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Wachstumsstrategie</h4>
-                            <ul style="list-style: none; padding: 0; font-size: 0.875rem; color: var(--text-secondary);">
-                                <li>• Ergänzungsversicherung ausbauen</li>
-                                <li>• Employer Branding stärken</li>
-                                <li>• Nachhaltigkeit integrieren</li>
-                                <li>• Internationale Expansion prüfen</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div style="margin-top: 2rem;">
-                        <h3 style="color: var(--primary); margin-bottom: 1rem; font-weight: 600;">Kritische Erfolgsfaktoren</h3>
-                        <div class="grid-2">
-                            <div class="success-box">
-                                <strong>Operative Exzellenz:</strong> Erfolgreiche Integration der Stuttgarter-Systeme ohne Service-Unterbrechungen für bestehende Kunden.
-                            </div>
-                            <div class="highlight-box">
-                                <strong>Innovation Leadership:</strong> Führungsposition bei digitalen Gesundheitsdiensten und präventiven Versicherungsmodellen ausbauen.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Action Items -->
-        <section class="section animated">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">📋 Offene Punkte &amp; Empfehlungen</h2>
-                </div>
-                <div class="card-content">
-                    <div class="two-column">
-                        <div>
-                            <h3 style="color: var(--accent); margin-bottom: 1rem; font-weight: 600;">🔍 Weitere Recherche erforderlich</h3>
-                            <ul style="list-style: none; padding: 0;">
-                                <li class="icon-text">❓ Genaue Aufschlüsselung Voll-/Zusatzversicherte</li>
-                                <li class="icon-text">❓ Vollständige Vorstandsliste post-Fusion</li>
-                                <li class="icon-text">❓ Ascore-Rating Status</li>
-                                <li class="icon-text">❓ VR-Banken Vertriebsdetails</li>
-                                <li class="icon-text">❓ Konkrete Fusionssynergien (quantifiziert)</li>
-                                <li class="icon-text">❓ IT-Investitionsbudget 2025/26</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h3 style="color: var(--primary); margin-bottom: 1rem; font-weight: 600;">💡 Strategische Empfehlungen</h3>
-                            <ul style="list-style: none; padding: 0;">
-                                <li class="icon-text">🎯 Beschleunigte Digitalisierung</li>
-                                <li class="icon-text">🎯 Präventionsprogramme ausbauen</li>
-                                <li class="icon-text">🎯 Kundenbindung verstärken</li>
-                                <li class="icon-text">🎯 Nachhaltigkeitsstrategie entwickeln</li>
-                                <li class="icon-text">🎯 Datenanalyse-Kompetenzen stärken</li>
-                                <li class="icon-text">🎯 Kooperationen mit Health-Tech</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="highlight-box" style="margin-top: 2rem;">
-                        <strong>Fazit:</strong> Die SDK steht vor einer entscheidenden Phase. Die Fusion mit der Stuttgarter bietet erhebliche Chancen, erfordert aber exzellente Execution. Die digitale Transformation und die Anpassung an steigende Gesundheitskosten werden den Erfolg der nächsten Jahre bestimmen.
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <div class="footer">
-            <p><strong>Stand:</strong> 30. August 2025</p>
-            <p style="margin-top: 0.5rem; opacity: 0.8;">Quellen: SDK Konzern Geschäftsbericht 2024, Assekurata, M&amp;M Rating, PKV-Verband, Branchenanalysen</p>
+    <!-- Products & Distribution -->
+    <section class="section animated">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">🎯 Produkte &amp; Vertriebsstrategie</h2>
         </div>
+        <div class="card-content">
+          <div class="grid-2">
+            <div>
+              <h3 style="color:var(--primary);margin-bottom:1rem;font-weight:600;">Tariffamilien</h3>
+              <div class="grid-3">
+                <div style="background:var(--bg-secondary);padding:1rem;border-radius:8px;text-align:center;">
+                  <div style="font-size:1.5rem;margin-bottom:.5rem;">🏥</div>
+                  <div style="font-weight:600;font-size:.875rem;">GesundheitsFAIR</div>
+                </div>
+                <div style="background:var(--bg-secondary);padding:1rem;border-radius:8px;text-align:center;">
+                  <div style="font-size:1.5rem;margin-bottom:.5rem;">⭐</div>
+                  <div style="font-weight:600;font-size:.875rem;">PrivatEXTRA</div>
+                </div>
+                <div style="background:var(--bg-secondary);padding:1rem;border-radius:8px;text-align:center;">
+                  <div style="font-size:1.5rem;margin-bottom:.5rem;">🛡️</div>
+                  <div style="font-weight:600;font-size:.875rem;">PflegeSTARK</div>
+                </div>
+                <div style="background:var(--bg-secondary);padding:1rem;border-radius:8px;text-align:center;">
+                  <div style="font-size:1.5rem;margin-bottom:.5rem;">👨‍⚕️</div>
+                  <div style="font-weight:600;font-size:.875rem;">ALLERÄRZTE</div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h3 style="color:var(--primary);margin-bottom:1rem;font-weight:600;">Vertriebskanäle</h3>
+              <ul style="list-style:none;padding:0;">
+                <li class="icon-text">🏢 Eigener Außendienst</li>
+                <li class="icon-text">🤝 Maklerkooperationen</li>
+                <li class="icon-text">🏦 Bankenvertrieb (VR-Partner)</li>
+                <li class="icon-text">🌐 Online-Vertrieb</li>
+                <li class="icon-text">📞 Telefonvertrieb</li>
+              </ul>
+              <div style="margin-top:1.5rem;padding:1rem;background:var(--bg-secondary);border-radius:8px;">
+                <h4 style="font-weight:600;margin-bottom:.5rem;">Zielgruppen</h4>
+                <p style="font-size:.875rem;color:var(--text-secondary);">Flexible Tarife für Arbeitnehmer, Selbstständige und Beamte mit individueller Zusammenstellung des Versicherungsschutzes.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Opportunities & Risks -->
+    <section class="section animated">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">🔮 Chancen &amp; Risiken 2025/26</h2>
+        </div>
+        <div class="card-content">
+          <div class="two-column">
+            <div>
+              <h3 style="color:var(--success);margin-bottom:1rem;font-weight:600;">🚀 Chancen</h3>
+              <div style="space-y:1rem;">
+                <div style="margin-bottom:1rem;">
+                  <h4 style="font-weight:600;margin-bottom:.5rem;">Fusionssynergien</h4>
+                  <p style="font-size:.875rem;color:var(--text-secondary);">Kosteneinsparungen durch gemeinsame IT-Infrastruktur und Verwaltung. Erweiterte Produktpalette durch Kombination der Kompetenzen.</p>
+                </div>
+                <div style="margin-bottom:1rem;">
+                  <h4 style="font-weight:600;margin-bottom:.5rem;">Digitalisierung</h4>
+                  <p style="font-size:.875rem;color:var(--text-secondary);">Führende Position bei E-Health-Services, DiGA-Integration und digitalen Kundenschnittstellen.</p>
+                </div>
+                <div style="margin-bottom:1rem;">
+                  <h4 style="font-weight:600;margin-bottom:.5rem;">Marktposition</h4>
+                  <p style="font-size:.875rem;color:var(--text-secondary);">Stärkung der Wettbewerbsposition durch größere Kapitalausstattung und erweiterte Risikoverteilung.</p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h3 style="color:var(--accent);margin-bottom:1rem;font-weight:600;">⚠️ Risiken</h3>
+              <div style="space-y:1rem;">
+                <div style="margin-bottom:1rem;">
+                  <h4 style="font-weight:600;margin-bottom:.5rem;">Beitragssteigerungen</h4>
+                  <p style="font-size:.875rem;color:var(--text-secondary);">Erwartete Erhöhungen von 9-11% ab 2026 aufgrund steigender Gesundheitskosten.</p>
+                </div>
+                <div style="margin-bottom:1rem;">
+                  <h4 style="font-weight:600;margin-bottom:.5rem;">Integrationsrisiken</h4>
+                  <p style="font-size:.875rem;color:var(--text-secondary);">Komplexität der IT-Integration und mögliche Kundenverluste während der Fusion.</p>
+                </div>
+                <div style="margin-bottom:1rem;">
+                  <h4 style="font-weight:600;margin-bottom:.5rem;">Marktdruck</h4>
+                  <p style="font-size:.875rem;color:var(--text-secondary);">Rückgang bei Vollversicherten (-1,3%) und allgemeiner Kostendruck im Gesundheitswesen.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="warning-box" style="margin-top:2rem;">
+            <strong>Kritische Entwicklung 2026:</strong> Der Gesundheitsetat steigt auf 20 Milliarden Euro. Milliardendefizite bei gesetzlichen Krankenkassen verstärken den Druck auf die PKV-Branche.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BRE Regulation -->
+    <section class="section animated">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">💰 Beitragsrückerstattung (BRE) 2025</h2>
+        </div>
+        <div class="card-content">
+          <div class="highlight-box">
+            <strong>Neue BRE-Regelung:</strong> Ab dem Versicherungsjahr 2025 erhalten nur gesunde Kunden ohne Rechnungseinreichung eine erfolgsabhängige Beitragsrückerstattung.
+          </div>
+          <div class="grid-2" style="margin-top:1.5rem;">
+            <div>
+              <h4 style="font-weight:600;margin-bottom:.75rem;color:var(--success);">Voraussetzungen für BRE</h4>
+              <ul style="list-style:none;padding:0;">
+                <li class="icon-text">✅ Keine Rechnungseinreichung im Kalenderjahr</li>
+                <li class="icon-text">✅ Gesunder Zustand des Versicherten</li>
+                <li class="icon-text">✅ Fristgerechte Beitragszahlung</li>
+                <li class="icon-text">✅ Erfüllung der Mindestversicherungsdauer</li>
+              </ul>
+            </div>
+            <div>
+              <h4 style="font-weight:600;margin-bottom:.75rem;color:var(--primary);">Auswirkungen</h4>
+              <p style="font-size:.875rem;color:var(--text-secondary);margin-bottom:1rem;">Die Anpassung der BRE-Regelung zielt darauf ab, präventive Gesundheitsmaßnahmen zu fördern und die Kostenentwicklung zu stabilisieren.</p>
+              <div class="metric-card">
+                <div class="metric-value" style="color:var(--success);">~15%</div>
+                <div class="metric-label">Geschätzte BRE-Berechtigung</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Future Outlook -->
+    <section class="section animated">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">🔭 Strategischer Ausblick 2025-2027</h2>
+        </div>
+        <div class="card-content">
+          <div class="grid-3">
+            <div class="metric-card">
+              <div style="font-size:2rem;margin-bottom:.5rem;">🎯</div>
+              <h4 style="font-weight:600;margin-bottom:.5rem;">Fusionsziele</h4>
+              <ul style="list-style:none;padding:0;font-size:.875rem;color:var(--text-secondary);">
+                <li>• IT-Synergien realisieren</li>
+                <li>• Verwaltungskosten senken</li>
+                <li>• Produktinnovationen beschleunigen</li>
+                <li>• Marktposition stärken</li>
+              </ul>
+            </div>
+            <div class="metric-card">
+              <div style="font-size:2rem;margin-bottom:.5rem;">💻</div>
+              <h4 style="font-weight:600;margin-bottom:.5rem;">Digital-Roadmap</h4>
+              <ul style="list-style:none;padding:0;font-size:.875rem;color:var(--text-secondary);">
+                <li>• KI-basierte Schadenbearbeitung</li>
+                <li>• Erweiterte Telemedizin</li>
+                <li>• Blockchain für Abrechnungen</li>
+                <li>• Predictive Health Analytics</li>
+              </ul>
+            </div>
+            <div class="metric-card">
+              <div style="font-size:2rem;margin-bottom:.5rem;">📈</div>
+              <h4 style="font-weight:600;margin-bottom:.5rem;">Wachstumsstrategie</h4>
+              <ul style="list-style:none;padding:0;font-size:.875rem;color:var(--text-secondary);">
+                <li>• Ergänzungsversicherung ausbauen</li>
+                <li>• Employer Branding stärken</li>
+                <li>• Nachhaltigkeit integrieren</li>
+                <li>• Internationale Expansion prüfen</li>
+              </ul>
+            </div>
+          </div>
+          <div style="margin-top:2rem;">
+            <h3 style="color:var(--primary);margin-bottom:1rem;font-weight:600;">Kritische Erfolgsfaktoren</h3>
+            <div class="grid-2">
+              <div class="success-box">
+                <strong>Operative Exzellenz:</strong> Erfolgreiche Integration der Stuttgarter-Systeme ohne Service-Unterbrechungen für bestehende Kunden.
+              </div>
+              <div class="highlight-box">
+                <strong>Innovation Leadership:</strong> Führungsposition bei digitalen Gesundheitsdiensten und präventiven Versicherungsmodellen ausbauen.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Action Items -->
+    <section class="section animated">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">📋 Offene Punkte &amp; Empfehlungen</h2>
+        </div>
+        <div class="card-content">
+          <div class="two-column">
+            <div>
+              <h3 style="color:var(--accent);margin-bottom:1rem;font-weight:600;">🔍 Weitere Recherche erforderlich</h3>
+              <ul style="list-style:none;padding:0;">
+                <li class="icon-text">❓ Genaue Aufschlüsselung Voll-/Zusatzversicherte</li>
+                <li class="icon-text">❓ Vollständige Vorstandsliste post-Fusion</li>
+                <li class="icon-text">❓ Ascore-Rating Status</li>
+                <li class="icon-text">❓ VR-Banken Vertriebsdetails</li>
+                <li class="icon-text">❓ Konkrete Fusionssynergien (quantifiziert)</li>
+                <li class="icon-text">❓ IT-Investitionsbudget 2025/26</li>
+              </ul>
+            </div>
+            <div>
+              <h3 style="color:var(--primary);margin-bottom:1rem;font-weight:600;">💡 Strategische Empfehlungen</h3>
+              <ul style="list-style:none;padding:0;">
+                <li class="icon-text">🎯 Beschleunigte Digitalisierung</li>
+                <li class="icon-text">🎯 Präventionsprogramme ausbauen</li>
+                <li class="icon-text">🎯 Kundenbindung verstärken</li>
+                <li class="icon-text">🎯 Nachhaltigkeitsstrategie entwickeln</li>
+                <li class="icon-text">🎯 Datenanalyse-Kompetenzen stärken</li>
+                <li class="icon-text">🎯 Kooperationen mit Health-Tech</li>
+              </ul>
+            </div>
+          </div>
+          <div class="highlight-box" style="margin-top:2rem;">
+            <strong>Fazit:</strong> Die SDK steht vor einer entscheidenden Phase. Die Fusion mit der Stuttgarter bietet erhebliche Chancen, erfordert aber exzellente Execution. Die digitale Transformation und die Anpassung an steigende Gesundheitskosten werden den Erfolg der nächsten Jahre bestimmen.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <p><strong>Stand:</strong> 30. August 2025</p>
+      <p style="margin-top:.5rem;opacity:.8;">Quellen: SDK Konzern Geschäftsbericht 2024, Assekurata, M&amp;M Rating, PKV-Verband, Branchenanalysen</p>
     </div>
+  </div>
 
-    <script>
-        // Add smooth scroll animations
-        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => { if (entry.isIntersecting) { entry.target.style.opacity = '1'; entry.target.style.transform = 'translateY(0)'; } });
-        }, observerOptions);
-
-        // Animate progress bars when visible
-        const progressObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const fills = entry.target.querySelectorAll('.progress-fill, .chart-fill');
-                    fills.forEach(fill => {
-                        const width = fill.style.width;
-                        fill.style.width = '0%';
-                        setTimeout(() => { fill.style.width = width; }, 100);
-                    });
-                }
-            });
+  <script>
+    // Einmalige Balken-Animation ohne Doppel-Trigger
+    document.addEventListener('DOMContentLoaded', () => {
+      const animateFill = (fill) => {
+        if (fill.dataset.animated === 'true') return;
+        const target = fill.dataset.width ? parseFloat(fill.dataset.width) : 0;
+        // Sicherheitsnetz, falls jemand % mitsendet
+        const clamped = Math.max(0, Math.min(100, target));
+        // Start bei 0, dann in die Zielbreite animieren
+        fill.style.width = '0%';
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            fill.style.width = clamped + '%';
+            fill.dataset.animated = 'true';
+          });
         });
+      };
 
-        // Initialize animations
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.animated').forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(20px)';
-                el.style.transition = 'all 0.6s ease-out';
-                observer.observe(el);
-            });
-
-            document.querySelectorAll('.chart-container, .card').forEach(el => { progressObserver.observe(el); });
-
-            // Tab functionality (visual highlight only)
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.tab').forEach(t => { t.style.background = 'transparent'; t.style.color = 'var(--text-primary)'; });
-                    tab.style.background = 'var(--primary)';
-                    tab.style.color = 'white';
-                });
-            });
-
-            // Trigger initial animations
-            setTimeout(() => {
-                document.querySelectorAll('.progress-fill, .chart-fill').forEach(fill => {
-                    const width = fill.style.width;
-                    fill.style.width = '0%';
-                    setTimeout(() => { fill.style.width = width; }, 200);
-                });
-            }, 500);
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          entry.target.querySelectorAll('.progress-fill, .chart-fill').forEach(animateFill);
+          obs.unobserve(entry.target);
         });
-    </script>
+      }, { threshold: 0.2, rootMargin: '0px 0px -50px 0px' });
+
+      // Nur Container beobachten, die auch Füllbalken enthalten
+      document.querySelectorAll('.chart-container, .card').forEach(el => {
+        if (el.querySelector('.progress-fill, .chart-fill')) observer.observe(el);
+      });
+
+      // Tabs: optische Aktivierung
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.tab').forEach(t => {
+            t.style.background = 'transparent';
+            t.style.color = 'var(--text-primary)';
+          });
+          tab.style.background = 'var(--primary)';
+          tab.style.color = '#fff';
+        });
+      });
+    });
+  </script>
 </body>
 </html>

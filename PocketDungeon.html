@@ -29,9 +29,6 @@
             font-size: 12px;
         }
     </style>
-    <!-- GoatCounter -->
-    <script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
-    <!-- End GoatCounter -->
 </head>
 <body>
     <div id="game-container">
@@ -44,6 +41,19 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         
+        // Game constants
+        const TILE_SIZE = 12;
+        const MAP_WIDTH = 20;
+        const MAP_HEIGHT = 15;
+        
+        // Tile types
+        const TILES = {
+            EMPTY: 0,
+            WALL: 1,
+            ENEMY: 2,
+            TREASURE: 3
+        };
+        
         // Game state
         let gameState = {
             player: { x: 1, y: 1 },
@@ -54,20 +64,20 @@
             gameOver: false,
             victory: false,
             invulnerable: 0,
-            particles: []
+            particles: [],
+            enemies: []
         };
         
         let map = [];
         const keys = {};
         let lastMoveTime = 0;
-        const moveDelay = 150; // Millisekunden zwischen Bewegungen
+        const moveDelay = 150;
         
         // Input handling
         document.addEventListener('keydown', (e) => {
             keys[e.code] = true;
             
-            // Restart game
-            if (e.code === 'KeyR' && gameState.gameOver) {
+            if (e.code === 'KeyR' && (gameState.gameOver || gameState.victory)) {
                 initGame();
             }
         });
@@ -76,4 +86,381 @@
             keys[e.code] = false;
         });
         
-        // Particle system for effects
+        // Particle system
+        function createParticle(x, y, color, velocity) {
+            return {
+                x: x * TILE_SIZE + TILE_SIZE / 2,
+                y: y * TILE_SIZE + TILE_SIZE / 2,
+                vx: velocity.x,
+                vy: velocity.y,
+                color: color,
+                life: 30,
+                maxLife: 30
+            };
+        }
+        
+        function updateParticles() {
+            for (let i = gameState.particles.length - 1; i >= 0; i--) {
+                const p = gameState.particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life--;
+                
+                if (p.life <= 0) {
+                    gameState.particles.splice(i, 1);
+                }
+            }
+        }
+        
+        function drawParticles() {
+            gameState.particles.forEach(p => {
+                const alpha = p.life / p.maxLife;
+                ctx.globalAlpha = alpha;
+                ctx.fillStyle = p.color;
+                ctx.fillRect(p.x - 1, p.y - 1, 2, 2);
+                ctx.globalAlpha = 1;
+            });
+        }
+        
+        // Map generation
+        function generateMap() {
+            map = [];
+            gameState.enemies = [];
+            
+            // Initialize with walls
+            for (let y = 0; y < MAP_HEIGHT; y++) {
+                map[y] = [];
+                for (let x = 0; x < MAP_WIDTH; x++) {
+                    map[y][x] = TILES.WALL;
+                }
+            }
+            
+            // Create rooms and corridors
+            const rooms = [];
+            const numRooms = 4 + Math.floor(Math.random() * 3);
+            
+            for (let i = 0; i < numRooms; i++) {
+                const roomW = 3 + Math.floor(Math.random() * 4);
+                const roomH = 3 + Math.floor(Math.random() * 4);
+                const roomX = Math.floor(Math.random() * (MAP_WIDTH - roomW - 2)) + 1;
+                const roomY = Math.floor(Math.random() * (MAP_HEIGHT - roomH - 2)) + 1;
+                
+                rooms.push({ x: roomX, y: roomY, w: roomW, h: roomH });
+                
+                // Clear room
+                for (let y = roomY; y < roomY + roomH; y++) {
+                    for (let x = roomX; x < roomX + roomW; x++) {
+                        map[y][x] = TILES.EMPTY;
+                    }
+                }
+            }
+            
+            // Connect rooms with corridors
+            for (let i = 1; i < rooms.length; i++) {
+                const room1 = rooms[i - 1];
+                const room2 = rooms[i];
+                
+                const x1 = Math.floor(room1.x + room1.w / 2);
+                const y1 = Math.floor(room1.y + room1.h / 2);
+                const x2 = Math.floor(room2.x + room2.w / 2);
+                const y2 = Math.floor(room2.y + room2.h / 2);
+                
+                // Horizontal corridor
+                const minX = Math.min(x1, x2);
+                const maxX = Math.max(x1, x2);
+                for (let x = minX; x <= maxX; x++) {
+                    if (x >= 0 && x < MAP_WIDTH && y1 >= 0 && y1 < MAP_HEIGHT) {
+                        map[y1][x] = TILES.EMPTY;
+                    }
+                }
+                
+                // Vertical corridor
+                const minY = Math.min(y1, y2);
+                const maxY = Math.max(y1, y2);
+                for (let y = minY; y <= maxY; y++) {
+                    if (x2 >= 0 && x2 < MAP_WIDTH && y >= 0 && y < MAP_HEIGHT) {
+                        map[y][x2] = TILES.EMPTY;
+                    }
+                }
+            }
+            
+            // Place enemies
+            const numEnemies = 3 + gameState.level;
+            let enemiesPlaced = 0;
+            let attempts = 0;
+            
+            while (enemiesPlaced < numEnemies && attempts < 100) {
+                const x = Math.floor(Math.random() * MAP_WIDTH);
+                const y = Math.floor(Math.random() * MAP_HEIGHT);
+                
+                if (map[y][x] === TILES.EMPTY && (x !== 1 || y !== 1)) {
+                    gameState.enemies.push({ x, y, hp: 1 + Math.floor(gameState.level / 2) });
+                    enemiesPlaced++;
+                }
+                attempts++;
+            }
+        }
+        
+        // Game logic
+        function movePlayer(dx, dy) {
+            const newX = gameState.player.x + dx;
+            const newY = gameState.player.y + dy;
+            
+            // Check bounds
+            if (newX < 0 || newX >= MAP_WIDTH || newY < 0 || newY >= MAP_HEIGHT) {
+                return false;
+            }
+            
+            // Check wall collision
+            if (map[newY][newX] === TILES.WALL) {
+                return false;
+            }
+            
+            // Check enemy collision
+            const enemy = gameState.enemies.find(e => e.x === newX && e.y === newY);
+            if (enemy) {
+                // Attack enemy
+                enemy.hp--;
+                gameState.score += 10;
+                
+                // Create hit particles
+                for (let i = 0; i < 5; i++) {
+                    gameState.particles.push(createParticle(
+                        newX, newY, '#ff0000',
+                        { x: (Math.random() - 0.5) * 2, y: (Math.random() - 0.5) * 2 }
+                    ));
+                }
+                
+                if (enemy.hp <= 0) {
+                    gameState.enemies = gameState.enemies.filter(e => e !== enemy);
+                    gameState.score += 50;
+                    
+                    // Create death particles
+                    for (let i = 0; i < 8; i++) {
+                        gameState.particles.push(createParticle(
+                            newX, newY, '#ffff00',
+                            { x: (Math.random() - 0.5) * 4, y: (Math.random() - 0.5) * 4 }
+                        ));
+                    }
+                }
+                return false;
+            }
+            
+            // Move player
+            gameState.player.x = newX;
+            gameState.player.y = newY;
+            return true;
+        }
+        
+        function moveEnemies() {
+            gameState.enemies.forEach(enemy => {
+                const dx = gameState.player.x - enemy.x;
+                const dy = gameState.player.y - enemy.y;
+                const distance = Math.abs(dx) + Math.abs(dy);
+                
+                // Only move if player is within range
+                if (distance <= 5) {
+                    const moveX = dx === 0 ? 0 : dx > 0 ? 1 : -1;
+                    const moveY = dy === 0 ? 0 : dy > 0 ? 1 : -1;
+                    
+                    // Try to move towards player
+                    let newX = enemy.x;
+                    let newY = enemy.y;
+                    
+                    if (Math.abs(dx) > Math.abs(dy)) {
+                        newX += moveX;
+                    } else {
+                        newY += moveY;
+                    }
+                    
+                    // Check if movement is valid
+                    if (newX >= 0 && newX < MAP_WIDTH && newY >= 0 && newY < MAP_HEIGHT &&
+                        map[newY][newX] !== TILES.WALL && 
+                        !gameState.enemies.some(e => e.x === newX && e.y === newY && e !== enemy)) {
+                        
+                        enemy.x = newX;
+                        enemy.y = newY;
+                        
+                        // Check if enemy reached player
+                        if (enemy.x === gameState.player.x && enemy.y === gameState.player.y && gameState.invulnerable <= 0) {
+                            gameState.hp--;
+                            gameState.invulnerable = 60; // 1 second at 60fps
+                            
+                            // Create damage particles
+                            for (let i = 0; i < 6; i++) {
+                                gameState.particles.push(createParticle(
+                                    gameState.player.x, gameState.player.y, '#ff4444',
+                                    { x: (Math.random() - 0.5) * 3, y: (Math.random() - 0.5) * 3 }
+                                ));
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function handleInput() {
+            const now = Date.now();
+            if (now - lastMoveTime < moveDelay) return;
+            
+            if (gameState.gameOver || gameState.victory) return;
+            
+            let moved = false;
+            
+            if (keys.KeyW || keys.ArrowUp) {
+                moved = movePlayer(0, -1);
+            } else if (keys.KeyS || keys.ArrowDown) {
+                moved = movePlayer(0, 1);
+            } else if (keys.KeyA || keys.ArrowLeft) {
+                moved = movePlayer(-1, 0);
+            } else if (keys.KeyD || keys.ArrowRight) {
+                moved = movePlayer(1, 0);
+            }
+            
+            if (moved) {
+                lastMoveTime = now;
+                moveEnemies();
+            }
+        }
+        
+        function checkWinCondition() {
+            if (gameState.enemies.length === 0 && !gameState.victory) {
+                gameState.victory = true;
+                gameState.score += 100 * gameState.level;
+                
+                // Victory particles
+                for (let i = 0; i < 20; i++) {
+                    gameState.particles.push(createParticle(
+                        gameState.player.x, gameState.player.y, '#00ff00',
+                        { x: (Math.random() - 0.5) * 6, y: (Math.random() - 0.5) * 6 }
+                    ));
+                }
+            }
+        }
+        
+        function checkGameOver() {
+            if (gameState.hp <= 0 && !gameState.gameOver) {
+                gameState.gameOver = true;
+                
+                // Game over particles
+                for (let i = 0; i < 15; i++) {
+                    gameState.particles.push(createParticle(
+                        gameState.player.x, gameState.player.y, '#ff0000',
+                        { x: (Math.random() - 0.5) * 4, y: (Math.random() - 0.5) * 4 }
+                    ));
+                }
+            }
+        }
+        
+        // Rendering
+        function draw() {
+            // Clear canvas
+            ctx.fillStyle = '#001122';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw map
+            for (let y = 0; y < MAP_HEIGHT; y++) {
+                for (let x = 0; x < MAP_WIDTH; x++) {
+                    const tile = map[y][x];
+                    
+                    if (tile === TILES.WALL) {
+                        ctx.fillStyle = '#444';
+                        ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                    } else if (tile === TILES.EMPTY) {
+                        ctx.fillStyle = '#222';
+                        ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                    }
+                }
+            }
+            
+            // Draw enemies
+            ctx.fillStyle = '#ff0000';
+            gameState.enemies.forEach(enemy => {
+                ctx.fillRect(enemy.x * TILE_SIZE + 1, enemy.y * TILE_SIZE + 1, TILE_SIZE - 2, TILE_SIZE - 2);
+            });
+            
+            // Draw player
+            const playerAlpha = gameState.invulnerable > 0 ? 0.5 + 0.5 * Math.sin(Date.now() * 0.02) : 1;
+            ctx.globalAlpha = playerAlpha;
+            ctx.fillStyle = '#00ff00';
+            ctx.fillRect(gameState.player.x * TILE_SIZE + 1, gameState.player.y * TILE_SIZE + 1, TILE_SIZE - 2, TILE_SIZE - 2);
+            ctx.globalAlpha = 1;
+            
+            // Draw particles
+            drawParticles();
+            
+            // Draw UI
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '12px monospace';
+            ctx.fillText(`HP: ${gameState.hp}/${gameState.maxHp}`, 5, 15);
+            ctx.fillText(`Score: ${gameState.score}`, 5, 30);
+            ctx.fillText(`Level: ${gameState.level}`, 5, 45);
+            ctx.fillText(`Enemies: ${gameState.enemies.length}`, 5, 60);
+            
+            // Game over/victory screen
+            if (gameState.gameOver) {
+                ctx.fillStyle = 'rgba(0,0,0,0.7)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#ff0000';
+                ctx.font = '24px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 20);
+                ctx.font = '16px monospace';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(`Final Score: ${gameState.score}`, canvas.width / 2, canvas.height / 2 + 10);
+                ctx.fillText('Press R to restart', canvas.width / 2, canvas.height / 2 + 30);
+                ctx.textAlign = 'left';
+            } else if (gameState.victory) {
+                ctx.fillStyle = 'rgba(0,0,0,0.7)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#00ff00';
+                ctx.font = '24px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('VICTORY!', canvas.width / 2, canvas.height / 2 - 20);
+                ctx.font = '16px monospace';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(`Score: ${gameState.score}`, canvas.width / 2, canvas.height / 2 + 10);
+                ctx.fillText('Press R for next level', canvas.width / 2, canvas.height / 2 + 30);
+                ctx.textAlign = 'left';
+            }
+        }
+        
+        function gameLoop() {
+            handleInput();
+            
+            if (gameState.invulnerable > 0) {
+                gameState.invulnerable--;
+            }
+            
+            updateParticles();
+            checkWinCondition();
+            checkGameOver();
+            
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        function initGame() {
+            if (gameState.victory) {
+                gameState.level++;
+            } else {
+                gameState.level = 1;
+                gameState.score = 0;
+            }
+            
+            gameState.player = { x: 1, y: 1 };
+            gameState.hp = gameState.maxHp;
+            gameState.gameOver = false;
+            gameState.victory = false;
+            gameState.invulnerable = 0;
+            gameState.particles = [];
+            
+            generateMap();
+        }
+        
+        // Start game
+        initGame();
+        gameLoop();
+    </script>
+</body>
+</html>

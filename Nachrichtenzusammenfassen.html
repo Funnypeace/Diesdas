@@ -23,9 +23,10 @@
       <label class="block text-sm font-medium mb-2">Quellen (eine Domain oder URL pro Zeile)</label>
       <textarea id="sources" class="w-full h-32 rounded-xl border border-slate-200 p-3 text-sm mono" placeholder="https://www.tagesschau.de\nhttps://www.zeit.de/index\nspiegel.de/politik"></textarea>
       <label class="block text-sm font-medium mt-4 mb-2">Themen/Keywords (optional)</label>
-      <input id="keywords" class="w-full rounded-xl border border-slate-200 p-3 text-sm" placeholder="wirtschaft, politik, energie …" />
+      <input id="keywords" class="w-full rounded-xl border border-slate-200 p-3 text-sm" placeholder="wirtschaft, politik, energie …" value="bahnverkehr" />
       <div class="flex items-center gap-3 mt-4">
         <button id="btnSummarize" class="px-4 py-2 rounded-xl bg-indigo-600 text-white">Zusammenfassen (3 Sätze)</button>
+        <button id="btnTest" class="px-4 py-2 rounded-xl bg-orange-600 text-white">Backend Test</button>
         <button id="btnClear" class="px-4 py-2 rounded-xl border">Zurücksetzen</button>
       </div>
       <p class="text-xs text-slate-500 mt-2">Server‑Route: <span class="mono">/api/groq</span>. Die Route übernimmt Firecrawl‑Suche/Scrapes serverseitig (wenn ein Query übergeben wird) und lässt Groq zusammenfassen.</p>
@@ -89,27 +90,23 @@
       $("btnSummarize").disabled = true;
       
       try {
-        // Verschiedene Payload-Formate versuchen
+        // Backend erwartet 'query' für Firecrawl-Suche und 'sources' für direktes Scraping
         const payloads = [
-          // Option 1: urls Array (häufigste Variante)
+          // Option 1: sources Array + query (direktes Scraping + Suchaktivierung)
           {
-            urls: urls,
-            keywords: keywords || ""
+            sources: urls,
+            query: keywords || "nachrichten",
+            action: "news_summary"
           },
-          // Option 2: targets Array 
+          // Option 2: Nur query für Firecrawl-Suche mit site-Filter
           {
-            targets: urls,
-            keywords: keywords || ""
+            query: `${keywords || "nachrichten"} site:${urls.map(url => new URL(url).hostname.replace(/^www\./, '')).join(' OR site:')}`,
+            action: "news_summary"
           },
-          // Option 3: sites Array mit vollständigen URLs
+          // Option 3: Query ohne site-Filter (allgemeine Suche)
           {
-            sites: urls,
-            keywords: keywords || ""
-          },
-          // Option 4: Original Format mit Hostnames
-          {
-            sites: urls.map(url => new URL(url).hostname.replace(/^www./, '')),
-            keywords: keywords || ""
+            query: keywords || "bahnverkehr nachrichten",
+            action: "news_summary"
           }
         ];
         
@@ -135,20 +132,20 @@
           log(`Antwort erhalten: ${JSON.stringify(data, null, 2)}`);
           
           // Prüfen ob das Backend Daten verarbeitet hat
-          if (data.debug && (data.debug.scrapedCount > 0 || data.debug.targets?.length > 0)) {
-            log(`✅ Erfolgreich mit Payload-Format ${i + 1}`);
+          if (data.debug && (data.debug.scrapedCount > 0 || (data.debug.firecrawlUsed && data.debug.targets?.length > 0))) {
+            log(`✅ Erfolgreich mit Payload-Format ${i + 1} (firecrawlUsed: ${data.debug.firecrawlUsed}, scrapedCount: ${data.debug.scrapedCount})`);
             
-            if (data.summary || data.content) {
-              $("summary").innerHTML = `<p>${data.summary || data.content}</p>`;
+            if (data.content && data.content !== 'Keine relevanten Nachrichten gefunden. Es liegen keine Eingangsdaten vor, um eine Zusammenfassung zu erstellen.') {
+              $("summary").innerHTML = `<p>${data.content}</p>`;
               log("Zusammenfassung erfolgreich erstellt.");
               return;
             }
           } else if (i < payloads.length - 1) {
-            log(`❌ Payload-Format ${i + 1} funktioniert nicht, versuche nächstes Format...`);
+            log(`❌ Payload-Format ${i + 1} funktioniert nicht (firecrawlUsed: ${data.debug?.firecrawlUsed}, scrapedCount: ${data.debug?.scrapedCount})`);
             continue;
           }
           
-          // Fallback wenn keine summary aber Antwort
+          // Fallback wenn Content vorhanden aber Standard-Fehlermeldung
           if (data.content && data.content !== 'Keine relevanten Nachrichten gefunden. Es liegen keine Eingangsdaten vor, um eine Zusammenfassung zu erstellen.') {
             $("summary").innerHTML = `<p>${data.content}</p>`;
             log("Content erhalten (Fallback).");
@@ -184,22 +181,29 @@
         let data = await response.json();
         log(`Antwort: ${JSON.stringify(data, null, 2)}`);
         
-        // Test 2: Nur Keywords
-        log("Test 2: Nur Keywords");
+        // Test 2: Nur Query (aktiviert Firecrawl)
+        log("Test 2: Nur Query");
         response = await fetch("/api/groq", {
           method: "POST", 
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ keywords: "nachrichten" })
+          body: JSON.stringify({ 
+            query: "bahnverkehr nachrichten heute", 
+            action: "news_summary" 
+          })
         });
         data = await response.json();
         log(`Antwort: ${JSON.stringify(data, null, 2)}`);
         
-        // Test 3: Query Parameter (falls Backend Suche statt Scraping erwartet)
-        log("Test 3: Query Parameter");
+        // Test 3: Query + Sources
+        log("Test 3: Query + Sources");
         response = await fetch("/api/groq", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ query: "bahnverkehr", keywords: "nachrichten" })
+          body: JSON.stringify({ 
+            query: "bahnverkehr",
+            sources: ["https://www.bild.de/regional/hannover/ausfaelle-im-bahnverkehr-wichtigste-ost-west-strecke-weiter-gestoert-68c6ab957ecf6b1bfe3e48eb"],
+            action: "news_summary"
+          })
         });
         data = await response.json();
         log(`Antwort: ${JSON.stringify(data, null, 2)}`);
@@ -214,14 +218,14 @@
 
     $("btnClear").addEventListener("click", () => {
       $("sources").value = "";
-      $("keywords").value = "";
+      $("keywords").value = "bahnverkehr";
       $("summary").innerHTML = "";
       $("log").textContent = "";
       log("Felder zurückgesetzt.");
     });
 
     // Initial log
-    log("News-Zusammenfassung bereit.");
+    log("News-Zusammenfassung bereit. (v2.0 - mit korrekten Backend-Parametern)");
   </script>
 </body>
 </html>

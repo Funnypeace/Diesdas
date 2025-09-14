@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>News‑Zusammenfassung (Firecrawl + Groq)</title>
+  <title>News-Zusammenfassung (Firecrawl + Groq)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .prose p { margin: 0.4rem 0; }
@@ -16,19 +16,19 @@
 <body class="bg-slate-50 text-slate-900">
   <main class="max-w-3xl mx-auto p-6">
     <header class="mb-6">
-      <h1 class="text-2xl font-bold">News‑Zusammenfassung: Firecrawl → Groq</h1>
-      <p class="text-sm text-slate-600">Dieses Frontend nutzt <span class="font-semibold">/api/groq</span> (serverseitig) – keine Client‑Keys, kein Demo‑Modus.</p>
+      <h1 class="text-2xl font-bold">News-Zusammenfassung: Firecrawl → Groq</h1>
+      <p class="text-sm text-slate-600">Dieses Frontend nutzt <span class="font-semibold">/api/groq</span> (serverseitig) – keine Client-Keys, kein Demo-Modus.</p>
     </header>
     <section class="bg-white rounded-2xl shadow p-4 mb-4">
       <label class="block text-sm font-medium mb-2">Quellen (eine Domain oder URL pro Zeile)</label>
-      <textarea id="sources" class="w-full h-32 rounded-xl border border-slate-200 p-3 text-sm mono" placeholder="https://www.tagesschau.de\nhttps://www.zeit.de/index\nspiegel.de/politik"></textarea>
+      <textarea id="sources" class="w-full h-32 rounded-xl border border-slate-200 p-3 text-sm mono" placeholder="https://www.tagesschau.de&#10;https://www.zeit.de/index&#10;spiegel.de/politik"></textarea>
       <label class="block text-sm font-medium mt-4 mb-2">Themen/Keywords (optional)</label>
       <input id="keywords" class="w-full rounded-xl border border-slate-200 p-3 text-sm" placeholder="wirtschaft, politik, energie …" />
       <div class="flex items-center gap-3 mt-4">
         <button id="btnSummarize" class="px-4 py-2 rounded-xl bg-indigo-600 text-white">Zusammenfassen (3 Sätze)</button>
         <button id="btnClear" class="px-4 py-2 rounded-xl border">Zurücksetzen</button>
       </div>
-      <p class="text-xs text-slate-500 mt-2">Server‑Route: <span class="mono">/api/groq</span>. Die Route übernimmt Firecrawl‑Suche/Scrapes serverseitig (wenn ein Query übergeben wird) und lässt Groq zusammenfassen.</p>
+      <p class="text-xs text-slate-500 mt-2">Server-Route: <span class="mono">/api/groq</span>. Die Route übernimmt Firecrawl-Suche/Scrapes serverseitig (wenn ein Query übergeben wird) und lässt Groq zusammenfassen.</p>
     </section>
     <section class="bg-white rounded-2xl shadow p-4 mb-4">
       <h2 class="font-semibold mb-2">Zusammenfassung</h2>
@@ -44,7 +44,12 @@
     // Helpers
     // ----------------------
     const $ = (id) => document.getElementById(id);
-    const log = (msg) => { const el = $("log"); el.textContent += `[${new Date().toLocaleTimeString()}] ${msg}\n`; el.scrollTop = el.scrollHeight; };
+    const log = (msg) => {
+      const el = $("log");
+      el.textContent += `[${new Date().toLocaleTimeString()}] ${msg}\n`;
+      el.scrollTop = el.scrollHeight;
+    };
+
     function toSiteParts(lines) {
       const parts = [];
       for (let raw of lines) {
@@ -52,8 +57,8 @@
         raw = raw.trim();
         try {
           // Sicher per URL-Parser, füge Protokoll hinzu wenn nötig
-          const u = new URL(raw.startsWith('http') ? raw : ('https://' + raw));
-          const host = u.hostname.replace(/^www./, '');
+          const u = new URL(raw.startsWith("http") ? raw : "https://" + raw);
+          const host = u.hostname.replace(/^www\./, "");
           parts.push({ hostname: host, fullUrl: u.href });
         } catch (e) {
           log(`Ungültige URL übersprungen: ${raw}`);
@@ -68,15 +73,15 @@
     $("btnSummarize").addEventListener("click", async () => {
       const sourcesText = $("sources").value.trim();
       const keywords = $("keywords").value.trim();
-      
+
       if (!sourcesText) {
         alert("Bitte geben Sie mindestens eine Quelle ein.");
         return;
       }
 
-      const lines = sourcesText.split("\n").filter(l => l.trim());
+      const lines = sourcesText.split("\n").filter((l) => l.trim());
       const siteParts = toSiteParts(lines);
-      
+
       if (siteParts.length === 0) {
         alert("Keine gültigen URLs gefunden.");
         return;
@@ -85,35 +90,44 @@
       log(`Starte Zusammenfassung für ${siteParts.length} Quelle(n)...`);
       $("summary").innerHTML = "<em>Lädt...</em>";
       $("btnSummarize").disabled = true;
-      
+
       try {
+        // URLs explizit mitschicken + optional query
         const payload = {
-          sites: siteParts.map(p => p.hostname),
-          keywords: keywords || ""
+          query: keywords || null,
+          targets: siteParts.map((p) => p.fullUrl),
+          sites: [...new Set(siteParts.map((p) => p.hostname))]
         };
-        
-        log(`Sende Anfrage an /api/groq...`);
+
+        log(`Sende Anfrage an /api/groq mit Payload: ${JSON.stringify(payload)}`);
         const response = await fetch("/api/groq", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
-        
+
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         const data = await response.json();
         log(`Antwort erhalten: ${JSON.stringify(data, null, 2)}`);
-        
-        if (data.summary) {
-          $("summary").innerHTML = `<p>${data.summary}</p>`;
+
+        // Robust gegen unterschiedliche API-Schemata
+        const summaryText =
+          data.summary ||
+          data.content ||
+          data.result?.summary ||
+          data.choices?.[0]?.message?.content ||
+          "";
+
+        if (summaryText) {
+          $("summary").innerHTML = `<p>${summaryText}</p>`;
           log("Zusammenfassung erfolgreich erstellt.");
         } else {
           $("summary").innerHTML = "<em>Keine Zusammenfassung erhalten.</em>";
           log("Warnung: Keine Zusammenfassung in der Antwort.");
         }
-        
       } catch (error) {
         log(`Fehler: ${error.message}`);
         $("summary").innerHTML = `<em>Fehler: ${error.message}</em>`;

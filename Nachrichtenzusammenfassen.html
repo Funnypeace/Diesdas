@@ -149,9 +149,9 @@
           }
           
           // Fallback wenn keine summary aber Antwort
-          if (data.content) {
+          if (data.content && data.content !== 'Keine relevanten Nachrichten gefunden. Es liegen keine Eingangsdaten vor, um eine Zusammenfassung zu erstellen.') {
             $("summary").innerHTML = `<p>${data.content}</p>`;
-            log("Content erhalten (kein summary-Feld).");
+            log("Content erhalten (Fallback).");
             return;
           }
           
@@ -166,6 +166,49 @@
         $("summary").innerHTML = `<em>Fehler: ${error.message}</em>`;
       } finally {
         $("btnSummarize").disabled = false;
+      }
+    });
+
+    $("btnTest").addEventListener("click", async () => {
+      log("=== Backend Test ===");
+      $("btnTest").disabled = true;
+      
+      try {
+        // Test 1: Leerer Request
+        log("Test 1: Leerer Request");
+        let response = await fetch("/api/groq", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({})
+        });
+        let data = await response.json();
+        log(`Antwort: ${JSON.stringify(data, null, 2)}`);
+        
+        // Test 2: Nur Keywords
+        log("Test 2: Nur Keywords");
+        response = await fetch("/api/groq", {
+          method: "POST", 
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ keywords: "nachrichten" })
+        });
+        data = await response.json();
+        log(`Antwort: ${JSON.stringify(data, null, 2)}`);
+        
+        // Test 3: Query Parameter (falls Backend Suche statt Scraping erwartet)
+        log("Test 3: Query Parameter");
+        response = await fetch("/api/groq", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: "bahnverkehr", keywords: "nachrichten" })
+        });
+        data = await response.json();
+        log(`Antwort: ${JSON.stringify(data, null, 2)}`);
+        
+      } catch (error) {
+        log(`Test-Fehler: ${error.message}`);
+      } finally {
+        $("btnTest").disabled = false;
+        log("=== Backend Test Ende ===");
       }
     });
 

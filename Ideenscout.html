@@ -1,88 +1,376 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ideenscout: 20 Variationen eines Themas</title>
-    
-    <!-- Tailwind CSS for styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        /* Custom styles to apply the Inter font */
-        body {
-            font-family: 'Inter', sans-serif;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ideenscout · 20 Variationen eines Themas</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Inter", "system-ui", "-apple-system", "Segoe UI", "Roboto", "Ubuntu", "Cantarell", "Noto Sans", "sans-serif"],
+            mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "monospace"],
+          },
+          colors: {
+            brand: {
+              50: '#f3f3ff', 100: '#e7e7fe', 200: '#c9c8fd', 300: '#aaa9fb',
+              400: '#8c8bf9', 500: '#6e6df7', 600: '#5856d4', 700: '#4543a6',
+              800: '#313077', 900: '#1f1e4f', 950: '#121235'
+            }
+          },
+          boxShadow: {
+            glow: '0 0 0 1px rgba(126, 136, 255, 0.25), 0 10px 40px rgba(126, 136, 255, 0.15)'
+          }
         }
-        /* Simple animation for the result list items */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .result-item {
-            animation: fadeIn 0.5s ease-out forwards;
-        }
-    </style>
-    
-    <!-- GoatCounter -->
-    <script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
-    <!-- End GoatCounter -->
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg1: #0f1025; /* deep indigo */
+      --bg2: #171936; /* night blue */
+      --bg3: #2a1f5f; /* purple tint */
+      --grad-a: #667eea;
+      --grad-b: #764ba2;
+    }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(118, 75, 162, 0.35), transparent 60%),
+        radial-gradient(900px 500px at 110% 20%, rgba(102, 126, 234, 0.25), transparent 60%),
+        linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 50%, var(--bg3) 100%);
+      color: #e6e6f0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .noise-overlay {
+      position: fixed; inset: 0; pointer-events: none; opacity: .06; mix-blend-mode: soft-light;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)" opacity="0.6"/></svg>');
+      background-size: 200px 200px;
+    }
+    .glass {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .gradient-text { background: linear-gradient(135deg, var(--grad-a), var(--grad-b)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .ring-gradient {
+      position: relative;
+      border-radius: 1.5rem;
+    }
+    .ring-gradient::before {
+      content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px;
+      background: linear-gradient(135deg, rgba(102,126,234,.5), rgba(118,75,162,.5)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+    /* Focus styles */
+    :where(button, a, input, textarea):focus-visible { outline: 2px solid rgba(126,136,255,.8); outline-offset: 2px; border-radius: .75rem; }
+  </style>
+
+  <!-- GoatCounter -->
+  <script async src="https://gc.zgo.at/count.js" data-goatcounter="https://funnypeace.goatcounter.com/count"></script>
 </head>
-<body class="bg-gray-900 text-gray-200 flex items-center justify-center min-h-screen p-4">
-    <div class="w-full max-w-3xl mx-auto">
-        <main class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl shadow-2xl p-6 sm:p-8">
-            
-            <!-- Header Section -->
-            <div class="text-center mb-8">
-                <h1 class="text-4xl sm:text-5xl font-bold text-white tracking-tight">
-                    Ideenscout <span class="text-indigo-400">KI</span>
-                </h1>
-                <p class="mt-3 text-lg text-gray-400 max-w-xl mx-auto">
-                    Gib ein Thema oder eine Grundidee ein und erhalte 20 kreative Variationen per Klick.
-                </p>
-            </div>
-            
-            <!-- Input Form -->
-            <form id="idea-form" class="flex flex-col sm:flex-row gap-3 mb-8">
-                <input 
-                    type="text" 
-                    id="theme-input"
-                    placeholder="z.B. Eine App für Gärtner, ein Fantasy-Roman, ein neues Kaffeeprodukt..."
-                    required
-                    class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
-                >
-                <button 
-                    type="submit" 
-                    id="generate-button"
-                    class="w-full sm:w-auto flex items-center justify-center px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500 transition-all duration-200 transform active:scale-95 disabled:bg-indigo-800 disabled:cursor-not-allowed disabled:opacity-70"
-                >
-                    <!-- Spinner Icon (hidden by default) -->
-                    <svg id="spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span id="button-text">Variationen finden</span>
-                </button>
-            </form>
-            
-            <!-- Results Section -->
-            <div id="results-container">
-                <div id="placeholder" class="text-center py-10 px-4 border-2 border-dashed border-gray-700 rounded-lg">
-                    <svg class="mx-auto h-12 w-12 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                        <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                    </svg>
-                    <h3 class="mt-2 text-lg font-medium text-gray-300">Deine kreativen Ideen erscheinen hier</h3>
-                    <p class="mt-1 text-sm text-gray-500">Gib oben ein Thema ein, um zu starten.</p>
-                </div>
-            </div>
-            
-            <!-- Additional JavaScript would go here -->
-            
-        </main>
+<body class="min-h-screen selection:bg-brand-500/30 selection:text-white">
+
+  <div class="noise-overlay"></div>
+
+  <!-- Navbar -->
+  <header class="sticky top-0 z-30 backdrop-blur supports-[backdrop-filter]:bg-black/20">
+    <div class="mx-auto max-w-5xl px-4">
+      <div class="flex h-14 items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="h-7 w-7 rounded-xl bg-gradient-to-br from-brand-400 to-brand-700 shadow-glow grid place-items-center font-black">💡</div>
+          <span class="font-extrabold tracking-tight">Ideenscout <span class="gradient-text">AI</span></span>
+          <span class="ml-2 rounded-full border border-white/10 px-2 py-0.5 text-[11px] uppercase tracking-wide text-white/70">Beta</span>
+        </div>
+        <nav class="hidden sm:flex items-center gap-2 text-sm text-white/70">
+          <a href="#how" class="hover:text-white/95">So funktioniert's</a>
+          <a href="#examples" class="hover:text-white/95">Beispiele</a>
+          <a href="#faq" class="hover:text-white/95">FAQ</a>
+        </nav>
+      </div>
     </div>
+    <div class="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+  </header>
+
+  <main class="mx-auto max-w-5xl px-4 pb-24 pt-10">
+    <!-- Hero -->
+    <section class="text-center mb-10">
+      <h1 class="text-4xl sm:text-6xl font-black tracking-tight leading-[1.1]">
+        Verwandle eine Idee in <span class="gradient-text">20 starke Variationen</span>
+      </h1>
+      <p class="mt-4 text-white/70 max-w-2xl mx-auto">Kurzer Prompt rein — klare Liste raus. Perfekt zum Brainstorming für Apps, Content, Features, Produkte & mehr.</p>
+    </section>
+
+    <!-- Card -->
+    <section class="ring-gradient glass rounded-3xl p-6 sm:p-8 shadow-glow">
+      <form id="idea-form" class="space-y-5" autocomplete="off">
+        <label class="block text-left">
+          <span class="sr-only">Thema eingeben</span>
+          <input id="theme-input" type="text" required
+            placeholder="z. B. App für Gärtner, Fantasy‑Roman, innovatives Startup…"
+            class="w-full rounded-2xl bg-white/5 px-5 py-4 text-base text-white/95 placeholder-white/40 border border-white/10 focus:border-brand-400/60 focus:ring-2 focus:ring-brand-400/30" />
+        </label>
+
+        <!-- Quick chips -->
+        <div id="examples" class="flex flex-wrap gap-2 text-sm">
+          <button type="button" class="chip">App für Handwerker</button>
+          <button type="button" class="chip">YouTube‑Format für Reisen</button>
+          <button type="button" class="chip">Newsletter über KI‑Tools</button>
+          <button type="button" class="chip">Bordcomputer fürs E‑Bike</button>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
+          <button id="generate-button" type="submit" class="group inline-flex items-center justify-center rounded-2xl bg-gradient-to-tr from-brand-500 to-brand-700 px-6 py-3 font-semibold shadow-glow transition active:scale-[.99] disabled:opacity-60">
+            <span id="loading-animation" class="hidden mr-3 -ml-1 inline-flex gap-1">
+              <span class="h-4 w-1 animate-[wave_1.4s_ease-in-out_infinite] bg-white/95 rounded-sm"></span>
+              <span class="h-4 w-1 animate-[wave_1.4s_ease-in-out_infinite_.1s] bg-white/95 rounded-sm"></span>
+              <span class="h-4 w-1 animate-[wave_1.4s_ease-in-out_infinite_.2s] bg-white/95 rounded-sm"></span>
+            </span>
+            <svg id="magic-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="mr-2 h-5 w-5 opacity-90 transition group-hover:rotate-12" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.5 2.5L16 4.5 15.5 3M13 13l2.5 2.5L16 14.5 15.5 13m-5-5l2.5 2.5L8 9.5 7.5 8M17 17l2.5 2.5L20 18.5 19.5 17"/></svg>
+            <span id="button-text">Magie entfesseln</span>
+          </button>
+
+          <div class="flex gap-2">
+            <button id="copy-all" type="button" class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/80 hover:bg-white/[.07]">Alles kopieren</button>
+            <button id="export-txt" type="button" class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/80 hover:bg-white/[.07]">Als TXT exportieren</button>
+          </div>
+        </div>
+
+        <p class="text-xs text-white/50">Hinweis: Genau 20 Variationen, kompakt und auf Deutsch.</p>
+      </form>
+
+      <!-- Error -->
+      <div id="error-container" class="mt-4 hidden" aria-live="polite">
+        <div class="rounded-2xl border border-red-400/30 bg-red-900/20 px-4 py-3 text-red-200"> <span id="error-message"></span> </div>
+      </div>
+
+      <!-- Placeholder / Results -->
+      <div id="results-container" class="mt-8">
+        <div id="placeholder" class="text-center py-14">
+          <div class="mx-auto w-fit rounded-3xl border border-white/10 bg-white/5 p-8">
+            <div class="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-brand-400/30 to-brand-700/30 text-white/90">⚡</div>
+            <h3 class="text-2xl font-bold">Bereit für Inspiration?</h3>
+            <p class="mt-1 text-white/60">Gib eine Grundidee ein und lass die KI 20 kreative Variationen bauen.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Explainer -->
+    <section id="how" class="mt-12 text-white/70">
+      <h4 class="mb-2 text-sm font-semibold tracking-wider text-white/80">So funktioniert's</h4>
+      <ol class="grid gap-2 sm:grid-cols-3 text-sm">
+        <li class="glass rounded-xl p-4">1. Thema eingeben</li>
+        <li class="glass rounded-xl p-4">2. KI generiert 20 Varianten</li>
+        <li class="glass rounded-xl p-4">3. Kopieren, speichern, weiterdenken</li>
+      </ol>
+    </section>
+
+    <!-- FAQ (short) -->
+    <section id="faq" class="mt-10 text-white/65 text-sm">
+      <details class="group glass rounded-xl p-4">
+        <summary class="cursor-pointer select-none font-semibold text-white/80">Welche KI wird genutzt?</summary>
+        <div class="mt-2 text-white/70">Das Frontend ruft deine <span class="font-mono">/api/groq</span>‑Route auf (GroqCloud). Du kannst das Modell in der API anpassen.</div>
+      </details>
+    </section>
+  </main>
+
+  <footer class="mx-auto max-w-5xl px-4 pb-12 text-center text-xs text-white/40">© <span id="y"></span> Ideenscout. Leicht, schnell, fokussiert.</footer>
+
+  <template id="result-item-template">
+    <div class="result-item group glass rounded-3xl p-5 transition hover:border-white/15 hover:bg-white/[.07]">
+      <div class="flex items-start gap-4">
+        <div class="number-badge grid h-10 w-10 flex-shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 font-black text-white shadow-glow"></div>
+        <div class="min-w-0 flex-1">
+          <p class="text-[15px] leading-relaxed text-white/95 group-hover:text-white" data-text></p>
+          <div class="mt-3 flex gap-2 opacity-0 transition group-hover:opacity-100">
+            <button class="copy-one rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/75 hover:bg-white/[.07]">Kopieren</button>
+            <button class="save-one rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/75 hover:bg-white/[.07]">Merken</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    class IdeenscoutApp {
+      constructor() {
+        this.form = document.getElementById('idea-form');
+        this.themeInput = document.getElementById('theme-input');
+        this.generateButton = document.getElementById('generate-button');
+        this.buttonText = document.getElementById('button-text');
+        this.loadingAnimation = document.getElementById('loading-animation');
+        this.magicIcon = document.getElementById('magic-icon');
+        this.resultsContainer = document.getElementById('results-container');
+        this.placeholder = document.getElementById('placeholder');
+        this.errorContainer = document.getElementById('error-container');
+        this.errorMessage = document.getElementById('error-message');
+        this.copyAllBtn = document.getElementById('copy-all');
+        this.exportBtn = document.getElementById('export-txt');
+        this.template = document.getElementById('result-item-template');
+        this.saved = new Set();
+
+        this.bindEvents();
+      }
+
+      bindEvents() {
+        this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+        this.themeInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') { e.preventDefault(); this.handleSubmit(e); }
+        });
+        document.querySelectorAll('.chip').forEach(ch => ch.addEventListener('click', () => {
+          this.themeInput.value = ch.textContent;
+          this.themeInput.focus();
+        }));
+        this.copyAllBtn.addEventListener('click', () => this.copyAll());
+        this.exportBtn.addEventListener('click', () => this.exportTxt());
+        document.getElementById('y').textContent = new Date().getFullYear();
+      }
+
+      setLoading(loading) {
+        this.generateButton.disabled = loading;
+        this.themeInput.disabled = loading;
+        this.loadingAnimation.classList.toggle('hidden', !loading);
+        this.magicIcon.classList.toggle('hidden', loading);
+        this.buttonText.textContent = loading ? 'Magie wirkt…' : 'Magie entfesseln';
+      }
+
+      showError(msg) {
+        this.errorMessage.textContent = msg;
+        this.errorContainer.classList.remove('hidden');
+        setTimeout(() => this.errorContainer.classList.add('hidden'), 5000);
+      }
+
+      async handleSubmit(e) {
+        e.preventDefault();
+        const theme = this.themeInput.value.trim();
+        if (!theme) return this.showError('✨ Bitte gib ein Thema ein, damit die Magie beginnen kann!');
+
+        this.setLoading(true);
+        try {
+          const variations = await this.generateVariations(theme);
+          this.renderResults(variations, theme);
+        } catch (err) {
+          console.error(err);
+          this.showError('🚀 Oops! Etwas ist schiefgelaufen. Versuch es noch einmal.');
+        } finally {
+          this.setLoading(false);
+        }
+      }
+
+      async generateVariations(theme) {
+        const systemPrompt = `Du bist ein kreativer Ideenentwickler. Deine Aufgabe ist es, basierend auf einem gegebenen Thema oder einer Grundidee genau 20 kreative und vielfältige Variationen zu entwickeln.\n\nRegeln:\n- Erstelle genau 20 nummerierte Variationen (1. bis 20.)\n- Jede Variation sollte eine eigenständige, kreative Weiterentwicklung des ursprünglichen Themas sein\n- Variiere Ansatz, Zielgruppe, Format, Stil oder Kontext\n- Sei kreativ, aber bleibe beim Kernthema\n- Jede Variation sollte in 1-2 Sätzen beschrieben werden\n- Schreibe auf Deutsch\n- Beginne direkt mit \"1.\" ohne weitere Einleitung`;
+
+        const messages = [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: `Erstelle 20 kreative Variationen für folgendes Thema: "${theme}"` }
+        ];
+
+        const res = await fetch('/api/groq', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages, action: 'generate_variations' }) });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (!data.content) throw new Error('Keine Antwort vom Server erhalten');
+        return this.parseVariations(data.content);
+      }
+
+      parseVariations(content) {
+        const lines = content.split('\n').filter(Boolean);
+        const out = [];
+        for (const line of lines) {
+          const m = line.match(/^(\d{1,2})\.\s*(.+)/);
+          if (m && parseInt(m[1]) <= 20) out.push({ number: parseInt(m[1]), text: m[2].trim() });
+        }
+        if (out.length < 20) {
+          let n = out.length + 1;
+          for (const raw of lines) {
+            if (out.length >= 20) break;
+            const t = raw.replace(/^\d{1,2}\./, '').trim();
+            if (t.length > 8 && !out.some(v => t.startsWith(v.text.slice(0, 12)))) {
+              out.push({ number: n++, text: t });
+            }
+          }
+        }
+        return out.slice(0, 20);
+      }
+
+      renderResults(variations, theme) {
+        this.placeholder?.classList.add('hidden');
+        const header = `
+          <div class="mb-6 text-center">
+            <h2 class="text-3xl font-black"><span class="gradient-text">20 Variationen</span></h2>
+            <p class="mt-2 text-white/70">Für: <span class="font-semibold text-white/90">“${this.escapeHtml(theme)}”</span></p>
+          </div>`;
+
+        const list = document.createElement('div');
+        list.className = 'grid gap-4';
+
+        variations.forEach((v) => {
+          const frag = this.template.content.cloneNode(true);
+          frag.querySelector('.number-badge').textContent = v.number;
+          frag.querySelector('[data-text]').textContent = v.text;
+          const root = frag.querySelector('.result-item');
+          // Copy one
+          frag.querySelector('.copy-one').addEventListener('click', () => this.copyText(`${v.number}. ${v.text}`));
+          // Save one (simple highlight)
+          frag.querySelector('.save-one').addEventListener('click', (ev) => {
+            if (this.saved.has(v.number)) { this.saved.delete(v.number); root.classList.remove('ring', 'ring-brand-500/40'); }
+            else { this.saved.add(v.number); root.classList.add('ring', 'ring-brand-500/40'); }
+          });
+          list.appendChild(frag);
+        });
+
+        this.resultsContainer.innerHTML = header;
+        this.resultsContainer.appendChild(list);
+      }
+
+      copyAll() {
+        const items = Array.from(document.querySelectorAll('[data-text]')).map((el, i) => `${i+1}. ${el.textContent}`);
+        if (!items.length) return this.showError('Nichts zum Kopieren gefunden.');
+        this.copyText(items.join('\n'));
+      }
+
+      exportTxt() {
+        const items = Array.from(document.querySelectorAll('[data-text]')).map((el, i) => `${i+1}. ${el.textContent}`);
+        if (!items.length) return this.showError('Nichts zu exportieren.');
+        const blob = new Blob([items.join('\n')], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'ideenscout_variationen.txt'; a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+      }
+
+      async copyText(text) {
+        try { await navigator.clipboard.writeText(text); this.toast('Kopiert!'); }
+        catch { this.showError('Kopieren nicht möglich.'); }
+      }
+
+      toast(msg) {
+        const t = document.createElement('div');
+        t.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 rounded-xl bg-black/70 px-4 py-2 text-sm text-white shadow-lg';
+        t.textContent = msg; document.body.appendChild(t);
+        setTimeout(() => t.remove(), 1600);
+      }
+
+      escapeHtml(s) { return s.replace(/[&<>"]+/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => new IdeenscoutApp());
+  </script>
 </body>
 </html>

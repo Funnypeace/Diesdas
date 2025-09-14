@@ -1,5 +1,7 @@
-// /api/groq.js — Vercel API Route: Firecrawl → Groq News-Summary
-// Drop-in: ersetzt deine bestehende Datei vollständig.
+// /api/groq.js — Firecrawl → Groq News-Summary (mit Diagnose)
+// Ersetzt deine bestehende Datei vollständig.
+
+export const config = { runtime: "nodejs" }; // klare Node-Runtime
 
 export default async function handler(req, res) {
   // ---------- CORS ----------
@@ -7,41 +9,47 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
-  // ---------- Parse Body ----------
+  // ---------- Body sicher parsen ----------
   let body = req.body;
-  if (typeof body === "string") {
-    try { body = JSON.parse(body); } catch { body = {}; }
-  }
+  if (typeof body === "string") { try { body = JSON.parse(body); } catch { body = {}; } }
+  if (!body || typeof body !== "object") body = {};
 
-  // Support altes Schema (messages/action) & neues Schema (query/targets/sites)
   const payload = normalizePayload(body);
-
-  // ---------- Validate ----------
-  if (!payload.targets.length && !payload.query) {
-    return res.status(400).json({
-      error: "Bitte mindestens eine Ziel-URL (targets[]) oder eine Query übergeben.",
-      received: payload
-    });
-  }
 
   // ---------- Keys ----------
   const GROQ_API_KEY = process.env.GROQ_API_KEY || "";
-  if (!GROQ_API_KEY || !GROQ_API_KEY.startsWith("gsk_")) {
+  const FIRECRAWL_API_KEY = process.env.FIRECRAWL_API_KEY || "";
+  const envDiag = {
+    hasGROQ: !!GROQ_API_KEY,
+    hasFIRECRAWL: !!FIRECRAWL_API_KEY,
+    groqStartsWith_gsk: GROQ_API_KEY.startsWith("gsk_"),
+    nodeVersion: process.version,
+    runtime: "nodejs"
+  };
+
+  if (!envDiag.hasGROQ || !envDiag.groqStartsWith_gsk) {
     return res.status(500).json({
-      error: "GROQ_API_KEY fehlt oder hat ein falsches Format (muss mit gsk_ beginnen)."
+      error: "GROQ_API_KEY fehlt oder Format falsch (muss mit gsk_ beginnen).",
+      debug: { env: envDiag, payload }
     });
   }
-  const FIRECRAWL_API_KEY = process.env.FIRECRAWL_API_KEY || "";
+
+  // ---------- Mindest-Input prüfen ----------
+  if (!payload.targets.length && !payload.query) {
+    return res.status(400).json({
+      error: "Bitte mindestens eine Ziel-URL (targets[]) oder eine Query senden.",
+      debug: { env: envDiag, payload }
+    });
+  }
 
   const debug = {
+    env: envDiag,
     firecrawlUsed: !!FIRECRAWL_API_KEY,
     query: payload.query || null,
     targets: payload.targets,
+    sites: payload.sites,
     scrapedCount: 0,
     scrapeErrors: [],
     groqTokens: null
@@ -57,20 +65,20 @@ export default async function handler(req, res) {
           : await scrapeWithFallbackFetch(url);
         if (text) scraped.push({ url, text });
       } catch (e) {
-        debug.scrapeErrors.push({ url, error: String(e.message || e) });
+        debug.scrapeErrors.push({ url, error: String(e?.message || e) });
       }
     }
     debug.scrapedCount = scraped.length;
 
-    // Falls Query vorhanden aber keine Targets: (optionale) Firecrawl-Suche
+    // Optional: site:-Suche, wenn nur query kam
     if (scraped.length === 0 && payload.query && FIRECRAWL_API_KEY && payload.sites.length) {
       const candidates = await firecrawlSiteSearch(payload.query, payload.sites, FIRECRAWL_API_KEY);
-      for (const c of candidates.slice(0, 5)) { // max. 5 Treffer scrapen
+      for (const c of candidates.slice(0, 5)) {
         try {
           const text = await scrapeWithFirecrawl(c, FIRECRAWL_API_KEY);
           if (text) scraped.push({ url: c, text });
         } catch (e) {
-          debug.scrapeErrors.push({ url: c, error: String(e.message || e) });
+          debug.scrapeErrors.push({ url: c, error: String(e?.message || e) });
         }
       }
       debug.scrapedCount = scraped.length;
@@ -86,39 +94,31 @@ export default async function handler(req, res) {
       });
     }
 
-    // ---------- PREPARE PROMPT ----------
-    const MAX_PER_SOURCE = 2500;  // Zeichen pro Quelle
-    const MAX_TOTAL = 11000;      // Zeichen gesamt fürs LLM
-    let total = 0;
-
-    const sourceBlocks = scraped.map(({ url, text }) => {
-      const clean = collapseWhitespace(text).slice(0, MAX_PER_SOURCE);
-      total += clean.length;
-      return `Quelle: ${url}\n---\n${clean}`;
-    }).filter(Boolean);
-
-    // hart kappen
+    // ---------- PROMPT ----------
+    const MAX_PER_SOURCE = 2500;
+    const MAX_TOTAL = 11000;
     let material = "";
-    for (const block of sourceBlocks) {
+    for (const { url, text } of scraped) {
+      const clean = collapseWhitespace(text).slice(0, MAX_PER_SOURCE);
+      if (!clean) continue;
+      const block = `Quelle: ${url}\n---\n${clean}\n\n`;
       if (material.length + block.length > MAX_TOTAL) break;
-      material += block + "\n\n";
+      material += block;
     }
 
     const systemPrompt = `
 Du bist ein präziser deutschsprachiger News-Summarizer.
-Fasse die gelieferten Artikel in **maximal 3 Sätzen** zusammen.
-- Neutral, faktenbasiert, keine Spekulation.
-- Wenn mehrere Quellen, fasse sie zu einer Gesamtmeldung zusammen.
-- Nenne keine Anweisungen oder Metakommentare.
+Fasse die gelieferten Inhalte in **maximal 3 Sätzen** zusammen.
+Neutral, faktenbasiert, keine Spekulation, keine Meta-Hinweise.
 `.trim();
 
     const userPrompt = `
 Thema/Keywords: ${payload.query || "—"}
-Material (Auszüge):
+Material:
 ${material}
 `.trim();
 
-    // ---------- CALL GROQ ----------
+    // ---------- GROQ ----------
     const groqResp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -140,13 +140,12 @@ ${material}
       const txt = await groqResp.text().catch(() => "");
       throw new Error(`Groq HTTP ${groqResp.status} – ${groqResp.statusText} – ${txt}`);
     }
-
     const groqJson = await groqResp.json();
+    debug.groqTokens = groqJson?.usage || null;
+
     const summary =
       groqJson?.choices?.[0]?.message?.content?.trim?.() ||
       groqJson?.content || "";
-
-    debug.groqTokens = groqJson?.usage || null;
 
     return res.status(200).json({
       summary: summary || "Keine Zusammenfassung erzeugt.",
@@ -166,7 +165,7 @@ ${material}
   }
 }
 
-// ------------------------ Utils ------------------------
+/* ====================== Utils ====================== */
 
 function normalizePayload(body) {
   // Neues Schema
@@ -176,29 +175,18 @@ function normalizePayload(body) {
     sites: Array.isArray(body?.sites) ? dedupe(body.sites) : []
   };
 
-  // Fallback: altes Schema (messages/action)
+  // Altes Schema (messages/action) – URLs aus dem letzten User-Content ziehen
   if ((!out.targets.length && !out.query) && Array.isArray(body?.messages)) {
     const last = body.messages[body.messages.length - 1];
     const text = typeof last?.content === "string" ? last.content : "";
-    const urls = extractUrls(text);
-    out.targets = urls;
-    // action ignorieren – wir wollen dennoch eine Zusammenfassung fahren
+    out.targets = extractUrls(text);
   }
   return out;
 }
 
-function dedupe(arr) {
-  return Array.from(new Set((arr || []).map(String))).filter(Boolean);
-}
-
-function extractUrls(text = "") {
-  const m = text.match(/https?:\/\/[^\s)]+/g) || [];
-  return dedupe(m);
-}
-
-function collapseWhitespace(s = "") {
-  return s.replace(/\u00a0/g, " ").replace(/\s+/g, " ").trim();
-}
+function dedupe(arr) { return Array.from(new Set((arr || []).map(String))).filter(Boolean); }
+function extractUrls(text = "") { return dedupe(text.match(/https?:\/\/[^\s)]+/g) || []); }
+function collapseWhitespace(s = "") { return s.replace(/\u00a0/g, " ").replace(/\s+/g, " ").trim(); }
 
 // --- Firecrawl Search (site: Filter) ---
 async function firecrawlSiteSearch(query, sites, key) {
@@ -208,22 +196,20 @@ async function firecrawlSiteSearch(query, sites, key) {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${key}`,
+        "X-API-KEY": key, // falls Deployment eine der Formen erwartet
         "Content-Type": "application/json"
       },
       body: JSON.stringify({ query: q, limit: 5 })
     });
     if (!resp.ok) return [];
     const js = await resp.json();
-    // API-Formate variieren: urls / data / results
     const urls =
       js?.urls ||
       js?.data?.map?.(x => x?.url).filter(Boolean) ||
       js?.results?.map?.(x => x?.url).filter(Boolean) ||
       [];
     return urls.slice(0, 5);
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
 
 // --- Firecrawl Scrape ---
@@ -232,6 +218,7 @@ async function scrapeWithFirecrawl(url, key) {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${key}`,
+      "X-API-KEY": key, // kompatibel zu älteren/anderen Gateways
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
@@ -248,7 +235,6 @@ async function scrapeWithFirecrawl(url, key) {
   }
 
   const js = await resp.json();
-  // unterschiedliche Shapes unterstützen
   const md = js?.markdown || js?.data?.markdown || "";
   const txt = js?.text || js?.data?.text || "";
   const html = js?.html || js?.data?.html || "";
@@ -256,7 +242,7 @@ async function scrapeWithFirecrawl(url, key) {
   return best || "";
 }
 
-// --- Fallback: Direkt-Fetch + einfache Extraktion ---
+// --- Fallback: Direkt-Fetch + simple Extraktion ---
 async function scrapeWithFallbackFetch(url) {
   const resp = await fetch(url, {
     headers: {
@@ -269,7 +255,6 @@ async function scrapeWithFallbackFetch(url) {
   return extractTextFromHtml(html);
 }
 
-// sehr einfache HTML→Text Extraktion (ohne Abhängigkeiten)
 function extractTextFromHtml(html = "") {
   const noScripts = html
     .replace(/<script[\s\S]*?<\/script>/gi, " ")

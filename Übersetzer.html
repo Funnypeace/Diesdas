@@ -1,385 +1,324 @@
 <!doctype html>
 <html lang="de">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Mehrsprachiger Übersetzer · Groq ⟷ Vercel</title>
-    <meta name="description" content="Einseiten-Übersetzer: sendet an /api/groq(.js) und liefert mehrere Sprachen zugleich." />
-    <style>
-        body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; background: #0b0c10; color: #e7e9ee; }
-        .app { max-width: 1060px; margin: auto; padding: 20px; }
-        .bar { display: flex; align-items: center; gap: 10px; }
-        .sp { flex: 1; }
-        .btn { padding: 8px 12px; background: #171a22; color: #fff; border: 1px solid #2b2f38; border-radius: 10px; cursor: pointer; }
-        .btn.primary { background: #5aa2ff; border: none; color: #fff; }
-        .btn:hover { opacity: 0.9; }
-        textarea { width: 100%; min-height: 180px; padding: 12px; background: #171a22; color: #e7e9ee; border: 1px solid #2b2f38; border-radius: 12px; }
-        .grid { display: grid; gap: 16px; grid-template-columns: 1.2fr .8fr; }
-        @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
-        .card { background: #12141a; padding: 16px; border-radius: 14px; border: 1px solid #1d2028; }
-        .lang-select-container { /* Renamed from lang-list for dropdown */
-            background: #171a22;
-            border: 1px solid #2b2f38;
-            border-radius: 10px;
-            padding: 8px;
-        }
-        select.lang-select { /* Added styling for the select element */
-            width: 100%;
-            padding: 8px;
-            background: #171a22;
-            color: #e7e9ee;
-            border: 1px solid #2b2f38;
-            border-radius: 8px;
-            -webkit-appearance: none; /* Remove default dropdown arrow */
-            -moz-appearance: none;
-            appearance: none;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        @media (max-width: 900px) { .result-grid { grid-template-columns: 1fr; } }
-        .res { background: #171a22; padding: 12px; border-radius: 10px; border: 1px solid #2b2f38; position: relative; }
-        .res h4 { margin: 0 0 6px 0; }
-        .tools { position: absolute; right: 8px; top: 8px; display: flex; gap: 6px; }
-        .tool { font-size: 12px; padding: 4px 8px; background: #0f1116; border: 1px solid #2b2f38; border-radius: 8px; cursor: pointer; }
-        .hint { font-size: 12px; color: #a6acb8; }
-        .sep { height: 1px; background: #232731; margin: 10px 0; }
-        pre { white-space: pre-wrap; word-wrap: break-word; background: #0f1116; border: 1px solid #2b2f38; padding: 10px; border-radius: 10px; margin: 0; color: #e7e9ee; }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mehrsprachiger Übersetzer · Groq ⟷ Vercel</title>
+  <meta name="description" content="Einseiten-Übersetzer: sendet an /api/groq(.js) und liefert mehrere Sprachen zugleich." />
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; background: #0b0c10; color: #e7e9ee; }
+    .app { max-width: 1060px; margin: auto; padding: 20px; }
+    .bar { display: flex; align-items: center; gap: 10px; }
+    .sp { flex: 1; }
+    .btn { padding: 8px 12px; background: #171a22; color: #fff; border: 1px solid #2b2f38; border-radius: 10px; cursor: pointer; }
+    .btn.primary { background: #5aa2ff; border: none; color: #fff; }
+    .btn:hover { opacity: 0.9; }
+    textarea { width: 100%; min-height: 180px; padding: 12px; background: #171a22; color: #e7e9ee; border: 1px solid #2b2f38; border-radius: 12px; }
+    .grid { display: grid; gap: 16px; grid-template-columns: 1.2fr .8fr; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+    .card { background: #12141a; padding: 16px; border-radius: 14px; border: 1px solid #1d2028; }
+    .lang-select-container { background: #171a22; border: 1px solid #2b2f38; border-radius: 10px; padding: 8px; }
+    select.lang-select { width: 100%; padding: 8px; background: #171a22; color: #e7e9ee; border: 1px solid #2b2f38; border-radius: 8px; -webkit-appearance: none; -moz-appearance: none; appearance: none; cursor: pointer; font-size: 1rem; }
+    .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 900px) { .result-grid { grid-template-columns: 1fr; } }
+    .res { background: #171a22; padding: 12px; border-radius: 10px; border: 1px solid #2b2f38; position: relative; }
+    .res h4 { margin: 0 0 6px 0; }
+    .tools { position: absolute; right: 8px; top: 8px; display: flex; gap: 6px; }
+    .tool { font-size: 12px; padding: 4px 8px; background: #0f1116; border: 1px solid #2b2f38; border-radius: 8px; cursor: pointer; }
+    .hint { font-size: 12px; color: #a6acb8; }
+    .sep { height: 1px; background: #232731; margin: 10px 0; }
+    pre { white-space: pre-wrap; word-wrap: break-word; background: #0f1116; border: 1px solid #2b2f38; padding: 10px; border-radius: 10px; margin: 0; color: #e7e9ee; }
+  </style>
 </head>
 <body>
 <div class="app" id="app">
-    <header>
-        <div class="bar">
-            <div class="brand" style="font-weight:800">Mehrsprachiger Übersetzer</div>
-            <span class="pill" style="font-size:12px; color:#a6acb8; background:#171a22; border:1px solid #2b2f38; padding:4px 8px; border-radius:999px">Groq ⟷ Vercel API</span>
-            <span class="sp"></span>
-            <span class="status hint" id="status">Bereit</span>
-            <button class="btn" id="themeBtn" title="Theme umschalten">🌓</button>
-            <button class="btn" id="exportBtn" title="Ergebnisse als JSON speichern">⬇️ Export</button>
-            <button class="btn" id="clearBtn" title="Ergebnisse leeren">🗑️ Leeren</button>
-        </div>
-    </header>
+  <header>
+    <div class="bar">
+      <div class="brand" style="font-weight:800">Mehrsprachiger Übersetzer</div>
+      <span class="pill" style="font-size:12px; color:#a6acb8; background:#171a22; border:1px solid #2b2f38; padding:4px 8px; border-radius:999px">Groq ⟷ Vercel API</span>
+      <span class="sp"></span>
+      <span class="status hint" id="status">Bereit</span>
+      <button class="btn" id="themeBtn" title="Theme umschalten">🌓</button>
+      <button class="btn" id="exportBtn" title="Ergebnisse als JSON speichern">⬇️ Export</button>
+      <button class="btn" id="clearBtn" title="Ergebnisse leeren">🗑️ Leeren</button>
+    </div>
+  </header>
 
-    <main>
-        <div class="grid">
-            <div class="card">
-                <h3>Quelltext</h3>
-                <textarea id="source" placeholder="Text hier einfügen…"></textarea>
-            </div>
+  <main>
+    <div class="grid">
+      <div class="card">
+        <h3>Quelltext</h3>
+        <textarea id="source" placeholder="Text hier einfügen…"></textarea>
+      </div>
 
-            <div class="card">
-                <h3>Zielsprache</h3>
-                <div class="lang-select-container">
-                    <select id="langSelect" class="lang-select"></select>
-                </div>
-                <div class="bar" style="margin-top:10px">
-                    <span class="sp"></span>
-                    <span class="hint">Tipp: Ctrl/Cmd + Enter sendet sofort.</span>
-                </div>
-            </div>
+      <div class="card">
+        <h3>Zielsprache</h3>
+        <div class="lang-select-container">
+          <select id="langSelect" class="lang-select"></select>
         </div>
+        <div class="bar" style="margin-top:10px">
+          <span class="sp"></span>
+          <span class="hint">Tipp: Ctrl/Cmd + Enter sendet sofort.</span>
+        </div>
+      </div>
+    </div>
 
-        <div class="card">
-            <div class="bar" style="justify-content:space-between">
-                <div class="bar actions">
-                    <button class="btn primary" id="translateBtn">Übersetzen ▶</button>
-                    <label class="bar" style="gap:6px"><input type="checkbox" id="keepFormatting" checked> Formatierung beibehalten</label>
-                    <label class="bar" style="gap:6px"><input type="checkbox" id="ttsEnable"> Vorlesen aktivieren</label>
-                </div>
-            </div>
-            <div class="sep"></div>
-            <div id="results" class="result-grid" style="margin-top:12px"></div>
-            <details style="margin-top:12px">
-                <summary>Debug</summary>
-                <pre id="debugOut">—</pre>
-            </details>
+    <div class="card">
+      <div class="bar" style="justify-content:space-between">
+        <div class="bar actions">
+          <button class="btn primary" id="translateBtn">Übersetzen ▶</button>
+          <label class="bar" style="gap:6px"><input type="checkbox" id="keepFormatting" checked> Formatierung beibehalten</label>
+          <label class="bar" style="gap:6px"><input type="checkbox" id="ttsEnable"> Vorlesen aktivieren</label>
         </div>
-    </main>
+      </div>
+      <div class="sep"></div>
+      <div id="results" class="result-grid" style="margin-top:12px"></div>
+      <details style="margin-top:12px">
+        <summary>Debug</summary>
+        <pre id="debugOut">—</pre>
+      </details>
+    </div>
+  </main>
 
-    <footer>
-        <div class="bar">
-            <span class="hint">Erstellt als Single-File Client. Erkennt Quellsprache automatisch und liefert eine Zielsprache in einem Request.</span>
-            <span class="sp"></span>
-            <span class="hint">Action: <span style="padding:2px 6px;border:1px solid #2b2f38;border-radius:999px">chat</span> · Body: { messages: [...], action: "chat" }</span>
-        </div>
-    </footer>
+  <footer>
+    <div class="bar">
+      <span class="hint">Erstellt als Single-File Client. Erkennt Quellsprache automatisch und liefert eine Zielsprache in einem Request.</span>
+      <span class="sp"></span>
+      <span class="hint">Action: <span style="padding:2px 6px;border:1px solid #2b2f38;border-radius:999px">chat</span> · Body: { messages: [...], action: "chat" }</span>
+    </div>
+  </footer>
 </div>
 
 <script>
 (function(){
-    const $ = s => document.querySelector(s);
-    const app = $('#app');
-    const source = $('#source');
-    const translateBtn = $('#translateBtn');
-    const results = $('#results');
-    const debugOut = $('#debugOut');
-    // const selectAllBtn = $('#selectAll'); // Removed
-    // const selectNoneBtn = $('#selectNone'); // Removed
-    const themeBtn = $('#themeBtn');
-    const exportBtn = $('#exportBtn');
-    const clearBtn = $('#clearBtn');
-    const keepFormatting = $('#keepFormatting');
-    const ttsEnable = $('#ttsEnable');
-    const status = $('#status');
-    const langSelect = $('#langSelect'); // New: reference to the select dropdown
+  const $ = s => document.querySelector(s);
+  const source = $('#source');
+  const translateBtn = $('#translateBtn');
+  const results = $('#results');
+  const debugOut = $('#debugOut');
+  const themeBtn = $('#themeBtn');
+  const exportBtn = $('#exportBtn');
+  const clearBtn = $('#clearBtn');
+  const keepFormatting = $('#keepFormatting');
+  const ttsEnable = $('#ttsEnable');
+  const status = $('#status');
+  const langSelect = $('#langSelect');
 
-    const LS = { THEME:'tx.theme', LANGS:'tx.langs', KEEP:'tx.keepFmt', TTS:'tx.tts' }; // LANGS will now store a single code
+  const LS = { THEME:'tx.theme', LANGS:'tx.langs', KEEP:'tx.keepFmt', TTS:'tx.tts' };
 
-    const ALL_LANGS = [
-        { code:'en', name:'Englisch' },
-        { code:'es', name:'Spanisch' },
-        { code:'fr', name:'Französisch' },
-        { code:'pt', name:'Portugiesisch' },
-        { code:'it', name:'Italienisch' },
-        { code:'nl', name:'Niederländisch' },
-        { code:'pl', name:'Polnisch' },
-        { code:'tr', name:'Türkisch' },
-        { code:'ru', name:'Russisch' },
-        { code:'ja', name:'Japanisch' },
-        { code:'zh', name:'Chinesisch (vereinfacht)' },
-        { code:'ar', name:'Arabisch' },
-        { code:'hi', name:'Hindi' },
-        { code:'sv', name:'Schwedisch' },
-        { code:'no', name:'Norwegisch' },
-        { code:'da', name:'Dänisch' },
-        { code:'fi', name:'Finnisch' }
-    ];
+  const ALL_LANGS = [
+    { code:'en', name:'Englisch' },
+    { code:'es', name:'Spanisch' },
+    { code:'fr', name:'Französisch' },
+    { code:'pt', name:'Portugiesisch' },
+    { code:'it', name:'Italienisch' },
+    { code:'nl', name:'Niederländisch' },
+    { code:'pl', name:'Polnisch' },
+    { code:'tr', name:'Türkisch' },
+    { code:'ru', name:'Russisch' },
+    { code:'ja', name:'Japanisch' },
+    { code:'zh', name:'Chinesisch (vereinfacht)' },
+    { code:'ar', name:'Arabisch' },
+    { code:'hi', name:'Hindi' },
+    { code:'sv', name:'Schwedisch' },
+    { code:'no', name:'Norwegisch' },
+    { code:'da', name:'Dänisch' },
+    { code:'fi', name:'Finnisch' }
+  ];
 
-    function load(k,f){ try{ return JSON.parse(localStorage.getItem(k)) ?? f }catch{return f} }
-    function save(k,v){ localStorage.setItem(k, JSON.stringify(v)) }
+  function load(k,f){ try{ return JSON.parse(localStorage.getItem(k)) ?? f }catch{return f} }
+  function save(k,v){ localStorage.setItem(k, JSON.stringify(v)) }
 
-    // Theme
-    function setTheme(t){ document.body.dataset.theme = t; localStorage.setItem(LS.THEME, t) }
-    setTheme(localStorage.getItem(LS.THEME)||'dark');
-    themeBtn.addEventListener('click', ()=> setTheme((document.body.dataset.theme||'dark')==='dark'?'light':'dark'));
+  function setTheme(t){ document.body.dataset.theme = t; localStorage.setItem(LS.THEME, t) }
+  setTheme(localStorage.getItem(LS.THEME)||'dark');
+  themeBtn.addEventListener('click', ()=> setTheme((document.body.dataset.theme||'dark')==='dark'?'light':'dark'));
 
-    // Language select initialization
-    const savedLang = load(LS.LANGS, 'en'); // Load a single language code
-    ALL_LANGS.forEach(l => {
-        const option = document.createElement('option');
-        option.value = l.code;
-        option.textContent = l.name;
-        langSelect.appendChild(option);
-    });
-    langSelect.value = savedLang; // Set selected value from localStorage
-    langSelect.addEventListener('change', persistLang); // Listen for changes
+  const savedLang = load(LS.LANGS, 'en');
+  ALL_LANGS.forEach(l => {
+    const option = document.createElement('option');
+    option.value = l.code;
+    option.textContent = l.name;
+    langSelect.appendChild(option);
+  });
+  langSelect.value = savedLang;
+  langSelect.addEventListener('change', ()=> save(LS.LANGS, langSelect.value));
 
-    function selectedLang(){ return langSelect.value; } // Get the single selected language
-    function persistLang(){ save(LS.LANGS, selectedLang()); } // Save the single selected language
+  keepFormatting.checked = load(LS.KEEP, true); keepFormatting.addEventListener('change', ()=> save(LS.KEEP, keepFormatting.checked));
+  ttsEnable.checked = load(LS.TTS, false); ttsEnable.addEventListener('change', ()=> save(LS.TTS, ttsEnable.checked));
 
-    // Removed event listeners for selectAllBtn and selectNoneBtn
-    // selectAllBtn.addEventListener('click', ()=>{ langList.querySelectorAll('input').forEach(i=>i.checked=true); persistLangs(); });
-    // selectNoneBtn.addEventListener('click', ()=>{ langList.querySelectorAll('input').forEach(i=>i.checked=false); persistLuts(); });
+  document.addEventListener('keydown', (e)=>{ if((e.ctrlKey||e.metaKey) && e.key==='Enter'){ e.preventDefault(); translate(); } });
 
+  translateBtn.addEventListener('click', translate);
+  clearBtn.addEventListener('click', ()=>{ results.innerHTML=''; debugOut.textContent='—'; status.textContent='Bereit'; });
+  exportBtn.addEventListener('click', ()=>{
+    const payload = { source: source.value, results: collectResults() };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='translations.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(url), 1000);
+  });
 
-    // Inputs init
-    keepFormatting.checked = load(LS.KEEP, true); keepFormatting.addEventListener('change', ()=> save(LS.KEEP, keepFormatting.checked));
-    ttsEnable.checked = load(LS.TTS, false); ttsEnable.addEventListener('change', ()=> save(LS.TTS, ttsEnable.checked));
+  function setBusy(on, msg='Sendet…'){
+    translateBtn.disabled = on; source.disabled = on; status.textContent = on? msg : 'Bereit';
+    translateBtn.textContent = on? 'Sendet…' : 'Übersetzen ▶';
+  }
 
-    // Keyboard shortcut
-    document.addEventListener('keydown', (e)=>{ if((e.ctrlKey||e.metaKey) && e.key==='Enter'){ e.preventDefault(); translate(); } });
+  function languageMeta(code){ return ALL_LANGS.find(l=>l.code===code) || { code, name: code } }
 
-    // Buttons
-    translateBtn.addEventListener('click', translate);
-    clearBtn.addEventListener('click', ()=>{ results.innerHTML=''; debugOut.textContent='—'; status.textContent='Bereit'; });
-    exportBtn.addEventListener('click', ()=>{
-        const payload = { source: source.value, results: collectResults() };
-        const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
-        const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='translations.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(url), 1000);
-    });
+  function buildMessages(text, code){
+    const target = languageMeta(code);
+    const system = `You are a professional translation engine. Detect the source language. Translate the user's input into the requested target language. Return EXACTLY a raw JSON object, no code fences, with item: {"languageCode": string, "languageName": string, "text": string}. Preserve tone, emojis, punctuation, and (if present) Markdown formatting. Keep URLs and code blocks unchanged; translate only natural-language commentary. Do not echo the source. Do not add explanations.`;
+    const user = JSON.stringify({ sourceText: text, target, keepFormatting: !!keepFormatting.checked });
+    return [ { role:'system', content: system }, { role:'user', content: user } ];
+  }
 
-    function setBusy(on, msg='Sendet…'){
-        translateBtn.disabled = on; source.disabled = on; status.textContent = on? msg : 'Bereit';
-        translateBtn.textContent = on? 'Sendet…' : 'Übersetzen ▶';
-    }
+  // -------- Robust Parsing Helpers --------
+  function parseJSONStrict(s){
+    try{ return JSON.parse(s) }catch{ return null }
+  }
+  function parseJsonLoose(text){
+    try{ return JSON.parse(text) }catch{}
+    const m = text.match(/```json\s*([\s\S]*?)```/i) || text.match(/```\s*([\s\S]*?)```/);
+    if(m){ try{ return JSON.parse(m[1]) }catch{} }
+    const j = text.indexOf('{'); if(j!==-1){ let d=0; for(let k=j;k<text.length;k++){ const c=text[k]; if(c==='{') d++; else if(c==='}'){ d--; if(d===0){ try{ return JSON.parse(text.slice(j,k+1)) }catch{} break; } } } }
+    const i = text.indexOf('['); if(i!==-1){ let d=0; for(let k=i;k<text.length;k++){ const c=text[k]; if(c==='[') d++; else if(c===']'){ d--; if(d===0){ try{ return JSON.parse(text.slice(i,k+1)) }catch{} break; } } } }
+    return null;
+  }
+  function extractContent(payload){
+    if(typeof payload === 'string') return payload;
+    if(payload?.content) return payload.content;
+    if(payload?.message?.content) return payload.message.content;
+    if(Array.isArray(payload?.choices) && payload.choices[0]?.message?.content) return payload.choices[0].message.content;
+    if(payload?.result) return payload.result;
+    if(payload?.assistant) return payload.assistant;
+    if(payload?.output) return payload.output;
+    return payload;
+  }
 
-    function languageMeta(code){ return ALL_LANGS.find(l=>l.code===code) || { code, name: code } }
+  async function translate(){
+    const text = source.value.trim();
+    const code = langSelect.value;
+    if(!text){ alert('Bitte Quelltext eingeben.'); return }
+    if(!code){ alert('Bitte eine Zielsprache wählen.'); return }
 
-    function buildMessages(text, code){ // Changed to accept a single code
-        const target = languageMeta(code); // Get meta for single target
-        const system = `You are a professional translation engine. Detect the source language. Translate the user's input into the requested target language. Return EXACTLY a raw JSON object, no code fences, with item: {"languageCode": string, "languageName": string, "text": string}. Preserve tone, emojis, punctuation, and (if present) Markdown formatting. Keep URLs and code blocks unchanged; translate only natural-language commentary. Do not echo the source. Do not add explanations.`;
-        const user = JSON.stringify({ sourceText: text, target, keepFormatting: !!keepFormatting.checked }); // Changed targets to target
-        return [ { role:'system', content: system }, { role:'user', content: user } ];
-    }
+    setBusy(true);
+    results.innerHTML = '';
+    debugOut.textContent = '—';
 
-    function extractContent(payload){
-        // Accept many backend shapes and always return a string
-        if(typeof payload === 'string') return payload;
-        if(payload?.content) return payload.content;
-        if(payload?.message?.content) return payload.message.content;
-        if(Array.isArray(payload?.choices) && payload.choices[0]?.message?.content) return payload.choices[0].message.content;
-        if(payload?.result) return payload.result;
-        if(payload?.assistant) return payload.assistant;
-        if(payload?.output) return payload.output;
-        return JSON.stringify(payload);
-    }
+    const body = { messages: buildMessages(text, code), action:'chat' };
 
-    function parseJsonLoose(text){
-        // 1) direct
-        try{ return JSON.parse(text) }catch{}
-        // 2) fenced
-        const m = text.match(/```json\s*([\s\S]*?)```/i) || text.match(/```\s*([\s\S]*?)```/);
-        if(m){ try{ return JSON.parse(m[1]) }catch{} }
-        // 3) first object (most relevant for single response)
-        const j = text.indexOf('{'); if(j!==-1){ let d=0; for(let k=j;k<text.length;k++){ const c=text[k]; if(c==='{') d++; else if(c==='}'){ d--; if(d===0){ try{ return JSON.parse(text.slice(j,k+1)) }catch{} break; } } } }
-        // 4) first array (less likely for single response, but kept for robustness)
-        const i = text.indexOf('['); if(i!==-1){ let d=0; for(let k=i;k<text.length;k++){ const c=text[k]; if(c==='[') d++; else if(c===']'){ d--; if(d===0){ try{ return JSON.parse(text.slice(i,k+1)) }catch{} break; } } } }
-        return null;
-    }
+    try{
+      let res = await fetch('/api/groq', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+      if(res.status === 404){
+        res = await fetch('/api/groq.js', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+      }
+      const raw = await res.text();
+      debugOut.textContent = raw || '—';
 
-    async function translate(){
-        const text = source.value.trim();
-        const code = selectedLang(); // Get single selected language code
-        if(!text){ alert('Bitte Quelltext eingeben.'); return }
-        if(!code){ alert('Bitte eine Zielsprache wählen.'); return } // Check for single selected code
+      // 1) Parse outer envelope (whatever the backend returns)
+      let outer = parseJSONStrict(raw) ?? parseJsonLoose(raw) ?? raw;
 
-        setBusy(true);
-        results.innerHTML = ''; // Clear previous results
-        debugOut.textContent = '—';
+      // 2) Extract "content" (LLM message content) from the envelope
+      let content = extractContent(outer);
 
-        const body = { messages: buildMessages(text, code), action:'chat' }; // Pass single code
+      // 3) If content is a JSON string, parse it. If it's text, try loose JSON parse, else keep as text.
+      if (typeof content === 'string') {
+        const parsedInner = parseJSONStrict(content) ?? parseJsonLoose(content);
+        if (parsedInner) content = parsedInner; // switch to object
+      }
 
-        try{
-            // Primär: /api/groq, Fallback: /api/groq.js bei 404
-            let res = await fetch('/api/groq', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
-            if(res.status === 404){
-                res = await fetch('/api/groq.js', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
-            }
-            const raw = await res.text();
-            debugOut.textContent = raw || '—'; // Always show raw for debug
+      // 4) Normalize into our expected fields
+      let languageCode = code;
+      let languageName = languageMeta(code).name;
+      let finalText = '';
 
-            let finalTranslationText = '';
-            let parsedAPIResponse = null;
+      if (typeof content === 'object' && content) {
+        // Fully-formed shape from the LLM
+        if (typeof content.languageCode === 'string') languageCode = content.languageCode;
+        if (typeof content.languageName === 'string') languageName = content.languageName;
 
-            try {
-                // Attempt to parse the raw response as a complete JSON object
-                parsedAPIResponse = JSON.parse(raw);
-
-                // If parsing succeeded, try to extract the text from known keys
-                if (typeof parsedAPIResponse.text === 'string') {
-                    finalTranslationText = parsedAPIResponse.text;
-                } else if (typeof parsedAPIResponse.text === 'object' && parsedAPIResponse.text.translation) {
-                    finalTranslationText = parsedAPIResponse.text.translation;
-                }
-            } catch (e) {
-                // If strict JSON parse fails, try loose parsing (e.g., fenced JSON, partial JSON)
-                parsedAPIResponse = parseJsonLoose(raw);
-                if (parsedAPIResponse && typeof parsedAPIResponse === 'object') {
-                    if (typeof parsedAPIResponse.text === 'string') {
-                        finalTranslationText = parsedAPIResponse.text;
-                    } else if (typeof parsedAPIResponse.text === 'object' && parsedAPIResponse.text.translation) {
-                        finalTranslationText = parsedAPIResponse.text.translation;
-                    }
-                }
-
-                // If still no text extracted from (potentially partial) JSON,
-                // and the raw string *starts with* the problematic JSON-like prefix,
-                // try to extract text by assuming the prefix is the JSON part and the rest is text.
-                // This is a direct fix for the user's reported symptom.
-                if (finalTranslationText === '' && typeof raw === 'string') {
-                    const problematicPrefix = `{"languageCode": "de", "languageName": "Deutsch", "text": {"translation": "`;
-                    if (raw.startsWith(problematicPrefix)) {
-                        // Extract everything after the prefix
-                        let tempText = raw.substring(problematicPrefix.length);
-                        // Attempt to remove trailing `"}` or `"}}` if they exist.
-                        // This is a heuristic based on the example and might need adjustment for other API deviations.
-                        if (tempText.endsWith('"}}')) {
-                            tempText = tempText.slice(0, -3); // Remove ", }}
-                        } else if (tempText.endsWith('"}')) {
-                            tempText = tempText.slice(0, -2); // Remove ", }
-                        } else if (tempText.endsWith('"')) { // Just a trailing quote from the translation string
-                            tempText = tempText.slice(0, -1);
-                        }
-                        finalTranslationText = tempText.trim();
-                    } else {
-                        // If it doesn't match the specific problematic prefix, just use the raw text.
-                        finalTranslationText = raw.trim();
-                    }
-                }
-            }
-
-            // Ensure we always use the requested language for display
-            let resultsToRender = [];
-            if (finalTranslationText.length > 0) {
-                resultsToRender = [{
-                    languageCode: code, // Always use the selected code
-                    languageName: languageMeta(code).name, // Always use the selected name
-                    text: finalTranslationText
-                }];
-            }
-
-            if (resultsToRender.length === 0) {
-                results.innerHTML = '<div class="res"><pre class="hint">Keine gültige Übersetzung erhalten. Bitte prüfen Sie die Debug-Ausgabe.</pre></div>';
-            } else {
-                renderResults(resultsToRender);
-            }
-            setBusy(false, 'Fertig');
-        }catch(err){
-            setBusy(false);
-            debugOut.textContent = String(err?.stack || err?.message || err);
-            alert('Fehler: ' + (err?.message || err));
+        if (typeof content.text === 'string') {
+          finalText = content.text;
+        } else if (content.text && typeof content.text.translation === 'string') {
+          finalText = content.text.translation;
+        } else if (typeof content.translation === 'string') {
+          finalText = content.translation;
         }
+      } else if (typeof content === 'string') {
+        // Plain text fallback
+        finalText = content.trim();
+      }
+
+      // Last-resort heuristic from your screenshot (broken JSON prefix)
+      if (!finalText && typeof raw === 'string') {
+        const prefix = `{"languageCode": "de", "languageName": "Deutsch", "text": {"translation": "`;
+        if (raw.startsWith(prefix)) {
+          let temp = raw.substring(prefix.length);
+          if (temp.endsWith('"}}')) temp = temp.slice(0, -3);
+          else if (temp.endsWith('"}')) temp = temp.slice(0, -2);
+          else if (temp.endsWith('"')) temp = temp.slice(0, -1);
+          finalText = temp.trim();
+        }
+      }
+
+      // Render
+      if (!finalText) {
+        results.innerHTML = '<div class="res"><pre class="hint">Keine gültige Übersetzung erhalten. Bitte prüfen Sie die Debug-Ausgabe.</pre></div>';
+      } else {
+        renderResults([{ languageCode, languageName, text: finalText }]);
+      }
+      setBusy(false, 'Fertig');
+    }catch(err){
+      setBusy(false);
+      debugOut.textContent = String(err?.stack || err?.message || err);
+      alert('Fehler: ' + (err?.message || err));
     }
+  }
 
-    function renderResults(items){
-        results.innerHTML = '';
-        items.forEach(item=>{
-            // Only render if the text content is not empty
-            if (!item.text || item.text.trim() === '') {
-                console.warn("Skipping rendering of empty translation:", item);
-                return;
-            }
+  function renderResults(items){
+    results.innerHTML = '';
+    items.forEach(item=>{
+      if (!item.text || item.text.trim() === '') return;
 
-            const wrap = document.createElement('div'); wrap.className='res';
-            const h = document.createElement('h4'); h.textContent = `${item.languageName||item.languageCode}`;
-            const tools = document.createElement('div'); tools.className='tools';
-            const copyBtn = document.createElement('button'); copyBtn.className='tool'; copyBtn.textContent='Kopieren';
-            copyBtn.onclick=()=>{
-                // Using document.execCommand('copy') for better iframe compatibility
-                const textArea = document.createElement('textarea');
-                textArea.value = item.text || '';
-                textArea.style.position = 'fixed'; // Prevent scrolling to bottom of page
-                textArea.style.left = '-9999px';
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                } catch (err) {
-                    console.error('Failed to copy text: ', err);
-                }
-                document.body.removeChild(textArea);
-            };
+      const wrap = document.createElement('div'); wrap.className='res';
+      const h = document.createElement('h4'); h.textContent = `${item.languageName||item.languageCode}`;
+      const tools = document.createElement('div'); tools.className='tools';
+      const copyBtn = document.createElement('button'); copyBtn.className='tool'; copyBtn.textContent='Kopieren';
+      copyBtn.onclick=()=>{
+        const textArea = document.createElement('textarea');
+        textArea.value = item.text || '';
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try { document.execCommand('copy'); } catch (err) { console.error('Failed to copy text: ', err); }
+        document.body.removeChild(textArea);
+      };
 
-            const speakBtn = document.createElement('button'); speakBtn.className='tool'; speakBtn.textContent='Vorlesen'; speakBtn.title='Web Speech API';
-            speakBtn.onclick=()=>{
-                if(!ttsEnable.checked){ alert('Vorlesen ist deaktiviert. Häkchen bei "Vorlesen aktivieren" setzen.'); return }
-                try{
-                    const u = new SpeechSynthesisUtterance(item.text||'');
-                    u.lang = (item.languageCode||'').toLowerCase();
-                    speechSynthesis.speak(u);
-                }catch(e){ alert('TTS nicht verfügbar: '+ e.message) }
-            };
-            tools.append(copyBtn, speakBtn);
-            const pre = document.createElement('pre'); pre.textContent = item.text || '';
-            wrap.append(h, tools, pre);
-            results.appendChild(wrap);
-        });
-    }
+      const speakBtn = document.createElement('button'); speakBtn.className='tool'; speakBtn.textContent='Vorlesen'; speakBtn.title='Web Speech API';
+      speakBtn.onclick=()=>{
+        if(!ttsEnable.checked){ alert('Vorlesen ist deaktiviert. Häkchen bei "Vorlesen aktivieren" setzen.'); return }
+        try{
+          const u = new SpeechSynthesisUtterance(item.text||'');
+          u.lang = (item.languageCode||'').toLowerCase();
+          speechSynthesis.speak(u);
+        }catch(e){ alert('TTS nicht verfügbar: '+ e.message) }
+      };
+      tools.append(copyBtn, speakBtn);
+      const pre = document.createElement('pre'); pre.textContent = item.text || '';
+      wrap.append(h, tools, pre);
+      results.appendChild(wrap);
+    });
+  }
 
-    function collectResults(){
-        const out = [];
-        results.querySelectorAll('.res').forEach(card=>{
-            const title = card.querySelector('h4')?.textContent || '';
-            const text = card.querySelector('pre')?.textContent || '';
-            out.push({ languageName: title, text });
-        });
-        return out;
-    }
-
-    // Removed the persistLuts function as it's no longer needed after removing selectAll/selectNone buttons.
-
+  function collectResults(){
+    const out = [];
+    results.querySelectorAll('.res').forEach(card=>{
+      const title = card.querySelector('h4')?.textContent || '';
+      const text = card.querySelector('pre')?.textContent || '';
+      out.push({ languageName: title, text });
+    });
+    return out;
+  }
 })();
 </script>
 </body>

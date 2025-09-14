@@ -23,10 +23,9 @@
       <label class="block text-sm font-medium mb-2">Quellen (eine Domain oder URL pro Zeile)</label>
       <textarea id="sources" class="w-full h-32 rounded-xl border border-slate-200 p-3 text-sm mono" placeholder="https://www.tagesschau.de\nhttps://www.zeit.de/index\nspiegel.de/politik"></textarea>
       <label class="block text-sm font-medium mt-4 mb-2">Themen/Keywords (optional)</label>
-      <input id="keywords" class="w-full rounded-xl border border-slate-200 p-3 text-sm" placeholder="wirtschaft, politik, energie …" value="bahnverkehr" />
+      <input id="keywords" class="w-full rounded-xl border border-slate-200 p-3 text-sm" placeholder="wirtschaft, politik, energie …" />
       <div class="flex items-center gap-3 mt-4">
         <button id="btnSummarize" class="px-4 py-2 rounded-xl bg-indigo-600 text-white">Zusammenfassen (3 Sätze)</button>
-        <button id="btnTest" class="px-4 py-2 rounded-xl bg-orange-600 text-white">Backend Test</button>
         <button id="btnClear" class="px-4 py-2 rounded-xl border">Zurücksetzen</button>
       </div>
       <p class="text-xs text-slate-500 mt-2">Server‑Route: <span class="mono">/api/groq</span>. Die Route übernimmt Firecrawl‑Suche/Scrapes serverseitig (wenn ein Query übergeben wird) und lässt Groq zusammenfassen.</p>
@@ -105,7 +104,7 @@
           },
           // Option 3: Query ohne site-Filter (allgemeine Suche)
           {
-            query: keywords || "bahnverkehr nachrichten",
+            query: keywords || "nachrichten",
             action: "news_summary"
           }
         ];
@@ -163,56 +162,6 @@
         $("summary").innerHTML = `<em>Fehler: ${error.message}</em>`;
       } finally {
         $("btnSummarize").disabled = false;
-      }
-    });
-
-    $("btnTest").addEventListener("click", async () => {
-      log("=== Backend Test ===");
-      $("btnTest").disabled = true;
-      
-      try {
-        // Test 1: Leerer Request
-        log("Test 1: Leerer Request");
-        let response = await fetch("/api/groq", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({})
-        });
-        let data = await response.json();
-        log(`Antwort: ${JSON.stringify(data, null, 2)}`);
-        
-        // Test 2: Nur Query (aktiviert Firecrawl)
-        log("Test 2: Nur Query");
-        response = await fetch("/api/groq", {
-          method: "POST", 
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            query: "bahnverkehr nachrichten heute", 
-            action: "news_summary" 
-          })
-        });
-        data = await response.json();
-        log(`Antwort: ${JSON.stringify(data, null, 2)}`);
-        
-        // Test 3: Query + Sources
-        log("Test 3: Query + Sources");
-        response = await fetch("/api/groq", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            query: "bahnverkehr",
-            sources: ["https://www.bild.de/regional/hannover/ausfaelle-im-bahnverkehr-wichtigste-ost-west-strecke-weiter-gestoert-68c6ab957ecf6b1bfe3e48eb"],
-            action: "news_summary"
-          })
-        });
-        data = await response.json();
-        log(`Antwort: ${JSON.stringify(data, null, 2)}`);
-        
-      } catch (error) {
-        log(`Test-Fehler: ${error.message}`);
-      } finally {
-        $("btnTest").disabled = false;
-        log("=== Backend Test Ende ===");
       }
     });
 

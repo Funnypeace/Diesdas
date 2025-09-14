@@ -13,8 +13,8 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ["Inter", "system-ui", "-apple-system", "Segoe UI", "Roboto", "Ubuntu", "Cantarell", "Noto Sans", "sans-serif"],
-            mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "monospace"],
+            sans: ["Inter","system-ui","-apple-system","Segoe UI","Roboto","Ubuntu","Cantarell","Noto Sans","sans-serif"],
+            mono: ["JetBrains Mono","ui-monospace","SFMono-Regular","Menlo","Monaco","Consolas","Liberation Mono","monospace"],
           },
           colors: {
             brand: {
@@ -71,15 +71,20 @@
       border-radius: 1.5rem;
     }
     .ring-gradient::before {
-      content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px;
-      background: linear-gradient(135deg, rgba(102,126,234,.5), rgba(118,75,162,.5)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      content: "";
+      position: absolute; inset: -1px; border-radius: inherit; padding: 1px;
+      background: linear-gradient(135deg, rgba(102,126,234,.5), rgba(118,75,162,.5));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
       -webkit-mask-composite: xor; mask-composite: exclude;
+      pointer-events: none; /* WICHTIG: Klicks fallen durch zum Input */
     }
     @media (prefers-reduced-motion: reduce) {
       * { animation: none !important; transition: none !important; }
     }
     /* Focus styles */
     :where(button, a, input, textarea):focus-visible { outline: 2px solid rgba(126,136,255,.8); outline-offset: 2px; border-radius: .75rem; }
+    /* Loading wave keyframes */
+    @keyframes wave { 0%,60%,100%{ transform: scaleY(1) } 30%{ transform: scaleY(1.5) } }
   </style>
 
   <!-- GoatCounter -->
@@ -123,24 +128,24 @@
         <label class="block text-left">
           <span class="sr-only">Thema eingeben</span>
           <input id="theme-input" type="text" required
-            placeholder="z. B. App für Gärtner, Fantasy‑Roman, innovatives Startup…"
+            placeholder="z. B. App für Gärtner, Fantasy-Roman, innovatives Startup…"
             class="w-full rounded-2xl bg-white/5 px-5 py-4 text-base text-white/95 placeholder-white/40 border border-white/10 focus:border-brand-400/60 focus:ring-2 focus:ring-brand-400/30" />
         </label>
 
         <!-- Quick chips -->
         <div id="examples" class="flex flex-wrap gap-2 text-sm">
-          <button type="button" class="chip">App für Handwerker</button>
-          <button type="button" class="chip">YouTube‑Format für Reisen</button>
-          <button type="button" class="chip">Newsletter über KI‑Tools</button>
-          <button type="button" class="chip">Bordcomputer fürs E‑Bike</button>
+          <button type="button" class="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-white/80 hover:bg-white/[.07]">App für Handwerker</button>
+          <button type="button" class="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-white/80 hover:bg-white/[.07]">YouTube-Format für Reisen</button>
+          <button type="button" class="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-white/80 hover:bg-white/[.07]">Newsletter über KI-Tools</button>
+          <button type="button" class="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-white/80 hover:bg-white/[.07]">Bordcomputer fürs E-Bike</button>
         </div>
 
         <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
           <button id="generate-button" type="submit" class="group inline-flex items-center justify-center rounded-2xl bg-gradient-to-tr from-brand-500 to-brand-700 px-6 py-3 font-semibold shadow-glow transition active:scale-[.99] disabled:opacity-60">
             <span id="loading-animation" class="hidden mr-3 -ml-1 inline-flex gap-1">
-              <span class="h-4 w-1 animate-[wave_1.4s_ease-in-out_infinite] bg-white/95 rounded-sm"></span>
-              <span class="h-4 w-1 animate-[wave_1.4s_ease-in-out_infinite_.1s] bg-white/95 rounded-sm"></span>
-              <span class="h-4 w-1 animate-[wave_1.4s_ease-in-out_infinite_.2s] bg-white/95 rounded-sm"></span>
+              <span class="h-4 w-1 rounded-sm bg-white/95" style="animation: wave 1.4s ease-in-out infinite;"></span>
+              <span class="h-4 w-1 rounded-sm bg-white/95" style="animation: wave 1.4s ease-in-out infinite .1s;"></span>
+              <span class="h-4 w-1 rounded-sm bg-white/95" style="animation: wave 1.4s ease-in-out infinite .2s;"></span>
             </span>
             <svg id="magic-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="mr-2 h-5 w-5 opacity-90 transition group-hover:rotate-12" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.5 2.5L16 4.5 15.5 3M13 13l2.5 2.5L16 14.5 15.5 13m-5-5l2.5 2.5L8 9.5 7.5 8M17 17l2.5 2.5L20 18.5 19.5 17"/></svg>
             <span id="button-text">Magie entfesseln</span>
@@ -157,7 +162,7 @@
 
       <!-- Error -->
       <div id="error-container" class="mt-4 hidden" aria-live="polite">
-        <div class="rounded-2xl border border-red-400/30 bg-red-900/20 px-4 py-3 text-red-200"> <span id="error-message"></span> </div>
+        <div class="rounded-2xl border border-red-400/30 bg-red-900/20 px-4 py-3 text-red-200"><span id="error-message"></span></div>
       </div>
 
       <!-- Placeholder / Results -->
@@ -186,7 +191,7 @@
     <section id="faq" class="mt-10 text-white/65 text-sm">
       <details class="group glass rounded-xl p-4">
         <summary class="cursor-pointer select-none font-semibold text-white/80">Welche KI wird genutzt?</summary>
-        <div class="mt-2 text-white/70">Das Frontend ruft deine <span class="font-mono">/api/groq</span>‑Route auf (GroqCloud). Du kannst das Modell in der API anpassen.</div>
+        <div class="mt-2 text-white/70">Das Frontend ruft deine <span class="font-mono">/api/groq</span>-Route auf (GroqCloud). Du kannst das Modell in der API anpassen.</div>
       </details>
     </section>
   </main>
@@ -234,7 +239,7 @@
         this.themeInput.addEventListener('keydown', (e) => {
           if (e.key === 'Enter') { e.preventDefault(); this.handleSubmit(e); }
         });
-        document.querySelectorAll('.chip').forEach(ch => ch.addEventListener('click', () => {
+        document.querySelectorAll('#examples button').forEach(ch => ch.addEventListener('click', () => {
           this.themeInput.value = ch.textContent;
           this.themeInput.focus();
         }));
@@ -275,14 +280,27 @@
       }
 
       async generateVariations(theme) {
-        const systemPrompt = `Du bist ein kreativer Ideenentwickler. Deine Aufgabe ist es, basierend auf einem gegebenen Thema oder einer Grundidee genau 20 kreative und vielfältige Variationen zu entwickeln.\n\nRegeln:\n- Erstelle genau 20 nummerierte Variationen (1. bis 20.)\n- Jede Variation sollte eine eigenständige, kreative Weiterentwicklung des ursprünglichen Themas sein\n- Variiere Ansatz, Zielgruppe, Format, Stil oder Kontext\n- Sei kreativ, aber bleibe beim Kernthema\n- Jede Variation sollte in 1-2 Sätzen beschrieben werden\n- Schreibe auf Deutsch\n- Beginne direkt mit \"1.\" ohne weitere Einleitung`;
+        const systemPrompt = `Du bist ein kreativer Ideenentwickler. Deine Aufgabe ist es, basierend auf einem gegebenen Thema oder einer Grundidee genau 20 kreative und vielfältige Variationen zu entwickeln.
+
+Regeln:
+- Erstelle genau 20 nummerierte Variationen (1. bis 20.)
+- Jede Variation sollte eine eigenständige, kreative Weiterentwicklung des ursprünglichen Themas sein
+- Variiere Ansatz, Zielgruppe, Format, Stil oder Kontext
+- Sei kreativ, aber bleibe beim Kernthema
+- Jede Variation sollte in 1-2 Sätzen beschrieben werden
+- Schreibe auf Deutsch
+- Beginne direkt mit "1." ohne weitere Einleitung`;
 
         const messages = [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: `Erstelle 20 kreative Variationen für folgendes Thema: "${theme}"` }
         ];
 
-        const res = await fetch('/api/groq', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages, action: 'generate_variations' }) });
+        const res = await fetch('/api/groq', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages, action: 'generate_variations' })
+        });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         if (!data.content) throw new Error('Keine Antwort vom Server erhalten');
@@ -328,9 +346,9 @@
           // Copy one
           frag.querySelector('.copy-one').addEventListener('click', () => this.copyText(`${v.number}. ${v.text}`));
           // Save one (simple highlight)
-          frag.querySelector('.save-one').addEventListener('click', (ev) => {
-            if (this.saved.has(v.number)) { this.saved.delete(v.number); root.classList.remove('ring', 'ring-brand-500/40'); }
-            else { this.saved.add(v.number); root.classList.add('ring', 'ring-brand-500/40'); }
+          frag.querySelector('.save-one').addEventListener('click', () => {
+            if (this.saved.has(v.number)) { this.saved.delete(v.number); root.classList.remove('ring','ring-brand-500/40'); }
+            else { this.saved.add(v.number); root.classList.add('ring','ring-brand-500/40'); }
           });
           list.appendChild(frag);
         });

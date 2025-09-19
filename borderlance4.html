@@ -31,7 +31,7 @@
 </head>
 <body class="min-h-screen">
   <!-- Header -->
-  <header class="border-b sticky top-0 z-40 bg-white/90 backdrop-blur">
+  <header id="top" class="border-b sticky top-0 z-40 bg-white/90 backdrop-blur">
     <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
       <div>
         <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Borderlands 4</h1>
@@ -57,7 +57,8 @@
           <li><a href="#einstellungen">Grafik, Audio & Komfort‑Settings</a></li>
           <li><a href="#skills">Skills & Prioritäten</a></li>
           <li><a href="#waffen">Waffen, Hersteller & Elemente</a></li>
-          <li><a href="#inventar">Inventar, SDUs & Wirtschaft</a></li>
+          $1
+          <li><a href="#loot">Loot & Drop‑System</a></li>
           <li><a href="#missionen">Missionen & Level‑Route</a></li>
           <li><a href="#fahrzeuge">Fahrzeuge & Reisen</a></li>
           <li><a href="#coop">Koop, Handel & Cross‑Save</a></li>
@@ -201,6 +202,32 @@
         </div>
       </div>
 
+      <!-- Loot & Drop System -->
+      <div class="card rounded-2xl p-6 shadow" id="loot">
+        <h2 class="text-2xl md:text-3xl font-bold">Loot & Drop‑System</h2>
+        <span class="heading-underline"></span>
+        <div class="prose text-gray-700 mt-4">
+          <ul class="list-disc pl-6 space-y-2">
+            <li><strong>World‑Drops vs. Dedicated Drops:</strong> Alles kann überall droppen (World), aber viele Legendaries haben <em>dedizierte Bosse/Zonen</em> mit höherer Chance. Prüfe den Loot‑Pool und farme gezielt.</li>
+            <li><strong>Seltenheiten & Rolls:</strong> Blau/Lila sind im Leveling oft effizienter als ein schlechter Legendär‑Roll. Achte auf <em>Affixe</em> (Crit, Feuerrate, Magazingröße, Element‑Chance/CDR).</li>
+            <li><strong>Anointments/Perks:</strong> Späte Spielsysteme geben Waffen/Schilden/Granaten extra Effekte (z. B. Element‑Boosts nach Aktiv‑Skill). Priorisiere Anointments, die deinen <em>Build‑Loop</em> verstärken.</li>
+            <li><strong>Item‑Score vs. TTK:</strong> Der Item‑Score ist eine grobe Orientierung. Entscheidend ist deine <em>Time‑to‑Kill</em> im Feld. Teste Kandidaten an denselben Gegnertypen.</li>
+            <li><strong>Reroll & Crafting:</strong> Wenn verfügbar, nutze Reroll‑Stationen für Anointments/Rolls. Setze Limits (z. B. 10 Versuche), um Währung nicht zu verbrennen.</li>
+            <li><strong>Luck/Bonus‑Systeme:</strong> Dauer‑Bonis (Rang/Token), Artefakt‑Seltenheit und Event‑Modifikatoren erhöhen Drop‑Qualität. Aktiviere alles, was deine <em>Seltenheits‑Chance</em> anhebt.</li>
+            <li><strong>SHiFT/Golden Keys:</strong> Schlüssel aufheben und an Level‑Schwellen (10/20/30/Max) einsetzen – für schnelle Slot‑Upgrades.</li>
+            <li><strong>Inventar‑Hygiene:</strong> Vor Farm‑Runs 10–15 freie Plätze lassen, Auto‑Sortierung und Favoriten/Lock nutzen, um Fehlverkäufe zu vermeiden.</li>
+          </ul>
+        </div>
+        <details class="spoiler mt-4 rounded-xl p-4 note">
+          <summary class="font-semibold">Schnell‑Check: Taugt dieser Drop?</summary>
+          <div class="grid grid-auto gap-3 mt-3 text-sm">
+            <div class="p-3 rounded-lg bg-white border"><p><strong>Synergie</strong> mit Skill‑Baum/Element? (Ja → weiter)</p></div>
+            <div class="p-3 rounded-lg bg-white border"><p><strong>Affixe/Anointment</strong> passend? (≥2 Treffer → behalten)</p></div>
+            <div class="p-3 rounded-lg bg-white border"><p><strong>TTK‑Test</strong> schlägt aktuelle Waffe um ≥10%? (Ja → ersetzen)</p></div>
+          </div>
+        </details>
+      </div>
+
       <!-- Missions & Leveling Route -->
       <div class="card rounded-2xl p-6 shadow" id="missionen">
         <h2 class="text-2xl md:text-3xl font-bold">Missionen & Level‑Route</h2>
@@ -245,9 +272,12 @@
 
       <!-- Builds -->
       <div class="card rounded-2xl p-6 shadow" id="builds">
-        <h2 class="text-2xl md:text-3xl font-bold">Build‑Beispiele (generisch)</h2>
+        <h2 class="text-2xl md:text-3xl font-bold">Build‑Beispiele</h2>
         <span class="heading-underline"></span>
+        <p class="text-gray-700 mt-2 text-sm">Hinweis: Da BL4‑Mechaniken je nach Version/Updates variieren können, sind die Builds generisch gehalten und nach Spielstil sortiert. Nutze sie als Vorlage und passe Perks/Anointments an.</p>
+
         <div class="grid grid-auto gap-4 mt-4">
+          <!-- 1: Crit‑Sturmgewehr -->
           <div class="p-4 bg-white border rounded-xl">
             <div class="flex items-center justify-between">
               <h3 class="font-semibold">Crit‑Sturmgewehr (Agility/Power)</h3>
@@ -257,32 +287,164 @@
             <ul class="list-disc pl-6 text-sm mt-2 space-y-1">
               <li><strong>Schlüssel‑Perks:</strong> +Crit, +Reload nach Kill, Ult‑Cooldown.</li>
               <li><strong>Waffen:</strong> Jakobs/Vladof AR, Dahl‑SMG als Backup.</li>
-              <li><strong>Elemente:</strong> Schock + Korrosion für universelle Abdeckung.</li>
+              <li><strong>Artefakt/Klassenmod:</strong> +AR‑Schaden, +Crit‑Chance, +Magazingröße.</li>
+              <li><strong>Gameplay‑Loop:</strong> Kopf‑Crits → Nachlade‑Buff → Burst. Ult für Boss‑Phasen.</li>
             </ul>
           </div>
+
+          <!-- 2: Element‑SMG -->
+          <div class="p-4 bg-white border rounded-xl">
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold">Element‑SMG Sprayer (Agility/Survival)</h3>
+              <span class="chip tag">Mob‑Clear</span>
+            </div>
+            <p class="text-sm mt-2">Hohe Feuerrate + stabile Kontrolle. Wechsele situativ zwischen Feuer/Schock/Kryo.</p>
+            <ul class="list-disc pl-6 text-sm mt-2 space-y-1">
+              <li><strong>Schlüssel‑Perks:</strong> Element‑Chance, Recoil‑Kontrolle, Lebensraub/Regeneration.</li>
+              <li><strong>Waffen:</strong> Maliwan/Dahl SMGs mit Element‑Umschaltung.</li>
+              <li><strong>Granaten:</strong> Transfusion (Überleben) oder MIRV (Fläche).</li>
+              <li><strong>Loop:</strong> Schild brechen (⚡) → frieren (❄️) → brennen lassen (🔥).</li>
+            </ul>
+          </div>
+
+          <!-- 3: Jakobs‑Sniper -->
+          <div class="p-4 bg-white border rounded-xl">
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold">Präzisions‑Sniper (Agility‑Focus)</h3>
+              <span class="chip tag">Single‑Target</span>
+            </div>
+            <p class="text-sm mt-2">Maximaler Einzelschuss‑Schaden mit Jakobs‑Sniper oder Hyperion‑DMR.</p>
+            <ul class="list-disc pl-6 text-sm mt-2 space-y-1">
+              <li><strong>Schlüssel‑Perks:</strong> +Crit‑Multi, +ADS‑Genauigkeit, Ruhe beim Zielen.</li>
+              <li><strong>Schild:</strong> Amp‑Schild oder geringe Delay‑Schilde für schnelle Reaktivierung.</li>
+              <li><strong>Artefakt:</strong> +Schaden bei voller Gesundheit / +Kopfschuss‑Schaden.</li>
+              <li><strong>Loop:</strong> Deckung → ADS‑Crits, Position rotieren, Ult für Boss‑Stagger.</li>
+            </ul>
+          </div>
+
+          <!-- 4: Explosiv‑Bosskiller -->
+          <div class="p-4 bg-white border rounded-xl">
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold">Explosiv‑Bosskiller (Power)</h3>
+              <span class="chip tag">Burst‑DPS</span>
+            </div>
+            <p class="text-sm mt-2">Torgue‑Klebeschüsse stapeln und in der Schadensspitze zünden.</p>
+            <ul class="list-disc pl-6 text-sm mt-2 space-y-1">
+              <li><strong>Schlüssel‑Perks:</strong> Explosiv‑Schaden, Mag‑Größe, Nachlade‑Tempo.</li>
+              <li><strong>Waffen:</strong> Torgue AR/Shotgun, Vladof Sekundärlauf für Adds.</li>
+              <li><strong>Granaten:</strong> Sticky/Remote‑Zündung, Singularität zum Gruppieren.</li>
+              <li><strong>Loop:</strong> Stacks setzen → Ult + Granate → Boss schmilzt.</li>
+            </ul>
+          </div>
+
+          <!-- 5: Kryo‑Kontrolle -->
           <div class="p-4 bg-white border rounded-xl">
             <div class="flex items-center justify-between">
               <h3 class="font-semibold">Kryo‑Kontrolle (Survival/Utility)</h3>
-              <span class="chip tag">Boss‑Setup</span>
+              <span class="chip tag">CC/Setup</span>
             </div>
-            <p class="text-sm mt-2">Kryo zum Einfrieren → Gratis‑Crits; Singularitätsgranaten zum Gruppieren, dann Boss‑Burst.</p>
+            <p class="text-sm mt-2">Einfrieren für sichere Crit‑Fenster; ideal im Koop als Setup‑Spieler.</p>
             <ul class="list-disc pl-6 text-sm mt-2 space-y-1">
-              <li><strong>Schlüssel‑Perks:</strong> Element‑Chance, CC‑Dauer, Team‑Utility.</li>
-              <li><strong>Waffen:</strong> Maliwan‑Kryo SMG/Beam, Torgue Explosiv.</li>
+              <li><strong>Schlüssel‑Perks:</strong> CC‑Dauer, Element‑Chance, Team‑Buffs.</li>
+              <li><strong>Waffen:</strong> Maliwan‑Kryo Beam/SMG, Jakobs Sidearm für Crit‑Finish.</li>
+              <li><strong>Artefakt:</strong> +Gefrorene Gegner‑Schaden.</li>
+              <li><strong>Loop:</strong> Gruppen mit Singularität → einfrieren → Team bursten lässt.</li>
             </ul>
           </div>
+
+          <!-- 6: Pet‑Beschwörer -->
           <div class="p-4 bg-white border rounded-xl">
             <div class="flex items-center justify-between">
-              <h3 class="font-semibold">Explosiv‑Bosskiller (Power‑Focus)</h3>
-              <span class="chip tag">Burst‑DPS</span>
+              <h3 class="font-semibold">Pet‑Beschwörer (Survival/Support)</h3>
+              <span class="chip tag">Solo‑sicher</span>
             </div>
-            <p class="text-sm mt-2">Torgue‑Klebebomben stapeln → Zündung mit Ult/Granate. Amp‑Schild + Nachlade‑Buffs.</p>
+            <p class="text-sm mt-2">Begleiter tankt/lenkt ab, du spielst mittlere Distanz mit DoT‑Elementen.</p>
             <ul class="list-disc pl-6 text-sm mt-2 space-y-1">
-              <li><strong>Schlüssel‑Perks:</strong> Explosiv‑Schaden, Mag‑Größe, Nachlade‑Tempo.</li>
-              <li><strong>Waffen:</strong> Torgue AR/Shotgun, Vladof Sekundärlauf.</li>
+              <li><strong>Schlüssel‑Perks:</strong> Pet‑HP/Schaden, geteilte Heilung, Aggro‑Gen.</li>
+              <li><strong>Waffen:</strong> DoT‑starke SMGs/ARs (Maliwan), Korrosiv für schwere Ziele.</li>
+              <li><strong>Artefakt:</strong> +Pet‑Schaden, +DoT‑Dauer.</li>
+              <li><strong>Loop:</strong> Pet schickt → Gegner dotten → in Ruhe nachsetzen.</li>
+            </ul>
+          </div>
+
+          <!-- 7: Melee‑Glaskanone -->
+          <div class="p-4 bg-white border rounded-xl">
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold">Melee‑Glaskanone (Power/Agility)</h3>
+              <span class="chip tag">High‑Risk/High‑Reward</span>
+            </div>
+            <p class="text-sm mt-2">Nahkampf mit Bewegungs‑Tech, Schilde mit Melee‑Buffs und Kryo‑Setups.</p>
+            <ul class="list-disc pl-6 text-sm mt-2 space-y-1">
+              <li><strong>Schlüssel‑Perks:</strong> +Melee, Bewegungsgeschw., Damage‑Reduction nach Kill.</li>
+              <li><strong>Waffen:</strong> Shotgun/SMG als Gap‑Closer, Artefakt mit Melee‑Rolls.</li>
+              <li><strong>Schild:</strong> Nova/Spike‑Schilde für Nahbereich.</li>
+              <li><strong>Loop:</strong> Kryo‑Proc → Sprint/Slide → Melee‑Finish.</li>
+            </ul>
+          </div>
+
+          <!-- 8: Granaten‑Ingenieur -->
+          <div class="p-4 bg-white border rounded-xl">
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold">Granaten‑Ingenieur (Utility/Power)</h3>
+              <span class="chip tag">Flächen‑Clear</span>
+            </div>
+            <p class="text-sm mt-2">Skaliert Granaten‑Schaden und -Nachschub, kombiniert mit Klassenmod‑Synergien.</p>
+            <ul class="list-disc pl-6 text-sm mt-2 space-y-1">
+              <li><strong>Schlüssel‑Perks:</strong> Granaten‑Kapazität, -Schaden, Rückgewinnung bei Kills.</li>
+              <li><strong>Granaten:</strong> MIRV, Clustering, Singularität je nach Map.</li>
+              <li><strong>Artefakt:</strong> +Werfer‑Geschwindigkeit, +AoE.</li>
+              <li><strong>Loop:</strong> Gruppieren → Kettenexplosionen auslösen → Nachfüllen durch Kills.</li>
+            </ul>
+          </div>
+
+          <!-- 9: Support‑Buffer -->
+          <div class="p-4 bg-white border rounded-xl">
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold">Support‑Buffer (Survival/Support)</h3>
+              <span class="chip tag">Koop‑Stärke</span>
+            </div>
+            <p class="text-sm mt-2">Teamheilung, Schadensreduktion, Res‑Sicherheit. Ideal für 3–4er Gruppen.</p>
+            <ul class="list-disc pl-6 text-sm mt-2 space-y-1">
+              <li><strong>Schlüssel‑Perks:</strong> Auren, Heilimpulse, Cooldown‑Teilung.</li>
+              <li><strong>Waffen:</strong> Schock‑/Kryo‑Procs zur Vorbereitung, sichere Handhabung.</li>
+              <li><strong>Artefakt:</strong> Team‑CDR, Movement‑Buffs.</li>
+              <li><strong>Loop:</strong> Buffs rotieren → Adds kontrollieren → Revives absichern.</li>
+            </ul>
+          </div>
+
+          <!-- 10: Schild‑Amp‑Schütze -->
+          <div class="p-4 bg-white border rounded-xl">
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold">Schild‑Amp‑Schütze (Agility/Power)</h3>
+              <span class="chip tag">Präzisions‑Burst</span>
+            </div>
+            <p class="text-sm mt-2">Nutzt Amp‑Schilde: erster Schuss nach Aufladung macht massiven Bonus‑Schaden.</p>
+            <ul class="list-disc pl-6 text-sm mt-2 space-y-1">
+              <li><strong>Schlüssel‑Perks:</strong> Schild‑Delay↓, Amp‑Bonus↑, Reload‑Tempo.</li>
+              <li><strong>Waffen:</strong> Semi‑Auto DMR/Shotguns, Jakobs Pistolen.</li>
+              <li><strong>Artefakt:</strong> +Schaden bei vollem Schild, +ADS.</li>
+              <li><strong>Loop:</strong> In Deckung aufladen → Peek‑Schuss → zurück, wiederholen.</li>
             </ul>
           </div>
         </div>
+
+        <details class="spoiler mt-5 rounded-xl p-4 note">
+          <summary class="font-semibold">Schnellstart‑Skillpunkte (generisch)</summary>
+          <div class="grid grid-auto gap-3 mt-3 text-sm">
+            <div class="p-3 rounded-lg bg-white border">
+              <p class="font-semibold">Lvl 1–10</p>
+              <p>2–3 Punkte in Überleben (Schild/HP) → 3–4 in Handling/Crit → 1 in Ult‑CDR.</p>
+            </div>
+            <div class="p-3 rounded-lg bg-white border">
+              <p class="font-semibold">Lvl 11–20</p>
+              <p>Waffengattung spezialisieren, Element‑Chance freischalten, erste Synergie‑Perks.</p>
+            </div>
+            <div class="p-3 rounded-lg bg-white border">
+              <p class="font-semibold">Lvl 21–35</p>
+              <p>Boss‑Perks, Granaten‑Ressourcen, defensive Notschalter (Unverwundbarkeit/Heilimpuls).</p>
+            </div>
+          </div>
+        </details>
       </div>
 
       <!-- Farm Routes & Bosses -->

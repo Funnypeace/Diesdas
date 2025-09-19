@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Borderlands 4 – Ultimativer Einsteiger- & Profi‑Guide</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background:#ffffff; color:#1a1a1a; }
+    .prose p { margin: .5rem 0; }
+    .card { background:#f7f7f7; }
+    .heading-underline { display:block; width:56px; height:3px; background:#ff9900; margin-top:8px; border-radius:3px; }
+    .kbd { border:1px solid #d1d5db; border-bottom-width:3px; padding:.1rem .4rem; border-radius:.375rem; background:#fff; font-weight:600; font-size:.85rem; }
+    .tag { font-size:.75rem; background:#fff; border:1px solid #e5e7eb; padding:.15rem .5rem; border-radius:9999px; }
+    .toc a { color:#374151; }
+    .toc a:hover { color:#111827; }
+    .grid-auto { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .chip { background:#ffeede; color:#7a3e00; border:1px solid #ffd1a8; }
+    .note { background:#eef9ff; border:1px solid #cdefff; }
+    .warn { background:#fff8e6; border:1px solid #ffe3a3; }
+    .ok { background:#ecfdf5; border:1px solid #a7f3d0; }
+    .spoiler[open] summary { border-bottom-left-radius:0; border-bottom-right-radius:0; }
+    .spoiler summary { list-style:none; cursor:pointer; }
+    .spoiler summary::-webkit-details-marker { display:none; }
+  </style>
+</head>
+<body class="min-h-screen">
+  <!-- Header -->
+  <header class="border-b sticky top-0 z-40 bg-white/90 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Borderlands 4</h1>
+        <p class="text-sm text-gray-500">Ultimative Tipps, Builds & Farmrouten – Stand: 19.09.2025</p>
+      </div>
+      <nav class="hidden md:flex items-center gap-3">
+        <a href="#toc" class="tag">Inhalt</a>
+        <a href="#starter" class="tag">Einstieg</a>
+        <a href="#builds" class="tag">Builds</a>
+        <a href="#loot" class="tag">Loot</a>
+        <a href="#endgame" class="tag">Endgame</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-8 grid lg:grid-cols-[280px,1fr] gap-8">
+    <!-- TOC -->
+    <aside id="toc" class="toc hidden lg:block">
+      <div class="sticky top-24 card rounded-2xl shadow p-5">
+        <p class="text-sm font-semibold text-gray-600 mb-3">Inhaltsverzeichnis</p>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#starter">Grundlagen & erster Start</a></li>
+          <li><a href="#einstellungen">Grafik, Audio & Komfort‑Settings</a></li>
+          <li><a href="#skills">Skills & Prioritäten</a></li>
+          <li><a href="#waffen">Waffen, Hersteller & Elemente</a></li>
+          <li><a href="#inventar">Inventar, SDUs & Wirtschaft</a></li>
+          <li><a href="#missionen">Missionen & Level‑Route</a></li>
+          <li><a href="#fahrzeuge">Fahrzeuge & Reisen</a></li>
+          <li><a href="#coop">Koop, Handel & Cross‑Save</a></li>
+          <li><a href="#builds">Build‑Beispiele</a></li>
+          <li><a href="#farm">Farmrouten & Bosse</a></li>
+          <li><a href="#endgame">Endgame‑Systeme</a></li>
+          <li><a href="#quality">Quality‑of‑Life Tricks</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Content -->
+    <section class="space-y-8">
+      <!-- Intro -->
+      <div class="card rounded-2xl p-6 shadow" id="starter">
+        <h2 class="text-2xl md:text-3xl font-bold">Grundlagen & erster Start</h2>
+        <span class="heading-underline"></span>
+        <p class="text-gray-700 mt-4">Willkommen auf Pandora & Co.! In <strong>Borderlands 4</strong> dreht sich alles um Loot, Builds und lauten Spass. Damit du vom ersten Claptrap‑Moment an überlebst, findest du hier einen strukturierten Start.</p>
+        <div class="grid gap-3 sm:grid-cols-2 mt-4">
+          <div class="p-4 rounded-xl bg-[#e6e6e6] flex items-start gap-3"><span class="text-2xl">✓</span><p><strong>Klassen‑Wahl:</strong> Entscheide dich für den Spielstil (Aggro, Support, Pet, Tech). Lies die Action‑Skills und passiven Boni; wähle, was deine bevorzugte Waffengattung stärkt.</p></div>
+          <div class="p-4 rounded-xl bg-[#e6e6e6] flex items-start gap-3"><span class="text-2xl">✓</span><p><strong>Quest‑Vorsprung:</strong> Räume Gebiete komplett, bevor du die Hauptstory weiterschiebst – so bleibst du überlevelt und bekommst bessere Drops.</p></div>
+          <div class="p-4 rounded-xl bg-[#e6e6e6] flex items-start gap-3"><span class="text-2xl">✓</span><p><strong>Loot‑Priorität:</strong> In den ersten Stunden zählen <em>Handhabung</em>, <em>Feuerrate</em>, <em>Nachladezeit</em> und <em>Magazingröße</em> oft mehr als Rohschaden.</p></div>
+          <div class="p-4 rounded-xl bg-[#e6e6e6] flex items-start gap-3"><span class="text-2xl">✓</span><p><strong>Favoriten & Sperren:</strong> Markiere gute Waffen als Favorit (⭐) und sperre sie gegen versehentliches Verkaufen.</p></div>
+        </div>
+        <details class="spoiler mt-4 rounded-xl note p-4">
+          <summary class="font-semibold">Pro‑Tipp: Tasten & kurze Moves</summary>
+          <div class="mt-2 text-sm text-gray-700 space-y-2">
+            <p><span class="kbd">R</span> vorzeitig nachladen, wenn Deckung verfügbar ist. <span class="kbd">Sprint</span> → <span class="kbd">Slide</span> → <span class="kbd">Jump</span> für schnelles Ausweichen.</p>
+            <p>Nutze <span class="kbd">Ping/Markieren</span> im Koop für fokussiertes Feuer & Loot‑Callouts.</p>
+          </div>
+        </details>
+      </div>
+
+      <!-- Settings -->
+      <div class="card rounded-2xl p-6 shadow" id="einstellungen">
+        <h2 class="text-2xl md:text-3xl font-bold">Grafik, Audio & Komfort‑Settings</h2>
+        <span class="heading-underline"></span>
+        <div class="prose text-gray-700 mt-4">
+          <ul class="list-disc pl-6 space-y-2">
+            <li><strong>Sichtfeld (FOV):</strong> 95–105 für bessere Übersicht ohne Fischaugen‑Effekt.</li>
+            <li><strong>Maus‑/Stick‑Empfindlichkeit:</strong> Senke minimal für präzisere Crits; aktiviere <em>Feinjustierung beim Zielen</em>.</li>
+            <li><strong>Motion Blur & Filmkörnung:</strong> Deaktivieren für Klarheit.</li>
+            <li><strong>Audio:</strong> Dialoge +5 dB, Effekte −2 dB, damit Callouts verständlich bleiben.</li>
+            <li><strong>Untertitel & Farbanpassungen:</strong> Aktivieren; bei Elementfarben <em>Deuteranopie‑Modus</em> erwägen.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="card rounded-2xl p-6 shadow" id="skills">
+        <h2 class="text-2xl md:text-3xl font-bold">Skills & Prioritäten</h2>
+        <span class="heading-underline"></span>
+        <p class="text-gray-700 mt-4">Jede Klasse besitzt drei Skill‑Bäume (z. B. <em>Agility</em>, <em>Survival</em>, <em>Power</em>). Für den Start:
+        </p>
+        <div class="grid gap-4 md:grid-cols-3 mt-4">
+          <div class="rounded-xl bg-[#e6e6e6] p-4"><h3 class="font-bold">Agility (Parkour)</h3><p class="text-sm mt-2">Waffenhandling, Feuerrate, Crit‑Multiplikatoren. 
+          Perfekt für Sturmgewehr/SMG‑Spielstile und Aggro‑Push.</p></div>
+          <div class="rounded-xl bg-[#e6e6e6] p-4"><h3 class="font-bold">Survival</h3><p class="text-sm mt-2">Schildkapazität, Regeneration, Defensive Perks. 
+          Reduziert Down‑Time und spart Med‑Kosten.</p></div>
+          <div class="rounded-xl bg-[#e6e6e6] p-4"><h3 class="font-bold">Power</h3><p class="text-sm mt-2">Granaten‑/Melee‑Schaden, Ult‑Synergien, Boss‑Burst.
+          Für Speedkills & AoE‑Clears.</p></div>
+        </div>
+        <details class="spoiler mt-4 rounded-xl ok p-4">
+          <summary class="font-semibold">Level‑Meilensteine (Empfehlung)</summary>
+          <div class="grid grid-auto gap-3 mt-3 text-sm">
+            <div class="p-3 rounded-lg bg-white border">
+              <p class="font-semibold">Lvl 1–10</p>
+              <p>Passives Überleben (Schild/HP) + Basishandling. Action‑Skill Cooldown verkürzen.</p>
+            </div>
+            <div class="p-3 rounded-lg bg-white border">
+              <p class="font-semibold">Lvl 11–20</p>
+              <p>Waffengattung fokussieren (SMG/AR/Shotgun). Erste Synergiekette bauen (z. B. Crit → Nachladebuff → Feuerrate).</p>
+            </div>
+            <div class="p-3 rounded-lg bg-white border">
+              <p class="font-semibold">Lvl 21–35</p>
+              <p>Ult‑Interaktionen, Element‑Procs, Granatenplay. Erste Boss‑Perks.</p>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <!-- Weapons & Elements -->
+      <div class="card rounded-2xl p-6 shadow" id="waffen">
+        <h2 class="text-2xl md:text-3xl font-bold">Waffen, Hersteller & Elemente</h2>
+        <span class="heading-underline"></span>
+        <div class="mt-4 grid gap-4 md:grid-cols-2">
+          <div class="rounded-xl bg-[#e6e6e6] p-4 flex items-start gap-3"><span class="text-2xl">🔫</span><p><strong>Elementarer Schaden:</strong> Feuer gegen HP (rot), Schock gegen Schilde (blau), Korrosion gegen Rüstung (gelb), Kryo zum Verlangsamen/Einfrieren, Strahlen/Schlacken‑ähnliche Effekte für Debuffs und Kombos.</p></div>
+          <div class="rounded-xl bg-[#e6e6e6] p-4 flex items-start gap-3"><span class="text-2xl">💥</span><p><strong>Legendärer Loot:</strong> Orange Items haben einzigartige Perks. Viele sind boss‑ oder gebietsgebunden; prüfe deren Loot‑Pools und nutze Schnellreisen für Respawns.</p></div>
+        </div>
+        <div class="mt-6 grid grid-auto gap-3">
+          <div class="p-4 bg-white border rounded-xl">
+            <h3 class="font-semibold">Hersteller‑Schnellübersicht</h3>
+            <ul class="list-disc pl-6 text-sm mt-2 space-y-1">
+              <li><strong>Jakobs:</strong> Hoher Krit‑Schaden, kein Element – ideal für Präzisions‑Builds.</li>
+              <li><strong>Tediore:</strong> Nachladen wirft die Waffe als Granate; gut für Mobbing.</li>
+              <li><strong>Hyperion:</strong> Präziser beim Zielen, oft Schild‑Synergien.</li>
+              <li><strong>Vladof:</strong> Sehr hohe Feuerrate, manchmal Zweitlauf‑Modi.</li>
+              <li><strong>Torgue:</strong> Klebe‑Granaten/Explosiv; starker Boss‑Burst.</li>
+              <li><strong>Maliwan:</strong> Geladene Element‑Laser; Charge‑Management wichtig.</li>
+              <li><strong>Dahl:</strong> Feuerstoß/Auto/Einzelschuss‑Umschalter – flexibel.</li>
+            </ul>
+          </div>
+          <div class="p-4 bg-white border rounded-xl">
+            <h3 class="font-semibold">Schild‑, Granaten‑ & Artefakt‑Basics</h3>
+            <ul class="list-disc pl-6 text-sm mt-2 space-y-1">
+              <li><strong>Schilde:</strong> Kapazität vs. Aufladegeschw., Nova‑/Amp‑Effekte für Offensiv‑Spieler.</li>
+              <li><strong>Granaten:</strong> MIRV/Clustering für Flächen, Singularität zum Gruppieren, Transfusion für Heilung.</li>
+              <li><strong>Artefakte/Klassenmods:</strong> Verstärken Waffengattungen, Elemente oder Skill‑Zeilen. Achte auf <em>Rolls/Anpassungen</em>.</li>
+            </ul>
+          </div>
+        </div>
+        <details class="spoiler mt-4 rounded-xl p-4 note">
+          <summary class="font-semibold">Element‑Matchups (Merkliste)</summary>
+          <div class="grid grid-auto gap-3 mt-3 text-sm">
+            <div class="p-3 rounded-lg bg-white border"><p>🔥 Feuer → HP (rot) sehr gut, gegen Schilde schlecht.</p></div>
+            <div class="p-3 rounded-lg bg-white border"><p>⚡ Schock → Schilde (blau) top, neutral vs. Rüstung.</p></div>
+            <div class="p-3 rounded-lg bg-white border"><p>☣️ Korrosion → Rüstung (gelb) top, ok vs. Schilde.</p></div>
+            <div class="p-3 rounded-lg bg-white border"><p>❄️ Kryo → Verlangsamt/Einfriert; gratis Crit‑Fenster.</p></div>
+            <div class="p-3 rounded-lg bg-white border"><p>☢️ Strahlung/Schlacke‑ähnlich → Debuffs/Kettenexplosionen.</p></div>
+          </div>
+        </details>
+      </div>
+
+      <!-- Inventory & Economy -->
+      <div class="card rounded-2xl p-6 shadow" id="inventar">
+        <h2 class="text-2xl md:text-3xl font-bold">Inventar, SDUs & Wirtschaft</h2>
+        <span class="heading-underline"></span>
+        <div class="prose text-gray-700 mt-4">
+          <ul class="list-disc pl-6 space-y-2">
+            <li><strong>SDUs priorisieren:</strong> Rucksack, Munition deiner Hauptwaffengattung, Granaten, Bankplätze.</li>
+            <li><strong>Verkaufen vs. Zerlegen:</strong> Frühes Spiel: verkaufen für SDUs. Später: Teile/Material für Crafting/Upgrades (falls verfügbar) sparen.</li>
+            <li><strong>Vending‑Routinen:</strong> Nach jedem Boss: Shop refreshen, nach Anointments/Perks scannen.</li>
+            <li><strong>Rare Währungen:</strong> Eridium‑/Seraph‑ähnliche Währungen für kosmetische/legendäre Käufe aufheben.</li>
+            <li><strong>Golden Keys / SHiFT:</strong> Codes regelmäßig einlösen – skalieren mit deinem Level.</li>
+          </ul>
+        </div>
+        <div class="rounded-xl warn p-4 mt-3 text-sm">
+          <p class="font-semibold">Achtung – Power‑Spikes</p>
+          <p>Öffne goldene Kisten erst nach Level‑Sprung (z. B. 10/20/30) oder vor einem schweren Boss, um maximalen Nutzen zu haben.</p>
+        </div>
+      </div>
+
+      <!-- Missions & Leveling Route -->
+      <div class="card rounded-2xl p-6 shadow" id="missionen">
+        <h2 class="text-2xl md:text-3xl font-bold">Missionen & Level‑Route</h2>
+        <span class="heading-underline"></span>
+        <div class="grid gap-4 md:grid-cols-3 mt-4 text-sm">
+          <div class="p-4 bg-white border rounded-xl">
+            <p class="font-semibold">Frühspiel (1–10)</p>
+            <p>Nebenquests in Startzonen komplettieren; erkunde für Schnellreisepunkte & Crew‑Challenges (für dauerhafte Boni).</p>
+          </div>
+          <div class="p-4 bg-white border rounded-xl">
+            <p class="font-semibold">Midgame (11–25)</p>
+            <p>Story pushen, neue Biome freischalten, Bosse für erste Legendaries farmen.</p>
+          </div>
+          <div class="p-4 bg-white border rounded-xl">
+            <p class="font-semibold">Spätspiel (26–Max)</p>
+            <p>Schwierigkeiten hochstellen, spezialisierte Nebenquests für Build‑Kernteile.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vehicles & Travel -->
+      <div class="card rounded-2xl p-6 shadow" id="fahrzeuge">
+        <h2 class="text-2xl md:text-3xl font-bold">Fahrzeuge & Reisen</h2>
+        <span class="heading-underline"></span>
+        <div class="space-y-3 mt-4">
+          <div class="flex items-start gap-3 p-4 rounded-xl bg-[#e6e6e6]"><span class="text-2xl">🚗</span><p><strong>Fahrzeug‑Management:</strong> Teile scannen, Varianten freischalten, Catch‑A‑Ride für Reparaturen & Loadouts nutzen.</p></div>
+          <div class="flex items-start gap-3 p-4 rounded-xl bg-[#e6e6e6]"><span class="text-2xl">💨</span><p><strong>Fast‑Travel & Autosave:</strong> Setze Warp‑Punkte; nach Bosskills sofort zum Eingang zurück für schnelle Wiederholungen.</p></div>
+        </div>
+      </div>
+
+      <!-- Co-op -->
+      <div class="card rounded-2xl p-6 shadow" id="coop">
+        <h2 class="text-2xl md:text-3xl font-bold">Koop, Handel & Cross‑Save</h2>
+        <span class="heading-underline"></span>
+        <ul class="list-disc pl-6 text-sm text-gray-700 mt-3 space-y-2">
+          <li><strong>Instanzierter Loot</strong> verhindert Streitereien – dennoch: sprecht vorher Loot‑Regeln ab.</li>
+          <li><strong>Rollenaufteilung:</strong> 1x Boss‑Burst, 1x Add‑Clear, 1x Support/CC – skaliert in jeder Aktivität.</li>
+          <li><strong>Handel:</strong> Nutzt Bank/Handel für Set‑Fertigmachen; achtet auf Level‑Sync.</li>
+          <li><strong>Cross‑Save/Plattform:</strong> Cloud‑Sicherung aktivieren; Controller‑Layouts synchron halten.</li>
+        </ul>
+      </div>
+
+      <!-- Builds -->
+      <div class="card rounded-2xl p-6 shadow" id="builds">
+        <h2 class="text-2xl md:text-3xl font-bold">Build‑Beispiele (generisch)</h2>
+        <span class="heading-underline"></span>
+        <div class="grid grid-auto gap-4 mt-4">
+          <div class="p-4 bg-white border rounded-xl">
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold">Crit‑Sturmgewehr (Agility/Power)</h3>
+              <span class="chip tag">Einsteiger‑freundlich</span>
+            </div>
+            <p class="text-sm mt-2">Fokus auf Crit‑Multiplikator, Feuerrate, Handling. Schild: Amp‑Schild; Granaten: MIRV/Explosiv.</p>
+            <ul class="list-disc pl-6 text-sm mt-2 space-y-1">
+              <li><strong>Schlüssel‑Perks:</strong> +Crit, +Reload nach Kill, Ult‑Cooldown.</li>
+              <li><strong>Waffen:</strong> Jakobs/Vladof AR, Dahl‑SMG als Backup.</li>
+              <li><strong>Elemente:</strong> Schock + Korrosion für universelle Abdeckung.</li>
+            </ul>
+          </div>
+          <div class="p-4 bg-white border rounded-xl">
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold">Kryo‑Kontrolle (Survival/Utility)</h3>
+              <span class="chip tag">Boss‑Setup</span>
+            </div>
+            <p class="text-sm mt-2">Kryo zum Einfrieren → Gratis‑Crits; Singularitätsgranaten zum Gruppieren, dann Boss‑Burst.</p>
+            <ul class="list-disc pl-6 text-sm mt-2 space-y-1">
+              <li><strong>Schlüssel‑Perks:</strong> Element‑Chance, CC‑Dauer, Team‑Utility.</li>
+              <li><strong>Waffen:</strong> Maliwan‑Kryo SMG/Beam, Torgue Explosiv.</li>
+            </ul>
+          </div>
+          <div class="p-4 bg-white border rounded-xl">
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold">Explosiv‑Bosskiller (Power‑Focus)</h3>
+              <span class="chip tag">Burst‑DPS</span>
+            </div>
+            <p class="text-sm mt-2">Torgue‑Klebebomben stapeln → Zündung mit Ult/Granate. Amp‑Schild + Nachlade‑Buffs.</p>
+            <ul class="list-disc pl-6 text-sm mt-2 space-y-1">
+              <li><strong>Schlüssel‑Perks:</strong> Explosiv‑Schaden, Mag‑Größe, Nachlade‑Tempo.</li>
+              <li><strong>Waffen:</strong> Torgue AR/Shotgun, Vladof Sekundärlauf.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Farm Routes & Bosses -->
+      <div class="card rounded-2xl p-6 shadow" id="farm">
+        <h2 class="text-2xl md:text-3xl font-bold">Farmrouten & Bosse (Allgemein)</h2>
+        <span class="heading-underline"></span>
+        <p class="text-gray-700 mt-3">Nutze Schnellreise zum Boss‑Eingang → Kill → Reload → Shop‑Check → Wiederholen. Achte auf Tages‑/Wochen‑Events (erhöhte Drop‑Raten).</p>
+        <div class="grid grid-auto gap-3 mt-3 text-sm">
+          <div class="p-4 bg-white border rounded-xl"><p class="font-semibold">Mobbing‑Zonen</p><p>Dichte Gegnergruppen für XP/Token. Wähle Ele‑Konter und AoE‑Granaten.</p></div>
+          <div class="p-4 bg-white border rounded-xl"><p class="font-semibold">Boss‑Korridore</p><p>Kurz vor Respawnpunkten parken. Builds auf Single‑Target optimieren.</p></div>
+          <div class="p-4 bg-white border rounded-xl"><p class="font-semibold">Rare Spawn‑Loops</p><p>Mehrere seltene Gegner in einer Route kombinieren; Map‑Rundlauf in 5–8 Minuten.</p></div>
+        </div>
+        <details class="spoiler mt-4 rounded-xl p-4 note">
+          <summary class="font-semibold">Drop‑Optimierung</summary>
+          <ul class="list-disc pl-6 mt-2 space-y-1 text-sm">
+            <li>Spiele auf höherer Schwierigkeit, wenn Time‑to‑Kill akzeptabel bleibt.</li>
+            <li>Nutze Luck‑/Seltenheits‑Boni aus Artefakten/Events.</li>
+            <li>Leere das Inventar vor Farm‑Sessions; filtere nach Itemlevel & Rolls.</li>
+          </ul>
+        </details>
+      </div>
+
+      <!-- Endgame Systems -->
+      <div class="card rounded-2xl p-6 shadow" id="endgame">
+        <h2 class="text-2xl md:text-3xl font-bold">Endgame‑Systeme (generisch)</h2>
+        <span class="heading-underline"></span>
+        <div class="prose text-gray-700 mt-3">
+          <ul class="list-disc pl-6 space-y-2">
+            <li><strong>Skalierende Schwierigkeitsgrade/Mayhem‑ähnlich:</strong> Mehr Gegner‑HP, bessere Drop‑Chancen; wähle Modifikatoren, die deinem Build liegen.</li>
+            <li><strong>Rogue‑/Arenamodi:</strong> Wellenbasierte Aktivitäten für gezielte Belohnungen (Schilde, Granaten, Artefakte).</li>
+            <li><strong>Rang/Token‑Systeme:</strong> Dauerhafte Minibonis (z. B. +Magazin, +Cooldown). Gezielt in Schwächen investieren.</li>
+            <li><strong>Rotierende Events:</strong> Wochenmodifikatoren, Mini‑Raids, erhöhte Legendär‑Raten in spezifischen Gebieten.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- QoL -->
+      <div class="card rounded-2xl p-6 shadow" id="quality">
+        <h2 class="text-2xl md:text-3xl font-bold">Quality‑of‑Life Tricks</h2>
+        <span class="heading-underline"></span>
+        <ul class="list-disc pl-6 text-sm text-gray-700 mt-3 space-y-2">
+          <li><strong>Favoriten/Lock:</strong> Gute Items sperren, Auto‑Sortierung nach Seltenheit aktivieren.</li>
+          <li><strong>Bewegungs‑Tech:</strong> Slide‑Cancel, Mantle‑Jumps, Nahkampf‑Reset nach Nachladen.</li>
+          <li><strong>HUD‑Anpassung:</strong> Schadensticker kleiner, Crit‑Farbe auffälliger.</li>
+          <li><strong>Fotomodus:</strong> Screens für Beweis‑Drops und Build‑Doku.</li>
+        </ul>
+      </div>
+
+      <!-- FAQ -->
+      <div class="card rounded-2xl p-6 shadow" id="faq">
+        <h2 class="text-2xl md:text-3xl font-bold">FAQ</h2>
+        <span class="heading-underline"></span>
+        <div class="mt-4 grid grid-auto gap-3 text-sm">
+          <div class="p-4 bg-white border rounded-xl">
+            <p class="font-semibold">Wann lohnen Golden Keys?</p>
+            <p>Bei Level‑Schwellen (10/20/30/Max) oder wenn dir Kernslots fehlen (Schild/Artefakt/Granate). Nicht bei vollem Inventar nutzen.</p>
+          </div>
+          <div class="p-4 bg-white border rounded-xl">
+            <p class="font-semibold">Welche Elemente decken alles ab?</p>
+            <p>Schock + Korrosion + Feuer. Optional Kryo für Kontrolle.</p>
+          </div>
+          <div class="p-4 bg-white border rounded-xl">
+            <p class="font-semibold">Wie erkenne ich gute Rolls?</p>
+            <p>Affixe, die deine Waffengattung & das Hauptelement buffen (Crit/Feuerrate/Magazin/CDR). Teste TTK auf Dummy/Basisgegnern.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="text-center text-gray-500 text-xs">
+        <p>Fan‑Guide – generische Tipps basierend auf Borderlands‑Erfahrung. Passe Empfehlungen an reale BL4‑Mechaniken deiner Version an.</p>
+        <p class="mt-1"><a href="#top" class="underline">Zurück nach oben</a></p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

@@ -53,8 +53,9 @@
             background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-size: 200% 200%;
             margin-bottom: 1rem;
-            animation: shimmer 2s infinite;
+            animation: shimmer 3s ease-in-out infinite;
         }
 
         .hero-subtitle {
@@ -79,6 +80,7 @@
             transition: var(--transition);
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .stat-card::before {
@@ -97,7 +99,7 @@
         }
 
         .stat-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-5px) scale(1.02);
         }
 
         .stat-number {
@@ -105,12 +107,58 @@
             font-weight: 700;
             color: var(--primary-color);
             display: block;
+            animation: countUp 2s ease-out;
         }
 
         .stat-label {
             color: var(--text-light);
             font-size: 0.9rem;
             margin-top: 0.5rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px;
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-tab {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            transition: var(--transition);
+            z-index: -1;
+        }
+
+        .nav-tab:hover::before,
+        .nav-tab.active::before {
+            left: 0;
+        }
+
+        .nav-tab:hover,
+        .nav-tab.active {
+            color: white;
+            transform: translateY(-2px);
         }
 
         .content-section {
@@ -122,14 +170,11 @@
             box-shadow: var(--card-shadow);
             animation: fadeInUp 0.8s ease-out;
             animation-fill-mode: both;
+            display: none;
         }
 
-        .content-section:nth-child(even) {
-            animation-delay: 0.1s;
-        }
-
-        .content-section:nth-child(odd) {
-            animation-delay: 0.2s;
+        .content-section.active {
+            display: block;
         }
 
         h2 {
@@ -150,6 +195,7 @@
             height: 2rem;
             background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
             border-radius: 2px;
+            animation: pulse 2s infinite;
         }
 
         h3 {
@@ -177,6 +223,7 @@
             border-radius: 10px;
             border-left: 4px solid var(--accent-color);
             margin: 1rem 0;
+            animation: slideInLeft 0.6s ease-out;
         }
 
         .tech-grid {
@@ -193,6 +240,7 @@
             transition: var(--transition);
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .tech-card::after {
@@ -212,184 +260,8 @@
         }
 
         .tech-card:hover {
-            transform: scale(1.02);
+            transform: scale(1.02) rotateZ(1deg);
             box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-        }
-
-        .timeline {
-            position: relative;
-            padding-left: 2rem;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 0.5rem;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 2rem;
-            padding-left: 1.5rem;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -0.5rem;
-            top: 0.5rem;
-            width: 12px;
-            height: 12px;
-            background: var(--accent-color);
-            border-radius: 50%;
-            box-shadow: 0 0 0 4px white, 0 0 0 6px var(--accent-color);
-        }
-
-        .timeline-year {
-            font-weight: 700;
-            color: var(--primary-color);
-            font-size: 1.1rem;
-        }
-
-        .market-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2rem 0;
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-        }
-
-        .market-table th {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 1rem;
-            font-weight: 600;
-            text-align: left;
-        }
-
-        .market-table td {
-            padding: 1rem;
-            border-bottom: 1px solid #eee;
-            transition: var(--transition);
-        }
-
-        .market-table tr:hover td {
-            background: rgba(0,102,204,0.05);
-        }
-
-        .progress-bar {
-            background: #e0e0e0;
-            border-radius: 10px;
-            height: 8px;
-            overflow: hidden;
-            margin: 0.5rem 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            border-radius: 10px;
-            transition: width 1s ease-out;
-        }
-
-        .company-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .company-card {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .company-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-        }
-
-        .company-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-        }
-
-        .company-logo {
-            width: 60px;
-            height: 60px;
-            background: var(--primary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .risk-alert {
-            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
-            border: 1px solid #ffeaa7;
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin: 1rem 0;
-            position: relative;
-        }
-
-        .risk-alert::before {
-            content: '⚠️';
-            font-size: 1.5rem;
-            margin-right: 0.5rem;
-        }
-
-        .future-trend {
-            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin: 1rem 0;
-            position: relative;
-        }
-
-        .future-trend::before {
-            content: '🚀';
-            font-size: 1.5rem;
-            margin-right: 0.5rem;
-        }
-
-        .quote-section {
-            background: linear-gradient(135deg, #f3e5f5, #e1bee7);
-            border-radius: 15px;
-            padding: 2rem;
-            margin: 2rem 0;
-            position: relative;
-            font-style: italic;
-        }
-
-        .quote-section::before {
-            content: '"';
-            font-size: 4rem;
-            color: var(--primary-color);
-            position: absolute;
-            top: 0.5rem;
-            left: 1rem;
-            opacity: 0.3;
         }
 
         .data-viz {
@@ -412,7 +284,7 @@
         }
 
         .chart-bar {
-            width: 40px;
+            width: 60px;
             background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
             border-radius: 5px 5px 0 0;
             transition: var(--transition);
@@ -422,93 +294,172 @@
             align-items: center;
             color: white;
             font-weight: 600;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             text-align: center;
+            cursor: pointer;
+            animation: growUp 2s ease-out;
+            animation-delay: var(--delay, 0s);
         }
 
         .chart-bar:hover {
             transform: scale(1.05);
-            filter: brightness(1.1);
+            filter: brightness(1.2);
         }
 
         .chart-label {
             margin-top: 0.5rem;
             color: var(--text-dark);
             font-size: 0.8rem;
-            transform: rotate(-45deg);
             white-space: nowrap;
         }
 
-        .nav-tabs {
-            display: flex;
-            background: rgba(255,255,255,0.9);
+        .competitive-analysis {
+            background: white;
             border-radius: 15px;
-            padding: 0.5rem;
-            margin-bottom: 2rem;
+            padding: 2rem;
+            margin: 2rem 0;
             box-shadow: var(--card-shadow);
         }
 
-        .nav-tab {
-            flex: 1;
-            text-align: center;
-            padding: 1rem;
-            border-radius: 10px;
-            cursor: pointer;
+        .competitor-bar {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+            padding: 0.5rem;
+            border-radius: 8px;
             transition: var(--transition);
+        }
+
+        .competitor-bar:hover {
+            background: rgba(0,102,204,0.05);
+            transform: translateX(5px);
+        }
+
+        .competitor-name {
+            width: 120px;
             font-weight: 600;
         }
 
-        .nav-tab:hover {
-            background: var(--primary-color);
-            color: white;
+        .market-share-bar {
+            flex: 1;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            margin: 0 1rem;
+            overflow: hidden;
+            position: relative;
         }
 
-        .innovation-grid {
+        .share-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 15px;
+            transition: width 3s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            animation: fillBar 3s ease-out;
+        }
+
+        .company-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
             margin: 2rem 0;
         }
 
-        .innovation-item {
+        .company-card {
             background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            border-left: 4px solid var(--secondary-color);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
             cursor: pointer;
         }
 
-        .innovation-item:hover {
-            transform: translateX(5px);
-            box-shadow: var(--card-shadow);
+        .company-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
         }
 
-        .footer {
-            background: rgba(0,0,0,0.8);
+        .company-card:hover {
+            transform: translateY(-8px) rotateX(5deg);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
-            text-align: center;
-            padding: 2rem;
-            border-radius: 20px;
-            margin-top: 3rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            animation: bounce 2s infinite;
         }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            margin: 0.5rem 0;
         }
 
-        @keyframes shimmer {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 10px;
+            transition: width 2s ease-out;
+            animation: fillProgress 2s ease-out;
         }
 
-        @media (max-width: 768px) {
-            .container { padding: 1rem; }
-            .hero { padding: 2rem; }
-            .hero h1 { font-size: 2rem; }
-            .stats-grid { grid-template-columns: 1fr; }
-            .nav-tabs { flex-direction: column; }
+        .future-trend {
+            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            position: relative;
+            transform: translateX(-20px);
+            animation: slideInRight 0.6s ease-out forwards;
+        }
+
+        .future-trend::before {
+            content: '🚀';
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+            animation: rocket 2s ease-in-out infinite;
+        }
+
+        .risk-alert {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border: 1px solid #ffeaa7;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            position: relative;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .risk-alert::before {
+            content: '⚠️';
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+            animation: warning 1s ease-in-out infinite;
         }
 
         .breakthrough-section {
@@ -532,11 +483,6 @@
             animation: rotate 20s linear infinite;
         }
 
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
         .impact-metrics {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -550,55 +496,176 @@
             border-radius: 10px;
             text-align: center;
             backdrop-filter: blur(10px);
+            transition: var(--transition);
+            cursor: pointer;
         }
 
-        .competitive-analysis {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
+        .metric-item:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.05);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 1.5rem;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+            animation-delay: var(--delay, 0s);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -0.5rem;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px white, 0 0 0 6px var(--accent-color);
+            animation: pulse 2s infinite;
+        }
+
+        .timeline-year {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .innovation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
             margin: 2rem 0;
+        }
+
+        .innovation-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--secondary-color);
+            transition: var(--transition);
+            cursor: pointer;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+            animation-delay: var(--delay, 0s);
+        }
+
+        .innovation-item:hover {
+            transform: translateX(10px);
             box-shadow: var(--card-shadow);
         }
 
-        .competitor-bar {
-            display: flex;
-            align-items: center;
+        .geopolitics-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
             margin: 1rem 0;
-            padding: 0.5rem;
-            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            border-left: 4px solid var(--accent-color);
             transition: var(--transition);
         }
 
-        .competitor-bar:hover {
-            background: rgba(0,102,204,0.05);
+        .geopolitics-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
         }
 
-        .competitor-name {
-            width: 120px;
-            font-weight: 600;
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .market-share-bar {
-            flex: 1;
-            height: 25px;
-            background: #e0e0e0;
-            border-radius: 12px;
-            margin: 0 1rem;
-            overflow: hidden;
-            position: relative;
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
-        .share-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            border-radius: 12px;
-            transition: width 2s ease-out;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 0.8rem;
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes growUp {
+            from { height: 0; }
+            to { height: var(--target-height); }
+        }
+
+        @keyframes fillBar {
+            from { width: 0; }
+            to { width: var(--target-width); }
+        }
+
+        @keyframes fillProgress {
+            from { width: 0; }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes rocket {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes warning {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .hero { padding: 2rem; }
+            .hero h1 { font-size: 2rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .nav-tabs { flex-direction: column; }
+            .chart-bar { width: 40px; }
         }
     </style>
 </head>
@@ -609,19 +676,19 @@
             <p class="hero-subtitle">Wie deutsche Präzision die Chipindustrie transformiert</p>
             
             <div class="stats-grid">
-                <div class="stat-card">
+                <div class="stat-card" onclick="showTooltip(this, 'Extrem ultraviolettes Licht - 14x kürzer als sichtbares Licht')">
                     <span class="stat-number">13.5</span>
                     <span class="stat-label">nm Wellenlänge</span>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" onclick="showTooltip(this, 'ASML dominiert den EUV-Markt praktisch vollständig')">
                     <span class="stat-number">95%</span>
                     <span class="stat-label">ASML Marktanteil</span>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" onclick="showTooltip(this, 'ZEISS ist der einzige Anbieter für EUV-Optiken weltweit')">
                     <span class="stat-number">100%</span>
                     <span class="stat-label">ZEISS EUV-Spiegel</span>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" onclick="showTooltip(this, 'Geschätzter Marktwert für 2025 mit weiterem Wachstum')">
                     <span class="stat-number">11.3</span>
                     <span class="stat-label">Mrd. USD Marktvolumen</span>
                 </div>
@@ -629,13 +696,14 @@
         </div>
 
         <div class="nav-tabs">
-            <div class="nav-tab">Technologie</div>
-            <div class="nav-tab">Marktanalyse</div>
-            <div class="nav-tab">Zukunftstrends</div>
-            <div class="nav-tab">Geopolitik</div>
+            <div class="nav-tab active" onclick="showSection('technologie')">💡 Technologie</div>
+            <div class="nav-tab" onclick="showSection('markt')">📈 Marktanalyse</div>
+            <div class="nav-tab" onclick="showSection('zukunft')">🚀 Zukunftstrends</div>
+            <div class="nav-tab" onclick="showSection('geopolitik')">🌍 Geopolitik</div>
         </div>
 
-        <div class="content-section">
+        <!-- Technologie Section -->
+        <div class="content-section active" id="technologie">
             <h2>💡 Technologische Revolution im Detail</h2>
             
             <div class="highlight">
@@ -646,77 +714,99 @@
             <p>EUV-Lithografie nutzt extrem ultraviolettes Licht mit einer Wellenlänge von nur 13,5 Nanometern – etwa 14-mal kürzer als sichtbares Licht. Diese winzige Wellenlänge ermöglicht es, Strukturen auf Silizium-Wafern zu belichten, die kleiner als 7 Nanometer sind. Zum Vergleich: Ein menschliches Haar ist etwa 10.000-mal dicker als diese Strukturen.</p>
 
             <div class="tech-grid">
-                <div class="tech-card">
+                <div class="tech-card" onclick="animateCard(this)">
                     <h4>🔬 Spiegelpräzision</h4>
                     <p>Jeder ZEISS EUV-Spiegel muss auf weniger als 0,2 Nanometer genau poliert werden – das entspricht etwa einem Tausendstel der Breite eines Atoms. Diese Präzision wird durch jahrzehntelange Erfahrung in der Optikfertigung erreicht.</p>
                 </div>
-                <div class="tech-card">
+                <div class="tech-card" onclick="animateCard(this)">
                     <h4>⚡ Lichtgeneration</h4>
                     <p>Das EUV-Licht entsteht durch Beschuss von Zinntröpfchen mit einem 20-Kilowatt-CO₂-Laser. Diese Plasmaquelle erzeugt über 50.000 Pulse pro Sekunde bei Temperaturen von über 200.000°C.</p>
                 </div>
-                <div class="tech-card">
+                <div class="tech-card" onclick="animateCard(this)">
                     <h4>🎯 Bildprojektion</h4>
                     <p>Ein komplexes System aus bis zu 11 Spiegeln projiziert die Chipstrukturen mit 4-facher Verkleinerung auf den Wafer. Jede Belichtung dauert nur Millisekunden, kann aber Milliarden von Transistoren gleichzeitig erzeugen.</p>
                 </div>
             </div>
+
+            <h3>Breakthrough-Technologien</h3>
+            <div class="breakthrough-section">
+                <h3 style="color: white;">🔬 High-NA EUV: Die nächste Generation</h3>
+                <div class="impact-metrics">
+                    <div class="metric-item" onclick="pulseAnimation(this)">
+                        <h4>0.55 NA</h4>
+                        <p>Höhere Auflösung</p>
+                    </div>
+                    <div class="metric-item" onclick="pulseAnimation(this)">
+                        <h4>2nm & kleiner</h4>
+                        <p>Zukünftige Nodes</p>
+                    </div>
+                    <div class="metric-item" onclick="pulseAnimation(this)">
+                        <h4>8x bessere</h4>
+                        <p>Strukturauflösung</p>
+                    </div>
+                    <div class="metric-item" onclick="pulseAnimation(this)">
+                        <h4>2025+</h4>
+                        <p>Markteinführung</p>
+                    </div>
+                </div>
+                <p style="color: white; opacity: 0.9;">High-NA EUV-Systeme verwenden größere Spiegel und erreichen eine numerische Apertur von 0,55 statt 0,33, wodurch die Auflösung um 70% verbessert wird.</p>
+            </div>
         </div>
 
-        <div class="content-section">
+        <!-- Marktanalyse Section -->
+        <div class="content-section" id="markt">
             <h2>📈 Erweiterte Marktanalyse 2025</h2>
             
             <div class="data-viz">
                 <h3>Marktwachstum EUV-Lithografie</h3>
                 <div class="growth-chart">
-                    <div class="chart-bar" style="height: 40%;">
+                    <div class="chart-bar" style="--target-height: 40%; --delay: 0.2s; height: 40%;" onclick="showBarDetails(this, '2022: 8.0 Mrd. USD')">
                         <span>8.0</span>
                         <div class="chart-label">2022</div>
                     </div>
-                    <div class="chart-bar" style="height: 60%;">
+                    <div class="chart-bar" style="--target-height: 60%; --delay: 0.4s; height: 60%;" onclick="showBarDetails(this, '2025: 11.3 Mrd. USD (aktuell)')">
                         <span>11.3</span>
                         <div class="chart-label">2025</div>
                     </div>
-                    <div class="chart-bar" style="height: 80%;">
+                    <div class="chart-bar" style="--target-height: 80%; --delay: 0.6s; height: 80%;" onclick="showBarDetails(this, '2028: 18.2 Mrd. USD (Prognose)')">
                         <span>18.2</span>
                         <div class="chart-label">2028</div>
                     </div>
-                    <div class="chart-bar" style="height: 100%;">
+                    <div class="chart-bar" style="--target-height: 100%; --delay: 0.8s; height: 100%;" onclick="showBarDetails(this, '2029: 22.7 Mrd. USD (Prognose)')">
                         <span>22.7</span>
                         <div class="chart-label">2029</div>
                     </div>
                 </div>
-                <p style="text-align: center; color: var(--text-light); font-size: 0.9rem;">Marktvolumen in Milliarden USD</p>
+                <p style="text-align: center; color: var(--text-light); font-size: 0.9rem;">Marktvolumen in Milliarden USD (klicken Sie auf die Balken für Details)</p>
             </div>
 
-            <h3>Aktualisierte Marktverteilung 2025</h3>
+            <h3>Marktverteilung 2025</h3>
             <div class="competitive-analysis">
                 <div class="competitor-bar">
                     <div class="competitor-name">ASML</div>
                     <div class="market-share-bar">
-                        <div class="share-fill" style="width: 95%;">95%</div>
+                        <div class="share-fill" style="--target-width: 95%; width: 95%;">95%</div>
                     </div>
                 </div>
                 <div class="competitor-bar">
                     <div class="competitor-name">Canon</div>
                     <div class="market-share-bar">
-                        <div class="share-fill" style="width: 3%;">3%</div>
+                        <div class="share-fill" style="--target-width: 3%; width: 3%;">3%</div>
                     </div>
                 </div>
                 <div class="competitor-bar">
                     <div class="competitor-name">Nikon</div>
                     <div class="market-share-bar">
-                        <div class="share-fill" style="width: 2%;">2%</div>
+                        <div class="share-fill" style="--target-width: 2%; width: 2%;">2%</div>
                     </div>
                 </div>
             </div>
 
             <p><strong>Marktdynamik:</strong> Der globale EUV-Lithografie-Markt wurde 2025 auf 11,26 Milliarden USD geschätzt und soll mit einer CAGR von 20,1% von 2025 bis 2032 wachsen. Andere Prognosen sehen einen Anstieg von 12,18 Milliarden USD in 2024 auf 22,69 Milliarden USD bis 2029 bei einer CAGR von 13,2%.</p>
-        </div>
 
-        <div class="content-section">
-            <h2>🏢 Unternehmensprofile & Strategien</h2>
-            
+            <h3>Unternehmensprofile & Strategien</h3>
             <div class="company-cards">
-                <div class="company-card">
+                <div class="company-card" onclick="expandCard(this)">
                     <div class="company-logo">Z</div>
                     <h3>ZEISS SMT</h3>
                     <p><strong>Position:</strong> Monopolist für EUV-Optiken</p>
@@ -729,7 +819,7 @@
                     </div>
                 </div>
 
-                <div class="company-card">
+                <div class="company-card" onclick="expandCard(this)">
                     <div class="company-logo">A</div>
                     <h3>ASML Holding</h3>
                     <p><strong>Position:</strong> Einziger EUV-Maschinenhersteller</p>
@@ -742,7 +832,7 @@
                     </div>
                 </div>
 
-                <div class="company-card">
+                <div class="company-card" onclick="expandCard(this)">
                     <div class="company-logo">T</div>
                     <h3>TSMC</h3>
                     <p><strong>Position:</strong> Größter EUV-Nutzer</p>
@@ -755,7 +845,7 @@
                     </div>
                 </div>
 
-                <div class="company-card">
+                <div class="company-card" onclick="expandCard(this)">
                     <div class="company-logo">S</div>
                     <h3>Samsung</h3>
                     <p><strong>Position:</strong> Zweitgrößter EUV-Nutzer</p>
@@ -767,12 +857,470 @@
                         <div class="progress-fill" style="width: 18%;"></div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <div class="company-card">
-                    <div class="company-logo">I</div>
-                    <h3>Intel</h3>
-                    <p><strong>Position:</strong> Aufholender EUV-Nutzer</p>
-                    <p><strong>Umsatz 2024:</strong> 63 Mrd. USD</p>
-                    <p><strong>EUV-Systeme:</strong> 40+ Maschinen</p>
-                    <p><strong>Technologie:</strong> Intel 4, Intel 3, Intel 20A</p>
-                    <p><strong>CapEx 2025:</strong> 25 Mrd.
+        <!-- Zukunftstrends Section -->
+        <div class="content-section" id="zukunft">
+            <h2>🚀 Zukunftstrends & Innovationen</h2>
+
+            <div class="future-trend">
+                <h4>🔬 High-NA EUV Revolution</h4>
+                <p><strong>Timeline:</strong> 2025-2027 erste Systeme, Massenproduktion ab 2028</p>
+                <p><strong>Impact:</strong> Ermöglicht 2nm und 1.4nm Prozesse, 70% höhere Auflösung</p>
+                <p><strong>Investment:</strong> TSMC plant 40+ Mrd. USD für neue Fabs</p>
+            </div>
+
+            <div class="future-trend">
+                <h4>⚡ Anamorphic High-NA</h4>
+                <p><strong>Innovation:</strong> Verschiedene NA-Werte für X- und Y-Richtung</p>
+                <p><strong>Vorteil:</strong> Optimierte Auflösung für spezifische Chipdesigns</p>
+                <p><strong>Status:</strong> In Entwicklung bei ZEISS/ASML</p>
+            </div>
+
+            <div class="future-trend">
+                <h4>🌐 Distributed Manufacturing</h4>
+                <p><strong>Trend:</strong> Regionalisierung der Chipproduktion</p>
+                <p><strong>Treiber:</strong> Geopolitische Spannungen, Versorgungssicherheit</p>
+                <p><strong>Impact:</strong> Mehr EUV-Fabs in USA, EU, Japan</p>
+            </div>
+
+            <h3>Technologie-Roadmap</h3>
+            <div class="timeline">
+                <div class="timeline-item" style="--delay: 0.2s;">
+                    <div class="timeline-year">2025</div>
+                    <h4>High-NA EUV Pilotproduktion</h4>
+                    <p>Erste High-NA Systeme bei TSMC und Intel, 2nm Prozessvalidierung</p>
+                </div>
+                <div class="timeline-item" style="--delay: 0.4s;">
+                    <div class="timeline-year">2026-2027</div>
+                    <h4>Volume High-NA Rollout</h4>
+                    <p>Massenproduktion beginnt, Samsung startet 2nm GAA</p>
+                </div>
+                <div class="timeline-item" style="--delay: 0.6s;">
+                    <div class="timeline-year">2028-2029</div>
+                    <h4>1.4nm Node Development</h4>
+                    <p>Next-Gen Prozesse, verbesserte Yield-Raten</p>
+                </div>
+                <div class="timeline-item" style="--delay: 0.8s;">
+                    <div class="timeline-year">2030+</div>
+                    <h4>Beyond Silicon</h4>
+                    <p>Neue Materialien, 3D-Integration, Quantum Computing</p>
+                </div>
+            </div>
+
+            <h3>Emerging Technologies</h3>
+            <div class="innovation-grid">
+                <div class="innovation-item" style="--delay: 0.1s;" onclick="highlightInnovation(this)">
+                    <h4>🔮 Hyper-NA EUV (0.75)</h4>
+                    <p>Forschung für noch höhere numerische Apertur, sub-nm Strukturen möglich</p>
+                </div>
+                <div class="innovation-item" style="--delay: 0.2s;" onclick="highlightInnovation(this)">
+                    <h4>🧊 Cryogenic Processing</h4>
+                    <p>Kühlung auf -196°C für präzisere Belichtung und weniger thermische Effekte</p>
+                </div>
+                <div class="innovation-item" style="--delay: 0.3s;" onclick="highlightInnovation(this)">
+                    <h4>🤖 AI-Optimized Optics</h4>
+                    <p>KI-gesteuerte Echtzeit-Kalibrierung der Spiegel für perfekte Bildqualität</p>
+                </div>
+                <div class="innovation-item" style="--delay: 0.4s;" onclick="highlightInnovation(this)">
+                    <h4>🌊 Multi-Beam EUV</h4>
+                    <p>Parallel-Belichtung mit mehreren Strahlen für höheren Durchsatz</p>
+                </div>
+                <div class="innovation-item" style="--delay: 0.5s;" onclick="highlightInnovation(this)">
+                    <h4>🔄 Self-Healing Mirrors</h4>
+                    <p>Spiegel mit automatischer Oberflächenregeneration bei Kontamination</p>
+                </div>
+                <div class="innovation-item" style="--delay: 0.6s;" onclick="highlightInnovation(this)">
+                    <h4>⚛️ Quantum Metrology</h4>
+                    <p>Quantensensoren für atomgenaue Positionsmessung der Optiken</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Geopolitik Section -->
+        <div class="content-section" id="geopolitik">
+            <h2>🌍 Geopolitische Dimensionen</h2>
+
+            <div class="risk-alert">
+                <h4>⚠️ Strategische Abhängigkeiten</h4>
+                <p>Die Konzentration der EUV-Technologie bei wenigen europäischen Unternehmen (ASML, ZEISS) schafft kritische Abhängigkeiten für die globale Chipindustrie.</p>
+            </div>
+
+            <h3>Exportkontrollen & Technologietransfer</h3>
+            <div class="geopolitics-card">
+                <h4>🚫 US-Export Controls</h4>
+                <p><strong>Ziel:</strong> Beschränkung chinesischer Zugang zu modernster EUV-Technologie</p>
+                <p><strong>Instrumente:</strong> Entity List, Foreign Direct Product Rule, FDPR</p>
+                <p><strong>Betroffene:</strong> SMIC, Huawei HiSilicon, weitere chinesische Halbleiterfirmen</p>
+                <p><strong>Impact:</strong> China kann aktuell nur DUV-Lithografie (28nm+) einsetzen</p>
+            </div>
+
+            <div class="geopolitics-card">
+                <h4>🇪🇺 EU Strategic Autonomy</h4>
+                <p><strong>Position:</strong> Europa kontrolliert kritische EUV-Infrastruktur</p>
+                <p><strong>Vorteil:</strong> ASML (NL) und ZEISS (DE) sind europäische Unternehmen</p>
+                <p><strong>Dilemma:</strong> Abhängigkeit von US-Komponenten in EUV-Systemen</p>
+                <p><strong>Strategie:</strong> European Chips Act - 43 Mrd. € bis 2030</p>
+            </div>
+
+            <div class="geopolitics-card">
+                <h4>🇨🇳 Chinas Reaktion</h4>
+                <p><strong>Massive Investitionen:</strong> 150+ Mrd. USD in heimische Halbleiterindustrie</p>
+                <p><strong>Alternative Wege:</strong> Fokus auf Chiplet-Architekturen, 3D-Stacking</p>
+                <p><strong>DUV-Optimierung:</strong> Multi-Patterning für 7nm-ähnliche Strukturen</p>
+                <p><strong>Zeitrahmen:</strong> Eigene EUV-Technologie frühestens 2030+</p>
+            </div>
+
+            <h3>Regionale Chipfab-Strategien</h3>
+            <div class="company-cards">
+                <div class="company-card" onclick="expandGeopoliticsCard(this)">
+                    <div class="company-logo">🇺🇸</div>
+                    <h3>USA - CHIPS Act</h3>
+                    <p><strong>Investment:</strong> 52 Mrd. USD Subventionen</p>
+                    <p><strong>Ziele:</strong> TSMC Arizona, Intel Ohio, Samsung Texas</p>
+                    <p><strong>EUV-Systeme:</strong> 60+ neue Maschinen bis 2028</p>
+                    <p><strong>Sicherheitsziel:</strong> 20% der globalen Kapazität</p>
+                </div>
+
+                <div class="company-card" onclick="expandGeopoliticsCard(this)">
+                    <div class="company-logo">🇪🇺</div>
+                    <h3>EU - Chips Act</h3>
+                    <p><strong>Investment:</strong> 43 Mrd. EUR bis 2030</p>
+                    <p><strong>Projekte:</strong> Intel Magdeburg, GlobalFoundries Malta</p>
+                    <p><strong>Vorteil:</strong> Heimat von ASML und ZEISS</p>
+                    <p><strong>Ziel:</strong> 20% Weltmarktanteil bis 2030</p>
+                </div>
+
+                <div class="company-card" onclick="expandGeopoliticsCard(this)">
+                    <div class="company-logo">🇯🇵</div>
+                    <h3>Japan - Rapidus Initiative</h3>
+                    <p><strong>Investment:</strong> 70 Mrd. USD über 10 Jahre</p>
+                    <p><strong>Partner:</strong> TSMC, Sony, Toyota, NTT</p>
+                    <p><strong>Ziel:</strong> 2nm Massenproduktion ab 2027</p>
+                    <p><strong>Standorte:</strong> Kumamoto, Hokkaido</p>
+                </div>
+
+                <div class="company-card" onclick="expandGeopoliticsCard(this)">
+                    <div class="company-logo">🇰🇷</div>
+                    <h3>Südkorea - K-Chips Belt</h3>
+                    <p><strong>Investment:</strong> 450 Mrd. USD bis 2047</p>
+                    <p><strong>Unternehmen:</strong> Samsung, SK Hynix</p>
+                    <p><strong>Strategie:</strong> Memory + Logic Dominance</p>
+                    <p><strong>EUV-Ausbau:</strong> 100+ neue Systeme</p>
+                </div>
+            </div>
+
+            <h3>Technologie-Allianzen</h3>
+            <div class="future-trend">
+                <h4>🤝 Chip 4 Alliance</h4>
+                <p><strong>Mitglieder:</strong> USA, Japan, Südkorea, Taiwan</p>
+                <p><strong>Ziel:</strong> Koordinierte Halbleiterstrategie gegen China</p>
+                <p><strong>Maßnahmen:</strong> Gemeinsame F&E, Exportkontrolle, Lieferkettenresilienz</p>
+            </div>
+
+            <div class="risk-alert">
+                <h4>⚠️ Risikofaktoren 2025+</h4>
+                <ul style="margin-left: 1rem;">
+                    <li>Taiwan-Konflikt könnte 90% der modernen Chipproduktion bedrohen</li>
+                    <li>Verschärfung der US-China Technologie-Entkopplung</li>
+                    <li>Potentielle EU-Regulierung von ASML-Exporten</li>
+                    <li>Ressourcenknappheit bei seltenen Erden für EUV-Komponenten</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state management
+        let currentSection = 'technologie';
+        let animationQueue = [];
+
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAnimations();
+            setupEventListeners();
+        });
+
+        // Section switching functionality
+        function showSection(sectionId) {
+            // Update active tab
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update active content section
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+
+            currentSection = sectionId;
+            
+            // Trigger section-specific animations
+            triggerSectionAnimations(sectionId);
+        }
+
+        // Section-specific animations
+        function triggerSectionAnimations(sectionId) {
+            const section = document.getElementById(sectionId);
+            
+            // Reset and replay animations
+            const animatedElements = section.querySelectorAll('.timeline-item, .innovation-item, .chart-bar');
+            animatedElements.forEach((el, index) => {
+                el.style.animation = 'none';
+                el.offsetHeight; // Trigger reflow
+                el.style.animation = null;
+            });
+
+            // Special animations for specific sections
+            if (sectionId === 'markt') {
+                animateMarketData();
+            } else if (sectionId === 'zukunft') {
+                animateTimeline();
+            } else if (sectionId === 'geopolitik') {
+                animateGeopolitics();
+            }
+        }
+
+        // Market data animations
+        function animateMarketData() {
+            const bars = document.querySelectorAll('.chart-bar');
+            bars.forEach((bar, index) => {
+                setTimeout(() => {
+                    bar.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        bar.style.transform = 'scale(1)';
+                    }, 200);
+                }, index * 200);
+            });
+
+            const shareFills = document.querySelectorAll('.share-fill');
+            shareFills.forEach((fill, index) => {
+                fill.style.width = '0';
+                setTimeout(() => {
+                    fill.style.width = fill.style.getPropertyValue('--target-width') || fill.dataset.width;
+                }, index * 300);
+            });
+        }
+
+        // Timeline animations
+        function animateTimeline() {
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            timelineItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-30px)';
+                setTimeout(() => {
+                    item.style.transition = 'all 0.6s ease-out';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateX(0)';
+                }, index * 200);
+            });
+        }
+
+        // Geopolitics animations
+        function animateGeopolitics() {
+            const geopoliticsCards = document.querySelectorAll('.geopolitics-card');
+            geopoliticsCards.forEach((card, index) => {
+                card.style.transform = 'translateY(20px)';
+                card.style.opacity = '0';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease-out';
+                    card.style.transform = 'translateY(0)';
+                    card.style.opacity = '1';
+                }, index * 150);
+            });
+        }
+
+        // Interactive card animations
+        function animateCard(card) {
+            card.style.transform = 'scale(1.05) rotateZ(2deg)';
+            card.style.boxShadow = '0 20px 40px rgba(0,0,0,0.2)';
+            
+            setTimeout(() => {
+                card.style.transform = 'scale(1) rotateZ(0deg)';
+                card.style.boxShadow = '';
+            }, 300);
+        }
+
+        function expandCard(card) {
+            const allCards = document.querySelectorAll('.company-card');
+            allCards.forEach(c => c.style.transform = '');
+            
+            card.style.transform = 'scale(1.02)';
+            card.style.zIndex = '10';
+            
+            setTimeout(() => {
+                card.style.transform = '';
+                card.style.zIndex = '';
+            }, 2000);
+        }
+
+        function expandGeopoliticsCard(card) {
+            card.style.transform = 'scale(1.02) translateY(-5px)';
+            card.style.boxShadow = '0 25px 50px rgba(0,0,0,0.15)';
+            
+            setTimeout(() => {
+                card.style.transform = '';
+                card.style.boxShadow = '';
+            }, 2000);
+        }
+
+        // Innovation item highlighting
+        function highlightInnovation(item) {
+            item.style.backgroundColor = 'rgba(0, 188, 212, 0.1)';
+            item.style.transform = 'translateX(15px) scale(1.02)';
+            
+            setTimeout(() => {
+                item.style.backgroundColor = '';
+                item.style.transform = '';
+            }, 1500);
+        }
+
+        // Pulse animation for metric items
+        function pulseAnimation(item) {
+            item.style.animation = 'pulse 0.6s ease-in-out';
+            setTimeout(() => {
+                item.style.animation = '';
+            }, 600);
+        }
+
+        // Tooltip functionality
+        function showTooltip(element, message) {
+            // Remove existing tooltips
+            const existingTooltip = document.querySelector('.tooltip');
+            if (existingTooltip) {
+                existingTooltip.remove();
+            }
+
+            const tooltip = document.createElement('div');
+            tooltip.className = 'tooltip';
+            tooltip.innerHTML = message;
+            tooltip.style.cssText = `
+                position: absolute;
+                background: rgba(0,0,0,0.9);
+                color: white;
+                padding: 0.5rem 1rem;
+                border-radius: 8px;
+                font-size: 0.9rem;
+                z-index: 1000;
+                max-width: 200px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            `;
+
+            document.body.appendChild(tooltip);
+
+            const rect = element.getBoundingClientRect();
+            tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + 'px';
+            tooltip.style.top = rect.top - tooltip.offsetHeight - 10 + 'px';
+
+            setTimeout(() => tooltip.style.opacity = '1', 10);
+
+            setTimeout(() => {
+                tooltip.style.opacity = '0';
+                setTimeout(() => tooltip.remove(), 300);
+            }, 3000);
+        }
+
+        // Bar chart details
+        function showBarDetails(bar, details) {
+            showTooltip(bar, details);
+            bar.style.filter = 'brightness(1.2) contrast(1.1)';
+            setTimeout(() => {
+                bar.style.filter = '';
+            }, 1000);
+        }
+
+        // Initialize all animations
+        function initializeAnimations() {
+            // Animate stats on load
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach((stat, index) => {
+                const finalValue = stat.textContent;
+                stat.textContent = '0';
+                setTimeout(() => {
+                    animateNumber(stat, 0, parseFloat(finalValue), 2000, finalValue.includes('.') ? 1 : 0);
+                }, index * 200);
+            });
+
+            // Initialize progress bars
+            const progressBars = document.querySelectorAll('.progress-fill');
+            progressBars.forEach((bar, index) => {
+                const width = bar.style.width;
+                bar.style.width = '0';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, index * 100 + 1000);
+            });
+        }
+
+        // Number animation utility
+        function animateNumber(element, start, end, duration, decimals = 0) {
+            const startTime = performance.now();
+            const suffix = element.textContent.replace(/[\d.]/g, '');
+            
+            function updateNumber(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                const current = start + (end - start) * easeOut;
+                
+                element.textContent = current.toFixed(decimals) + suffix;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateNumber);
+                }
+            }
+            
+            requestAnimationFrame(updateNumber);
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                const sections = ['technologie', 'markt', 'zukunft', 'geopolitik'];
+                const currentIndex = sections.indexOf(currentSection);
+                
+                if (e.key === 'ArrowLeft' && currentIndex > 0) {
+                    const tabs = document.querySelectorAll('.nav-tab');
+                    tabs[currentIndex - 1].click();
+                } else if (e.key === 'ArrowRight' && currentIndex < sections.length - 1) {
+                    const tabs = document.querySelectorAll('.nav-tab');
+                    tabs[currentIndex + 1].click();
+                }
+            });
+
+            // Auto-refresh animations on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'fadeInUp 0.6s ease-out';
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.content-section > *').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // Periodic updates (simulating real-time data)
+        setInterval(() => {
+            if (currentSection === 'markt') {
+                const randomStat = document.querySelectorAll('.stat-number')[Math.floor(Math.random() * 4)];
+                randomStat.style.animation = 'pulse 0.5s ease-in-out';
+                setTimeout(() => randomStat.style.animation = '', 500);
+            }
+        }, 10000);
+    </script>
+</body>
+</html>

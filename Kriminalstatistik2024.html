@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kriminalstatistik Deutschland 2024</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        th:last-child {
+            text-align: right;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        tbody tr.highlight {
+            background-color: #fff3cd;
+            font-weight: 600;
+        }
+
+        tbody tr.highlight:hover {
+            background-color: #ffe69c;
+        }
+
+        td {
+            padding: 15px;
+            color: #333;
+        }
+
+        td:last-child {
+            text-align: right;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .stats-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .stats-info p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Kriminalstatistik 2024</h1>
+            <p class="subtitle">Fälle je 100.000 Einwohner nach Bundesländern</p>
+        </header>
+
+        <div class="content">
+            <div class="stats-info">
+                <p><strong>Hinweis:</strong> Die Tabelle zeigt die Anzahl der registrierten Fälle pro 100.000 Einwohner in den einzelnen Bundesländern für das Jahr 2024. Der Prozentsatz gibt einen ungefähren Anteil der betroffenen Bevölkerung an.</p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bundesland</th>
+                        <th>Fälle je 100.000</th>
+                        <th>Anteil der Bevölkerung</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Baden-Württemberg</td>
+                        <td>
+                            5.230
+                            <div class="bar-container">
+                                <div class="bar" style="width: 34.9%"></div>
+                            </div>
+                        </td>
+                        <td>5,2 %</td>
+                    </tr>
+                    <tr>
+                        <td>Bayern</td>
+                        <td>
+                            4.726
+                            <div class="bar-container">
+                                <div class="bar" style="width: 31.5%"></div>
+                            </div>
+                        </td>
+                        <td>4,7 %</td>
+                    </tr>
+                    <tr>
+                        <td>Berlin</td>
+                        <td>
+                            14.719
+                            <div class="bar-container">
+                                <div class="bar" style="width: 98.1%"></div>
+                            </div>
+                        </td>
+                        <td>14,7 %</td>
+                    </tr>
+                    <tr>
+                        <td>Brandenburg</td>
+                        <td>
+                            6.915
+                            <div class="bar-container">
+                                <div class="bar" style="width: 46.1%"></div>
+                            </div>
+                        </td>
+                        <td>6,9 %</td>
+                    </tr>
+                    <tr>
+                        <td>Bremen</td>
+                        <td>
+                            14.998
+                            <div class="bar-container">
+                                <div class="bar" style="width: 100%"></div>
+                            </div>
+                        </td>
+                        <td>15,0 %</td>
+                    </tr>
+                    <tr>
+                        <td>Hamburg</td>
+                        <td>
+                            12.147
+                            <div class="bar-container">
+                                <div class="bar" style="width: 81.0%"></div>
+                            </div>
+                        </td>
+                        <td>12,1 %</td>
+                    </tr>
+                    <tr>
+                        <td>Hessen</td>
+                        <td>
+                            6.194
+                            <div class="bar-container">
+                                <div class="bar" style="width: 41.3%"></div>
+                            </div>
+                        </td>
+                        <td>6,2 %</td>
+                    </tr>
+                    <tr>
+                        <td>Mecklenburg-Vorpommern</td>
+                        <td>
+                            6.878
+                            <div class="bar-container">
+                                <div class="bar" style="width: 45.9%"></div>
+                            </div>
+                        </td>
+                        <td>6,9 %</td>
+                    </tr>
+                    <tr>
+                        <td>Niedersachsen</td>
+                        <td>
+                            6.609
+                            <div class="bar-container">
+                                <div class="bar" style="width: 44.1%"></div>
+                            </div>
+                        </td>
+                        <td>6,6 %</td>
+                    </tr>
+                    <tr>
+                        <td>Nordrhein-Westfalen</td>
+                        <td>
+                            7.763
+                            <div class="bar-container">
+                                <div class="bar" style="width: 51.8%"></div>
+                            </div>
+                        </td>
+                        <td>7,8 %</td>
+                    </tr>
+                    <tr>
+                        <td>Rheinland-Pfalz</td>
+                        <td>
+                            5.803
+                            <div class="bar-container">
+                                <div class="bar" style="width: 38.7%"></div>
+                            </div>
+                        </td>
+                        <td>5,8 %</td>
+                    </tr>
+                    <tr>
+                        <td>Saarland</td>
+                        <td>
+                            6.470
+                            <div class="bar-container">
+                                <div class="bar" style="width: 43.1%"></div>
+                            </div>
+                        </td>
+                        <td>6,5 %</td>
+                    </tr>
+                    <tr>
+                        <td>Sachsen</td>
+                        <td>
+                            7.349
+                            <div class="bar-container">
+                                <div class="bar" style="width: 49.0%"></div>
+                            </div>
+                        </td>
+                        <td>7,3 %</td>
+                    </tr>
+                    <tr>
+                        <td>Sachsen-Anhalt</td>
+                        <td>
+                            8.588
+                            <div class="bar-container">
+                                <div class="bar" style="width: 57.3%"></div>
+                            </div>
+                        </td>
+                        <td>8,6 %</td>
+                    </tr>
+                    <tr>
+                        <td>Schleswig-Holstein</td>
+                        <td>
+                            7.227
+                            <div class="bar-container">
+                                <div class="bar" style="width: 48.2%"></div>
+                            </div>
+                        </td>
+                        <td>7,2 %</td>
+                    </tr>
+                    <tr>
+                        <td>Thüringen</td>
+                        <td>
+                            7.381
+                            <div class="bar-container">
+                                <div class="bar" style="width: 49.2%"></div>
+                            </div>
+                        </td>
+                        <td>7,4 %</td>
+                    </tr>
+                    <tr class="highlight">
+                        <td><strong>Deutschland</strong></td>
+                        <td>
+                            <strong>6.995</strong>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 46.6%"></div>
+                            </div>
+                        </td>
+                        <td><strong>7,0 %</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

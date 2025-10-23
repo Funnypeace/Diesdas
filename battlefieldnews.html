@@ -85,13 +85,8 @@
     const statusDot = $('#statusDot');
     const debugInfo = $('#debugInfo');
     
-    const state = {
-      patches: [],
-      lastUpdate: null,
-      error: null
-    };
+    const state = { patches: [], lastUpdate: null, error: null };
 
-    // Groq API aufrufen
     async function loadPatches(){
       statusText.textContent = 'Lade Patch-Daten von Steam...';
       statusText.className = 'loading';
@@ -113,14 +108,10 @@
                 role: 'system',
                 content: `You are a data extraction API. Extract patch information from Battlefield 6 Steam news and return ONLY valid JSON.
 
-OUTPUT FORMAT (no markdown, no explanations, ONLY this JSON structure):
+OUTPUT FORMAT:
 {"patches":[{"version":"1.0.2","date":"2025-10-23","link":"https://...","notes":"Brief description","changes":[{"weapon":"M4A1","type":"nerf","change":"Recoil +10%"}]}]}
 
-RULES:
-- "type" must be: "buff", "nerf", or "change"
-- Extract only weapon balance changes (damage, recoil, range, fire rate, etc.)
-- If no patch notes found: {"patches":[]}
-- Output MUST be valid JSON only, no text before or after`
+No markdown, no extra text, only valid JSON.`
               },
               {
                 role: 'user',
@@ -130,64 +121,42 @@ RULES:
           })
         });
 
-        if (!response.ok) {
-          throw new Error(`API Error: ${response.status}`);
-        }
+        const rawText = await response.text();
+        debugInfo.textContent = rawText.substring(0, 2000);
 
-        const data = await response.json();
-        debugInfo.textContent = JSON.stringify(data, null, 2);
-
-        // Parse Groq response
-        let content = data.content || '';
-        
-        // Debug: Zeige rohen Content
-        console.log('Raw Groq content:', content);
-        
-        if (!content || content.trim().length === 0) {
-          throw new Error('API hat leeren Content zurückgegeben. Möglicherweise keine Patch-Notes gefunden.');
-        }
-        
-        // Entferne Markdown-Codeblöcke und zusätzlichen Text
-        content = content
-          .replace(/```json\n?/gi, '')
-          .replace(/```\n?/g, '')
-          .replace(/^[^{]*/, '') // Alles vor dem ersten {
-          .replace(/[^}]*$/, '') // Alles nach dem letzten }
-          .trim();
-        
-        let parsed;
+        let data;
         try {
-          parsed = JSON.parse(content);
-        } catch(e) {
-          // Fallback: Suche nach JSON-Objekt im Text
-          const jsonMatch = content.match(/\{(?:[^{}]|\{[^{}]*\})*\}/);
-          if (jsonMatch) {
+          data = JSON.parse(rawText);
+        } catch {
+          // Falls Groq nur Text liefert, JSON-Objekt extrahieren
+          const match = rawText.match(/\{(?:[^{}]|\{[^{}]*\})*\}/s);
+          if (match) {
             try {
-              parsed = JSON.parse(jsonMatch[0]);
-            } catch(e2) {
-              throw new Error(`JSON-Parsing fehlgeschlagen: ${e2.message}. Roher Content: ${content.substring(0, 200)}...`);
+              data = JSON.parse(match[0]);
+            } catch (e) {
+              throw new Error("Fehler beim Parsen des JSON aus Text: " + e.message);
             }
           } else {
-            throw new Error(`Kein JSON-Objekt gefunden. Roher Content: ${content.substring(0, 200)}...`);
+            throw new Error("Kein JSON-Objekt gefunden. Roher Content: " + rawText.substring(0, 300) + "...");
           }
         }
 
-        if (parsed && Array.isArray(parsed.patches)) {
-          state.patches = parsed.patches;
-          state.lastUpdate = new Date().toISOString();
-          state.error = null;
-          
-          if (state.patches.length === 0) {
-            statusText.textContent = `Aktualisiert: ${new Date().toLocaleTimeString('de-DE')} • Keine Patches gefunden (noch keine News auf Steam)`;
-            statusText.className = 'muted';
-            statusDot.style.background = '#ff9800';
-          } else {
-            statusText.textContent = `Aktualisiert: ${new Date().toLocaleTimeString('de-DE')} • ${state.patches.length} Patches gefunden`;
-            statusText.className = 'muted';
-            statusDot.style.background = 'var(--good)';
-          }
+        if (!data || !Array.isArray(data.patches)) {
+          throw new Error("Ungültiges Datenformat oder keine 'patches' gefunden.");
+        }
+
+        state.patches = data.patches;
+        state.lastUpdate = new Date().toISOString();
+        state.error = null;
+
+        if (state.patches.length === 0) {
+          statusText.textContent = `Aktualisiert: ${new Date().toLocaleTimeString('de-DE')} • Keine Patches gefunden`;
+          statusText.className = 'muted';
+          statusDot.style.background = '#ff9800';
         } else {
-          throw new Error(`Ungültiges Datenformat: ${JSON.stringify(parsed).substring(0, 100)}...`);
+          statusText.textContent = `Aktualisiert: ${new Date().toLocaleTimeString('de-DE')} • ${state.patches.length} Patches gefunden`;
+          statusText.className = 'muted';
+          statusDot.style.background = 'var(--good)';
         }
 
       } catch(err) {
@@ -196,7 +165,7 @@ RULES:
         statusText.textContent = `Fehler: ${err.message}`;
         statusText.className = 'error';
         statusDot.style.background = 'var(--bad)';
-        debugInfo.textContent = `ERROR: ${err.message}\n\n${err.stack || ''}`;
+        debugInfo.textContent = `ERROR: ${err.message}`;
       }
 
       render();
@@ -219,7 +188,6 @@ RULES:
     function render(){
       const {patches} = state;
       const out = [];
-      
       if (patches.length === 0) {
         out.push(`<div class="hint">Noch keine Patch-Daten geladen oder keine Patches gefunden.</div>`);
       } else {
@@ -244,14 +212,10 @@ RULES:
           </div>`);
         });
       }
-      
       listEl.innerHTML = out.join('') || '<div class="hint">Keine Treffer für diese Filter.</div>';
     }
 
-    // Event Listeners
     ['q','type','from','to'].forEach(id=>document.getElementById(id).addEventListener('input',render));
-
-    // Initial load + Auto-Reload alle 60 Minuten
     loadPatches();
     setInterval(loadPatches, 60 * 60 * 1000);
   </script>

@@ -474,7 +474,7 @@
       <section id="tools-section" class="category-section category-tools" data-category="tools" role="tabpanel" aria-labelledby="tools-tab">
         <div class="category-header"><span class="category-icon">🔧</span><h2 class="category-title">Produktivitäts-Tools</h2></div>
         <div class="grid">
-          <a class="card" href="https://sora-prompt-tool.vercel.app/" target="_blank" rel="noopener noreferrer"><h2>Sora 2 Prompt‑Generator</h2><p>(mit Ton)</p></a>
+          <a class="card" href="https://sora-prompt-tool.vercel.app/" target="_blank" rel="noopener noreferrer"><h2>Sora 2 Prompt-Generator</h2><p>(mit Ton)</p></a>
           <a class="card" href="musikVisualizer.html" target="_blank" rel="noopener noreferrer"><h2>Musik- oder Sound-Visualizer</h2><p>Mache Musik sichtbar</p></a>
           <a class="card" href="zitatgenerator.html" target="_blank" rel="noopener noreferrer"><h2>Zitatgenerator</h2><p>Zufallszitate</p></a>
           <a class="card" href="QuizV1.html" target="_blank" rel="noopener noreferrer"><h2>Quiz 100 Fragen</h2><p>Allgemeinwissen</p></a>
@@ -564,7 +564,7 @@
           try {
             const res = await fetch(url, { ...options, signal: controller.signal });
             clearTimeout(timeoutId);
-            if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+            if (!res.ok) throw new Error(\`HTTP \${res.status}: \${res.statusText}\`);
             return res;
           } catch (err) {
             clearTimeout(timeoutId);
@@ -783,8 +783,8 @@
     const weatherManager = {
       cities: [
         { city: 'Hamburg', lat: 53.55, lon: 10.00 },
-        { city: 'Berlin',  lat: 52.52, lon: 13.40 },
-        { city: 'München', lat: 48.14, lon: 11.58 }
+        { city: 'Porto',   lat: 41.16, lon: -8.63 },
+        { city: 'Tokio',   lat: 35.68, lon: 139.65 }
       ],
 
       async load() {

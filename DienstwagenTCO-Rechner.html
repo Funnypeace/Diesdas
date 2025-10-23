@@ -1,0 +1,157 @@
+<!-- ====================================================================
+ File: dienstwagen-tco-rechner.html
+ Purpose: Interaktiver TCO-Rechner (Monat & €/km) für Dienstwagen
+ Hinweis: Vereinfachtes Modell — keine Rechts-/Steuerberatung.
+==================================================================== -->
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dienstwagen TCO-Rechner</title>
+  <style>
+    :root{--bg:#0b0f14;--card:#121822;--muted:#8aa0b6;--text:#e7f0ff;--accent:#6ab0ff;--border:#223045;--good:#2ecc71}
+    *{box-sizing:border-box} body{margin:0;background:#0b0f14;color:var(--text);font:16px/1.45 system-ui}
+    header{padding:28px 20px 8px;max-width:1100px;margin:0 auto}
+    h1{margin:0 0 6px;font-size:28px}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px 20px 40px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px}
+    label{display:block;margin:8px 0 4px}
+    input,select{width:100%;background:#0f1722;border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px}
+    .out{font-size:22px;margin:6px 0}
+    .muted{color:var(--muted)}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .kpi{background:#0f1722;border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center}
+    .kpi small{display:block;color:var(--muted)}
+    .hint{font-size:13px;color:var(--muted)}
+  </style>
+</head>
+<body>
+<header>
+  <h1>Dienstwagen TCO-Rechner</h1>
+  <p class="muted">Einfaches TCO-Modell: Leasing + Betrieb + Versicherung + Service + Reifen + Steuer (+ optional 1%-Regel Nettokostenwirkung).</p>
+</header>
+<div class="wrap">
+  <div class="grid">
+    <div class="card">
+      <label>Fahrzeugtyp</label>
+      <select id="type"><option value="ev">EV</option><option value="ice">Verbrenner</option></select>
+      <label>Leasingrate (netto / Monat)</label>
+      <input id="lease" type="number" value="780" />
+      <label>Laufzeit (Monate)</label>
+      <input id="term" type="number" value="48" />
+      <label>Einmalige Sonderzahlung (netto)</label>
+      <input id="down" type="number" value="0" />
+      <div class="row">
+        <div>
+          <label>Jahresfahrleistung (km)</label>
+          <input id="km" type="number" value="20000" />
+        </div>
+        <div>
+          <label>Versicherung (netto / Monat)</label>
+          <input id="ins" type="number" value="90" />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Service & Wartung (netto / Monat)</label>
+          <input id="svc" type="number" value="40" />
+        </div>
+        <div>
+          <label>Reifen (netto / Monat)</label>
+          <input id="tires" type="number" value="20" />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label id="lblA">Verbrauch (kWh/100 km)</label>
+          <input id="consA" type="number" value="19" />
+        </div>
+        <div>
+          <label id="lblB">Energiepreis (€/kWh)</label>
+          <input id="consB" type="number" value="0.39" step="0.01" />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Steuer/Kfz (netto / Monat)</label>
+          <input id="tax" type="number" value="0" />
+        </div>
+        <div>
+          <label>Sonstiges (netto / Monat)</label>
+          <input id="misc" type="number" value="0" />
+        </div>
+      </div>
+      <label><input type="checkbox" id="onepct" checked/> 1%-Regel berücksichtigen (vereinfachte Nettokosten)</label>
+      <div class="row">
+        <div>
+          <label>Bruttolistenpreis (€)</label>
+          <input id="blp" type="number" value="60000" />
+        </div>
+        <div>
+          <label>Entfernung Wohnung-Arbeitsstätte (km)</label>
+          <input id="commute" type="number" value="10" />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Arbeitgeber-Steuersatz (Pauschal %)</label>
+          <input id="taxrate" type="number" value="35" />
+        </div>
+        <div>
+          <label>Privatanteil Energie (% der km)</label>
+          <input id="privateShare" type="number" value="30" />
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="kpi"><div class="out" id="mTotal">–</div><small>Gesamtkosten / Monat (netto)</small></div>
+      <div class="row">
+        <div class="kpi"><div class="out" id="perKm">–</div><small>Kosten / km (netto)</small></div>
+        <div class="kpi"><div class="out" id="energy">–</div><small>Energiekosten / Monat</small></div>
+      </div>
+      <h3>Aufschlüsselung</h3>
+      <ul id="break"></ul>
+      <p class="hint">Hinweis: 1%-Regel hier grob als zusätzliche Arbeitgeber-Kosten (Brutto) modelliert: <code>(1% BLP + 0,03% BLP ⋅ Entfernung ⋅ 15 Arbeitstage) ⋅ Steuersatz</code>. Für 0,25%-Regel (EV) passt du den Faktor bei Bedarf im Code an.</p>
+    </div>
+  </div>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+function fmt(n,dec=2){return new Intl.NumberFormat('de-DE',{minimumFractionDigits:dec,maximumFractionDigits:dec}).format(n)}
+function compute(){
+  const type=$('#type').value; const lease=+$('#lease').value||0; const term=+$('#term').value||0; const down=+$('#down').value||0;
+  const km=+$('#km').value||0; const ins=+$('#ins').value||0; const svc=+$('#svc').value||0; const tires=+$('#tires').value||0; const tax=+$('#tax').value||0; const misc=+$('#misc').value||0;
+  const consA=+$('#consA').value||0; const consB=+$('#consB').value||0; const onepct=$('#onepct').checked; const blp=+$('#blp').value||0; const commute=+$('#commute').value||0; const taxrate=(+$('#taxrate').value||0)/100; const priv=(+$('#privateShare').value||0)/100;
+  const monthlyKm = km/12; let energyMonth = 0;
+  if(type==='ev'){ energyMonth = (monthlyKm * consA/100) * consB; } else {
+    energyMonth = (monthlyKm * consA/100) * consB;
+  }
+  const downAlloc = term>0 ? down/term : 0;
+  let onepctCost = 0;
+  if(onepct){
+    const monthlyBenefit = (0.01*blp) + (0.0003*blp*commute*15);
+    onepctCost = monthlyBenefit * taxrate;
+  }
+  const total = lease + downAlloc + ins + svc + tires + tax + misc + energyMonth + onepctCost*(priv);
+  const perKm = monthlyKm>0 ? total / monthlyKm : 0;
+  $('#mTotal').textContent = `€ ${fmt(total)}`;
+  $('#perKm').textContent = `€ ${fmt(perKm)}`;
+  $('#energy').textContent = `€ ${fmt(energyMonth)}`;
+  const items=[
+    ['Leasing',lease], ['Sonderzahlung (anteilig)',downAlloc], ['Versicherung',ins], ['Service/Wartung',svc], ['Reifen',tires], ['Steuer',tax], ['Sonstiges',misc], ['Energie',energyMonth], ['1%-Regel (vereinfachter Effekt)', onepct? onepctCost*priv : 0]
+  ];
+  $('#break').innerHTML = items.map(([k,v])=>`<li>${k}: € ${fmt(v)}</li>`).join('');
+}
+function toggleLabels(){
+  if($('#type').value==='ev'){ $('#lblA').textContent='Verbrauch (kWh/100 km)'; $('#lblB').textContent='Energiepreis (€/kWh)'; $('#consA').value=19; $('#consB').value=0.39; }
+  else { $('#lblA').textContent='Verbrauch (L/100 km)'; $('#lblB').textContent='Kraftstoffpreis (€/L)'; $('#consA').value=6.8; $('#consB').value=1.85; }
+  compute();
+}
+['type','lease','term','down','km','ins','svc','tires','tax','misc','consA','consB','onepct','blp','commute','taxrate','privateShare'].forEach(id=>document.getElementById(id).addEventListener('input',compute));
+$('#type').addEventListener('change',toggleLabels);
+compute();
+</script>
+</body>
+</html>

@@ -55,7 +55,6 @@
       --info-color: #17a2b8;
     }
 
-    /* Dark Mode Overrides */
     @media (prefers-color-scheme: dark) {
       :root {
         --bg-light: var(--bg-dark);
@@ -70,7 +69,6 @@
       }
     }
 
-    /* Manuelle Dark Theme Klasse */
     html.dark-theme {
       --bg-light: var(--bg-dark);
       --card-light: var(--card-dark);
@@ -83,12 +81,10 @@
       --category-art: #2e0a1f;
     }
 
-    /* Reduzierte Bewegung respektieren */
     @media (prefers-reduced-motion: reduce) {
       * { animation: none !important; transition: none !important; }
     }
 
-    /* Basis-Styles */
     *, *::before, *::after { box-sizing: border-box; }
     body {
       margin: 0;
@@ -109,14 +105,12 @@
       color: var(--accent);
     }
 
-    /* Verbesserte Fokus-Indikatoren */
     :focus-visible {
       outline: 3px solid var(--accent);
       outline-offset: 3px;
       border-radius: var(--radius-md);
     }
 
-    /* Theme Toggle Button */
     .theme-toggle {
       position: fixed;
       top: 1rem;
@@ -138,7 +132,6 @@
     }
     .theme-toggle:hover { background: var(--accent); color: white; transform: scale(1.1); }
 
-    /* Login Styles */
     .login-wrapper {
       max-width: 380px;
       margin: 2rem auto 1.3rem;
@@ -194,7 +187,6 @@
     .login-message.error   { background: rgba(220, 53, 69, 0.1); color: var(--error-color); border: 1px solid var(--error-color); }
     .login-message.info    { background: rgba(255, 193, 7, 0.1); color: var(--warning-color); border: 1px solid var(--warning-color); }
 
-    /* Logout Button */
     .logout-btn {
       position: fixed;
       top: 1rem;
@@ -211,7 +203,6 @@
     }
     .logout-btn:hover { background: #1e3a5f; }
 
-    /* Wetter Section */
     .weather-section, .news-section {
       max-width: 740px;
       margin: 0 auto 2.5rem;
@@ -246,7 +237,6 @@
     .weather-city { font-size: 0.9rem; opacity: 0.8; }
     .time-display { margin-top: 0.6rem; font-size: 1.2rem; font-weight: 500; }
 
-    /* News Section */
     .news-container {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -289,10 +279,8 @@
     }
     .news-error a { color: inherit; font-weight: 600; text-decoration: underline; }
 
-    /* Content Wrapper */
     .content-wrapper { max-width: 1200px; margin: 0 auto; padding: 0 var(--gap-md); }
 
-    /* Category Sections */
     .category-section { margin-bottom: 3rem; transition: opacity 0.3s ease; padding: var(--gap-md); border-radius: var(--radius-lg); }
     .category-section.hidden { display: none; }
 
@@ -307,7 +295,6 @@
     .category-icon   { font-size: 1.8rem; margin-right: 0.8rem; }
     .category-title  { font-size: 1.4rem; font-weight: 600; color: var(--accent); margin: 0; }
 
-    /* Grid Layout */
     .grid { display: grid; gap: var(--gap-md); width: 100%; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
     .card {
       display: block; text-decoration: none; background: var(--card-light); color: inherit; padding: 1.6rem 1.8rem;
@@ -319,7 +306,6 @@
     .card p  { margin: 0; font-size: 1.05rem; color: #495567; }
     @media (prefers-color-scheme: dark) { .card p { color: var(--text-dark); opacity: 0.8; } }
 
-    /* Category Border Colors */
     .category-travel .card { border-left-color: #4caf50; }
     .category-games  .card { border-left-color: #ff9800; }
     .category-info   .card { border-left-color: #2196f3; }
@@ -327,7 +313,6 @@
     .category-demo   .card { border-left-color: #9c27b0; }
     .category-art    .card { border-left-color: #e91e63; }
 
-    /* Filter Navigation */
     .filter-nav {
       position: sticky; top: 0; z-index: 10; background: var(--bg-light); padding: 1rem 0;
       display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;
@@ -345,7 +330,6 @@
     .filter-btn.show-all { background: var(--success-color); border-color: var(--success-color); color: white; }
     .filter-btn.show-all:hover { background: #218838; border-color: #218838; }
 
-    /* Scrollbar Styling */
     .news-container::-webkit-scrollbar { width: 6px; }
     .news-container::-webkit-scrollbar-track { background: var(--bg-light); border-radius: 3px; }
     .news-container::-webkit-scrollbar-thumb { background: #c0c0c0; border-radius: 3px; }
@@ -356,7 +340,6 @@
       .news-container::-webkit-scrollbar-thumb:hover { background: #777; }
     }
 
-    /* Responsive Design */
     @media (max-width: 650px) {
       h1 { font-size: 1.9rem; margin-top: 1.8rem; }
       .grid { gap: var(--gap-md); }
@@ -553,9 +536,6 @@
 
   <!-- App-Script (inline, durch CSP erlaubt) -->
   <script>
-    /**
-     * API Service mit Retry + Timeout (pro Versuch)
-     */
     class APIService {
       static async fetchWithRetry(url, options = {}, retries = 3) {
         for (let attempt = 0; attempt < retries; attempt++) {
@@ -564,7 +544,7 @@
           try {
             const res = await fetch(url, { ...options, signal: controller.signal });
             clearTimeout(timeoutId);
-            if (!res.ok) throw new Error(\`HTTP \${res.status}: \${res.statusText}\`);
+            if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
             return res;
           } catch (err) {
             clearTimeout(timeoutId);
@@ -575,9 +555,6 @@
       }
     }
 
-    /**
-     * Utils
-     */
     const utils = {
       $: (sel, ctx=document) => ctx.querySelector(sel),
       $$: (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel)),
@@ -594,9 +571,6 @@
       formatDate: (s) => { try { const d=new Date(s); return d.toLocaleString('de-DE',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});} catch { return 'Unbekannt'; } }
     };
 
-    /**
-     * Theme Manager
-     */
     const themeManager = {
       init() {
         const btn = utils.$('.theme-toggle');
@@ -624,9 +598,6 @@
       }
     };
 
-    /**
-     * Supabase Auth Manager mit Login-Tracking
-     */
     const authManager = {
       client: null,
 
@@ -643,7 +614,7 @@
 
       async checkSession() {
         try {
-          const { data: { session } } = await this.client.auth.getSession();
+          const { data: { session} } = await this.client.auth.getSession();
           session ? this.showMainContent() : this.showLogin();
         } catch (e) {
           console.error('Session-Check Fehler:', e);
@@ -655,13 +626,16 @@
         utils.$('#login-form')?.addEventListener('submit', this.handleLogin.bind(this));
         utils.$('#signup-link')?.addEventListener('click', this.handleSignup.bind(this));
         utils.$('#logout-btn')?.addEventListener('click', this.handleLogout.bind(this));
-        this.client.auth.onAuthStateChange((event, session) => {
-          if (event === 'SIGNED_IN' && session) {
-            // Login-Historie tracken bei Auth State Change
-            this.trackLogin(session.user);
-            this.showMainContent();
-          }
-        });
+        try {
+          this.client.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN' && session) {
+              this.trackLogin(session.user);
+              this.showMainContent();
+            }
+          });
+        } catch (e) {
+          console.warn('onAuthStateChange nicht verfügbar:', e);
+        }
       },
 
       async handleLogin(e) {
@@ -674,11 +648,10 @@
           if (error) {
             this.showLoginMessage('Fehler: ' + error.message, 'error');
           } else {
-            // Login erfolgreich - tracke den Login
-            if (data.user) {
-              await this.trackLogin(data.user);
-            }
+            // Sofort weiterleiten – unabhängig vom Event
             this.showLoginMessage('Login erfolgreich!', 'success');
+            if (data?.user) { this.trackLogin(data.user).catch(console.error); }
+            this.showMainContent();
           }
         } catch (err) {
           this.showLoginMessage('Unerwarteter Fehler: ' + err.message, 'error');
@@ -687,28 +660,13 @@
         }
       },
 
-      /**
-       * Neue Methode: Login in der Historie speichern
-       */
       async trackLogin(user) {
         if (!user) return;
-        
         try {
           const { error } = await this.client
             .from('login_history')
-            .insert([
-              {
-                user_id: user.id,
-                email: user.email,
-                login_at: new Date().toISOString()
-              }
-            ]);
-          
-          if (error) {
-            console.error('Fehler beim Speichern der Login-Historie:', error);
-          } else {
-            console.log('Login erfolgreich in Historie gespeichert');
-          }
+            .insert([{ user_id: user.id, email: user.email, login_at: new Date().toISOString() }]);
+          if (error) console.error('Fehler beim Speichern der Login-Historie:', error);
         } catch (err) {
           console.error('Unerwarteter Fehler beim Login-Tracking:', err);
         }
@@ -726,9 +684,9 @@
             this.showLoginMessage('Registrierung fehlgeschlagen: ' + error.message, 'error');
           } else {
             this.showLoginMessage('Verifizierungsmail verschickt! Bitte E-Mail bestätigen.', 'success');
-            // Optional: Auch bei Registrierung tracken
             if (data.user && data.session) {
-              await this.trackLogin(data.user);
+              this.trackLogin(data.user).catch(console.error);
+              this.showMainContent();
             }
           }
         } catch (err) {
@@ -777,9 +735,6 @@
       }
     };
 
-    /**
-     * Weather Manager
-     */
     const weatherManager = {
       cities: [
         { city: 'Hamburg', lat: 53.55, lon: 10.00 },
@@ -791,9 +746,8 @@
         const container = utils.$('#weather-container');
         if (!container) return;
 
-        // Lade-Karten
         container.innerHTML = '';
-        this.cities.forEach(c => {
+        this.cities.forEach(() => {
           const card = utils.createElement('div', 'weather-card loading', 'Lade Wetter…');
           container.appendChild(card);
         });
@@ -829,9 +783,6 @@
       }
     };
 
-    /**
-     * News Manager
-     */
     const newsManager = {
       categories: [
         { title: 'Welt',              category: 'ausland',   fallbackLink: 'https://www.dw.com/de/themen/welt/s-30719',       icon: '🌍', column: 1 },
@@ -849,7 +800,6 @@
         container.setAttribute('aria-busy', 'true');
         container.innerHTML = '<div class="news-loading">Nachrichten werden geladen...</div>';
 
-        // Spalten erzeugen
         const columns = this.createColumns(container);
 
         try {
@@ -918,9 +868,6 @@
       }
     };
 
-    /**
-     * Time Manager
-     */
     const timeManager = {
       id: null,
       start() { this.update(); this.id = setInterval(() => this.update(), 30000); },
@@ -934,9 +881,6 @@
       }
     };
 
-    /**
-     * Filter Manager
-     */
     const filterManager = {
       init() {
         const buttons  = utils.$$('.filter-btn');
@@ -955,9 +899,6 @@
       }
     };
 
-    /**
-     * App-Init
-     */
     document.addEventListener('DOMContentLoaded', () => {
       themeManager.init();
       authManager.init();

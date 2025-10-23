@@ -102,39 +102,29 @@
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
-            action: 'news_summary',
-            query: 'Battlefield 6 patch notes balance changes',
+            action: 'patch_extract',
+            query: 'Battlefield 6 patch notes update balance weapon changes',
             sources: ['https://store.steampowered.com/news/app/2807960'],
             model: 'llama-3.3-70b-versatile',
             temperature: 0.1,
-            max_tokens: 2000,
+            max_tokens: 3000,
             messages: [
               {
                 role: 'system',
-                content: `Du bist ein Patch-Notes-Parser. Extrahiere aus den Steam News für Battlefield 6 strukturierte Patch-Informationen.
+                content: `You are a data extraction API. Extract patch information from Battlefield 6 Steam news and return ONLY valid JSON.
 
-WICHTIG: Antworte NUR mit gültigem JSON in diesem exakten Format (keine Markdown-Codeblöcke, kein zusätzlicher Text):
+OUTPUT FORMAT (no markdown, no explanations, ONLY this JSON structure):
+{"patches":[{"version":"1.0.2","date":"2025-10-23","link":"https://...","notes":"Brief description","changes":[{"weapon":"M4A1","type":"nerf","change":"Recoil +10%"}]}]}
 
-{
-  "patches": [
-    {
-      "version": "1.02",
-      "date": "2025-10-15",
-      "link": "https://store.steampowered.com/news/...",
-      "notes": "Kurze Beschreibung",
-      "changes": [
-        {"weapon": "M4A1", "type": "nerf", "change": "Rückstoß +10%"},
-        {"weapon": "AK-47", "type": "buff", "change": "Schaden +5"}
-      ]
-    }
-  ]
-}
-
-Regeln:
-- type kann sein: "buff", "nerf", oder "change"
-- Extrahiere nur tatsächliche Waffen-Balance-Änderungen
-- Wenn keine Patch-Notes gefunden: {"patches": []}
-- Antworte AUSSCHLIESSLICH mit dem JSON-Objekt, nichts sonst`
+RULES:
+- "type" must be: "buff", "nerf", or "change"
+- Extract only weapon balance changes (damage, recoil, range, fire rate, etc.)
+- If no patch notes found: {"patches":[]}
+- Output MUST be valid JSON only, no text before or after`
+              },
+              {
+                role: 'user',
+                content: 'Extract all patch notes with weapon balance changes from the scraped content. Return only the JSON structure.'
               }
             ]
           })

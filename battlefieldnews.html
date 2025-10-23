@@ -150,19 +150,35 @@ Regeln:
         // Parse Groq response
         let content = data.content || '';
         
-        // Entferne Markdown-Codeblöcke falls vorhanden
-        content = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+        // Debug: Zeige rohen Content
+        console.log('Raw Groq content:', content);
+        
+        if (!content || content.trim().length === 0) {
+          throw new Error('API hat leeren Content zurückgegeben. Möglicherweise keine Patch-Notes gefunden.');
+        }
+        
+        // Entferne Markdown-Codeblöcke und zusätzlichen Text
+        content = content
+          .replace(/```json\n?/gi, '')
+          .replace(/```\n?/g, '')
+          .replace(/^[^{]*/, '') // Alles vor dem ersten {
+          .replace(/[^}]*$/, '') // Alles nach dem letzten }
+          .trim();
         
         let parsed;
         try {
           parsed = JSON.parse(content);
         } catch(e) {
-          // Fallback: Versuche JSON aus dem Text zu extrahieren
-          const jsonMatch = content.match(/\{[\s\S]*\}/);
+          // Fallback: Suche nach JSON-Objekt im Text
+          const jsonMatch = content.match(/\{(?:[^{}]|\{[^{}]*\})*\}/);
           if (jsonMatch) {
-            parsed = JSON.parse(jsonMatch[0]);
+            try {
+              parsed = JSON.parse(jsonMatch[0]);
+            } catch(e2) {
+              throw new Error(`JSON-Parsing fehlgeschlagen: ${e2.message}. Roher Content: ${content.substring(0, 200)}...`);
+            }
           } else {
-            throw new Error('Keine gültigen JSON-Daten in der Antwort gefunden');
+            throw new Error(`Kein JSON-Objekt gefunden. Roher Content: ${content.substring(0, 200)}...`);
           }
         }
 
@@ -171,11 +187,17 @@ Regeln:
           state.lastUpdate = new Date().toISOString();
           state.error = null;
           
-          statusText.textContent = `Aktualisiert: ${new Date().toLocaleTimeString('de-DE')} • ${state.patches.length} Patches gefunden`;
-          statusText.className = 'muted';
-          statusDot.style.background = 'var(--good)';
+          if (state.patches.length === 0) {
+            statusText.textContent = `Aktualisiert: ${new Date().toLocaleTimeString('de-DE')} • Keine Patches gefunden (noch keine News auf Steam)`;
+            statusText.className = 'muted';
+            statusDot.style.background = '#ff9800';
+          } else {
+            statusText.textContent = `Aktualisiert: ${new Date().toLocaleTimeString('de-DE')} • ${state.patches.length} Patches gefunden`;
+            statusText.className = 'muted';
+            statusDot.style.background = 'var(--good)';
+          }
         } else {
-          throw new Error('Ungültiges Datenformat von der API');
+          throw new Error(`Ungültiges Datenformat: ${JSON.stringify(parsed).substring(0, 100)}...`);
         }
 
       } catch(err) {

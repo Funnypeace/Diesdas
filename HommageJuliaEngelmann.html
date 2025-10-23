@@ -1,203 +1,190 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8">
-  <title>Eines Tages, Baby | Julia Engelmann</title>
-
-  <!-- Webfonts -->
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap');
-  </style>
-
-  <!-- Meta -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Kompletter Poetry-Slam-Text »Eines Tages, Baby« von Julia Engelmann – modern inszeniert.">
-
-  <!-- Styles -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Battlefield 6 Patch-Tracker (Live)</title>
   <style>
     :root{
-      --dark:#0A1A2A;
-      --magenta:#D72663;
-      --lila:#6317AA;
-      --yellow:#F7B32B;
-      --white:#FFFFFF;
+      --bg:#0b0f14;--card:#121822;--muted:#8aa0b6;--text:#e7f0ff;--accent:#6ab0ff;--good:#2ecc71;--bad:#ff6b6b;--chip:#1a2330;
+      --border:#223045;--shadow: 0 8px 24px rgba(0,0,0,.35);
     }
-    *{box-sizing:border-box;margin:0;padding:0}
-    html{scroll-behavior:smooth}
-    body{
-      font-family:'Roboto',sans-serif;
-      line-height:1.6;
-      color:var(--white);
-      background:linear-gradient(180deg,var(--dark)0%,#142F50 100%);
-      overflow-x:hidden;
-    }
-    header{
-      text-align:center;
-      padding:4rem 1rem 2rem;
-    }
-    header h1{
-      font-family:'Playfair Display',serif;
-      font-size:clamp(2.2rem,4vw,3.5rem);
-      letter-spacing:1px;
-    }
-    nav a.skip{
-      position:absolute;
-      left:-999px;
-      top:auto;
-      width:1px;height:1px;
-      overflow:hidden;
-    }
-    nav a.skip:focus{
-      left:1rem;top:1rem;width:auto;height:auto;
-      background:var(--yellow);
-      color:var(--dark);
-      padding:.5rem 1rem;border-radius:4px;
-    }
-    main{max-width:1024px;margin:0 auto;padding:2rem 1rem}
-    section{
-      margin-bottom:3rem;
-      animation:fadeIn 1s ease-in both;
-    }
-    section h2{
-      font-family:'Playfair Display',serif;
-      font-size:clamp(1.5rem,3vw,2.3rem);
-      margin-bottom:1rem;
-      position:relative;
-    }
-    section h2::after{
-      content:'';
-      display:block;
-      width:60px;
-      height:4px;
-      background:var(--lila);
-      margin-top:.4rem;
-    }
-    p{
-      margin-bottom:1.2rem;
-      font-size:1.05rem;
-    }
-    footer{
-      text-align:center;
-      padding:2rem 1rem 4rem;
-      font-size:.9rem;
-      background:#0A1A2A;
-    }
-    a.btn{
-      display:inline-block;
-      background:var(--magenta);
-      color:var(--white);
-      text-decoration:none;
-      padding:.8rem 1.4rem;
-      border-radius:30px;
-      font-weight:500;
-      transition:transform .2s,background .3s;
-    }
-    a.btn:hover, a.btn:focus{
-      background:var(--yellow);
-      color:var(--dark);
-      transform:translateY(-3px);
-    }
-
-    /* Scroll reveal */
-    @keyframes fadeIn{
-      0%{opacity:0;transform:translateY(20px)}
-      100%{opacity:1;transform:translateY(0)}
-    }
-
-    /* Media Queries */
-    @media(max-width:600px){
-      header h1{line-height:1.2}
-    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#0b0f14,#0e141d);color:var(--text);font:16px/1.45 system-ui,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    header{padding:28px 20px 8px;max-width:1100px;margin:0 auto}
+    h1{margin:0 0 6px;font-size:28px}
+    .muted{color:var(--muted)}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px 20px 40px}
+    .controls{display:grid;grid-template-columns:1fr 150px 150px 160px;gap:10px;margin:12px 0 18px}
+    input,select{background:#0f1722;border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 14px;margin:10px 0;box-shadow:var(--shadow)}
+    .row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .tag{padding:2px 8px;border-radius:999px;font-size:12px;border:1px solid var(--border)}
+    .tag.buff{background:rgba(46,204,113,.08);color:var(--good)}
+    .tag.nerf{background:rgba(255,107,107,.08);color:var(--bad)}
+    .tag.change{background:rgba(106,176,255,.08);color:var(--accent)}
+    details{background:rgba(255,255,255,.02);border:1px dashed var(--border);border-radius:12px;padding:10px 12px;margin-top:10px}
+    summary{cursor:pointer}
+    table{width:100%;border-collapse:collapse;margin-top:8px}
+    th,td{border-bottom:1px solid var(--border);padding:8px 6px;text-align:left}
+    .link{color:var(--accent);text-decoration:none}
+    .hint{font-size:13px;color:var(--muted)}
+    .status{display:flex;gap:12px;align-items:center;margin:8px 0}
+    .status-dot{width:8px;height:8px;border-radius:50%;background:var(--good);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .loading{color:var(--accent)}
+    .error{color:var(--bad)}
+    .reload-btn{background:var(--accent);color:#fff;border:none;padding:10px 16px;border-radius:10px;cursor:pointer;font-size:14px}
+    .reload-btn:hover{opacity:.85}
+    .raw-content{background:#0a0e13;padding:12px;border-radius:8px;font-size:12px;max-height:300px;overflow:auto;white-space:pre-wrap;word-break:break-word}
+    .banner{margin:8px 0;padding:8px 10px;border-radius:8px;font-size:13px;border:1px solid var(--border);background:#0a111a}
   </style>
 </head>
 <body>
-
-  <nav><a href="#poem" class="skip">Zum Inhalt springen</a></nav>
-
-  <header role="banner">
-    <h1>„Eines Tages, Baby“</h1>
-    <a href="#poem" class="btn">Text lesen</a>
+  <header>
+    <h1>Battlefield 6 Patch-Tracker</h1>
+    <p class="muted">Live-Daten von Steam News • Automatische Updates alle 60 Minuten</p>
+    <div class="status">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText" class="muted">Lade Daten...</span>
+      <button class="reload-btn" onclick="loadPatches()">🔄 Jetzt aktualisieren</button>
+    </div>
+    <div id="infoBanner" class="banner" style="display:none"></div>
   </header>
 
-  <main id="poem" role="main">
+  <div class="wrap">
+    <div class="controls">
+      <input id="q" placeholder="Suche Version, Waffe, Notizen…" />
+      <select id="type">
+        <option value="all">Alle Änderungen</option>
+        <option value="buff">Nur Buffs</option>
+        <option value="nerf">Nur Nerfs</option>
+      </select>
+      <input type="date" id="from" />
+      <input type="date" id="to" />
+    </div>
 
-    <!-- Abschnitt 1 -->
-    <section>
-      <h2>Prolog</h2>
-      <p>Eines Tages, Baby, werden wir alt sein, oh Baby, werden wir alt sein und an all die Geschichten denken, die wir hätten erzählen können.</p>
-    </section>
+    <div id="list"></div>
 
-    <!-- Abschnitt 2 -->
-    <section>
-      <h2>Bestandsaufnahme</h2>
-      <p>Ich bin der Meister der Streiche, wenn’s um Selbstbetrug geht, ein Kleinkind vom Feinsten, wenn ich vor Aufgaben stehe. Ich bin ein entschleunigtes Teilchen, kann auf Keinsten etwas reißen, lasse mich begeistern für Leichtsinn – wenn ein anderer ihn lebt.</p>
-      <p>Ich denke zu viel nach, warte zu viel ab, nehme mir zu viel vor und mache davon zu wenig. Ich halte mich zu oft zurück, ich zweifle alles an – ich wäre gerne klug, allein das ist ziemlich dämlich.</p>
-      <p>Ich würde gern so vieles sagen, aber bleibe meistens still, weil, wenn ich das alles sagen würde, wär das viel zu viel.</p>
-    </section>
+    <details>
+      <summary>ℹ️ Debug-Informationen</summary>
+      <div class="hint" style="margin:8px 0">Letzte Antwort der API (abgeschnitten):</div>
+      <div class="raw-content" id="debugInfo">Noch keine Daten geladen.</div>
+    </details>
+  </div>
 
-    <!-- Abschnitt 3 -->
-    <section>
-      <h2>Listen & Ausreden</h2>
-      <p>Ich würde gern so vieles tun, meine Listen sind so lang, doch ich werde eh nie alles schaffen, also fang ich gar nicht an. Stattdessen hänge ich planlos vorm Smartphone, warte bloß auf den nächsten Freitag. „Ach, das mach ich später“ ist die Baseline meines Alltags.</p>
-      <p>Ich bin so furchtbar faul wie ein Kieselstein am Meeresgrund. Ich bin so furchtbar faul – mein Patronus ist ein Schweinehund.</p>
-    </section>
+  <script>
+    const $ = s => document.querySelector(s);
+    const statusText = $('#statusText');
+    const statusDot = $('#statusDot');
+    const debugInfo = $('#debugInfo');
+    const listEl = $('#list');
+    const infoBanner = $('#infoBanner');
+    const state = { patches: [] };
 
-    <!-- Abschnitt 4 -->
-    <section>
-      <h2>Silvester-Vorsätze</h2>
-      <p>Mein Leben ist ein Wartezimmer, niemand ruft mich auf, mein Dopamin spare ich mir immer, falls ich’s noch mal brauche. Und eines Tages, Baby, werde ich alt sein und an all die Geschichten denken, die ich hätte erzählen können.</p>
-      <p>Und du? Du murmelst jedes Jahr neu an Silvester die wieder gleichen Vorsätze treu in dein Sektglas, und Ende Dezember stellst du fest, dass du recht hast, wenn du sagst, dass du sie dieses Mal schon wieder vercheckt hast.</p>
-      <p>Dabei sollte für dich 2013 das erste Jahr vom Rest deines Lebens werden: Du wolltest abnehmen, früher aufstehen, öfter rausgehen, mal deine Träume angehen, mal die <em>Tagesschau</em> sehen – für mehr Small-Talk-Allgemeinwissen. Doch so wie jedes Jahr kam dir wieder mal der Alltag dazwischen.</p>
-    </section>
+    function setBanner(msg){ infoBanner.style.display = msg ? 'block':'none'; infoBanner.textContent = msg || ''; }
 
-    <!-- Abschnitt 5 -->
-    <section>
-      <h2>Stillstand</h2>
-      <p>Unser Leben ist ein Wartezimmer, niemand ruft uns auf; unser Dopamin – das sparen wir immer, falls wir’s noch mal brauchen. Wir sind jung und haben viel Zeit. Warum sollen wir etwas riskieren? Wir wollen doch keine Fehler machen, wollen auch nichts verlieren.</p>
-      <p>Und es bleibt so viel zu tun, unsere Listen bleiben lang, und so geht Tag für Tag ganz still ins unbekannte Land.</p>
-    </section>
+    function extractJsonFromText(txt){
+      const m = (txt||'').match(/\{(?:[^{}]|{[^{}]*})*\}/s);
+      if(!m) return null;
+      try { return JSON.parse(m[0]); } catch { return null; }
+    }
 
-    <!-- Abschnitt 6 -->
-    <section>
-      <h2>Konjunktive</h2>
-      <p>Die Geschichten, die wir später stattdessen erzählen werden, sind traurige Konjunktive: „Einmal bin ich fast einen Marathon gelaufen und hätte fast die <em>Buddenbrooks</em> gelesen. Einmal wäre ich beinahe bis die Wolken wieder lila waren noch wach gewesen. Und fast hätten wir uns mal demaskiert und gesehen, wir sind die Gleichen – fast hätten wir uns gesagt, wie viel wir uns bedeuten.“ Wir werden sagen, dass wir bloß faul und feige waren – das werden wir verschweigen und uns heimlich wünschen, noch ein bisschen hierzubleiben.</p>
-    </section>
+    function normalizePayload(payload){
+      if(Array.isArray(payload?.patches)) return payload;
+      if(typeof payload?.content === 'string'){
+        const inner = extractJsonFromText(payload.content);
+        if(inner && Array.isArray(inner.patches)) return inner;
+      }
+      return { patches: [] };
+    }
 
-    <!-- Abschnitt 7 -->
-    <section>
-      <h2>Wendepunkt</h2>
-      <p>Wenn wir dann alt sind und unsere Tage knapp – und das wird sowieso passieren – dann erst werden wir kapieren: Wir hatten nie etwas zu verlieren. Denn das Leben, das wir führen wollen, das können wir selber wählen. Also lass uns Geschichten schreiben, die wir später gern erzählen.</p>
-    </section>
+    async function loadPatches(){
+      statusText.textContent = 'Lade Patch-Daten...';
+      statusText.className = 'loading';
+      statusDot.style.background = 'var(--accent)';
+      setBanner('');
 
-    <!-- Abschnitt 8 -->
-    <section>
-      <h2>Aufbruch</h2>
-      <p>Lass uns nachts lange wach bleiben, aufs höchste Hausdach der Stadt steigen, lachend und vom Takt frei die allertollsten Lieder singen! Lass uns Feste wie Konfetti schmeißen, sehen, wie sie zu Boden reisen, und die gefallenen Feste feiern, bis die Wolken wieder lila sind.</p>
-      <p>Lass mal an uns selber glauben – ist mir egal, ob das verrückt ist. Wer genau hinguckt, sieht: Mut ist bloß ein Anagramm von Glück.</p>
-      <p>Wer immer wir auch waren, lass uns werden, wer wir sein wollen. Wir haben schon viel zu lang gewartet – lass uns Dopamin vergeuden!</p>
-    </section>
+      try {
+        const res = await fetch('/api/groq',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+            action:'patch_extract',
+            query:'Battlefield 6 patch notes update balance weapon changes',
+            sources:['https://store.steampowered.com/news/app/2807960'],
+            model:'llama-3.3-70b-versatile',
+            temperature:0.1,
+            max_tokens:3000,
+            messages:[{role:'system',content:'Return JSON with patch list as {"patches":[...]}'},
+                      {role:'user',content:'Extract Battlefield 6 patch notes as JSON.'}]
+          })
+        });
+        const text = await res.text();
+        debugInfo.textContent = text.slice(0,2000);
+        let data;
+        try{ data = JSON.parse(text); }catch{ data = { content:text }; }
 
-    <!-- Abschnitt 9 -->
-    <section>
-      <h2>Manifest</h2>
-      <p>„Der Sinn des Lebens ist Leben“ – das hat schon Casper gesagt. „Let’s make the most of the night“ – das hat schon Ke$ha gesagt.</p>
-      <p>Lass uns möglichst viele Fehler machen und möglichst viel aus ihnen lernen. Lass uns jetzt schon Gutes säen, damit wir später Gutes ernten. Lass uns alles tun, weil wir können – nicht weil wir müssen. Jetzt sind wir jung und lebendig, und das soll ruhig jeder wissen.</p>
-      <p>Unsere Zeit geht vorbei – das wird sowieso passieren, und bis dahin sind wir frei und es gibt nichts zu verlieren.</p>
-      <p>Lass uns uns mal demaskieren und sehen: Wir sind die Gleichen. Dann können wir uns ruhig sagen, dass wir uns viel bedeuten. Denn das Leben, das wir führen wollen, das können wir selber wählen!</p>
-    </section>
+        const norm = normalizePayload(data);
+        state.patches = norm.patches;
 
-    <!-- Abschnitt 10 -->
-    <section>
-      <h2>Epilog</h2>
-      <p>Also los – schreiben wir Geschichten, die wir später gern erzählen! Eines Tages, Baby, werden wir alt sein, oh Baby, werden wir alt sein und an all die Geschichten denken, die für immer unsere sind.</p>
-    </section>
+        if(!state.patches.length){
+          // Demo-Daten anzeigen
+          setBanner('Hinweis: Keine JSON-Struktur erkannt. Demo-Patch wird angezeigt.');
+          state.patches = [{
+            version:"1.0.99-demo",
+            date:new Date().toISOString().slice(0,10),
+            link:"https://store.steampowered.com/news/app/2807960",
+            notes:"⚙️ Simulierte Demo-Daten (keine echten Patchnotes)",
+            changes:[
+              {weapon:"M4A1",type:"nerf",change:"Recoil +8%"},
+              {weapon:"SGX-11",type:"buff",change:"Damage +5%"},
+              {weapon:"PW7A2",type:"change",change:"Reload time reduced by 0.2s"}
+            ]
+          }];
+        }
 
-  </main>
+        statusText.textContent = `Aktualisiert: ${new Date().toLocaleTimeString('de-DE')} • ${state.patches.length} Patches geladen`;
+        statusText.className = 'muted';
+        statusDot.style.background = 'var(--good)';
+      }
+      catch(e){
+        console.error(e);
+        setBanner('❌ Fehler: ' + e.message);
+        statusText.className = 'error';
+        statusDot.style.background = 'var(--bad)';
+      }
+      render();
+    }
 
-  <footer role="contentinfo">
-    © 2025 – Hommage an Julia Engelmann · Erstellt mit ♥ in Hamburg
-  </footer>
+    function render(){
+      if(!state.patches.length){
+        listEl.innerHTML = '<div class="hint">Keine Patch-Daten vorhanden.</div>';
+        return;
+      }
+      const out = state.patches.map(p=>`
+        <div class="card">
+          <div class="row">
+            <div>
+              <strong>Version ${p.version}</strong> · <span class="muted">${p.date}</span>
+              ${p.link?`· <a href="${p.link}" class="link" target="_blank">Steam News</a>`:''}
+              <div class="hint">${p.notes||''}</div>
+            </div>
+            <div class="chips">
+              ${(p.changes||[]).map(c=>`<span class="tag ${c.type}">${c.weapon} · ${c.type}</span>`).join('')}
+            </div>
+          </div>
+          <details><summary>Details anzeigen (${p.changes.length})</summary>
+            <table><thead><tr><th>Waffe</th><th>Typ</th><th>Änderung</th></tr></thead>
+            <tbody>${p.changes.map(c=>`<tr><td>${c.weapon}</td><td><span class="tag ${c.type}">${c.type}</span></td><td>${c.change}</td></tr>`).join('')}</tbody>
+            </table>
+          </details>
+        </div>`).join('');
+      listEl.innerHTML = out;
+    }
 
+    loadPatches();
+    setInterval(loadPatches, 60*60*1000);
+  </script>
 </body>
 </html>

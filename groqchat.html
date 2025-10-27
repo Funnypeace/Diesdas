@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>GROQ Demo</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    #antwort { white-space: pre-line; border: 1px solid #aaa; background: #fafafa; padding: 1em; margin-top: 1em; }
+    button { padding: 6px 20px; }
+  </style>
+</head>
+<body>
+  <h2>GROQ API Demo</h2>
+  <label for="frage">Deine Frage:</label><br>
+  <input type="text" id="frage" size="60" autofocus>
+  <button onclick="frageAbsenden()">Absenden</button>
+  
+  <div id="antwort"></div>
+
+  <script>
+    async function frageAbsenden() {
+      const frage = document.getElementById('frage').value;
+      document.getElementById('antwort').textContent = 'Bitte warten...';
+      try {
+        // Passe ggf. den API-Pfad an
+        const res = await fetch('/API/groq', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'chat', messages: [{ role: 'user', content: frage }] })
+        });
+        const data = await res.json();
+        if(data.content) {
+          document.getElementById('antwort').textContent = data.content;
+        } else if(data.error) {
+          document.getElementById('antwort').textContent = 'Fehler: ' + data.error;
+        } else {
+          document.getElementById('antwort').textContent = 'Unbekannte Antwortformat!';
+        }
+      } catch(e) {
+        document.getElementById('antwort').textContent = 'Es gab einen Fehler: ' + e.message;
+      }
+    }
+  </script>
+</body>
+</html>

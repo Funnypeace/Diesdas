@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GROQ Chat — Clean</title>
+  <title>GROQ Chat</title>
   <style>
     :root {
-      --bg: #0b1020;           /* page background */
+      --bg: #0b1020;
       --card: rgba(255,255,255,0.06);
       --card-border: rgba(255,255,255,0.12);
       --text: #e7ecf3;
@@ -42,7 +42,6 @@
       display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px;
     }
     .title { font-weight: 700; letter-spacing: .2px; font-size: 20px; }
-    .badge { font-size: 12px; color: var(--muted); border: 1px solid var(--card-border); padding: 6px 10px; border-radius: 999px; }
     .row { display: grid; grid-template-columns: 1fr auto; gap: 12px; }
     .input {
       width: 100%; appearance: none; border-radius: 14px; padding: 14px 16px; border: 1px solid var(--card-border); background: rgba(255,255,255,0.04);
@@ -78,7 +77,6 @@
   <main class="card" role="main">
     <div class="header">
       <div class="title">GROQ Chat</div>
-      <div class="badge">/api/groq2</div>
     </div>
 
     <label class="subtle" for="frage">Deine Frage</label>
@@ -91,7 +89,6 @@
     <div class="meta">
       <span id="status" class="status">Bereit</span>
       <span id="timing" class="chip" hidden>—</span>
-      <span class="chip">Modell: llama‑3.3‑70b‑versatile</span>
     </div>
   </main>
 
@@ -107,7 +104,7 @@
       if (!q) { result.textContent = 'Bitte gib eine Frage ein.'; return; }
 
       btn.disabled = true; statusEl.textContent = ''; statusEl.className = 'status';
-      statusEl.classList.add('ok'); // farblich neutral, wird unten ggf. überschrieben
+      statusEl.classList.add('ok');
       statusEl.innerHTML = '<span class="spinner"></span>Denke …';
       timingEl.hidden = true; result.textContent = '';
 
@@ -116,7 +113,7 @@
         const res = await fetch('/api/groq2', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'chat', messages: [{ role: 'user', content: q }], model: 'llama-3.3-70b-versatile' })
+          body: JSON.stringify({ action: 'chat', messages: [{ role: 'user', content: q }] })
         });
 
         if (!res.ok) {

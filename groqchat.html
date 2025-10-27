@@ -1,106 +1,155 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>GROQ Chat Debug</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GROQ Chat — Clean</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 40px; }
-    #antwort { white-space: pre-line; border: 1px solid #aaa; background: #fafafa; padding: 1em; margin-top: 1em; }
-    button { padding: 6px 20px; }
-    input[type="text"] { padding: 6px; width: 400px; }
-    #debug { font-size: 0.9em; color: #444; margin-top: 1em; white-space: pre; background: #f0f0f0; border: 1px dashed #aaa; padding: 10px; }
-    .info { color: #058; font-size: 0.94em; margin-bottom: 1em; }
-    label { font-weight: 600; }
+    :root {
+      --bg: #0b1020;           /* page background */
+      --card: rgba(255,255,255,0.06);
+      --card-border: rgba(255,255,255,0.12);
+      --text: #e7ecf3;
+      --muted: #b9c2d0;
+      --accent: #6aa7ff;
+      --accent-2: #9b8cff;
+      --ok: #1fd68a;
+      --err: #ff6b6b;
+    }
+    @media (prefers-color-scheme: light) {
+      :root { --bg:#f6f8fc; --card:#ffffff; --card-border:#e6e9f2; --text:#0b1020; --muted:#4a5162; }
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; background: radial-gradient(1200px 600px at 10% -10%, #17306b 0%, transparent 60%),
+                                radial-gradient(1200px 600px at 110% 110%, #2b2369 0%, transparent 55%),
+                                var(--bg);
+      color: var(--text); font: 16px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      display: grid; place-items: center; padding: 32px; 
+    }
+    .card {
+      width: min(900px, 100%);
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      box-shadow: 0 30px 60px rgba(0,0,0,.25);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 24px; overflow: hidden;
+    }
+    .header {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px;
+    }
+    .title { font-weight: 700; letter-spacing: .2px; font-size: 20px; }
+    .badge { font-size: 12px; color: var(--muted); border: 1px solid var(--card-border); padding: 6px 10px; border-radius: 999px; }
+    .row { display: grid; grid-template-columns: 1fr auto; gap: 12px; }
+    .input {
+      width: 100%; appearance: none; border-radius: 14px; padding: 14px 16px; border: 1px solid var(--card-border); background: rgba(255,255,255,0.04);
+      color: var(--text); outline: none; box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+    .input::placeholder { color: var(--muted); }
+    .btn {
+      border: none; cursor: pointer; border-radius: 14px; padding: 14px 18px; font-weight: 600; color: #0b1020;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      transition: transform .06s ease, filter .2s ease, box-shadow .2s ease;
+      box-shadow: 0 8px 20px rgba(106,167,255,.35);
+    }
+    .btn:hover { filter: brightness(1.05); }
+    .btn:active { transform: translateY(1px); }
+    .result {
+      margin-top: 16px; border-radius: 16px; border: 1px solid var(--card-border); background: rgba(255,255,255,0.03);
+      padding: 16px; min-height: 120px; white-space: pre-wrap; word-wrap: break-word;
+    }
+    .meta { margin-top: 8px; font-size: 13px; color: var(--muted); display:flex; gap:14px; align-items:center; }
+    .chip { padding: 4px 10px; border-radius: 999px; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); }
+    .status { font-weight:600; }
+    .status.ok { color: var(--ok); }
+    .status.err { color: var(--err); }
+    .spinner {
+      display:inline-block; width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(255,255,255,.25);
+      border-top-color: currentColor; animation: spin .9s linear infinite; vertical-align: -2px; margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg) } }
+    .subtle { color: var(--muted); font-size: 14px; margin: 6px 0 2px; }
   </style>
 </head>
 <body>
-  <h2>🧠 GROQ API Debug Chat</h2>
-  <div class="info">
-    Diese Version zeigt **ALLE Fehler und Debug-Infos** an.<br>
-    Endpoint: <code>/api/groq2</code><br>
-    Wenn etwas nicht funktioniert, erscheinen detaillierte Infos im Debug-Bereich.
-  </div>
+  <main class="card" role="main">
+    <div class="header">
+      <div class="title">GROQ Chat</div>
+      <div class="badge">/api/groq2</div>
+    </div>
 
-  <label for="frage">Deine Frage:</label><br>
-  <input type="text" id="frage" placeholder="z. B. Was sind die News heute?">
-  <button onclick="frageAbsenden()">Absenden</button>
+    <label class="subtle" for="frage">Deine Frage</label>
+    <div class="row">
+      <input id="frage" class="input" type="text" placeholder="Frag mich etwas … (Enter zum Absenden)" autofocus />
+      <button id="sendBtn" class="btn" aria-label="Absenden">Absenden</button>
+    </div>
 
-  <div id="antwort"></div>
-  <div id="debug"></div>
+    <section class="result" id="result" aria-live="polite"></section>
+    <div class="meta">
+      <span id="status" class="status">Bereit</span>
+      <span id="timing" class="chip" hidden>—</span>
+      <span class="chip">Modell: llama‑3.3‑70b‑versatile</span>
+    </div>
+  </main>
 
   <script>
-    async function frageAbsenden() {
-      const frage = document.getElementById('frage').value.trim();
-      const antwortEl = document.getElementById('antwort');
-      const debugEl = document.getElementById('debug');
-      antwortEl.textContent = '⏳ Anfrage läuft...';
-      debugEl.textContent = '';
+    const frage = document.getElementById('frage');
+    const btn = document.getElementById('sendBtn');
+    const result = document.getElementById('result');
+    const statusEl = document.getElementById('status');
+    const timingEl = document.getElementById('timing');
 
-      if (!frage) {
-        antwortEl.textContent = '❗ Bitte gib eine Frage ein!';
-        return;
-      }
+    async function ask() {
+      const q = frage.value.trim();
+      if (!q) { result.textContent = 'Bitte gib eine Frage ein.'; return; }
 
+      btn.disabled = true; statusEl.textContent = ''; statusEl.className = 'status';
+      statusEl.classList.add('ok'); // farblich neutral, wird unten ggf. überschrieben
+      statusEl.innerHTML = '<span class="spinner"></span>Denke …';
+      timingEl.hidden = true; result.textContent = '';
+
+      const t0 = performance.now();
       try {
-        const start = performance.now();
         const res = await fetch('/api/groq2', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'chat',
-            messages: [{ role: 'user', content: frage }],
-            model: 'llama-3.3-70b-versatile'
-          })
+          body: JSON.stringify({ action: 'chat', messages: [{ role: 'user', content: q }], model: 'llama-3.3-70b-versatile' })
         });
 
-        const duration = (performance.now() - start).toFixed(0);
-        let rawText;
-        try {
-          rawText = await res.clone().text();
-        } catch (e) {
-          rawText = '⚠️ Response konnte nicht gelesen werden: ' + e.message;
-        }
-
-        let json;
-        try {
-          json = JSON.parse(rawText);
-        } catch (e) {
-          json = null;
-        }
-
-        // --- HTTP Fehlerbehandlung ---
         if (!res.ok) {
-          antwortEl.textContent = `❌ HTTP Fehler ${res.status}: ${res.statusText}`;
-          debugEl.textContent = `Response Body (Text):\n${rawText}`;
-          return;
+          const text = await res.text().catch(()=>'');
+          throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ' — ' + text : ''}`);
         }
 
-        // --- JSON Parsing Ergebnis ---
-        if (!json) {
-          antwortEl.textContent = '❌ Fehler: Antwort ist kein gültiges JSON!';
-          debugEl.textContent = rawText;
-          return;
-        }
+        const data = await res.json();
+        const t = Math.max(1, Math.round(performance.now() - t0));
+        timingEl.textContent = '⏱ ' + t + ' ms';
+        timingEl.hidden = false;
 
-        // --- Inhalt prüfen ---
-        if (json.error) {
-          antwortEl.textContent = `⚠️ API Fehler: ${json.error}\n${json.details || ''}`;
-        } else if (json.content) {
-          antwortEl.textContent = `✅ Antwort (${duration} ms):\n\n${json.content}`;
+        const content = (data && data.content) ? data.content.trim() : '';
+        if (content) {
+          result.textContent = content;
+          statusEl.textContent = 'Fertig';
+          statusEl.className = 'status ok';
         } else {
-          antwortEl.textContent = '⚠️ Unerwartetes Format ohne "content"';
+          result.textContent = 'Keine Antwort erhalten.';
+          statusEl.textContent = 'Leere Antwort';
+          statusEl.className = 'status err';
         }
-
-        debugEl.textContent = JSON.stringify(json, null, 2);
       } catch (err) {
-        antwortEl.textContent = '💥 Ausnahmefehler: ' + err.message;
-        debugEl.textContent = err.stack || '(keine Stacktrace)';
+        statusEl.textContent = 'Fehler';
+        statusEl.className = 'status err';
+        result.textContent = 'Es ist ein Fehler aufgetreten: ' + (err && err.message ? err.message : String(err));
+      } finally {
+        btn.disabled = false;
       }
     }
 
-    document.getElementById('frage').addEventListener('keypress', e => {
-      if (e.key === 'Enter') frageAbsenden();
-    });
+    btn.addEventListener('click', ask);
+    frage.addEventListener('keydown', (e) => { if (e.key === 'Enter') ask(); });
   </script>
 </body>
 </html>

@@ -59,7 +59,7 @@
       justify-content: space-between;
       flex-wrap: wrap;
     }
-    .chips { display: flex; gap: 8px; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
     .chip {
       background: var(--chip);
       padding: 4px 12px;
@@ -73,6 +73,7 @@
     }
     .details {
       margin-top: 22px;
+      word-break: break-all;
     }
     .good { color: var(--good); }
     .bad { color: var(--bad); }
@@ -87,6 +88,21 @@
       cursor: pointer;
     }
     button:hover { filter: brightness(1.08); }
+    pre {
+      background: #12161f;
+      color: #cbe1ff;
+      border-radius: 9px;
+      padding: 8px 10px;
+      margin: 6px 0 0 0;
+      font-size: 14px;
+      max-height: 320px;
+      overflow: auto;
+    }
+    summary {
+      cursor: pointer;
+      font-weight: bold;
+      margin: 6px 0 3px 0;
+    }
     @media (max-width: 900px) {
       .wrap, header { padding: 14px; }
       .controls { grid-template-columns: 1fr 1fr; }
@@ -124,8 +140,23 @@
       <div id="patchList" class="chips"></div>
     </div>
     <div class="details card">
-      <strong>ℹ️ Debug-Informationen</strong>
-      <pre id="debug">Noch keine Daten geladen.</pre>
+      <strong>ℹ️ Debug-Informationen & Rohdaten</strong>
+      <details open>
+        <summary>Letztes Debug-Objekt</summary>
+        <pre id="debug"></pre>
+      </details>
+      <details>
+        <summary>Letzte gesamte API-Antwort</summary>
+        <pre id="apiRaw"></pre>
+      </details>
+      <details>
+        <summary>Alle Fehler / Exceptions</summary>
+        <pre id="errorLog"></pre>
+      </details>
+      <details>
+        <summary>Letzter Patch-Response (JSON, gekürzt)</summary>
+        <pre id="patchRaw"></pre>
+      </details>
     </div>
     <div class="details card">
       <strong>🔧 Wie funktioniert das?</strong>
@@ -143,6 +174,9 @@
     const datetime = document.getElementById("datetime");
     const reloadBtn = document.getElementById("reloadBtn");
     const debugEl = document.getElementById("debug");
+    const apiRawEl = document.getElementById("apiRaw");
+    const errorLogEl = document.getElementById("errorLog");
+    const patchRawEl = document.getElementById("patchRaw");
     const patchList = document.getElementById("patchList");
     const search = document.getElementById("search");
     const filter = document.getElementById("filter");
@@ -150,6 +184,9 @@
     const toDate = document.getElementById("toDate");
     let patches = [];
     let lastDebug = "";
+    let lastError = "";
+    let lastApiRaw = "";
+    let lastPatchRaw = "";
 
     function formatTime(d) {
       return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -157,24 +194,43 @@
 
     async function fetchData() {
       patchStatus.textContent = "Lade Patch-Daten von EA...";
+      lastError = "";
       try {
         const res = await fetch("/api/groq2", { method: "POST" });
         const data = await res.json();
         datetime.textContent = formatTime(new Date());
+        lastApiRaw = JSON.stringify(data, null, 2);
+        apiRawEl.textContent = lastApiRaw;
+
+        // Versuche möglichst viele Debuginfos zu zeigen
         lastDebug = data.debug ? JSON.stringify(data.debug, null, 2) : "";
         debugEl.textContent = lastDebug || "Keine Debug-Infos.";
-        if (data.patches && data.patches.length) {
-          patches = data.patches;
-          patchStatus.innerHTML = `<span class="good">Gefundene Patches: ${data.patches.length}</span>`;
+        lastPatchRaw = data.content ? (
+            data.content.length > 1400
+                ? data.content.slice(0, 1400) + "\n...\n[gekuerzt]" 
+                : data.content
+          ) : "—";
+        patchRawEl.textContent = lastPatchRaw;
+
+        let jsonPatches = [];
+        try {
+          jsonPatches = JSON.parse(data.content).patches || [];
+        } catch(e) {
+          lastError += "\nPatchdaten konnten nicht geparst werden: " + e.toString();
+        }
+        if (jsonPatches.length) {
+          patches = jsonPatches;
+          patchStatus.innerHTML = `<span class="good">Gefundene Patches: ${patches.length}</span>`;
         } else {
           patches = [];
           patchStatus.innerHTML = `<span class="bad">Keine Patches gefunden</span>`;
         }
         render();
       } catch (e) {
+        lastError += "\nFetch/API Fehler: " + e.toString();
         patchStatus.innerHTML = `<span class="bad">Fehler beim Laden der Patch-Daten!</span>`;
-        debugEl.textContent = e.toString();
       }
+      errorLogEl.textContent = lastError || "Keine Fehler.";
     }
 
     function filterPatches() {
@@ -209,7 +265,14 @@
       filtered.forEach(p => {
         const chip = document.createElement("div");
         chip.className = "chip";
-        chip.innerHTML = `<b>${p.version || ""}</b> ${p.weapon ? "Waffe: " + p.weapon + " " : ""}${p.buff ? '<span class="good">Buff</span>' : ""}${p.nerf ? '<span class="bad">Nerf</span>' : ""}<br>${p.notes || ""}`;
+        chip.innerHTML = [
+          `<b>${p.version || ""}</b>`,
+          p.date ? `<span>${p.date}</span>` : "",
+          p.weapon ? "Waffe: " + p.weapon + " " : "",
+          p.buff ? '<span class="good">Buff</span>' : "",
+          p.nerf ? '<span class="bad">Nerf</span>' : "",
+          `<br>${p.notes || ""}`
+        ].join(' ');
         patchList.appendChild(chip);
       });
     }

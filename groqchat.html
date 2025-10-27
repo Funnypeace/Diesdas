@@ -2,24 +2,27 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>GROQ Chat Demo</title>
+  <title>GROQ Chat Debug</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 40px; }
     #antwort { white-space: pre-line; border: 1px solid #aaa; background: #fafafa; padding: 1em; margin-top: 1em; }
     button { padding: 6px 20px; }
-    input[type="text"] { padding: 6px; }
-    #debug { font-size: 0.9em; color: #555; margin-top: 0.5em; }
+    input[type="text"] { padding: 6px; width: 400px; }
+    #debug { font-size: 0.9em; color: #444; margin-top: 1em; white-space: pre; background: #f0f0f0; border: 1px dashed #aaa; padding: 10px; }
     .info { color: #058; font-size: 0.94em; margin-bottom: 1em; }
     label { font-weight: 600; }
   </style>
 </head>
 <body>
-  <h2>GROQ API Demo</h2>
+  <h2>🧠 GROQ API Debug Chat</h2>
   <div class="info">
-    Mit dieser Seite kannst du direkt mit deiner GROQ API (<code>/API/groq2</code>) chatten. Bei Fehlern werden Debug-Infos angezeigt.
+    Diese Version zeigt **ALLE Fehler und Debug-Infos** an.<br>
+    Endpoint: <code>/api/groq2</code><br>
+    Wenn etwas nicht funktioniert, erscheinen detaillierte Infos im Debug-Bereich.
   </div>
+
   <label for="frage">Deine Frage:</label><br>
-  <input type="text" id="frage" size="60" autofocus>
+  <input type="text" id="frage" placeholder="z. B. Was sind die News heute?">
   <button onclick="frageAbsenden()">Absenden</button>
 
   <div id="antwort"></div>
@@ -27,41 +30,75 @@
 
   <script>
     async function frageAbsenden() {
-      const frage = document.getElementById('frage').value;
-      document.getElementById('antwort').textContent = 'Bitte warten...';
-      document.getElementById('debug').textContent = '';
+      const frage = document.getElementById('frage').value.trim();
+      const antwortEl = document.getElementById('antwort');
+      const debugEl = document.getElementById('debug');
+      antwortEl.textContent = '⏳ Anfrage läuft...';
+      debugEl.textContent = '';
+
+      if (!frage) {
+        antwortEl.textContent = '❗ Bitte gib eine Frage ein!';
+        return;
+      }
+
       try {
-        const res = await fetch('/API/groq2', {
+        const start = performance.now();
+        const res = await fetch('/api/groq2', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'chat', messages: [{ role: 'user', content: frage }] })
+          body: JSON.stringify({
+            action: 'chat',
+            messages: [{ role: 'user', content: frage }],
+            model: 'llama-3.3-70b-versatile'
+          })
         });
-        let data;
+
+        const duration = (performance.now() - start).toFixed(0);
+        let rawText;
         try {
-          data = await res.json();
-        } catch {
-          const text = await res.text();
-          throw new Error('Antwort ist kein JSON:\n' + text);
+          rawText = await res.clone().text();
+        } catch (e) {
+          rawText = '⚠️ Response konnte nicht gelesen werden: ' + e.message;
         }
-        if (data.error) {
-          document.getElementById('antwort').textContent =
-            'Fehler: ' + data.error + (data.details ? '\nDetails: ' + data.details : '');
-          document.getElementById('debug').textContent = data.debug ? JSON.stringify(data.debug, null, 2) : '';
-        } else if (data.content) {
-          document.getElementById('antwort').textContent = data.content;
-          document.getElementById('debug').textContent = data.debug ? JSON.stringify(data.debug, null, 2) : '';
+
+        let json;
+        try {
+          json = JSON.parse(rawText);
+        } catch (e) {
+          json = null;
+        }
+
+        // --- HTTP Fehlerbehandlung ---
+        if (!res.ok) {
+          antwortEl.textContent = `❌ HTTP Fehler ${res.status}: ${res.statusText}`;
+          debugEl.textContent = `Response Body (Text):\n${rawText}`;
+          return;
+        }
+
+        // --- JSON Parsing Ergebnis ---
+        if (!json) {
+          antwortEl.textContent = '❌ Fehler: Antwort ist kein gültiges JSON!';
+          debugEl.textContent = rawText;
+          return;
+        }
+
+        // --- Inhalt prüfen ---
+        if (json.error) {
+          antwortEl.textContent = `⚠️ API Fehler: ${json.error}\n${json.details || ''}`;
+        } else if (json.content) {
+          antwortEl.textContent = `✅ Antwort (${duration} ms):\n\n${json.content}`;
         } else {
-          document.getElementById('antwort').textContent = 'Unbekanntes Antwortformat!';
-          document.getElementById('debug').textContent = '';
+          antwortEl.textContent = '⚠️ Unerwartetes Format ohne "content"';
         }
-      } catch (e) {
-        document.getElementById('antwort').textContent = 'Es gab einen Fehler: ' + e.message;
-        document.getElementById('debug').textContent = '';
+
+        debugEl.textContent = JSON.stringify(json, null, 2);
+      } catch (err) {
+        antwortEl.textContent = '💥 Ausnahmefehler: ' + err.message;
+        debugEl.textContent = err.stack || '(keine Stacktrace)';
       }
     }
 
-    // ENTER-Handler für bequemes Absenden
-    document.getElementById('frage').addEventListener('keypress', function (e) {
+    document.getElementById('frage').addEventListener('keypress', e => {
       if (e.key === 'Enter') frageAbsenden();
     });
   </script>

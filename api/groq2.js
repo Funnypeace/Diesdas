@@ -1,4 +1,4 @@
-// /api/groq.js  (CommonJS für Vercel Functions ohne package.json)
+// /api/groq2.js  (CommonJS für Vercel Functions ohne package.json)
 // ENV: GROQ_API_KEY, FIRECRAWL_API_KEY
 module.exports = async function (req, res) {
   if (req.method !== 'POST') {
@@ -14,9 +14,10 @@ module.exports = async function (req, res) {
       top_p = 1,
       max_tokens = 1200,
       stream = false,
-      query = '',         // z. B. (site:welt.de wirtschaft) OR (site:tagesschau.de wirtschaft)
+      query = '',         // z. B. (site:ea.com OR site:battlefield.com) patch notes
       sources = []        // optionale URL-/Domainliste als Fallback fürs Scrapen
     } = req.body || {};
+
     // --- Firecrawl: Search + Scrape (nur wenn query vorhanden und kein Chat) ---
     let scrapedBlocks = [];
     let targets = [];
@@ -25,6 +26,7 @@ module.exports = async function (req, res) {
       typeof query === 'string' &&
       query.trim().length > 0 &&
       !!process.env.FIRECRAWL_API_KEY;
+
     if (useFirecrawl) {
       try {
         const fcHeaders = {
@@ -71,28 +73,38 @@ module.exports = async function (req, res) {
         console.warn('Firecrawl overall failed:', e?.message || e);
       }
     }
+
     // --- Groq: Anfrage vorbereiten ---
-    const systemInstruction =
-      'Fasse die wichtigsten heutigen Nachrichten zusammen. Sei präzise, neutral und vermeide Ausschmückungen.';
-    if (scrapedBlocks.length === 0 && (!Array.isArray(messages) || messages.length === 0)) {
+    let groqMessages = [];
+    
+    // Wenn Firecrawl-Daten vorhanden sind (action != 'chat')
+    if (scrapedBlocks.length > 0) {
+      const joined = scrapedBlocks.join('\n\n---\n\n');
+      const systemInstruction = 'Du bist ein Assistent, der NUR im JSON-Format antwortet. Fasse die wichtigsten Patch Notes zusammen. Antworte ausschließlich mit einem JSON-Objekt im Format: {"patches": [{"version": "...", "date": "...", "changes": ["...", "..."]}]}';
+      groqMessages = [
+        { role: 'system', content: systemInstruction },
+        { role: 'user', content: `Quelleninhalte (Auszug):\n\n${joined}` }
+      ];
+    } 
+    // Wenn action === 'chat' und messages vorhanden
+    else if (action === 'chat' && Array.isArray(messages) && messages.length > 0) {
+      // Nutze die übergebenen messages direkt
+      groqMessages = messages;
+    }
+    // Fallback: keine Daten
+    else {
       return res.status(200).json({
-        content: 'Keine relevanten Nachrichten gefunden. Es liegen keine Eingangsdaten vor, um eine Zusammenfassung zu erstellen.',
+        content: JSON.stringify({
+          patches: [],
+          message: 'Keine relevanten Patch Notes gefunden. Es liegen keine Eingangsdaten vor.'
+        }),
         model,
         action,
         timestamp: new Date().toISOString(),
         debug: { firecrawlUsed: useFirecrawl, query, targets, scrapedCount: 0 }
       });
     }
-    let groqMessages = [];
-    if (scrapedBlocks.length > 0) {
-      const joined = scrapedBlocks.join('\n\n---\n\n');
-      groqMessages = [
-        { role: 'system', content: systemInstruction },
-        { role: 'user', content: `Quelleninhalte (Auszug):\n\n${joined}` }
-      ];
-    } else {
-      groqMessages = messages;
-    }
+
     // --- Groq API Call ---
     const gr = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -111,7 +123,7 @@ module.exports = async function (req, res) {
     const groqData = await gr.json();
     const content = groqData?.choices?.[0]?.message?.content?.trim?.() || '';
     return res.status(200).json({
-      content: content || 'Keine Antwort erhalten',
+      content: content || JSON.stringify({ patches: [], message: 'Keine Antwort erhalten' }),
       usage: groqData.usage,
       model: groqData.model || model,
       action,
@@ -119,7 +131,7 @@ module.exports = async function (req, res) {
       debug: { firecrawlUsed: useFirecrawl, query, targets, scrapedCount: scrapedBlocks.length }
     });
   } catch (err) {
-    console.error('API /api/groq error:', err);
+    console.error('API /api/groq2 error:', err);
     return res.status(500).json({ error: 'Internal Server Error', details: String(err && err.message || err) });
   }
 };

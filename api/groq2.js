@@ -21,7 +21,7 @@ module.exports = async function (req, res) {
     } = req.body || {};
 
     // 1. Default-Quelle + Default-Query wenn nix gesetzt
-    const defaultSources = ["https://www.ea.com/games/battlefield/battlefield-6/news"];
+    const defaultSources = ["https://patchbot.io/games/battlefield-6"];
     const mySources = Array.isArray(sources) && sources.length ? sources : defaultSources;
     const effectiveQuery = query && query.trim().length ? query : 'Battlefield 6 Patch Notes';
 

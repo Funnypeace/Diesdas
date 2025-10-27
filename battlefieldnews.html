@@ -1,206 +1,227 @@
 <!DOCTYPE html>
-
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  Battlefield 6 Patch-Tracker (Live)
-  <style>:root{--bg:#0b0f14;--card:#121822;--muted:#8aa0b6;--text:#e7f0ff;--accent:#6ab0ff;--good:#2ecc71;--bad:#ff6b6b;--chip:#1a2330;--border:#223045;--shadow: 0 8px 24px rgba(0,0,0,.35);}*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#0b0f14,#0e141d);color:var(--text);font:16px/1.45 system-ui,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}header{padding:28px 20px 8px;max-width:1100px;margin:0 auto}h1{margin:0 0 6px;font-size:28px}.muted{color:var(--muted)}.wrap{max-width:1100px;margin:0 auto;padding:16px 20px 40px}.controls{display:grid;grid-template-columns:1fr 150px 150px 160px;gap:10px;margin:12px 0 18px}input,select{background:#0f1722;border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px}.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 14px;margin:10px 0;box-shadow:var(--shadow)}.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}.chips{display:flex;gap:8px;flex-wrap:wrap}.tag{padding:2px 8px;border-radius:999px;font-size:12px;border:1px solid var(--border)}.tag.buff{background:rgba(46,204,113,.08);color:var(--good)}.tag.nerf{background:rgba(255,107,107,.08);color:var(--bad)}.tag.change{background:rgba(106,176,255,.08);color:var(--accent)}details{background:rgba(255,255,255,.02);border:1px dashed var(--border);border-radius:12px;padding:10px 12px;margin-top:10px}summary{cursor:pointer}table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border-bottom:1px solid var(--border);padding:8px 6px;text-align:left}.link{color:var(--accent);text-decoration:none}.hint{font-size:13px;color:var(--muted)}.status{display:flex;gap:12px;align-items:center;margin:8px 0}.status-dot{width:8px;height:8px;border-radius:50%;background:var(--good);animation:pulse 2s infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}.loading{color:var(--accent)}.error{color:var(--bad)}.reload-btn{background:var(--accent);color:#fff;border:none;padding:10px 16px;border-radius:10px;cursor:pointer;font-size:14px}.reload-btn:hover{opacity:.85}.raw-content{background:#0a0e13;padding:12px;border-radius:8px;font-size:12px;max-height:300px;overflow:auto;white-space:pre-wrap;word-break:break-word}.banner{margin:8px 0;padding:8px 10px;border-radius:8px;font-size:13px;border:1px solid var(--border);background:#0a111a}</style>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Battlefield 6 Patch-Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #121822;
+      --muted: #8aa0b6;
+      --text: #e7f0ff;
+      --accent: #6ab0ff;
+      --good: #2ecc71;
+      --bad: #ff6b6b;
+      --chip: #1a2330;
+      --border: #223045;
+      --shadow: 0 8px 24px rgba(0,0,0,.35);
+    }
+    html, body {
+      margin: 0;
+      background: linear-gradient(180deg, #0b0f14, #0e141d);
+      color: var(--text);
+      font: 16px/1.45 system-ui, Segoe UI, Roboto, Ubuntu, Helvetica Neue, Arial;
+    }
+    header {
+      padding: 28px 20px 8px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    h1 { margin: 0 0 6px; font-size: 28px; }
+    .muted { color: var(--muted); }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 16px 20px 40px; }
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 150px 150px 160px;
+      gap: 10px;
+      margin: 12px 0 18px;
+    }
+    input, select {
+      background: #0f1722;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 10px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 14px;
+      margin: 10px 0;
+      box-shadow: var(--shadow);
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .chips { display: flex; gap: 8px; }
+    .chip {
+      background: var(--chip);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 15px;
+    }
+    .hint {
+      color: var(--muted);
+      font-size: 14px;
+      margin: 24px 0 4px 0;
+    }
+    .details {
+      margin-top: 22px;
+    }
+    .good { color: var(--good); }
+    .bad { color: var(--bad); }
+    button {
+      background: var(--accent);
+      color: #fff;
+      border-radius: 10px;
+      border: none;
+      font-weight: 600;
+      padding: 10px 22px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover { filter: brightness(1.08); }
+    @media (max-width: 900px) {
+      .wrap, header { padding: 14px; }
+      .controls { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 700px) {
+      .controls { display: block; }
+      .wrap, header { padding: 8px; }
+      .card { padding: 8px; }
+    }
+  </style>
+</head>
+<body>
   <header>
-    Battlefield 6 Patch-Tracker
-    <p class="muted">Live-Daten von Steam News • Automatische Updates alle 60 Minuten</p>
-    <div class="status">
-      <span class="status-dot" id="statusDot"></span>
-      <span class="muted" id="statusText">Lade Daten...</span>
-      <button class="reload-btn" onclick="loadPatches()">🔄 Jetzt aktualisieren</button>
-    </div>
-    <div class="banner" id="infoBanner" style="display:none"></div>
+    <h1>Battlefield 6 Patch-Tracker</h1>
+    <div class="muted">Live-Daten von der offiziellen EA Patchnote-Seite &bull; Automatische Updates alle 60 Minuten</div>
   </header>
   <div class="wrap">
-    <div class="controls">
-      <input id="q" placeholder="Suche Version, Waffe, Notizen…"/>
-      <select id="type">
-        <option value="all">Alle Änderungen</option>
-        <option value="buff">Nur Buffs</option>
-        <option value="nerf">Nur Nerfs</option>
+    <div class="row controls">
+      <input id="search" type="text" placeholder="Suche Version, Waffe, Notizen...">
+      <select id="filter">
+        <option value="">Alle Änderungen</option>
+        <option value="Buffs">Nur Buffs</option>
+        <option value="Nerfs">Nur Nerfs</option>
       </select>
-      <input id="from" type="date"/>
-      <input id="to" type="date"/>
+      <input type="date" id="fromDate">
+      <input type="date" id="toDate">
     </div>
-    <div id="list"></div>
-    <details>
-      ℹ️ Debug-Informationen
-      <div class="hint" style="margin:8px 0">Letzte Antwort der API (abgeschnitten):</div>
-      <div class="raw-content" id="debugInfo">Noch keine Daten geladen.</div>
-    </details>
-    <details style="margin-top:12px">
-      🔧 Wie funktioniert das?
-      <ul class="hint">
-        Diese Seite ruft /api/groq2 auf und übergibt die Steam News URL
-        Firecrawl scrapt die Patch-Notes von Steam
-        Groq (LLaMA) extrahiert strukturierte Daten (Version, Waffen-Changes, etc.)
-        Automatisches Reload alle 60 Minuten für frische Daten
-        Komplett serverless über Vercel Functions
-      </ul>
-    </details>
+    <div class="card" id="main">
+      <div class="row" style="margin-bottom: 12px;">
+        <div id="statusText">
+          <span class="muted">Aktualisiert: <span id="datetime">--:--:--</span> &bull; <span id="patchStatus">Lade Patch-Daten von EA...</span></span>
+        </div>
+        <button id="reloadBtn">Jetzt aktualisieren</button>
+      </div>
+      <div id="patchList" class="chips"></div>
+    </div>
+    <div class="details card">
+      <strong>ℹ️ Debug-Informationen</strong>
+      <pre id="debug">Noch keine Daten geladen.</pre>
+    </div>
+    <div class="details card">
+      <strong>🔧 Wie funktioniert das?</strong>
+      <div class="hint">
+        Diese Seite ruft <code>/api/groq2</code> auf und übergibt die <b>offizielle EA News URL</b>.<br>
+        Firecrawl scrapt die Patch-Notes von <b>EA</b>, Groq (LLaMA) extrahiert strukturierte Daten (Version, Waffen-Changes, etc.).<br>
+        Automatisches Reload alle 60 Minuten für frische Daten.<br>
+        Komplett serverless über Vercel Functions.
+      </div>
+    </div>
   </div>
   <script>
-    const $ = s => document.querySelector(s);
-    const listEl = $('#list');
-    const statusText = $('#statusText');
-    const statusDot = $('#statusDot');
-    const debugInfo = $('#debugInfo');
-    const infoBanner = $('#infoBanner');
-    const state = { patches: [], lastUpdate: null, error: null };
-    // Hilfsfunktionen
-    function setBanner(msg){
-      if(!msg){ infoBanner.style.display='none'; infoBanner.textContent=''; return; }
-      infoBanner.style.display='block';
-      infoBanner.textContent = msg;
+    const statusText = document.getElementById("statusText");
+    const patchStatus = document.getElementById("patchStatus");
+    const datetime = document.getElementById("datetime");
+    const reloadBtn = document.getElementById("reloadBtn");
+    const debugEl = document.getElementById("debug");
+    const patchList = document.getElementById("patchList");
+    const search = document.getElementById("search");
+    const filter = document.getElementById("filter");
+    const fromDate = document.getElementById("fromDate");
+    const toDate = document.getElementById("toDate");
+    let patches = [];
+    let lastDebug = "";
+
+    function formatTime(d) {
+      return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     }
-    // Versucht, aus einem beliebigen Text ein JSON-Objekt zu extrahieren
-    function extractJsonFromText(txt){
-      // Codeblock-Tags entfernen
-      let t = (txt || '')
-        .replace(/```json\s*/gi,'')
-        .replace(/```\s*/g,'')
-        .trim();
-      // Vollständiges JSON-Objekt suchen (inklusive verschachtelter Klammern)
-      const m = t.match(/\{(?:[^{}]|{[^{}]*})*\}/s);
-      if(!m) return null;
-      try { return JSON.parse(m[0]); } catch { return null; }
-    }
-    // Normalisiert verschiedene API-Formate zu { patches: [...] }
-    function normalizeToPatches(payload){
-      // Bereits korrekt?
-      if (payload && Array.isArray(payload.patches)) return { patches: payload.patches, source: 'payload.patches' };
-      // Groq-typisch: choices[0].message.content
-      const choice = payload && payload.choices && payload.choices[0] && payload.choices[0].message && payload.choices[0].message.content;
-      if (typeof choice === 'string'){
-        const inner = extractJsonFromText(choice) || (()=>{
-          try { return JSON.parse(choice); } catch { return null; }
-        })();
-        if (inner && Array.isArray(inner.patches)) return { patches: inner.patches, source: 'choices[0].message.content' };
-      }
-      // content als String, der JSON enthält
-      if (typeof payload?.content === 'string'){
-        const inner = extractJsonFromText(payload.content) || (()=>{
-          try { return JSON.parse(payload.content); } catch { return null; }
-        })();
-        if (inner && Array.isArray(inner.patches)) return { patches: inner.patches, source: 'payload.content' };
-      }
-      return { patches: [], source: 'none' };
-    }
-    async function loadPatches(){
-      statusText.textContent = 'Lade Patch-Daten von Steam...';
-      statusText.className = 'loading';
-      statusDot.style.background = 'var(--accent)';
-      setBanner('');
+
+    async function fetchData() {
+      patchStatus.textContent = "Lade Patch-Daten von EA...";
       try {
-        const response = await fetch('/api/groq2', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'patch_extract',
-            query: 'Battlefield 6 patch notes update balance weapon changes',
-            sources: ['https://store.steampowered.com/news/app/2807960'],
-            model: 'llama-3.3-70b-versatile',
-            temperature: 0.1,
-            max_tokens: 3000,
-            messages: [
-              {
-                role: 'system',
-                content: `You are a data extraction API. Return ONLY valid JSON of Battlefield 6 weapon balance patches.
-FORMAT:
-{"patches":[{"version":"1.0.2","date":"2025-10-23","link":"https://...","notes":"...","changes":[{"weapon":"M4A1","type":"nerf","change":"Recoil +10%"}]}]}`
-              },
-              {
-                role: 'user',
-                content: 'Extract all patch notes with weapon balance changes from the scraped content. Return only the JSON structure.'
-              }
-            ]
-          })
-        });
-        const rawText = await response.text();
-        debugInfo.textContent = rawText.slice(0, 4000);
-        // 1) Versuche, die Antwort als JSON zu interpretieren
-        let payload;
-        try { payload = JSON.parse(rawText); } catch { payload = { content: rawText }; }
-        // 2) Normalisieren
-        const norm = normalizeToPatches(payload);
-        // 3) Wenn gar kein JSON gefunden wurde und keine Patches -> sauberer Fallback (keine Fehlermeldung)
-        state.patches = Array.isArray(norm.patches) ? norm.patches : [];
-        state.lastUpdate = new Date().toISOString();
-        state.error = null;
-        if (state.patches.length === 0){
-          statusText.textContent = `Aktualisiert: ${new Date().toLocaleTimeString('de-DE')} • Keine Patches gefunden`;
-          statusText.className = 'muted';
-          statusDot.style.background = '#ff9800';
-          // Hinweis anzeigen, falls wir nur Text bekamen
-          const isPlainText = typeof payload?.content === 'string' && !payload?.choices && !Array.isArray(payload?.patches);
-          if (isPlainText) setBanner('Hinweis: Die API hat keinen JSON-Block geliefert. Es wurden daher keine Patches extrahiert.');
+        const res = await fetch("/api/groq2", { method: "POST" });
+        const data = await res.json();
+        datetime.textContent = formatTime(new Date());
+        lastDebug = data.debug ? JSON.stringify(data.debug, null, 2) : "";
+        debugEl.textContent = lastDebug || "Keine Debug-Infos.";
+        if (data.patches && data.patches.length) {
+          patches = data.patches;
+          patchStatus.innerHTML = `<span class="good">Gefundene Patches: ${data.patches.length}</span>`;
         } else {
-          statusText.textContent = `Aktualisiert: ${new Date().toLocaleTimeString('de-DE')} • ${state.patches.length} Patches gefunden`;
-          statusText.className = 'muted';
-          statusDot.style.background = 'var(--good)';
+          patches = [];
+          patchStatus.innerHTML = `<span class="bad">Keine Patches gefunden</span>`;
         }
-      } catch(err) {
-        console.error('Load error:', err);
-        state.error = err.message;
-        statusText.textContent = `Fehler: ${err.message}`;
-        statusText.className = 'error';
-        statusDot.style.background = 'var(--bad)';
-        debugInfo.textContent = `ERROR: ${err.message}`;
-        setBanner('');
+        render();
+      } catch (e) {
+        patchStatus.innerHTML = `<span class="bad">Fehler beim Laden der Patch-Daten!</span>`;
+        debugEl.textContent = e.toString();
       }
-      render();
     }
-    function matchFilters(patch){
-      const q = $('#q').value.toLowerCase().trim();
-      const type = $('#type').value;
-      const from = $('#from').value ? new Date($('#from').value) : null;
-      const to = $('#to').value ? new Date($('#to').value) : null;
-      const d = new Date(patch.date);
-      if (from && d < from) return false;
-      if (to && d > to) return false;
-      const text = [patch.version, patch.notes, ...(patch.changes||[]).map(c=>`${c.weapon} ${c.type} ${c.change}`)].join(' ').toLowerCase();
-      if (q && !text.includes(q)) return false;
-      if (type !== 'all' && !(patch.changes||[]).some(c => c.type === type)) return false;
-      return true;
-    }
-    function render(){
-      const { patches } = state;
-      const out = [];
-      if (patches.length === 0) {
-        out.push(`<div class="hint">Noch keine Patch-Daten geladen oder keine Patches gefunden.</div>`);
-      } else {
-        patches
-          .filter(matchFilters)
-          .sort((a,b)=>new Date(b.date)-new Date(a.date))
-          .forEach(p=>{
-            out.push(`<div class="card">
-              <div class="row">
-                <div>
-                  <strong>Version ${p.version}</strong> · <span class="muted">${p.date}</span>
-                  ${p.link?` · <a class="link" href="${p.link}" target="_blank" rel="noopener">Steam News</a>`:''}
-                  <div class="hint">${p.notes||''}</div>
-                </div>
-                <div class="chips">
-                  ${(p.changes||[]).map(c=>`<span class="tag ${c.type}">${c.weapon} · ${c.type}</span>`).join('')}
-                </div>
-              </div>
-              <details><summary>Details anzeigen (${(p.changes||[]).length} Änderungen)</summary>
-                <table>
-                  <thead><tr><th>Waffe</th><th>Typ</th><th>Änderung</th></tr></thead>
-                  <tbody>
-                    ${(p.changes||[]).map(c=>`<tr><td>${c.weapon}</td><td><span class="tag ${c.type}">${c.type}</span></td><td>${c.change}</td></tr>`).join('')}
-                  </tbody>
-                </table>
-              </details>
-            </div>`);
-          });
+
+    function filterPatches() {
+      let out = patches;
+      if (search.value) {
+        const q = search.value.toLowerCase();
+        out = out.filter(p =>
+          (p.version && p.version.toLowerCase().includes(q)) ||
+          (p.weapon && p.weapon.toLowerCase().includes(q)) ||
+          (p.notes && p.notes.toLowerCase().includes(q))
+        );
       }
-      listEl.innerHTML = out.join('') || '<div class="hint">Keine Treffer für diese Filter.</div>';
+      if (filter.value) {
+        out = out.filter(p => (filter.value === "Buffs" ? p.buff : p.nerf));
+      }
+      if (fromDate.value) {
+        out = out.filter(p => p.date >= fromDate.value);
+      }
+      if (toDate.value) {
+        out = out.filter(p => p.date <= toDate.value);
+      }
+      return out;
     }
-    ['q','type','from','to'].forEach(id=>document.getElementById(id).addEventListener('input',render));
-    loadPatches();
-    setInterval(loadPatches, 60 * 60 * 1000);
+
+    function render() {
+      const filtered = filterPatches();
+      patchList.innerHTML = "";
+      if (!filtered.length) {
+        patchList.innerHTML = `<span class="muted">Noch keine Patch-Daten geladen oder keine passenden Patches gefunden.</span>`;
+        return;
+      }
+      filtered.forEach(p => {
+        const chip = document.createElement("div");
+        chip.className = "chip";
+        chip.innerHTML = `<b>${p.version || ""}</b> ${p.weapon ? "Waffe: " + p.weapon + " " : ""}${p.buff ? '<span class="good">Buff</span>' : ""}${p.nerf ? '<span class="bad">Nerf</span>' : ""}<br>${p.notes || ""}`;
+        patchList.appendChild(chip);
+      });
+    }
+
+    reloadBtn.addEventListener("click", fetchData);
+    search.addEventListener("input", render);
+    filter.addEventListener("change", render);
+    fromDate.addEventListener("change", render);
+    toDate.addEventListener("change", render);
+
+    fetchData();
+    setInterval(fetchData, 60 * 60 * 1000); // 60 Minuten
   </script>
+</body>
+</html>

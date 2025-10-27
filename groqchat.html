@@ -2,44 +2,68 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>GROQ Demo</title>
+  <title>GROQ Chat Demo</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 40px; }
     #antwort { white-space: pre-line; border: 1px solid #aaa; background: #fafafa; padding: 1em; margin-top: 1em; }
     button { padding: 6px 20px; }
+    input[type="text"] { padding: 6px; }
+    #debug { font-size: 0.9em; color: #555; margin-top: 0.5em; }
+    .info { color: #058; font-size: 0.94em; margin-bottom: 1em; }
+    label { font-weight: 600; }
   </style>
 </head>
 <body>
   <h2>GROQ API Demo</h2>
+  <div class="info">
+    Mit dieser Seite kannst du direkt mit deiner GROQ API (<code>/API/groq2</code>) chatten. Bei Fehlern werden Debug-Infos angezeigt.
+  </div>
   <label for="frage">Deine Frage:</label><br>
   <input type="text" id="frage" size="60" autofocus>
   <button onclick="frageAbsenden()">Absenden</button>
-  
+
   <div id="antwort"></div>
+  <div id="debug"></div>
 
   <script>
     async function frageAbsenden() {
       const frage = document.getElementById('frage').value;
       document.getElementById('antwort').textContent = 'Bitte warten...';
+      document.getElementById('debug').textContent = '';
       try {
-        // Passe ggf. den API-Pfad an
-        const res = await fetch('/API/groq', {
+        const res = await fetch('/API/groq2', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'chat', messages: [{ role: 'user', content: frage }] })
         });
-        const data = await res.json();
-        if(data.content) {
-          document.getElementById('antwort').textContent = data.content;
-        } else if(data.error) {
-          document.getElementById('antwort').textContent = 'Fehler: ' + data.error;
-        } else {
-          document.getElementById('antwort').textContent = 'Unbekannte Antwortformat!';
+        let data;
+        try {
+          data = await res.json();
+        } catch {
+          const text = await res.text();
+          throw new Error('Antwort ist kein JSON:\n' + text);
         }
-      } catch(e) {
+        if (data.error) {
+          document.getElementById('antwort').textContent =
+            'Fehler: ' + data.error + (data.details ? '\nDetails: ' + data.details : '');
+          document.getElementById('debug').textContent = data.debug ? JSON.stringify(data.debug, null, 2) : '';
+        } else if (data.content) {
+          document.getElementById('antwort').textContent = data.content;
+          document.getElementById('debug').textContent = data.debug ? JSON.stringify(data.debug, null, 2) : '';
+        } else {
+          document.getElementById('antwort').textContent = 'Unbekanntes Antwortformat!';
+          document.getElementById('debug').textContent = '';
+        }
+      } catch (e) {
         document.getElementById('antwort').textContent = 'Es gab einen Fehler: ' + e.message;
+        document.getElementById('debug').textContent = '';
       }
     }
+
+    // ENTER-Handler für bequemes Absenden
+    document.getElementById('frage').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') frageAbsenden();
+    });
   </script>
 </body>
 </html>
